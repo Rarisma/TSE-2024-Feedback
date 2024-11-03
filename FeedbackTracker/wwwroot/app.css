@@ -43,9 +43,38 @@ h1:focus {
 }
 
     .blazor-error-boundary::after {
-        content: "An error has occurred."
+        content: "An error has occurred.";
     }
 
 .darker-border-checkbox.form-check-input {
     border-color: #929292;
+}
+
+
+/*
+    create feedback class
+*/
+
+.create-form{
+    width:75vw;
+    height:80vh;
+    padding:5vh;
+    color:whitesmoke;
+    background-color:#262626;
+    display:flex;
+    flex:auto;
+    flex-direction:column;
+    justify-content:space-around;
+    border: 3px solid black;
+
+}
+
+.create-btn {
+    width: 10vw;
+    height: 5vh;
+    color:whitesmoke;
+    background-color:darkslategrey;
+    padding: 1vh;
+    display: flex;
+    justify-content: center;
 }

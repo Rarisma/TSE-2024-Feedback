@@ -1,0 +1,57 @@
+﻿@page "/feedback"
+@rendermode InteractiveServer
+
+<PageTitle>Feedback Page</PageTitle>
+
+<h1>Feedback form</h1>
+<!-- form -->
+<form class="create-form">
+
+<p role="status">Feedback Name: @textFeedbackName</p>
+<input type="text" @bind="userInput" placeholder="What is the Feedback Name" class="form-control" />
+
+
+<p role="status">Feedback Text: @textFeedbackText</p>
+<input type="text" @bind="userInput2" placeholder="Write your feedback here" class="form-control" />
+
+
+<p role="status">Deadline: @deadline</p>
+<select id="Dropdown" @bind="selectedDays" class="form-control">
+    <option value="3">3 days</option>
+    <option value="7">7 days</option>
+</select>
+
+<p role="status">Priority: @priority</p>
+<select id="Dropdown" @bind="priority" class="form-control">
+    <option value="@High">High</option>
+    <option value="@Low">Low</option>
+</select>
+
+
+
+
+<button class="btn btn-primary mt-2" @onclick="Submit">Submit</button>
+
+</form>
+
+@code {
+    private string userInput = string.Empty;
+    private string userInput2 = string.Empty;
+    private string textFeedbackName = string.Empty;
+    private string textFeedbackText= string.Empty;
+    private int selectedDays = 3;
+    private string High = "High";
+    private string Low = "Low";
+    private DateTime? deadline = null;
+    private string priority = "";
+
+    private void Submit()
+    {
+        // Store the user's input
+        textFeedbackName = userInput;
+        textFeedbackText = userInput2;
+        // Clear textbox after submission
+        userInput = string.Empty;
+        userInput2 = string.Empty;
+    }
+}

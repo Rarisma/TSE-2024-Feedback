@@ -1,9 +1,17 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\RARI\\Documents\\Repos\\University Work\\TSE-2024-Feedback\\FeedbackTracker\\",
+  "WorkspaceRootPath": "C:\\Users\\nieob\\Documents\\GitHub\\TSE-2024-Feedback\\FeedbackTracker\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{054EB2E7-65D6-4BCA-919C-C8D4CAF0CA41}|..\\Server\\Server.csproj|c:\\users\\rari\\documents\\repos\\university work\\tse-2024-feedback\\server\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{4727962E-8A08-4E72-B19F-1097F90745D3}|App.csproj|c:\\users\\nieob\\documents\\github\\tse-2024-feedback\\feedbacktracker\\components\\pages\\home.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{4727962E-8A08-4E72-B19F-1097F90745D3}|App.csproj|solutionrelative:components\\pages\\home.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4727962E-8A08-4E72-B19F-1097F90745D3}|App.csproj|c:\\users\\nieob\\documents\\github\\tse-2024-feedback\\feedbacktracker\\components\\pages\\feedback.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{4727962E-8A08-4E72-B19F-1097F90745D3}|App.csproj|solutionrelative:components\\pages\\feedback.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\RARI\\Documents\\Repos\\University Work\\TSE-2024-Feedback\\Server\\Program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -13,58 +21,43 @@
       "DocumentGroups": [
         {
           "DockedWidth": 281,
-          "SelectedChildIndex": 7,
+          "SelectedChildIndex": 0,
           "Children": [
-            {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{004be353-6879-467c-9d1e-9ac23cdf6d49}"
-            },
-            {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{34e76e81-ee4a-11d0-ae2e-00a0c90fffc3}"
-            },
-            {
-              "$type": "Bookmark",
-              "Name": "ST:1:0:{d212f56b-c48a-434c-a121-1c5d80b59b9f}"
-            },
-            {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{d78612c7-9962-4b83-95d9-268046dad23a}"
-            },
-            {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{0504ff91-9d61-11d0-a794-00a0c9110051}"
-            },
-            {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
-            },
-            {
-              "$type": "Bookmark",
-              "Name": "ST:5:0:{e8034f19-ab72-4f06-83fd-f6832b41aa63}"
-            },
             {
               "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "Home.razor",
+              "DocumentMoniker": "C:\\Users\\nieob\\Documents\\GitHub\\TSE-2024-Feedback\\FeedbackTracker\\Components\\Pages\\Home.razor",
+              "RelativeDocumentMoniker": "Components\\Pages\\Home.razor",
+              "ToolTip": "C:\\Users\\nieob\\Documents\\GitHub\\TSE-2024-Feedback\\FeedbackTracker\\Components\\Pages\\Home.razor",
+              "RelativeToolTip": "Components\\Pages\\Home.razor",
+              "ViewState": "AgIAACoAAAAAAAAAAAAAAEcAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2024-11-03T22:12:27.781Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Feedback.razor",
+              "DocumentMoniker": "C:\\Users\\nieob\\Documents\\GitHub\\TSE-2024-Feedback\\FeedbackTracker\\Components\\Pages\\Feedback.razor",
+              "RelativeDocumentMoniker": "Components\\Pages\\Feedback.razor",
+              "ToolTip": "C:\\Users\\nieob\\Documents\\GitHub\\TSE-2024-Feedback\\FeedbackTracker\\Components\\Pages\\Feedback.razor",
+              "RelativeToolTip": "Components\\Pages\\Feedback.razor",
+              "ViewState": "AgIAABIAAAAAAAAAAAAAADMAAAAYAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2024-11-03T22:04:50.132Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
               "Title": "Program.cs",
               "DocumentMoniker": "C:\\Users\\RARI\\Documents\\Repos\\University Work\\TSE-2024-Feedback\\Server\\Program.cs",
-              "RelativeDocumentMoniker": "..\\Server\\Program.cs",
+              "RelativeDocumentMoniker": "..\\..\\..\\..\\..\\RARI\\Documents\\Repos\\University Work\\TSE-2024-Feedback\\Server\\Program.cs",
               "ToolTip": "C:\\Users\\RARI\\Documents\\Repos\\University Work\\TSE-2024-Feedback\\Server\\Program.cs",
-              "RelativeToolTip": "..\\Server\\Program.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAABAAAAAAAAAA==",
+              "RelativeToolTip": "..\\..\\..\\..\\..\\RARI\\Documents\\Repos\\University Work\\TSE-2024-Feedback\\Server\\Program.cs",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-10-25T22:35:04.667Z",
-              "EditorCaption": ""
-            }
-          ]
-        },
-        {
-          "DockedWidth": 281,
-          "SelectedChildIndex": -1,
-          "Children": [
-            {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{9a7cebbb-dc5c-4986-bc49-962da46aa506}"
+              "WhenOpened": "2024-10-25T22:35:04.667Z"
             }
           ]
         }
