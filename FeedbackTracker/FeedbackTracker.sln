@@ -5,9 +5,9 @@ VisualStudioVersion = 17.11.35327.3
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "App", "App.csproj", "{4727962E-8A08-4E72-B19F-1097F90745D3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "..\FeedbackTrackerCommon\Core.csproj", "{7D336B79-0427-4CF5-9D7E-DA8C08964B39}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core", "..\FeedbackTrackerCommon\Core.csproj", "{7D336B79-0427-4CF5-9D7E-DA8C08964B39}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server", "..\Server\Server.csproj", "{054EB2E7-65D6-4BCA-919C-C8D4CAF0CA41}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Server", "..\Server\Server.csproj", "{054EB2E7-65D6-4BCA-919C-C8D4CAF0CA41}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

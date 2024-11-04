@@ -1,3 +1,6 @@
+using FeedbackTrackerCommon.Definitions;
+using System.Text.Json.Nodes;
+
 namespace Server
 {
 	public class Program
@@ -9,7 +12,6 @@ namespace Server
 			builder.Services.AddControllers();
 			var app = builder.Build();
 
-			app.MapGet("/", () => "Hello World!");
 			app.MapControllers();
 
 			app.Run();
