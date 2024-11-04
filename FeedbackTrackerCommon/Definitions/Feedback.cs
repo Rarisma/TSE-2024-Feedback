@@ -8,7 +8,7 @@ public class Feedback
 	public int FeedbackID;
 
 	/// <summary>
-	/// Person recieiving feedback
+	/// Person receiving feedback
 	/// </summary>
 	public int AssignedUser;
 
