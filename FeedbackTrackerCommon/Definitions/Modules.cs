@@ -5,7 +5,7 @@ namespace FeedbackTrackerCommon.Definitions;
 public class Modules
 {
     [Key]
-    private int ModuleID { get; set; }
-    private int Module { get; set; }
+    public int ModuleID { get; set; }
+    public int Module { get; set; }
 
 }
