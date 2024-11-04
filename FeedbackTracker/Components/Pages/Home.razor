@@ -1,7 +1,78 @@
 ﻿@page "/"
 
-<PageTitle>Home</PageTitle>
+<PageTitle>Feedback Tracking Tool</PageTitle>
 
-<h1>Hello, world!</h1>
+<div>
+    <center><h1>Feedback Tracking Tool</h1></center>
+    <br><br />
+    <center><h2>Dashboard</h2></center>
 
-Welcome to your new app.
+    <div>
+        <input type="text" placeholder="Search" />
+    </div>
+
+    <div style="margin: 20px 0;">
+        <button @onclick='() => currentTab = "total"'>All Feedback</button>
+        <button @onclick='() => currentTab = "completed"'>Completed</button>
+        <button @onclick='() => currentTab = "todo"'>Not Completed</button>
+    </div>
+
+    <div>
+        <h3>Feedback List for @user</h3>
+        @if (currentTab == "total")
+        {
+            <div>
+                @foreach (var feedback in allFeedback)
+                {
+                    <div style="border: 1px solid black; margin: 5px; padding: 10px;">
+                        <h4>@feedback.textFeedbackName</h4>
+                        <p><strong>@feedback.textFeedbackText</strong></p>
+                        <p><strong>Due in: </strong> @feedback.DueDate</p>
+                        <p><strong>Completed:</strong> @feedback.Completed</p>
+                    </div>
+                }
+            </div>
+        }
+
+        @if (currentTab == "completed")
+        {
+            <div>
+                @foreach (var feedback in allFeedback.Where(f => f.Completed))
+                {
+                    <div style="border: 1px solid black; margin: 5px; padding: 10px;">
+                        <h4>@feedback.textFeedbackName</h4>
+                        <p><strong>@feedback.textFeedbackText</strong></p>
+                        <p><strong>Due in: </strong> @feedback.DueDate</p>
+                        <p><strong>Completed:</strong> @feedback.Completed</p>
+                    </div>
+                }
+            </div>
+        }
+
+    </div>
+</div>
+
+@code {
+
+    private string currentTab = "total";
+
+
+    // Will be replaced with login page which will determine who is logged in
+    private string user = "Paul";
+
+    // List of feedback
+    private List<Feedback> allFeedback = new()
+    {
+        new Feedback { textFeedbackName = "Team software", textFeedbackText = "This is where the feedback will go", DueDate = "1", Completed = false },
+        new Feedback { textFeedbackName = "Database", textFeedbackText = "This is where the feedback will go", DueDate = "3", Completed = true },
+    };
+
+
+    public class Feedback
+    {
+        public string textFeedbackName { get; set; }
+        public string DueDate { get; set; }
+        public bool Completed { get; set; }
+        public string textFeedbackText { get; set; }
+    }
+}

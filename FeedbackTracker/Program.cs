@@ -1,8 +1,8 @@
-using FeedbackTracker.Components;
+using Application.Components;
 
-namespace FeedbackTracker
-{
-	public class Program
+namespace Application;
+
+public class Program
 	{
 		public static void Main(string[] args)
 		{
@@ -22,6 +22,8 @@ namespace FeedbackTracker
 				app.UseHsts();
 			}
 
+			app.UseStatusCodePagesWithReExecute("/StatusCode/{0}");
+
 			app.UseHttpsRedirection();
 
 			app.UseStaticFiles();
@@ -30,7 +32,7 @@ namespace FeedbackTracker
 			app.MapRazorComponents<App>()
 				.AddInteractiveServerRenderMode();
 
-			app.Run();
+        app.Run();
 		}
 	}
-}
+

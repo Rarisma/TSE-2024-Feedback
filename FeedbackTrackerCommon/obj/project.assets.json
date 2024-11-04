@@ -8,23 +8,23 @@
     "net8.0": []
   },
   "packageFolders": {
-    "C:\\n": {},
+    "C:\\Users\\nieob\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\RARI\\Documents\\Repos\\University Work\\TSE-2024-Feedback\\FeedbackTrackerCommon\\Core.csproj",
+      "projectUniqueName": "C:\\Users\\nieob\\Documents\\GitHub\\TSE-2024-Feedback\\FeedbackTrackerCommon\\Core.csproj",
       "projectName": "Core",
-      "projectPath": "C:\\Users\\RARI\\Documents\\Repos\\University Work\\TSE-2024-Feedback\\FeedbackTrackerCommon\\Core.csproj",
-      "packagesPath": "C:\\n",
-      "outputPath": "C:\\Users\\RARI\\Documents\\Repos\\University Work\\TSE-2024-Feedback\\FeedbackTrackerCommon\\obj\\",
+      "projectPath": "C:\\Users\\nieob\\Documents\\GitHub\\TSE-2024-Feedback\\FeedbackTrackerCommon\\Core.csproj",
+      "packagesPath": "C:\\Users\\nieob\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\nieob\\Documents\\GitHub\\TSE-2024-Feedback\\FeedbackTrackerCommon\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\RARI\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\nieob\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -32,7 +32,6 @@
         "net8.0"
       ],
       "sources": {
-        "C:\\Local Nuget Packages": {},
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "C:\\Program Files\\dotnet\\library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
