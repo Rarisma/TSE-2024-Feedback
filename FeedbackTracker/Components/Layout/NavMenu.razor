@@ -1,5 +1,4 @@
 ﻿<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
-
 <div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
     <nav class="flex-column">
         <div class="nav-item px-3">
@@ -7,12 +6,26 @@
                 <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
             </NavLink>
         </div>
-
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="feedback">
                 <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Create-Feedback
             </NavLink>
         </div>
     </nav>
+    <div class="login-buttons fixed-bottom px-3 pb-3">
+        <NavLink class="btn btn-primary mb-2 w-100" href="/LogIn">Log In</NavLink>
+        <NavLink class="btn btn-primary w-100" href="/SignUp">Sign Up</NavLink>
+        <style>
+            .btn-primary {
+                background-color: #56a3a6;
+                border: none;
+            }
+            .fixed-bottom {
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                right: 0;
+            }
+        </style>
+    </div>
 </div>
-
