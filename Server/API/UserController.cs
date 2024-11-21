@@ -1,5 +1,4 @@
-﻿using System.Runtime.InteropServices.Marshalling;
-using System.Text.Json;
+﻿using System.Text.Json;
 using FeedbackTrackerCommon.Definitions;
 using Microsoft.AspNetCore.Mvc;
 
@@ -35,7 +34,7 @@ public class UserController : Controller
 	/// </summary>
 	/// <param name="Username">Username</param>
 	/// <returns>Account Object</returns>
-	[HttpGet("GetUserByID")]
+	[HttpGet("GetUserByUsername")]
 	public string GetUserByUsername(string Username)
 	{
 		try
@@ -51,25 +50,31 @@ public class UserController : Controller
 	}
 
 	/// <summary>
-	/// Creates a new user
+	/// Creates a new user object.
 	/// </summary>
-	/// <param name="user">Json Serialised user object.</param>
+	/// <param name="Username">Account username</param>
+	/// <param name="Password">Account password (in plaintext)</param>
 	/// <returns></returns>
-	public string CreateUser(string user)
+	[HttpGet("CreateUser")]
+	public async string CreateUser(string Username, string Password)
 	{
 		try
 		{
-			//Deserialize
-			User? Account = JsonSerializer.Deserialize<User>(user);
-			if (Account == null)
+			//Create account object
+			//NOTE: bCrypt is very secure. (Salting is handled automatically)
+			User Account = new()
 			{
-				return "Invalid user object";
-			}
+				Username = Username,
+				Password = BCrypt.Net.BCrypt.HashPassword(Password),
+				IsStudent = true,
+				IsTeacher = false,
+			};
 
 			//Add user to database
 			using TrackerContext Ctx = new();
 			Ctx.Users.Add(Account);
 			Ctx.SaveChanges();
+			await Ctx.DisposeAsync();
 			return "User created successfully";
 		}
 		catch (Exception ex) { return "Encountered an error: " + ex.Message; }
