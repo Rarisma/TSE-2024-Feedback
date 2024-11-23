@@ -8,11 +8,11 @@
 <form class="create-form">
 
 <p role="status">Feedback Name: @textFeedbackName</p>
-<input type="text" @bind="userInput" placeholder="What is the Feedback Name" class="form-control" />
+<input type="text" @bind="title" placeholder="What is the Feedback Name" class="form-control" />
 
 
 <p role="status">Feedback Text: @textFeedbackText</p>
-<input type="text" @bind="userInput2" placeholder="Write your feedback here" class="form-control" />
+<input type="text" @bind="text" placeholder="Write your feedback here" class="form-control" />
 
 
 <p role="status">Deadline: @deadline</p>
@@ -34,9 +34,12 @@
 
 </form>
 
+<button class="btn btn-primary mt-2" @onclick="Sendfeedback">send feedback</button>
+
 @code {
-    private string userInput = string.Empty;
-    private string userInput2 = string.Empty;
+
+    private string text = string.Empty;
+    private string title = string.Empty;
     private string textFeedbackName = string.Empty;
     private string textFeedbackText= string.Empty;
     private int selectedDays = 3;
@@ -45,13 +48,44 @@
     private DateTime? deadline = null;
     private string priority = "";
 
+
     private void Submit()
     {
         // Store the user's input
-        textFeedbackName = userInput;
-        textFeedbackText = userInput2;
+        textFeedbackName = title;
+        textFeedbackText = text;
         // Clear textbox after submission
-        userInput = string.Empty;
-        userInput2 = string.Empty;
+        text = string.Empty;
+        title = string.Empty;
+    }
+
+    // sendFeedback function
+    private async void Sendfeedback()
+    {
+        
+        FeedbackTrackerCommon.Definitions.Feedback fb = new FeedbackTrackerCommon.Definitions.Feedback();
+
+        /*
+          assign feedback
+         */
+
+        // fb.FeedbackId;
+        // fb.AsignedUserID;
+        // fb.AssigneeID;
+        // fb.ModuleID;
+        fb.FeedbackText = text;
+        fb.Closed = false;
+        fb.Title = title;
+        fb.Priority = 5;
+        // fb.AssignedUSer;
+        // fb.Assignee;
+        // fb.Module;
+
+        //Console.WriteLine(fb.FeedbackText);
+
+        // call api createfeedback
+        string apiFeedback = await new FeedbackApiClient("https://localhost:7184").CreateFeedback(fb);
+
+        //Console.WriteLine(apiFeedback);
     }
 }

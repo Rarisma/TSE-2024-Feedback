@@ -16,7 +16,8 @@ namespace Server
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseMySQL("Server=www.hallon.rarisma.net;Database=feedbacktracker;User ID=trackeradmin;Password=RaZZmATazz0043_@@!;");
+            const string connectionString = "Server=www.hallon.rarisma.net;Database=feedbacktracker;User ID=trackeradmin;Password=RaZZmATazz0043_@@!;";
+            optionsBuilder.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
 
         }
     }
