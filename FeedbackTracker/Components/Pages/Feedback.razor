@@ -4,60 +4,102 @@
 <PageTitle>Feedback Page</PageTitle>
 
 <h1>Feedback form</h1>
-<!-- form -->
+<!-- Feedback form -->
 <form class="create-form">
 
-<p role="status">Feedback Name: @textFeedbackName</p>
+<!--Name-->
+<p role="status">Feedback Name:</p>
 <input type="text" @bind="title" placeholder="What is the Feedback Name" class="form-control" />
 
-
-<p role="status">Feedback Text: @textFeedbackText</p>
+<!--Text-->
+<p role="status">Feedback Text:</p>
 <input type="text" @bind="text" placeholder="Write your feedback here" class="form-control" />
 
+<!--module-->
+<p role="status">Feedback module:</p>
+<select @bind=moduleID>
+    <!-- add each module to select options-->
+        @if(modules.Count > 0)
+        {
+            for (int i = 0; i < modules.Count; i++)
+            {
+                <option value="@modules[i].ModuleID">module: @modules[i].Module</option>
+            }
+        }else{
+            <option>No modules</option>
+        }
+        
 
+</select>
+
+    <!--Assign-->
+    <p role="status">Asign feedback:</p>
+    <select @bind=assignedUser.UserID>
+        <!-- add each user to select options-->
+        @if (users.Count > 0)
+        {
+            for (int i = 0; i < users.Count; i++)
+            {
+                <option value="@users[i].UserID">@users[i].Username</option>
+            }
+        }
+        else
+        {
+            <option>No users</option>
+        }
+
+
+    </select>
+
+<!--Deadline-->
 <p role="status">Deadline: @deadline</p>
-<select id="Dropdown" @bind="selectedDays" class="form-control">
-    <option value="3">3 days</option>
-    <option value="7">7 days</option>
-</select>
+    <input type="date" @bind="deadline" min="@DateTime.Now" />
 
-<p role="status">Priority: @priority</p>
-<select id="Dropdown" @bind="priority" class="form-control">
-    <option value="@High">High</option>
-    <option value="@Low">Low</option>
-</select>
-
-
-
-
-<button class="btn btn-primary mt-2" @onclick="Submit">Submit</button>
-
-</form>
 
 <button class="btn btn-primary mt-2" @onclick="Sendfeedback">send feedback</button>
 
+</form>
+
+
+
 @code {
 
-    private string text = string.Empty;
+    // name
     private string title = string.Empty;
-    private string textFeedbackName = string.Empty;
-    private string textFeedbackText= string.Empty;
-    private int selectedDays = 3;
-    private string High = "High";
-    private string Low = "Low";
-    private DateTime? deadline = null;
-    private string priority = "";
+    // text
+    private string text = string.Empty;
 
+    // moduleID
+    private int moduleID;
 
-    private void Submit()
+    // get modules
+    private List<FeedbackTrackerCommon.Definitions.Modules> modules = new List<FeedbackTrackerCommon.Definitions.Modules> { new FeedbackTrackerCommon.Definitions.Modules { ModuleID = 1, Module = 2811 }, new FeedbackTrackerCommon.Definitions.Modules { ModuleID = 2, Module = 2804 }, new FeedbackTrackerCommon.Definitions.Modules {ModuleID=67,Module=2803 } };
+
+    // deadline
+    private DateTime? deadline = DateTime.Now;
+
+    // assigne
+    // author of feedback (get current user)
+    private FeedbackTrackerCommon.Definitions.User assignee = getUser();
+
+    // get possible users to asign to
+    private List<FeedbackTrackerCommon.Definitions.User> users = getAssignableUsers();
+
+    // assigned user
+    private FeedbackTrackerCommon.Definitions.User assignedUser = getUser(); // change
+
+    // get logged in user
+    private static FeedbackTrackerCommon.Definitions.User getUser()
     {
-        // Store the user's input
-        textFeedbackName = title;
-        textFeedbackText = text;
-        // Clear textbox after submission
-        text = string.Empty;
-        title = string.Empty;
+        return new FeedbackTrackerCommon.Definitions.User {UserID=69,Username="test_loggedUser" };
     }
+
+    // get users that can be assigned feedback
+    private static List<FeedbackTrackerCommon.Definitions.User> getAssignableUsers()
+    {
+        return new List<FeedbackTrackerCommon.Definitions.User> { new FeedbackTrackerCommon.Definitions.User { UserID = 7, Username = "sam" }, new FeedbackTrackerCommon.Definitions.User { UserID = 3, Username = "david" } };
+    }
+
 
     // sendFeedback function
     private async void Sendfeedback()
@@ -69,10 +111,10 @@
           assign feedback
          */
 
-        // fb.FeedbackId;
-        // fb.AsignedUserID;
-        // fb.AssigneeID;
-        // fb.ModuleID;
+        // fb.FeedbackId; ??  generate
+        fb.AssignedUserID = assignedUser.UserID;
+        fb.AssigneeID = assignee.UserID;
+        fb.ModuleID = moduleID;
         fb.FeedbackText = text;
         fb.Closed = false;
         fb.Title = title;
@@ -80,6 +122,8 @@
         // fb.AssignedUSer;
         // fb.Assignee;
         // fb.Module;
+
+        // fb.Deadline = deadline ???
 
         Console.WriteLine(fb.Title);
 
