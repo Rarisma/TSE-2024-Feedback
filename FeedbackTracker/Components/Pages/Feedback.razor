@@ -81,11 +81,11 @@
         // fb.Assignee;
         // fb.Module;
 
-        //Console.WriteLine(fb.FeedbackText);
+        Console.WriteLine(fb.Title);
 
         // call api createfeedback
-        string apiFeedback = await new FeedbackApiClient("https://localhost:7184").CreateFeedback(fb);
+        string apiFeedback = await new FeedbackApiClient("http://localhost:5189").CreateFeedback(fb);
 
-        //Console.WriteLine(apiFeedback);
+        Console.WriteLine(apiFeedback);
     }
 }

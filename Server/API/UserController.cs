@@ -35,7 +35,7 @@ public class UserController : Controller
 	/// </summary>
 	/// <param name="Username">Username</param>
 	/// <returns>Account Object</returns>
-	[HttpGet("GetUserByID")]
+	[HttpGet("GetUserByUsername")]
 	public string GetUserByUsername(string Username)
 	{
 		try
@@ -55,16 +55,21 @@ public class UserController : Controller
 	/// </summary>
 	/// <param name="user">Json Serialised user object.</param>
 	/// <returns></returns>
-	public string CreateUser(string user)
+	[HttpPost("CreateUser")]
+	public string CreateUser([FromBody]User user)
 	{
 		try
 		{
+			/*
 			//Deserialize
 			User? Account = JsonSerializer.Deserialize<User>(user);
+			*/
+			User? Account = user;
 			if (Account == null)
 			{
 				return "Invalid user object";
 			}
+			
 
 			//Add user to database
 			using TrackerContext Ctx = new();
