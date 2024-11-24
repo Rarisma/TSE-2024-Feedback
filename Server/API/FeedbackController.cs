@@ -89,7 +89,7 @@ public class FeedbackController : Controller
 			return "Feedback created successfully";
 		}
 		catch (Exception ex) {
-			Console.WriteLine("error : ",ex.Message);
+			Console.WriteLine($"prev: {ex.InnerException.Message}  | error: {ex.Message}");
 				return "Encountered an error: " + ex.Message; }
 	}
 

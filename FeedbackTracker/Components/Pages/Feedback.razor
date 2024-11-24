@@ -8,16 +8,16 @@
 <form class="create-form">
 
 <!--Name-->
-<p role="status">Feedback Name:</p>
-<input type="text" @bind="title" placeholder="What is the Feedback Name" class="form-control" />
+<label for="title">Feedback Name:</label>
+<input id="title" type="text" @bind="title" placeholder="What is the Feedback Name" class="form-control" />
 
 <!--Text-->
-<p role="status">Feedback Text:</p>
-<input type="text" @bind="text" placeholder="Write your feedback here" class="form-control" />
+<label for="text">Feedback Text:</label>
+<input id="text" type="text" @bind="text" placeholder="Write your feedback here" class="form-control" />
 
 <!--module-->
-<p role="status">Feedback module:</p>
-<select @bind=moduleID>
+<label for="module">Feedback module:</label>
+<select id="module" @bind=moduleID>
     <!-- add each module to select options-->
         @if(modules.Count > 0)
         {
@@ -33,8 +33,8 @@
 </select>
 
     <!--Assign-->
-    <p role="status">Asign feedback:</p>
-    <select @bind=assignedUser.UserID>
+    <label for="assign">Asign feedback:</label>
+    <select id="assign" @bind=assignedUser.UserID>
         <!-- add each user to select options-->
         @if (users.Count > 0)
         {
@@ -52,8 +52,8 @@
     </select>
 
 <!--Deadline-->
-<p role="status">Deadline: @deadline</p>
-    <input type="date" @bind="deadline" min="@DateTime.Now" />
+<label for="deadline">Deadline: @deadline</label>
+    <input id="deadline" type="date" @bind="deadline" min="@DateTime.Now" />
 
 
 <button class="btn btn-primary mt-2" @onclick="Sendfeedback">send feedback</button>

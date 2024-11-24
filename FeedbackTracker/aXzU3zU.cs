@@ -70,7 +70,7 @@ public class FeedbackApiClient
 		}
 		catch (Exception ex)
 		{
-			return $"Encountered an error: {ex.Message}";
+			return $"{ex.InnerException} : Encountered an error: {ex.Message}";
 		}
 	}
 
