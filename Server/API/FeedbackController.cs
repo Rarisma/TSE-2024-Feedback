@@ -84,12 +84,12 @@ public class FeedbackController : Controller
 
             Ctx.SaveChanges();
 
-			Console.WriteLine("save");
+			Console.WriteLine("save"); // logging
 
 			return "Feedback created successfully";
 		}
 		catch (Exception ex) {
-			Console.WriteLine($"prev: {ex.InnerException.Message}  | error: {ex.Message}");
+			Console.WriteLine($"prev: {ex.InnerException.Message}  | error: {ex.Message}"); // logging
 				return "Encountered an error: " + ex.Message; }
 	}
 
