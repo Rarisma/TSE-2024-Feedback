@@ -5,6 +5,7 @@ namespace FeedbackTrackerCommon.Definitions;
 
 public class FolderLinks
 {
+    [Key]
     public int FolderID { get; set; }
     public int FeedbackID { get; set; }
 

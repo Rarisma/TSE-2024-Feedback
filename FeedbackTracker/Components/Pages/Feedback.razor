@@ -2,56 +2,160 @@
 @rendermode InteractiveServer
 
 <PageTitle>Feedback Page</PageTitle>
+<div class="card justify-content-center">
+    <div class="card-header">
+		<h1 class="card-title text-center">Feedback form</h1>
+	</div>
+	<!-- Feedback form -->
+    <div class="card-body">
+		<form class="create-form">
 
-<h1>Feedback form</h1>
-<!-- form -->
-<form class="create-form">
+			<!--Name-->
+            <div class="mb-3">
+			    <label for="title">Feedback Name:</label>
+			    <input id="title" type="text" @bind="title" placeholder="What is the Feedback Name" class="form-control" />
+            </div>
 
-<p role="status">Feedback Name: @textFeedbackName</p>
-<input type="text" @bind="userInput" placeholder="What is the Feedback Name" class="form-control" />
+			<!--Text-->
+            <div class="mb-3">
+			    <label for="text">Feedback Text:</label>
+			    <textarea id="text" type="text" @bind="text" placeholder="Write your feedback here" class="form-control" />
+			</div>
+			<!--module-->
+            <div class="mb-3">
+			    <label for="module">Feedback module:</label>
+			    <select id="module" @bind="moduleID">
+
+				    <!-- add each module to select options-->
+				    @if (modules.Count > 0)
+				    {
+					    for (int i = 0; i < modules.Count; i++)
+					    {
+						    <option value="@modules[i].ModuleID">module: @modules[i].Module</option>
+					    }
+				    }
+				    else
+				    {
+					    <option value="">No modules</option>
+				    }
 
 
-<p role="status">Feedback Text: @textFeedbackText</p>
-<input type="text" @bind="userInput2" placeholder="Write your feedback here" class="form-control" />
+			    </select>
+            </div>
+
+			<!--Assign-->
+            <div class="mb-3">
+			    <label for="assign">Asign feedback:</label>
+			    <select id="assign" @bind=assignedUserID>
+
+				    <!-- add each user to select options-->
+				    @if (users.Count > 0)
+				    {
+					    for (int i = 0; i < users.Count; i++)
+					    {
+						    <option value="@users[i].UserID">@users[i].Username</option>
+					    }
+				    }
+				    else
+				    {
+					    <option value="">No users</option>
+				    }
+
+			    </select>
+			</div>
+
+            <div class="mb-3">
+            </div>
 
 
-<p role="status">Deadline: @deadline</p>
-<select id="Dropdown" @bind="selectedDays" class="form-control">
-    <option value="3">3 days</option>
-    <option value="7">7 days</option>
-</select>
+			<!--Deadline-->
+            <div class="mb-3">
+			    <label for="deadline">Deadline:</label>
+			    <input id="deadline" type="date" @bind="deadline" min="@DateTime.Now" />
+            </div>
 
-<p role="status">Priority: @priority</p>
-<select id="Dropdown" @bind="priority" class="form-control">
-    <option value="@High">High</option>
-    <option value="@Low">Low</option>
-</select>
+            <div class="mb-3">
+			    <button class="btn btn-primary mt-2" @onclick="Sendfeedback">send feedback</button>
+            </div>
+		</form>
+    </div>
+	
+</div>
 
 
 
-
-<button class="btn btn-primary mt-2" @onclick="Submit">Submit</button>
-
-</form>
 
 @code {
-    private string userInput = string.Empty;
-    private string userInput2 = string.Empty;
-    private string textFeedbackName = string.Empty;
-    private string textFeedbackText= string.Empty;
-    private int selectedDays = 3;
-    private string High = "High";
-    private string Low = "Low";
-    private DateTime? deadline = null;
-    private string priority = "";
 
-    private void Submit()
+    // name
+    private string title = string.Empty;
+    // text
+    private string text = string.Empty;
+
+    // moduleID
+    private int moduleID;
+
+    // get modules
+    private List<FeedbackTrackerCommon.Definitions.Modules> modules = new List<FeedbackTrackerCommon.Definitions.Modules> { new FeedbackTrackerCommon.Definitions.Modules { ModuleID = 1, Module = 2811 }, new FeedbackTrackerCommon.Definitions.Modules { ModuleID = 2, Module = 2804 }, new FeedbackTrackerCommon.Definitions.Modules {ModuleID=67,Module=2803 } };
+
+    // deadline
+    private DateTime? deadline = DateTime.Now;
+
+    // assigne
+    // author of feedback (get current user)
+    private FeedbackTrackerCommon.Definitions.User assignee = getUser();
+
+    // get possible users to asign to
+    private List<FeedbackTrackerCommon.Definitions.User> users = getAssignableUsers();
+
+    // assigned user
+    private int assignedUserID;
+    //private FeedbackTrackerCommon.Definitions.User assignedUser = getUser();
+
+    // get logged in user
+    private static FeedbackTrackerCommon.Definitions.User getUser()
     {
-        // Store the user's input
-        textFeedbackName = userInput;
-        textFeedbackText = userInput2;
-        // Clear textbox after submission
-        userInput = string.Empty;
-        userInput2 = string.Empty;
+        // create test user
+        return new FeedbackTrackerCommon.Definitions.User {UserID=69,Username="test_loggedUser" };
+    }
+
+    // get users that can be assigned feedback
+    private static List<FeedbackTrackerCommon.Definitions.User> getAssignableUsers()
+    {
+        // create test data
+        return new List<FeedbackTrackerCommon.Definitions.User> { new FeedbackTrackerCommon.Definitions.User { UserID = 7, Username = "sam" }, new FeedbackTrackerCommon.Definitions.User { UserID = 3, Username = "david" } };
+    }
+
+
+    // sendFeedback function
+    private async void Sendfeedback()
+    {
+        
+        FeedbackTrackerCommon.Definitions.Feedback fb = new FeedbackTrackerCommon.Definitions.Feedback();
+
+        /*
+          assign feedback
+         */
+
+        // fb.FeedbackId; ??  generate
+        fb.AssignedUserID = assignedUserID;
+        fb.AssigneeID = assignee.UserID;
+        fb.ModuleID = moduleID;
+        fb.FeedbackText = text;
+        fb.Closed = false;
+        fb.Title = title;
+        fb.Priority = 5;
+        // fb.AssignedUSer;
+        // fb.Assignee;
+        // fb.Module;
+
+        // fb.Deadline = deadline ???
+
+        Console.WriteLine(fb.Title);
+
+        // call api createfeedback
+        string apiFeedback = await new FeedbackApiClient("http://localhost:5189").CreateFeedback(fb);
+
+        Console.WriteLine(apiFeedback);
     }
 }
