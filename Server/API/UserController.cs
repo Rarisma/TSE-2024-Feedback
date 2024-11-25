@@ -3,11 +3,16 @@ using FeedbackTrackerCommon.Definitions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Server.API;
-
+[ApiController]
 [Route("User")]
 public class UserController : Controller
 {
+	private readonly AuthService _authService;
 
+	public UserController(AuthService authService)
+	{
+		_authService = authService;
+	}
 	/// <summary>
 	/// Gets a user by their User ID
 	/// </summary>
@@ -20,7 +25,7 @@ public class UserController : Controller
 		{
 			//Find account
 			using TrackerContext Ctx = new();
-			User Account = Ctx.Users.First(User => User.UserID == ID);
+			User Account = Ctx.user.First(User => User.UserID == ID);
 
 			//Serialise to JSON
 			string json = JsonSerializer.Serialize(Account);
@@ -41,7 +46,7 @@ public class UserController : Controller
 		{
 			//Find account
 			using TrackerContext Ctx = new();
-			User Account = Ctx.Users.First(User => User.Username == Username);
+			User Account = Ctx.user.First(User => User.Username == Username);
 
 			//Serialise to JSON
 			return JsonSerializer.Serialize(Account);
@@ -56,7 +61,7 @@ public class UserController : Controller
 	/// <param name="Password">Account password (in plaintext)</param>
 	/// <returns></returns>
 	[HttpGet("CreateUser")]
-	public async string CreateUser(string Username, string Password)
+	public async void CreateUser(string Username, string Password)
 	{
 		try
 		{
@@ -72,11 +77,22 @@ public class UserController : Controller
 
 			//Add user to database
 			using TrackerContext Ctx = new();
-			Ctx.Users.Add(Account);
+			Ctx.user.Add(Account);
 			Ctx.SaveChanges();
 			await Ctx.DisposeAsync();
-			return "User created successfully";
 		}
-		catch (Exception ex) { return "Encountered an error: " + ex.Message; }
+		catch (Exception ex) {  }
+	}
+
+	/// <summary>
+	/// Authenticates a user
+	/// </summary>
+	/// <param name="Username">User's account username</param>
+	/// <param name="Password">account password</param>
+	/// <returns></returns>
+	[HttpGet("Authenticate")]
+	public Task<string> Authenticate(string Username, string Password)
+	{
+		return _authService.AuthenticateUserAsync(Username, Password);
 	}
 }

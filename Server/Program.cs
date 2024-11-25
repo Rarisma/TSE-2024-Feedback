@@ -1,34 +1,74 @@
-using FeedbackTrackerCommon.Definitions;
-using System.Text.Json.Nodes;
+using System.Text;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Server;
 
-namespace Server
+var builder = WebApplication.CreateBuilder(args);
+
+//Add API Controllers
+builder.Services.AddControllers();
+
+//Add Swagger for API documentation
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+//Configure Entity Framework Core with MySQL
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+builder.Services.AddDbContext<TrackerContext>(options =>
+	options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+
+//Register Services for Dependency Injection
+builder.Services.AddScoped<AuthService>();
+
+//Configure JWT Authentication
+var jwtSettings = builder.Configuration.GetSection("JwtSettings");
+var secretKey = jwtSettings.GetValue<string>("SecretKey");
+var issuer = jwtSettings.GetValue<string>("Issuer");
+var audience = jwtSettings.GetValue<string>("Audience");
+
+builder.Services.AddAuthentication(options =>
 {
-	public class Program
+	options.DefaultAuthenticateScheme = "JwtBearer";
+	options.DefaultChallengeScheme = "JwtBearer";
+})
+.AddJwtBearer("JwtBearer", options =>
+{
+	options.TokenValidationParameters = new TokenValidationParameters
 	{
-		public static void Main(string[] args)
-		{
-			var builder = WebApplication.CreateBuilder(args);
+		ValidateIssuer = true,
+		ValidateAudience = true,
+		ValidateLifetime = true,
+		ValidateIssuerSigningKey = true,
+		ValidIssuer = issuer,
+		ValidAudience = audience,
+		IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey)),
+	};
+});
 
-			// Add API Controllers
-			builder.Services.AddControllers();
+builder.Services.AddAuthorization();
 
-			// Add Swagger
-			builder.Services.AddEndpointsApiExplorer();
-			builder.Services.AddSwaggerGen();
+// Build the app
+var app = builder.Build();
 
-			var app = builder.Build();
 
-			// Add Swagger Middleware
-			if (app.Environment.IsDevelopment())
-			{
-				app.UseSwagger();
-				app.UseSwaggerUI();
-			}
-
-			app.MapControllers();
-
-			app.Run();
-
-		}
-	}
+// Enable Swagger in Development
+if (app.Environment.IsDevelopment())
+{
+	app.UseSwagger();
+	app.UseSwaggerUI();
 }
+
+app.UseHttpsRedirection();
+
+// Apply CORS Policy
+app.UseCors("AllowBlazorClient");
+
+// Enable Authentication and Authorization
+app.UseAuthentication();
+app.UseAuthorization();
+
+// Map Controllers
+app.MapControllers();
+
+// Run the application
+app.Run();
