@@ -23,8 +23,8 @@ namespace Server
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-			optionsBuilder.UseMySql(ConnectionString, ServerVersion.AutoDetect(ConnectionString));
 
+            optionsBuilder.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
         }
     }
 }

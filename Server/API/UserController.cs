@@ -75,6 +75,7 @@ public class UserController : Controller
 				IsTeacher = false,
 			};
 
+
 			//Add user to database
 			using TrackerContext Ctx = new();
 			Ctx.user.Add(Account);

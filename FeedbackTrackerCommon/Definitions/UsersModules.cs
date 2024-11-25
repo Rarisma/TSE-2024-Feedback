@@ -5,7 +5,7 @@ namespace FeedbackTrackerCommon.Definitions;
 
 public class UsersModules
 {
-	[Key]
+    [Key]
     public int UserID { get; set; }
     public int ModuleID { get; set; }
 
