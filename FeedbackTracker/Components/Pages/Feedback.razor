@@ -12,68 +12,70 @@
 
 			<!--Name-->
             <div class="mb-3">
-			<label for="title">Feedback Name:</label>
-			<input id="title" type="text" @bind="title" placeholder="What is the Feedback Name" class="form-control" />
+			    <label for="title">Feedback Name:</label>
+			    <input id="title" type="text" @bind="title" placeholder="What is the Feedback Name" class="form-control" />
             </div>
 
 			<!--Text-->
             <div class="mb-3">
-			<label for="text">Feedback Text:</label>
-			<textarea id="text" type="text" @bind="text" placeholder="Write your feedback here" class="form-control" />
+			    <label for="text">Feedback Text:</label>
+			    <textarea id="text" type="text" @bind="text" placeholder="Write your feedback here" class="form-control" />
 			</div>
 			<!--module-->
             <div class="mb-3">
-			<label for="module">Feedback module:</label>
-			<select id="module" @bind=moduleID>
-                <option value="" disabled selected hidden>Select Module</option>
-				<!-- add each module to select options-->
-				@if (modules.Count > 0)
-				{
-					for (int i = 0; i < modules.Count; i++)
-					{
-						<option value="@modules[i].ModuleID">module: @modules[i].Module</option>
-					}
-				}
-				else
-				{
-					<option value="">No modules</option>
-				}
+			    <label for="module">Feedback module:</label>
+			    <select id="module" @bind="moduleID">
+
+				    <!-- add each module to select options-->
+				    @if (modules.Count > 0)
+				    {
+					    for (int i = 0; i < modules.Count; i++)
+					    {
+						    <option value="@modules[i].ModuleID">module: @modules[i].Module</option>
+					    }
+				    }
+				    else
+				    {
+					    <option value="">No modules</option>
+				    }
 
 
-			</select>
+			    </select>
             </div>
 
 			<!--Assign-->
             <div class="mb-3">
-			<label for="assign">Asign feedback:</label>
-			<select id="assign" @bind=assignedUser.UserID>
-                <option value="" disabled selected hidden>Select User</option>
-				<!-- add each user to select options-->
-				@if (users.Count > 0)
-				{
-					for (int i = 0; i < users.Count; i++)
-					{
-						<option value="@users[i].UserID">@users[i].Username</option>
-					}
-				}
-				else
-				{
-					<option value="">No users</option>
-				}
+			    <label for="assign">Asign feedback:</label>
+			    <select id="assign" @bind=assignedUserID>
 
+				    <!-- add each user to select options-->
+				    @if (users.Count > 0)
+				    {
+					    for (int i = 0; i < users.Count; i++)
+					    {
+						    <option value="@users[i].UserID">@users[i].Username</option>
+					    }
+				    }
+				    else
+				    {
+					    <option value="">No users</option>
+				    }
 
-			</select>
+			    </select>
 			</div>
+
+            <div class="mb-3">
+            </div>
 
 
 			<!--Deadline-->
             <div class="mb-3">
-			<label for="deadline">Deadline:</label>
-			<input id="deadline" type="date" @bind="deadline" min="@DateTime.Now" />
+			    <label for="deadline">Deadline:</label>
+			    <input id="deadline" type="date" @bind="deadline" min="@DateTime.Now" />
             </div>
 
             <div class="mb-3">
-			<button class="btn btn-primary mt-2" @onclick="Sendfeedback">send feedback</button>
+			    <button class="btn btn-primary mt-2" @onclick="Sendfeedback">send feedback</button>
             </div>
 		</form>
     </div>
@@ -107,17 +109,20 @@
     private List<FeedbackTrackerCommon.Definitions.User> users = getAssignableUsers();
 
     // assigned user
-    private FeedbackTrackerCommon.Definitions.User assignedUser = getUser(); // change
+    private int assignedUserID;
+    //private FeedbackTrackerCommon.Definitions.User assignedUser = getUser();
 
     // get logged in user
     private static FeedbackTrackerCommon.Definitions.User getUser()
     {
+        // create test user
         return new FeedbackTrackerCommon.Definitions.User {UserID=69,Username="test_loggedUser" };
     }
 
     // get users that can be assigned feedback
     private static List<FeedbackTrackerCommon.Definitions.User> getAssignableUsers()
     {
+        // create test data
         return new List<FeedbackTrackerCommon.Definitions.User> { new FeedbackTrackerCommon.Definitions.User { UserID = 7, Username = "sam" }, new FeedbackTrackerCommon.Definitions.User { UserID = 3, Username = "david" } };
     }
 
@@ -133,7 +138,7 @@
          */
 
         // fb.FeedbackId; ??  generate
-        fb.AssignedUserID = assignedUser.UserID;
+        fb.AssignedUserID = assignedUserID;
         fb.AssigneeID = assignee.UserID;
         fb.ModuleID = moduleID;
         fb.FeedbackText = text;
