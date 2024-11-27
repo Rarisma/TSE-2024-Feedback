@@ -1,4 +1,6 @@
-﻿<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
+<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
+
+<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
 <div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
     <nav class="flex-column">
         <div class="nav-item px-3">
@@ -11,7 +13,14 @@
                 <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Create-Feedback
             </NavLink>
         </div>
+
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="viewfeedback">
+                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> View-Feedback
+            </NavLink>
+        </div>
     </nav>
+
 
     <!-- Buttons for Logging in and Signing up. Needs to be conditional based on whether a user isn't logged in -->
     <div class="login-buttons fixed-bottom px-3 pb-3">

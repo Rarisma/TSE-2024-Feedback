@@ -6,6 +6,6 @@ public class Modules
 {
     [Key]
     public int ModuleID { get; set; }
-    public string Module { get; set; }
+    public int Module { get; set; }
 
 }

@@ -1,0 +1,58 @@
+
+@page "/viewfeedback"
+@using FeedbackTrackerCommon.Definitions
+@using Application
+@inject FeedbackApiClient FeedbackClientAccess
+@{
+		<PageTitle>Feedback Viewer</PageTitle>
+		<h1>Feedback Viewer</h1>
+		<h3>Select Feedback To View</h3>
+		<div style="margin: 20px 0">
+			<button @onclick='() => currentTab = "total"'>All Feedback</button>
+			<button @onclick='() => currentTab = "completed"'>Completed</button>
+			<button @onclick='() => currentTab = "todo"'>Not Completed</button>
+		</div>
+
+		<p>Current Tab: @currentTab</p>
+		@if (currentTab == "total")
+		{
+			<h4>All Feedback</h4>
+			@if (SelectedFeedback != null)
+			{
+				<p><strong>Title:</strong> @SelectedFeedback.Title</p>
+				<p><strong>Description:</strong> @SelectedFeedback.FeedbackText</p>
+			}
+			else
+			{
+				<p>No feedback found</p>
+			}
+		}
+}
+
+
+
+@code {
+	private string currentTab = "total";
+	private FeedbackTrackerCommon.Definitions.Feedback SelectedFeedback;
+
+	private async Task LoadFeedback()
+	{
+		var feedback = await FeedbackClientAccess.GetFeedbackByID(1);
+
+		if (feedback != null)
+		{
+			SelectedFeedback = feedback;
+		}
+		else
+		{
+			Console.WriteLine("Failed to load feedback.");
+		}
+	}
+
+	protected override async Task OnInitializedAsync()
+	{
+		await LoadFeedback();
+	}
+
+
+}
