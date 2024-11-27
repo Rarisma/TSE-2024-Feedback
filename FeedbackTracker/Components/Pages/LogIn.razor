@@ -1,18 +1,25 @@
 ﻿@page "/LogIn"
+@inject IJSRuntime JSRuntime
 
 <div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-md-6">
             <div class="card">
-                <div class="card-header"> <!--Card header for formatting -->
+                <div class="card-header">
+                    <!--Card header for formatting -->
                     <h3 class="text-center">Log In</h3>
                 </div>
                 <div class="card-body">
-                    <form>
+
+
+                    <!-- Form destination needs adding to action attribute, # = null. onsubmit will need removing at some point -->
+                    <form action="#" onsubmit="alert('Username: ' + document.getElementById('username').value + ', Password: ' + document.getElementById('password').value); return false;">
+
+
                         <div class="mb-3">
-                            <!-- Header and text box for email address -->
-                            <label for="email" class="form-label">Email address</label>
-                            <input type="email" class="form-control" id="email" placeholder="Enter email">
+                            <!-- Header and text box for username -->
+                            <label for="username" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="username" placeholder="Username">
                         </div>
                         <div class="mb-3">
                             <!-- Header and text box for password -->
@@ -20,7 +27,7 @@
                             <input type="password" class="form-control" id="password" placeholder="Password">
                         </div>
                         <div class="d-grid">
-                            <!-- Login Button -->
+                            <!-- Button -->
                             <button type="submit" class="btn btn-primary">Log In</button>
                         </div>
                     </form>
