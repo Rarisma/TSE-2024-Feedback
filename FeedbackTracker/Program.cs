@@ -8,9 +8,12 @@ public class Program
 		{
 			var builder = WebApplication.CreateBuilder(args);
 
-			// Add services to the container.
 			builder.Services.AddRazorComponents()
 				.AddInteractiveServerComponents();
+			
+			builder.Services.AddSingleton<FeedbackApiClient>(sp => 
+                new FeedbackApiClient("http://localhost:5189"));
+
 
 			var app = builder.Build();
 
