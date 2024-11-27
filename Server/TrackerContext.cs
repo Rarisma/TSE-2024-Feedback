@@ -1,4 +1,5 @@
-﻿using FeedbackTrackerCommon.Definitions;
+﻿using System;
+using FeedbackTrackerCommon.Definitions;
 using Microsoft.EntityFrameworkCore;
 
 namespace Server
@@ -23,7 +24,7 @@ namespace Server
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
 
-            optionsBuilder.UseMySql(ConnectionString, ServerVersion.AutoDetect(ConnectionString));
+            optionsBuilder.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
         }
     }
 }

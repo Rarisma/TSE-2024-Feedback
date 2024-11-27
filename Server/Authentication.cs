@@ -2,7 +2,9 @@
 using System.Security.Claims;
 using System.Text;
 using FeedbackTrackerCommon.Definitions;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Server;
