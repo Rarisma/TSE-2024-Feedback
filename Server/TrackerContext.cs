@@ -6,7 +6,14 @@ namespace Server
 {
     public class TrackerContext : DbContext
     {
-        public DbSet<User> Users { get; set; }
+	    public string ConnectionString { get; set; }
+
+		public TrackerContext(string connectionString = "Server=www.hallon.rarisma.net;Database=feedbacktracker;User ID=trackeradmin;Password=RaZZmATazz0043_@@!;")
+		{
+			ConnectionString = connectionString;
+		}
+
+	    public DbSet<User> user { get; set; }
         public DbSet<Feedback> feedback { get; set; }
         public DbSet<Modules> modules { get; set; }
         public DbSet<FeedbackFolders> feedback_folders { get; set; }
@@ -16,8 +23,8 @@ namespace Server
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseMySQL("Server=www.hallon.rarisma.net;Database=feedbacktracker;User ID=trackeradmin;Password=RaZZmATazz0043_@@!;");
 
+            optionsBuilder.UseMySql(ConnectionString, ServerVersion.AutoDetect(ConnectionString));
         }
     }
 }
