@@ -7,6 +7,7 @@ namespace Application;
 public class UserAPI
 {
 	private readonly HttpClient _httpClient;
+	private readonly IHttpContextAccessor HttpContext;
 
 	public UserAPI(string baseEndpoint)
 	{
@@ -68,5 +69,48 @@ public class UserAPI
 		{
 			return $"Error: {ex.Message}";
 		}
+	}
+
+
+	/// <summary>
+	/// Authenticates a user.
+	/// </summary>
+	/// <param name="Username">Username</param>
+	/// <param name="Password">Password</param>
+	/// <returns>True if authentication is successful, otherwise, false.</returns>
+	public async Task<bool> Authenticate(string Username, string Password)
+	{
+		try
+		{
+			// Send login request.
+			HttpResponseMessage response = await _httpClient.GetAsync($"User/Authenticate?Username={Username}&Password={Password}");
+			response.EnsureSuccessStatusCode();
+
+			// Read the JWT token from the response
+			string token = await response.Content.ReadAsStringAsync();
+
+			if (!string.IsNullOrEmpty(token))
+			{
+				// Set the JWT as an HTTP-only cookie
+				var httpContext = HttpContext.HttpContext;
+				if (httpContext != null)
+				{
+					httpContext.Response.Cookies.Append("AuthToken", token, new CookieOptions
+					{
+						HttpOnly = true,
+						SameSite = SameSiteMode.Strict,
+						Secure = true, // Ensure HTTPS
+						Expires = DateTimeOffset.UtcNow.AddMinutes(600)
+					});
+					return true;
+				}
+			}
+		}
+		catch (Exception ex)
+		{
+			// Log the exception (ex) as needed
+		}
+
+		return false;
 	}
 }
