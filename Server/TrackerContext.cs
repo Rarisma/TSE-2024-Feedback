@@ -1,5 +1,4 @@
-﻿using System;
-using FeedbackTrackerCommon.Definitions;
+﻿using FeedbackTrackerCommon.Definitions;
 using Microsoft.EntityFrameworkCore;
 
 namespace Server
