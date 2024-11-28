@@ -1,32 +1,50 @@
-
 @page "/viewfeedback"
 @using FeedbackTrackerCommon.Definitions
 @using Application
 @inject FeedbackApiClient FeedbackClientAccess
 @{
-		<PageTitle>Feedback Viewer</PageTitle>
-		<h1>Feedback Viewer</h1>
-		<h3>Select Feedback To View</h3>
-		<div style="margin: 20px 0">
-			<button @onclick='() => currentTab = "total"'>All Feedback</button>
-			<button @onclick='() => currentTab = "completed"'>Completed</button>
-			<button @onclick='() => currentTab = "todo"'>Not Completed</button>
-		</div>
+	<PageTitle>Feedback Viewer</PageTitle>
+	<h1>Feedback Viewer</h1>
+	<h3>Select Feedback To View</h3>
+	<div style="margin: 20px 0">
+		<button @onclick='() => currentTab = "total"'>All Feedback</button>
+		<button @onclick='() => currentTab = "completed"'>Completed</button>
+		<button @onclick='() => currentTab = "todo"'>Not Completed</button>
+	</div>
 
-		<p>Current Tab: @currentTab</p>
-		@if (currentTab == "total")
+	<p>Current Tab: @currentTab</p>
+	@if (currentTab == "total")
+	{
+		<h4>All Feedback</h4>
+		@if (SelectedFeedback != null)
 		{
-			<h4>All Feedback</h4>
-			@if (SelectedFeedback != null)
+			<p><strong>Title:</strong> @SelectedFeedback.Title</p>
+			<p><strong>Description:</strong> @SelectedFeedback.FeedbackText</p>
+			try
 			{
-				<p><strong>Title:</strong> @SelectedFeedback.Title</p>
-				<p><strong>Description:</strong> @SelectedFeedback.FeedbackText</p>
+				if (SelectedComments != null)
+				{
+					foreach (var comment in SelectedComments)
+					{
+						<p>@comment.CommenterID</p>
+						<p>@comment.Body</p>
+					}
+				}
+				else
+				{
+					<p>No comments yet!</p>
+				}
 			}
-			else
+			catch (Exception ex)
 			{
-				<p>No feedback found</p>
+				Console.WriteLine("error view");
 			}
 		}
+		else
+		{
+			<p>No feedback found</p>
+		}
+	}
 }
 
 
@@ -34,10 +52,12 @@
 @code {
 	private string currentTab = "total";
 	private FeedbackTrackerCommon.Definitions.Feedback SelectedFeedback;
+	private List<FeedbackTrackerCommon.Definitions.FeedbackComments> SelectedComments;
+	//private string UsernameForComments;
 
 	private async Task LoadFeedback()
 	{
-		var feedback = await FeedbackClientAccess.GetFeedbackByID(1);
+		var feedback = await FeedbackClientAccess.GetFeedbackByID(3);
 
 		if (feedback != null)
 		{
@@ -47,10 +67,28 @@
 		{
 			Console.WriteLine("Failed to load feedback.");
 		}
+
+		await LoadComments(SelectedFeedback.FeedbackID);
 	}
+
+	private async Task LoadComments(int ID)
+	{
+		var comments = await FeedbackClientAccess.GetComments(ID);
+
+		if (comments != null)
+		{
+			SelectedComments = comments;
+		}
+	}
+
+	// private async Task LoadUser()
+	// {
+	// 	Not finished as was waiting for whoever finished login system, can be done soon
+	// }
 
 	protected override async Task OnInitializedAsync()
 	{
+		//await LoadUser();
 		await LoadFeedback();
 	}
 
