@@ -25,13 +25,12 @@
             <div class="mb-3">
                 <label for="module">Feedback module:</label>
                 <select id="module" @bind="moduleID">
-
                     <!-- add each module to select options-->
                     @if (modules.Count > 0)
                     {
                         for (int i = 0; i < modules.Count; i++)
                         {
-                            <option value="@modules[i].ModuleID">module: @modules[i].Module</option>
+                            <option value="@modules[i].ModuleID">@modules[i].Module</option>
                         }
                     }
                     else
@@ -94,9 +93,8 @@
 
     // moduleID
     private int moduleID;
-
     // get modules
-    private List<FeedbackTrackerCommon.Definitions.Modules> modules = new List<FeedbackTrackerCommon.Definitions.Modules> { new FeedbackTrackerCommon.Definitions.Modules { ModuleID = 1, Module = "Mathmatics" }};
+    private List<FeedbackTrackerCommon.Definitions.Modules> modules = new List<FeedbackTrackerCommon.Definitions.Modules> { new FeedbackTrackerCommon.Definitions.Modules { ModuleID = 0, Module = "no module" }};
 
     // deadline
     private DateTime deadline = DateTime.Now;
@@ -105,25 +103,57 @@
     // author of feedback (get current user)
     private FeedbackTrackerCommon.Definitions.User assignee = getUser();
 
-    // get possible users to asign to
-    private List<FeedbackTrackerCommon.Definitions.User> users = getAssignableUsers();
-
     // assigned user
     private int assignedUserID;
-    //private FeedbackTrackerCommon.Definitions.User assignedUser = getUser();
+    // get possible users to asign to
+    private List<FeedbackTrackerCommon.Definitions.User> users = new List<FeedbackTrackerCommon.Definitions.User> { new FeedbackTrackerCommon.Definitions.User { UserID=0,Username="No users"} };
 
     // get logged in user
     private static FeedbackTrackerCommon.Definitions.User getUser()
     {
+        //#TODO get logged in user
+
         // create test user
-        return new FeedbackTrackerCommon.Definitions.User {UserID=3,Username="test_loggedUser" };
+        return new FeedbackTrackerCommon.Definitions.User {UserID=1,Username="awdwdaw" };
     }
 
     // get users that can be assigned feedback
-    private static List<FeedbackTrackerCommon.Definitions.User> getAssignableUsers()
+    private async void getAssignableUsers()
     {
-        // create test data
-        return new List<FeedbackTrackerCommon.Definitions.User> {new FeedbackTrackerCommon.Definitions.User { UserID = 4, Username = "david" } };
+        //#TODO get assignable users (within selected module?)
+
+        // Get users
+        FeedbackTrackerCommon.Definitions.User? user1 = await new UserAPI("http://localhost:5189").GetUserByID(3);
+        FeedbackTrackerCommon.Definitions.User? user2 = await new UserAPI("http://localhost:5189").GetUserByID(4);
+
+        if (user1 != null && user2 != null)
+        {
+            users = [user1, user2];
+        }
+
+        StateHasChanged();
+
+    }
+
+    // getModules (get modules user in / can access)
+
+    private async void GetModules() {
+
+        //#TODO get modules by UserModule
+
+        // Call API
+            // returns Module
+        FeedbackTrackerCommon.Definitions.Modules? mod1 = await new ModuleAPI("http://localhost:5189").GetModuleByID(1);
+        FeedbackTrackerCommon.Definitions.Modules? mod2 = await new ModuleAPI("http://localhost:5189").GetModuleByID(2);
+
+        // if a module is returned
+        if(mod1 != null && mod2 != null){
+            // replace modules variable with retrieved modules
+            modules = [mod1,mod2];
+        }
+
+        // refresh ui with new data
+        StateHasChanged();
     }
 
 
@@ -137,15 +167,15 @@
         assign feedback
         */
 
-        //fb.FeedbackID; do not set auto created in database
-        fb.AssignedUserID = assignedUserID;
-        fb.AssigneeID = assignee.UserID;
-        fb.ModuleID = moduleID;
-        fb.FeedbackText = text;
-        fb.Closed = false;
-        fb.Title = title;
-        fb.Priority = 5; // get priority based of deadline
-        fb.Deadline = deadline;
+        // fb.FeedbackID; Feedback ID auto increment on insert
+        fb.AssignedUserID = assignedUserID; // ID of user the feedback is assigned to.
+        fb.AssigneeID = assignee.UserID; // ID of user thats logged in 
+        fb.ModuleID = moduleID; // ID of associated module
+        fb.FeedbackText = text; // text of feedback
+        fb.Closed = false; // Feedback starts open (close would be completed)
+        fb.Title = title; // Name of feedback
+        fb.Priority = 5; //#TODO calaculate inital priority based on deadline date
+        fb.Deadline = deadline; // date feedback is due / response needed by
 
         // fb.AssignedUSer;
 
@@ -155,13 +185,18 @@
 
 
 
-        
 
-        Console.WriteLine(fb.Title); // log
+
+        //Console.WriteLine(fb.Title); // log
 
         // call api createfeedback
         string apiFeedback = await new FeedbackApiClient("http://localhost:5189").CreateFeedback(fb);
 
-        Console.WriteLine(apiFeedback); // log
+        //Console.WriteLine(apiFeedback); // log
+    }
+
+    public Feedback(){
+        GetModules();
+        getAssignableUsers();
     }
 }
