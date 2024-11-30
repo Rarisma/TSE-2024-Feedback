@@ -22,23 +22,41 @@
     </nav>
 
 
-    <!-- Buttons for Logging in and Signing up. Needs to be conditional based on whether a user isn't logged in -->
+    <!-- Buttons for logging in, signing up and account management -->
     <div class="login-buttons fixed-bottom px-3 pb-3">
-        <NavLink class="btn btn-primary mb-2 w-100" href="/LogIn">Log In</NavLink>
-        <NavLink class="btn btn-primary w-100" href="/SignUp">Sign Up</NavLink>
+        @if (UserLoggedIn)
+        {
+            <NavLink class="btn btn-primary mb-2 w-100" href="/AccountManagement">Account</NavLink>
+        }
+        else
+        {
+            <NavLink class="btn btn-primary mb-2 w-100" href="/LogIn">Log In</NavLink>
+            <NavLink class="btn btn-primary w-100" href="/SignUp">Sign Up</NavLink>
+        }
+    </div>
 
         <!-- Button Styling -->
         <style>
             .btn-primary {
-                background-color: #56a3a6;
-                border: none;
+            background-color: #FF0000;
+            border: none;
             }
             .fixed-bottom {
-                position: absolute;
-                bottom: 0;
-                left: 0;
-                right: 0;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
             }
         </style>
     </div>
-</div>
+
+
+<!-- Login/Signup buttons display conditions -->
+@code {
+    bool UserLoggedIn = false;
+
+    //TODO: This function will update the UserLoggedIn status, needs the logic
+    private bool UserStatus() {
+        return false;
+    }
+}
