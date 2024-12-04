@@ -14,8 +14,11 @@ public class Program
 			builder.Services.AddSingleton<FeedbackApiClient>(sp => 
                 new FeedbackApiClient("http://localhost:5189"));
 
+			builder.Services.AddSingleton<UserAPI>(sp =>
+		new UserAPI("http://localhost:5189"));
 
-			var app = builder.Build();
+
+        var app = builder.Build();
 
 			// Configure the HTTP request pipeline.
 			if (!app.Environment.IsDevelopment())

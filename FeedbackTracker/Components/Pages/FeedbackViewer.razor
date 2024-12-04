@@ -2,46 +2,107 @@
 @page "/viewfeedback"
 @using FeedbackTrackerCommon.Definitions
 @using Application
+@rendermode InteractiveServer
 @inject FeedbackApiClient FeedbackClientAccess
+@inject UserAPI UserClientAccess
 @{
-		<PageTitle>Feedback Viewer</PageTitle>
-		<h1>Feedback Viewer</h1>
-		<h3>Select Feedback To View</h3>
-		<div style="margin: 20px 0">
-			<button @onclick='() => currentTab = "total"'>All Feedback</button>
-			<button @onclick='() => currentTab = "completed"'>Completed</button>
-			<button @onclick='() => currentTab = "todo"'>Not Completed</button>
-		</div>
+	<PageTitle>Feedback Viewer</PageTitle>
+	<h1>Feedback Viewer</h1>
+	<h3>Select Feedback To View</h3>
+	<div style="margin: 20px 0">
+		<button @onclick='() => currentTab = "total"'>All Feedback</button>
+		<button @onclick='() => currentTab = "completed"'>Completed</button>
+		<button @onclick='() => currentTab = "todo"'>Not Completed</button>
+	</div>
 
-		<p>Current Tab: @currentTab</p>
-		@if (currentTab == "total")
-		{
-			<h4>All Feedback</h4>
-			@if (SelectedFeedback != null)
-			{
-				<p><strong>Title:</strong> @SelectedFeedback.Title</p>
-				<p><strong>Description:</strong> @SelectedFeedback.FeedbackText</p>
-			}
-			else
-			{
-				<p>No feedback found</p>
-			}
-		}
+	<p>Current Tab: @currentTab</p>
+	@if (currentTab == "total")
+	{
+		<h4>All Feedback</h4>
+		<div class="container mb-3">
+			<div class="card mb-3 justify-content:center">
+				<div class="card-body">
+					@if (SelectedFeedback != null)
+					{
+						<div class="flex-row">
+							<div class="flex-column">
+								<p class="card-text"><strong>Title:</strong> @SelectedFeedback.Title</p>
+								<p class="card-text"><strong>Description:</strong> @SelectedFeedback.FeedbackText</p>
+							</div>
+							<div>
+								<button class="btn btn-primary mt-2" @onclick=ChangeExtensionView>Extension request @if (extensionView)
+									{
+										<span>v</span>
+									} else { <span>></span>}
+								</button>
+
+								@if (extensionView == true){
+									<div id="extensionForm" class="card">
+										<form class="flex-column">
+
+											<div class="card-header">
+												<h3 class="card-text"> Extension request</h3>
+											</div>
+											<div class="card-body">
+
+												<div class="card-text">
+													<label for="length">Length: </label>
+													<input name="length" type="number" min="1" max="10" placeholder="1" @bind=extension.Length/>
+												</div>
+												<div class="card-text flex-row">
+													<label for="reason">reason:</label>
+													<textarea name="reason" placeholder="reason" @bind=extension.Reason></textarea>
+												</div>
+											</div>	
+
+											<div>
+												<button name="extensionButton" @onclick=requestExtension> Send request </button>
+											</div>
+										</form>
+									</div>
+
+								}
+							</div>
+
+						</div>
+					}
+					else
+					{
+						<p>No feedback found</p>
+					}
+				</div>
+			</div>
+		</div>
+	}
 }
 
 
 
 @code {
+
 	private string currentTab = "total";
-	private FeedbackTrackerCommon.Definitions.Feedback SelectedFeedback;
+	private FeedbackTrackerCommon.Definitions.Feedback? SelectedFeedback;
+
+	private FeedbackTrackerCommon.Definitions.User? loggedUser;
+
+	private FeedbackTrackerCommon.Definitions.Extension extension = new Extension { };
+
+	private bool extensionView = false;
+
+	private void ChangeExtensionView(){
+		extensionView = !extensionView;
+		StateHasChanged();
+	}
+
 
 	private async Task LoadFeedback()
 	{
-		var feedback = await FeedbackClientAccess.GetFeedbackByID(1);
+		var feedback = await FeedbackClientAccess.GetFeedbackByID(3);
 
 		if (feedback != null)
 		{
 			SelectedFeedback = feedback;
+			StateHasChanged();
 		}
 		else
 		{
@@ -49,8 +110,30 @@
 		}
 	}
 
+	private async Task LoadUser()
+	{
+		var user = await UserClientAccess.GetUserByID(3);
+
+		if (user != null)
+		{
+			loggedUser = user;
+		}
+		else
+		{
+			Console.WriteLine("Failed to load user.");
+		}
+	}
+
+	private async void requestExtension()
+	{
+		// add extension request
+	}
+
+
 	protected override async Task OnInitializedAsync()
 	{
+
+		await LoadUser();
 		await LoadFeedback();
 	}
 
