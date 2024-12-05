@@ -71,25 +71,17 @@ public class FeedbackController : Controller
 				return "Invalid feedback object";
 			}
 			
-			Console.WriteLine($"feedback title: {Feedback.Title}"); // logging
-
 			//Add user to database
 			using TrackerContext Ctx = new();
 
-            Console.WriteLine($"feedback text: {Feedback.FeedbackText}"); // logging
-
             Ctx.feedback.Add(Feedback);
-
-            Console.WriteLine($"feedback priority: {Feedback.Priority}"); // logging
 
             Ctx.SaveChanges();
 
-			Console.WriteLine("save"); // logging
 
 			return "Feedback created successfully";
 		}
 		catch (Exception ex) {
-			Console.WriteLine($"prev: {ex.InnerException.Message}  | error: {ex.Message}"); // logging
 				return "Encountered an error: " + ex.Message; }
 	}
 
@@ -141,4 +133,64 @@ public class FeedbackController : Controller
 			return "Encountered an error: " + e.Message;
 		}
 	}
+
+
+	/// <summary>
+	/// create extension
+	/// </summary>
+	/// <param name="extensionobject"></param>
+	/// <returns></returns>
+	[HttpPost("Extension")]
+	public string ExtensionPost([FromBody] Extension extensionobject)
+	{
+        try
+        {
+            //Deserialize
+            /*
+			Feedback? Feedback = JsonSerializer.Deserialize<Feedback>(FeedbackObject);
+			*/
+            Extension? extension = extensionobject;
+            if (extension == null)
+            {
+                return "Invalid extension object";
+            }
+
+            //Add user to database
+            using TrackerContext Ctx = new();
+
+            Ctx.extension.Add(extension);
+			
+            Ctx.SaveChanges();
+
+
+            return "extension created successfully";
+        }
+        catch (Exception ex)
+        {
+            return " : Encountered an error: " + ex.Message;
+        }
+    }
+
+    /// <summary>
+    /// Gets extension for feedback
+    /// </summary>
+    /// <param name="FeedbackID">Feedback ID</param>
+    /// <returns>Gets comments</returns>
+    [HttpGet("Extension")]
+    public string ExtensionsGet(int FeedbackID)
+    {
+        try
+        {
+            using TrackerContext ctx = new();
+			//Find all comments for the feedback
+			List<Extension> extensions = ctx.extension
+                .Where(extension => extension.FeedbackId == FeedbackID).ToList();
+
+            return JsonSerializer.Serialize(extensions);
+        }
+        catch (Exception e)
+        {
+            return "Encountered an error: " + e.Message;
+        }
+    }
 }

@@ -12,6 +12,11 @@ public class Extension
     [Column("EXTENSION_ID")]
     public int ExtensionId { get; set; }
 
+    ///<sumary>
+    ///feedback id
+    /// </sumary>
+    [Column("FEEDBACK_ID")]
+    public int FeedbackId { get; set; }
 
     ///<summary>
     /// extension status (to review,denied,accepted)

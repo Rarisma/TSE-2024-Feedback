@@ -47,11 +47,11 @@
 
 												<div class="card-text">
 													<label for="length">Length: </label>
-													<input name="length" type="number" min="1" max="10" placeholder="1" @bind=extension.Length/>
+													<input name="length" type="number" min="1" max="10" placeholder="1" @bind=newExtension.Length/>
 												</div>
 												<div class="card-text flex-row">
 													<label for="reason">reason:</label>
-													<textarea name="reason" placeholder="reason" @bind=extension.Reason></textarea>
+													<textarea name="reason" placeholder="reason" @bind=newExtension.Reason></textarea>
 												</div>
 											</div>	
 
@@ -61,6 +61,27 @@
 										</form>
 									</div>
 
+								}
+
+								@if(extensions != null){
+									@foreach(Extension extension in extensions){
+										<div class="card">
+											<div class="card-header">
+												<h3 class="card-text">ID : @extension.ExtensionId</h3>
+											</div>
+
+											<div class="card-body">
+												<p>Status: @extension.Status</p>
+												<p>Reason: @extension.Reason</p>
+												<p>Extra time amount: @extension.Length</p>
+
+												@if(extension.Status == "to review"){
+													<button @onclick='() => extension.Status = "accepted"'>accept</button>
+													<button @onclick='() => extension.Status = "declined"'>decline</button>
+												}
+											</div>
+										</div>
+									}
 								}
 							</div>
 
@@ -82,10 +103,11 @@
 
 	private string currentTab = "total";
 	private FeedbackTrackerCommon.Definitions.Feedback? SelectedFeedback;
+	private List<FeedbackTrackerCommon.Definitions.Extension>? extensions;
 
 	private FeedbackTrackerCommon.Definitions.User? loggedUser;
 
-	private FeedbackTrackerCommon.Definitions.Extension extension = new Extension { };
+	private FeedbackTrackerCommon.Definitions.Extension newExtension = new Extension { };
 
 	private bool extensionView = false;
 
@@ -102,6 +124,8 @@
 		if (feedback != null)
 		{
 			SelectedFeedback = feedback;
+			extensions = await FeedbackClientAccess.GetExtensions(SelectedFeedback.FeedbackID);
+
 			StateHasChanged();
 		}
 		else
@@ -127,6 +151,16 @@
 	private async void requestExtension()
 	{
 		// add extension request
+
+		newExtension.FeedbackId = SelectedFeedback.FeedbackID;
+		newExtension.Status = "to review";
+
+		//Console.WriteLine(fb.Title); // log
+
+		// call api createfeedback
+		string apiFeedback = await new FeedbackApiClient("http://localhost:5189").CreateExtension(newExtension);
+
+		Console.WriteLine(apiFeedback); // log
 	}
 
 

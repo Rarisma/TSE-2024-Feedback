@@ -108,4 +108,46 @@ public class FeedbackApiClient
 			return null;
 		}
 	}
+
+	/// <summary>
+	/// create extension
+	/// </summary>
+	/// <param name="extension"></param>
+	/// <returns></returns>
+	public async Task<string> CreateExtension(Extension extension)
+	{
+		try
+		{
+			//Serialise
+			string jsonContent = JsonSerializer.Serialize(extension);
+			StringContent content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+
+			//Send
+			HttpResponseMessage response = await _httpClient.PostAsync("Feedback/Extension", content);
+			response.EnsureSuccessStatusCode();
+			return await response.Content.ReadAsStringAsync();
+		}
+		catch (Exception ex)
+		{
+			return $"Encountered an error: {ex.Message}";
+		}
+	}
+
+    /// <summary>
+    /// Gets extension request for a feedback
+    /// </summary>
+    public async Task<List<Extension>?> GetExtensions(int feedbackID)
+    {
+        try
+        {
+            HttpResponseMessage response = await _httpClient.GetAsync($"Feedback/EXtension?FeedbackID={feedbackID}");
+            response.EnsureSuccessStatusCode();
+            string jsonString = await response.Content.ReadAsStringAsync();
+            return JsonSerializer.Deserialize<List<Extension>>(jsonString);
+        }
+        catch (Exception ex)
+        {
+            return null;
+        }
+    }
 }
