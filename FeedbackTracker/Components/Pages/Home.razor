@@ -1,8 +1,8 @@
-﻿@page "/"
-
+@page "/"
+@rendermode InteractiveServer
+@inject JAuth JAuth
 @using FeedbackTrackerCommon.Definitions
 @using Application
-
 <PageTitle>Feedback Tracking Tool</PageTitle>
 
 <div>
@@ -56,7 +56,10 @@
 </div>
 
 @code {
-
+	
+	protected override async Task OnInitializedAsync()	{
+		JAuth.EnforceAuth();
+	}
     private string currentTab = "total";
 
     // current user, default is a guest
