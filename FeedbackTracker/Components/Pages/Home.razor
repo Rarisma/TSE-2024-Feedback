@@ -1,5 +1,6 @@
 ﻿@page "/"
-
+@rendermode InteractiveServer
+@inject JAuth JAuth
 <PageTitle>Feedback Tracking Tool</PageTitle>
 
 <div>
@@ -53,7 +54,10 @@
 </div>
 
 @code {
-
+	
+	protected override async Task OnInitializedAsync()	{
+		JAuth.EnforceAuth();
+	}
     private string currentTab = "total";
 
 
