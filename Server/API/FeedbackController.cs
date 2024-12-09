@@ -193,4 +193,80 @@ public class FeedbackController : Controller
             return "Encountered an error: " + e.Message;
         }
     }
+
+    /// <summary>
+    /// update Feedback
+    /// </summary>
+    /// <param name="Feedback">Feedback</param>
+    /// <returns>Gets comments</returns>
+    [HttpPut("Feedback")]
+    public string FeedbackPut([FromBody]Feedback feedback)
+    {
+        try
+        {
+            using TrackerContext ctx = new();
+			//get feedback
+			var fb = ctx.feedback.Single(feedbackid => feedbackid.FeedbackID == feedback.FeedbackID);
+			
+			if (fb != null)
+			{
+				// set feedback to new values
+                ctx.Entry(fb).CurrentValues.SetValues(feedback);
+				//save
+				ctx.SaveChanges();
+            }
+			else
+			{
+				return "no feedback found";
+			}
+
+			
+
+
+
+            return "feedback updated success";
+        }
+        catch (Exception e)
+        {
+            return "Encountered an error: " + e.Message;
+        }
+    }
+
+    /// <summary>
+    /// update extension
+    /// </summary>
+    /// <param name="extension">extension</param>
+    /// <returns>Gets comments</returns>
+    [HttpPut("Extension")]
+    public string ExtensionPut([FromBody] Extension extension)
+    {
+        try
+        {
+            using TrackerContext ctx = new();
+            //get feedback
+            var ext = ctx.extension.Single(ex => ex.ExtensionId == extension.ExtensionId);
+
+            if (ext != null)
+            {
+                // set feedback to new values
+                ctx.Entry(ext).CurrentValues.SetValues(extension);
+                //save
+                ctx.SaveChanges();
+            }
+            else
+            {
+                return "no extension found";
+            }
+
+
+
+
+
+            return "extension updated success";
+        }
+        catch (Exception e)
+        {
+            return "Encountered an error: " + e.Message;
+        }
+    }
 }

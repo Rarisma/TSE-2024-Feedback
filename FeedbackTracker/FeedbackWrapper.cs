@@ -150,4 +150,46 @@ public class FeedbackApiClient
             return null;
         }
     }
+
+    /// <summary>
+    /// Gets extension request for a feedback
+    /// </summary>
+    public async Task<string> UpdateFeedback(Feedback feedback)
+    {
+        try
+        {
+            //Serialise
+            string jsonContent = JsonSerializer.Serialize(feedback);
+            StringContent content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+            //Send
+            HttpResponseMessage response = await _httpClient.PutAsync("Feedback/Feedback", content);
+            response.EnsureSuccessStatusCode();
+			return await response.Content.ReadAsStringAsync();
+        }
+        catch (Exception ex)
+        {
+            return null;
+        }
+    }
+
+    /// <summary>
+    /// Gets extension request for a feedback
+    /// </summary>
+    public async Task<string> UpdateExtension(Extension extension)
+    {
+        try
+        {
+            //Serialise
+            string jsonContent = JsonSerializer.Serialize(extension);
+            StringContent content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+            //Send
+            HttpResponseMessage response = await _httpClient.PutAsync("Feedback/Extension", content);
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadAsStringAsync();
+        }
+        catch (Exception ex)
+        {
+            return null;
+        }
+    }
 }

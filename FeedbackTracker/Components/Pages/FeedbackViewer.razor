@@ -27,6 +27,7 @@
 						<div class="flex-row">
 							<div class="flex-column">
 								<p class="card-text"><strong>Title:</strong> @SelectedFeedback.Title</p>
+								<p class="card-text"><strong>deadline:</strong> @SelectedFeedback.Deadline</p>
 								<p class="card-text"><strong>Description:</strong> @SelectedFeedback.FeedbackText</p>
 							</div>
 							<div>
@@ -76,8 +77,8 @@
 												<p>Extra time amount: @extension.Length</p>
 
 												@if(extension.Status == "to review"){
-													<button @onclick='() => extension.Status = "accepted"'>accept</button>
-													<button @onclick='() => extension.Status = "declined"'>decline</button>
+													<button @onclick='() => {deadlineAccepted(extension);}'>accept</button>
+													<button @onclick='() => {deadlineDeclined(extension);}'>decline</button>
 												}
 											</div>
 										</div>
@@ -163,7 +164,34 @@
 		Console.WriteLine(apiFeedback); // log
 	}
 
+	private async Task<string> updateExtension(Extension extension)
+	{
+		string apiFeedback = await new FeedbackApiClient("http://localhost:5189").UpdateExtension(extension);
+		return apiFeedback; // log
+	}
 
+	private async void deadlineAccepted(Extension extension){
+
+		// feedback deadline
+		SelectedFeedback.Deadline = SelectedFeedback.Deadline.Add(new TimeSpan(extension.Length,0,0,0));
+		// update feedback in db
+		string apiFeedback = await new FeedbackApiClient("http://localhost:5189").UpdateFeedback(SelectedFeedback);
+		Console.WriteLine(apiFeedback); // log
+
+		// update 
+		extension.Status = "accepted";
+		string apiExtension = await updateExtension(extension);
+		Console.WriteLine(apiExtension); // log
+		StateHasChanged();
+	}
+
+	private async void deadlineDeclined(Extension extension){
+		// update
+		extension.Status = "declined";
+		string apiExtension = await updateExtension(extension);
+		Console.WriteLine(apiExtension); // log
+		StateHasChanged();
+	}
 	protected override async Task OnInitializedAsync()
 	{
 
