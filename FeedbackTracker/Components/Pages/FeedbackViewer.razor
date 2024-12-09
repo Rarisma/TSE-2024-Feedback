@@ -2,46 +2,150 @@
 @page "/viewfeedback"
 @using FeedbackTrackerCommon.Definitions
 @using Application
+@rendermode InteractiveServer
 @inject FeedbackApiClient FeedbackClientAccess
+@inject UserAPI UserClientAccess
 @{
-		<PageTitle>Feedback Viewer</PageTitle>
-		<h1>Feedback Viewer</h1>
-		<h3>Select Feedback To View</h3>
-		<div style="margin: 20px 0">
-			<button @onclick='() => currentTab = "total"'>All Feedback</button>
-			<button @onclick='() => currentTab = "completed"'>Completed</button>
-			<button @onclick='() => currentTab = "todo"'>Not Completed</button>
-		</div>
+	<PageTitle>Feedback Viewer</PageTitle>
+	<h1>Feedback Viewer</h1>
+	<h3>Select Feedback To View</h3>
+	<div style="margin: 20px 0">
+		<button @onclick='() => currentTab = "total"'>All Feedback</button>
+		<button @onclick='() => currentTab = "completed"'>Completed</button>
+		<button @onclick='() => currentTab = "todo"'>Not Completed</button>
+	</div>
 
-		<p>Current Tab: @currentTab</p>
-		@if (currentTab == "total")
-		{
-			<h4>All Feedback</h4>
-			@if (SelectedFeedback != null)
-			{
-				<p><strong>Title:</strong> @SelectedFeedback.Title</p>
-				<p><strong>Description:</strong> @SelectedFeedback.FeedbackText</p>
-			}
-			else
-			{
-				<p>No feedback found</p>
-			}
-		}
+	<p>Current Tab: @currentTab</p>
+	@if (currentTab == "total")
+	{
+		<h4>All Feedback</h4>
+		<div class="container mb-3">
+			<div class="card mb-3 justify-content:center">
+				<div class="card-body">
+					@if (SelectedFeedback != null) // if feedback found
+					{
+						// display feedback {title,deadline,description,create extension request button}
+						<div class="flex-row">
+							<div class="flex-column">
+								<p class="card-text"><strong>Title:</strong> @SelectedFeedback.Title</p>
+								<p class="card-text"><strong>deadline:</strong> @SelectedFeedback.Deadline</p>
+								<p class="card-text"><strong>Description:</strong> @SelectedFeedback.FeedbackText</p>
+							</div>
+							<div>
+								<button class="btn btn-primary mt-2" @onclick=ChangeExtensionView>Extension request @if (extensionView)
+									{
+										<span>v</span>
+									} else { <span>></span>}
+								</button>
+
+								@if (extensionView == true) // check extension toggle then display extension form {length,reason,submit button}
+								{
+									<div id="extensionForm" class="card">
+										<form class="flex-column">
+
+											<div class="card-header">
+												<h3 class="card-text"> Extension request</h3>
+											</div>
+											<div class="card-body">
+
+												<div class="card-text">
+													<label for="length">Length: </label>
+													<input name="length" type="number" min="1" max="10" placeholder="1" @bind=newExtension.Length/>
+												</div>
+												<div class="card-text flex-row">
+													<label for="reason">reason:</label>
+													<textarea name="reason" placeholder="reason" @bind=newExtension.Reason></textarea>
+												</div>
+											</div>	
+
+											<div>
+												<button name="extensionButton" @onclick=requestExtension> Send request </button>
+											</div>
+										</form>
+									</div>
+
+								}
+
+								@if(extensions != null)// if extensions are found
+								{
+									@foreach(Extension extension in extensions)// display extension {status,reason,length,accept/decline buttons}
+									{
+										<div class="card">
+											<div class="card-header">
+												<h3 class="card-text">ExtensionID : @extension.ExtensionId</h3>
+											</div>
+
+											<div class="card-body">
+												<p>Status: @extension.Status</p>
+												<p>Reason: @extension.Reason</p>
+												<p>Extra time amount: @extension.Length</p>
+
+												@if(extension.Status == "to review"){
+													<button @onclick='() => {extension.Status="accepted"; deadlineResponse(extension);}'>accept</button>
+													<button @onclick='() => {extension.Status="declined"; deadlineResponse(extension);}'>decline</button>
+												}
+											</div>
+										</div>
+									}
+								}
+							</div>
+
+						</div>
+					}
+					else
+					{
+						<p>No feedback found</p>
+					}
+				</div>
+			</div>
+		</div>
+	}
 }
 
 
 
 @code {
-	private string currentTab = "total";
-	private FeedbackTrackerCommon.Definitions.Feedback SelectedFeedback;
 
+	// selected tab
+	private string currentTab = "total";
+
+	// selected feedback
+	private FeedbackTrackerCommon.Definitions.Feedback? SelectedFeedback;
+
+	// extensions from feedback
+	private List<FeedbackTrackerCommon.Definitions.Extension>? extensions;
+
+	// logged user
+	private FeedbackTrackerCommon.Definitions.User? loggedUser;
+
+	// store a new extension
+	private FeedbackTrackerCommon.Definitions.Extension newExtension = new Extension { };
+
+	// show extension toggle
+	private bool extensionView = false;
+
+	/// <summary>
+	/// Hide / show extensions
+	/// </summary>
+	private void ChangeExtensionView(){
+		extensionView = !extensionView;
+		StateHasChanged();
+	}
+
+	/// <summary>
+	/// Get feedback to display and related extensions
+	/// </summary>
+	/// <returns>task -  updates stored feedback and extensions</returns>
 	private async Task LoadFeedback()
 	{
-		var feedback = await FeedbackClientAccess.GetFeedbackByID(1);
+		var feedback = await FeedbackClientAccess.GetFeedbackByID(3);
 
 		if (feedback != null)
 		{
 			SelectedFeedback = feedback;
+			extensions = await FeedbackClientAccess.GetExtensions(SelectedFeedback.FeedbackID);
+
+			StateHasChanged();
 		}
 		else
 		{
@@ -49,8 +153,71 @@
 		}
 	}
 
+	/// <summary>
+	///  logged user
+	/// </summary>
+	/// <returns>Task - user</returns>
+	private async Task LoadUser()
+	{
+		var user = await UserClientAccess.GetUserByID(3);
+
+		if (user != null)
+		{
+			loggedUser = user;
+		}
+		else
+		{
+			Console.WriteLine("Failed to load user.");
+		}
+	}
+
+	/// <summary>
+	/// Create a new extension
+	/// </summary>
+	private async void requestExtension()
+	{
+		// add extension request
+
+		newExtension.FeedbackId = SelectedFeedback.FeedbackID;
+		newExtension.Status = "to review";
+
+		//Console.WriteLine(fb.Title); // log
+
+		// call api createfeedback
+		string apiFeedback = await FeedbackClientAccess.CreateExtension(newExtension);
+
+		Console.WriteLine(apiFeedback); // log
+	}
+
+	/// <summary>
+	/// Deadline accepted
+	/// </summary>
+	/// <param name="extension">extension that has been accepted</param>
+	private async void deadlineResponse(Extension extension){
+		if (extension.Status == "accepted")
+		{
+			// feedback deadline
+			SelectedFeedback.Deadline = SelectedFeedback.Deadline.Add(new TimeSpan(extension.Length, 0, 0, 0)); // update deadline
+
+			// update feedback in db
+			string apiFeedback = await FeedbackClientAccess.UpdateFeedback(SelectedFeedback);
+			Console.WriteLine(apiFeedback); // log
+		}
+
+		// update extension
+		string apiExtension = await FeedbackClientAccess.UpdateExtension(extension);
+		Console.WriteLine(apiExtension); // log
+		StateHasChanged();
+	}
+
+	/// <summary>
+	/// function that runs on page load
+	/// </summary>
+	/// <returns></returns>
 	protected override async Task OnInitializedAsync()
 	{
+
+		await LoadUser();
 		await LoadFeedback();
 	}
 
