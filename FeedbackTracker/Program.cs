@@ -1,4 +1,5 @@
 using Application.Components;
+using Microsoft.AspNetCore.Components;
 
 namespace Application;
 
@@ -13,12 +14,12 @@ public class Program
 			
 			builder.Services.AddSingleton<FeedbackApiClient>(sp => 
                 new FeedbackApiClient("http://localhost:5189"));
+			builder.Services.AddScoped<JAuth>();
 
 			builder.Services.AddSingleton<UserAPI>(sp =>
 		new UserAPI("http://localhost:5189"));
 
-
-        var app = builder.Build();
+		var app = builder.Build();
 
 			// Configure the HTTP request pipeline.
 			if (!app.Environment.IsDevelopment())
@@ -30,14 +31,20 @@ public class Program
 			app.UseStatusCodePagesWithReExecute("/StatusCode/{0}");
 
 			app.UseHttpsRedirection();
-
 			app.UseStaticFiles();
 			app.UseAntiforgery();
 
 			app.MapRazorComponents<App>()
 				.AddInteractiveServerRenderMode();
 
-        app.Run();
-		}
+			//JAuth init stuff
+			using (var scope = app.Services.CreateScope())
+			{
+				var navigationManager = scope.ServiceProvider.GetRequiredService<NavigationManager>();
+			}
+
+			app.Run();
+
 	}
+}
 
