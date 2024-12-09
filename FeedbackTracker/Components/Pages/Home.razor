@@ -58,7 +58,11 @@
 @code {
 	
 	protected override async Task OnInitializedAsync()	{
-		JAuth.EnforceAuth();
+		JAuth.EnforceAuth();        
+        
+        await LoadUser();
+
+        await LoadFeedback();
 	}
     private string currentTab = "total";
 
@@ -66,17 +70,6 @@
     private User user = new User { UserID = 0, Username = "Guest" };
 
     private List<Feedback> allFeedback = new();
-
-
-    // calls LoadUser and Loadfeedback from the api
-    protected override async Task OnInitializedAsync()
-    {
-        await LoadUser();
-
-        await LoadFeedback();
-
-
-    }
 
     // finds the user information by calling the UserAPI
     private async Task LoadUser()

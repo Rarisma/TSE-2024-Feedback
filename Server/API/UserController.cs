@@ -60,7 +60,7 @@ public class UserController : Controller
 	/// <param name="Username">Account username</param>
 	/// <param name="Password">Account password (in plaintext)</param>
 	/// <returns></returns>
-	[HttpGet("CreateUser")]
+	[HttpPost("CreateUser")]
 	public async void CreateUser(string Username, string Password)
 	{
 		try
