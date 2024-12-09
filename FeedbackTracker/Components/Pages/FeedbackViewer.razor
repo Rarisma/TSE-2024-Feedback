@@ -72,7 +72,7 @@
 									{
 										<div class="card">
 											<div class="card-header">
-												<h3 class="card-text">ID : @extension.ExtensionId</h3>
+												<h3 class="card-text">ExtensionID : @extension.ExtensionId</h3>
 											</div>
 
 											<div class="card-body">
@@ -81,8 +81,8 @@
 												<p>Extra time amount: @extension.Length</p>
 
 												@if(extension.Status == "to review"){
-													<button @onclick='() => {deadlineAccepted(extension);}'>accept</button>
-													<button @onclick='() => {deadlineDeclined(extension);}'>decline</button>
+													<button @onclick='() => {extension.Status="accepted"; deadlineResponse(extension);}'>accept</button>
+													<button @onclick='() => {extension.Status="declined"; deadlineResponse(extension);}'>decline</button>
 												}
 											</div>
 										</div>
@@ -190,44 +190,22 @@
 	}
 
 	/// <summary>
-	/// update extension
-	/// </summary>
-	/// <param name="extension">new extension</param>
-	/// <returns> log string </returns>
-	private async Task<string> updateExtension(Extension extension)
-	{
-		string apiFeedback = await FeedbackClientAccess.UpdateExtension(extension);
-		return apiFeedback; // log
-	}
-
-	/// <summary>
 	/// Deadline accepted
 	/// </summary>
 	/// <param name="extension">extension that has been accepted</param>
-	private async void deadlineAccepted(Extension extension){
+	private async void deadlineResponse(Extension extension){
+		if (extension.Status == "accepted")
+		{
+			// feedback deadline
+			SelectedFeedback.Deadline = SelectedFeedback.Deadline.Add(new TimeSpan(extension.Length, 0, 0, 0)); // update deadline
 
-		// feedback deadline
-		SelectedFeedback.Deadline = SelectedFeedback.Deadline.Add(new TimeSpan(extension.Length,0,0,0)); // update deadline
+			// update feedback in db
+			string apiFeedback = await FeedbackClientAccess.UpdateFeedback(SelectedFeedback);
+			Console.WriteLine(apiFeedback); // log
+		}
 
-		// update feedback in db
-		string apiFeedback = await FeedbackClientAccess.UpdateFeedback(SelectedFeedback);
-		Console.WriteLine(apiFeedback); // log
-
-		// update 
-		extension.Status = "accepted";
-		string apiExtension = await updateExtension(extension);
-		Console.WriteLine(apiExtension); // log
-		StateHasChanged();
-	}
-
-	/// <summary>
-	/// deadline declined
-	/// </summary>
-	/// <param name="extension">extension that has been delined</param>
-	private async void deadlineDeclined(Extension extension){
-		// update
-		extension.Status = "declined";
-		string apiExtension = await updateExtension(extension);
+		// update extension
+		string apiExtension = await FeedbackClientAccess.UpdateExtension(extension);
 		Console.WriteLine(apiExtension); // log
 		StateHasChanged();
 	}
