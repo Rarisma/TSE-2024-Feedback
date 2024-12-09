@@ -22,8 +22,9 @@
 		<div class="container mb-3">
 			<div class="card mb-3 justify-content:center">
 				<div class="card-body">
-					@if (SelectedFeedback != null)
+					@if (SelectedFeedback != null) // if feedback found
 					{
+						// display feedback {title,deadline,description,create extension request button}
 						<div class="flex-row">
 							<div class="flex-column">
 								<p class="card-text"><strong>Title:</strong> @SelectedFeedback.Title</p>
@@ -37,7 +38,8 @@
 									} else { <span>></span>}
 								</button>
 
-								@if (extensionView == true){
+								@if (extensionView == true) // check extension toggle then display extension form {length,reason,submit button}
+								{
 									<div id="extensionForm" class="card">
 										<form class="flex-column">
 
@@ -64,8 +66,10 @@
 
 								}
 
-								@if(extensions != null){
-									@foreach(Extension extension in extensions){
+								@if(extensions != null)// if extensions are found
+								{
+									@foreach(Extension extension in extensions)// display extension {status,reason,length,accept/decline buttons}
+									{
 										<div class="card">
 											<div class="card-header">
 												<h3 class="card-text">ID : @extension.ExtensionId</h3>
@@ -102,22 +106,36 @@
 
 @code {
 
+	// selected tab
 	private string currentTab = "total";
+
+	// selected feedback
 	private FeedbackTrackerCommon.Definitions.Feedback? SelectedFeedback;
+
+	// extensions from feedback
 	private List<FeedbackTrackerCommon.Definitions.Extension>? extensions;
 
+	// logged user
 	private FeedbackTrackerCommon.Definitions.User? loggedUser;
 
+	// store a new extension
 	private FeedbackTrackerCommon.Definitions.Extension newExtension = new Extension { };
 
+	// show extension toggle
 	private bool extensionView = false;
 
+	/// <summary>
+	/// Hide / show extensions
+	/// </summary>
 	private void ChangeExtensionView(){
 		extensionView = !extensionView;
 		StateHasChanged();
 	}
 
-
+	/// <summary>
+	/// Get feedback to display and related extensions
+	/// </summary>
+	/// <returns>task -  updates stored feedback and extensions</returns>
 	private async Task LoadFeedback()
 	{
 		var feedback = await FeedbackClientAccess.GetFeedbackByID(3);
@@ -135,6 +153,10 @@
 		}
 	}
 
+	/// <summary>
+	///  logged user
+	/// </summary>
+	/// <returns>Task - user</returns>
 	private async Task LoadUser()
 	{
 		var user = await UserClientAccess.GetUserByID(3);
@@ -149,6 +171,9 @@
 		}
 	}
 
+	/// <summary>
+	/// Create a new extension
+	/// </summary>
 	private async void requestExtension()
 	{
 		// add extension request
@@ -159,23 +184,33 @@
 		//Console.WriteLine(fb.Title); // log
 
 		// call api createfeedback
-		string apiFeedback = await new FeedbackApiClient("http://localhost:5189").CreateExtension(newExtension);
+		string apiFeedback = await FeedbackClientAccess.CreateExtension(newExtension);
 
 		Console.WriteLine(apiFeedback); // log
 	}
 
+	/// <summary>
+	/// update extension
+	/// </summary>
+	/// <param name="extension">new extension</param>
+	/// <returns> log string </returns>
 	private async Task<string> updateExtension(Extension extension)
 	{
-		string apiFeedback = await new FeedbackApiClient("http://localhost:5189").UpdateExtension(extension);
+		string apiFeedback = await FeedbackClientAccess.UpdateExtension(extension);
 		return apiFeedback; // log
 	}
 
+	/// <summary>
+	/// Deadline accepted
+	/// </summary>
+	/// <param name="extension">extension that has been accepted</param>
 	private async void deadlineAccepted(Extension extension){
 
 		// feedback deadline
-		SelectedFeedback.Deadline = SelectedFeedback.Deadline.Add(new TimeSpan(extension.Length,0,0,0));
+		SelectedFeedback.Deadline = SelectedFeedback.Deadline.Add(new TimeSpan(extension.Length,0,0,0)); // update deadline
+
 		// update feedback in db
-		string apiFeedback = await new FeedbackApiClient("http://localhost:5189").UpdateFeedback(SelectedFeedback);
+		string apiFeedback = await FeedbackClientAccess.UpdateFeedback(SelectedFeedback);
 		Console.WriteLine(apiFeedback); // log
 
 		// update 
@@ -185,6 +220,10 @@
 		StateHasChanged();
 	}
 
+	/// <summary>
+	/// deadline declined
+	/// </summary>
+	/// <param name="extension">extension that has been delined</param>
 	private async void deadlineDeclined(Extension extension){
 		// update
 		extension.Status = "declined";
@@ -192,6 +231,11 @@
 		Console.WriteLine(apiExtension); // log
 		StateHasChanged();
 	}
+
+	/// <summary>
+	/// function that runs on page load
+	/// </summary>
+	/// <returns></returns>
 	protected override async Task OnInitializedAsync()
 	{
 

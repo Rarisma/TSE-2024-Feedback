@@ -258,10 +258,6 @@ public class FeedbackController : Controller
                 return "no extension found";
             }
 
-
-
-
-
             return "extension updated success";
         }
         catch (Exception e)
