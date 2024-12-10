@@ -1,11 +1,15 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FeedbackTrackerCommon.Definitions;
 
 public class Modules
 {
     [Key]
-    public int ModuleID { get; set; }
-    public string Module { get; set; }
+	[Column("MODULE_ID")]
+	public int ModuleID { get; set; }
+
+	[Column("MODULE")]
+	public string Module { get; set; }
 
 }
