@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FeedbackTrackerCommon.Definitions;
 
@@ -8,22 +9,28 @@ public class FeedbackComments
     /// ID of feedback comment in database.
     /// </summary>
     [Key]
-    public int CommentID { get; set; }
+	[Column("COMMENT_ID")]
+	public int CommentID { get; set; }
 
     /// <summary>
     /// Content of comment
     /// </summary>
-    public string Body { get; set; }
+	[Column("BODY")]
+	public string Body { get; set; }
 
     /// <summary>
     /// Account ID of commenter
     /// </summary>
-    public int CommenterID { get; set; }
+	[Column("USER_ID")]
+
+	public int CommenterID { get; set; }
 
     /// <summary>
     /// Feedback thread this comment belongs to
     /// </summary>
-    public int FeedbackID { get; set; }
+	[Column("FEEDBACK_ID")]
+
+	public int FeedbackID { get; set; }
 
     public User Commenter { get; set; }
     public Feedback FeedbackC { get; set; }
