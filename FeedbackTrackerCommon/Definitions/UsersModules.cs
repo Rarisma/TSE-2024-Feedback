@@ -1,13 +1,16 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FeedbackTrackerCommon.Definitions;
 
 public class UsersModules
 {
-    [Key]
-    public int UserID { get; set; }
-    public int ModuleID { get; set; }
+	[Key]
+	[Column("USER_ID")]
+	public int UserID { get; set; }
+
+	[Column("MODULE_ID")]
+	public int ModuleID { get; set; }
 
     public User User { get; set; }
     public Modules Modules { get; set; }
