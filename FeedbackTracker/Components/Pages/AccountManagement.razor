@@ -1,18 +1,75 @@
-﻿@page "/AccountManagement";
+﻿@page "/AccountManagement"
+@rendermode InteractiveServer
+@inject JAuth JAuth
+@using FeedbackTrackerCommon.Definitions
+@using Application
+
+@code {
+    public string FirstName { get; set; }
+    public string LastName { get; set; }
+    public string Username { get; set; }
+    public string Password { get; set; }
+
+    private bool isAuthorized;
+
+    protected override async Task OnInitializedAsync()
+    {
+        isAuthorized = JAuth.IsAuthorised();
+
+        if (isAuthorized)
+        {
+            JAuth.EnforceAuth();
+        }
+    }
+
+    private async Task UpdateProfile()
+    {
+        // make a function in the database so its possible to update details
+        // await new UserAPI("http://localhost:5189").
+    }
+
+
+}
 
 <div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-md-6">
             <div class="card">
                 <div class="card-header">
-                    <!--Card header for formatting -->
-                    <h3 class="text-center">Account Management</h3>
+                    <h3 class="text-center">Edit Profile</h3>
                 </div>
-                <div class="card-body">
-                    <!-- Form destination needs adding to action attribute, # = null -->
-                    <form action="#">
-                    </form>
-                </div>
+                @if (isAuthorized)
+                {
+                    <div class="card-body">
+                        <form>
+                            <div class="mb-3">
+                                <label for="firstName" class="form-label">First Name</label>
+                                <input type="text" class="form-control" id="firstName" placeholder="Enter First Name" @bind-value="FirstName">
+                            </div>
+                            <div class="mb-3">
+                                <label for="lastName" class="form-label">Last Name</label>
+                                <input type="text" class="form-control" id="lastName" placeholder="Enter Last Name" @bind-value="LastName">
+                            </div>
+                            <div class="mb-3">
+                                <label for="username" class="form-label">Username</label>
+                                <input type="text" class="form-control" id="username" placeholder="Enter Username" @bind-value="Username">
+                            </div>
+                            <div class="mb-3">
+                                <label for="password" class="form-label">Password</label>
+                                <input type="password" class="form-control" id="password" placeholder="Enter Password" @bind-value="Password">
+                            </div>
+                            <div class="d-grid">
+                                <button type="button" class="btn btn-primary" @onclick="UpdateProfile">Update Profile</button>
+                            </div>
+                        </form>
+                    </div>
+                }
+                else
+                {
+                    <div class="card-body">
+                        <p>You are not authorized to view this page. Please log in.</p>
+                    </div>
+                }
             </div>
         </div>
     </div>
