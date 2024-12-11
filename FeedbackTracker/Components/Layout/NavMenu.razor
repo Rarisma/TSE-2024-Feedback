@@ -1,3 +1,5 @@
+@inject JAuth auth
+
 <input type="checkbox" title="Navigation menu" class="navbar-toggler" />
 
 <input type="checkbox" title="Navigation menu" class="navbar-toggler" />
@@ -21,12 +23,12 @@
         </div>
     </nav>
 
-
     <!-- Buttons for logging in, signing up and account management -->
     <div class="login-buttons fixed-bottom px-3 pb-3">
-        @if (UserLoggedIn)
+		@if (auth.IsAuthorised())
         {
             <NavLink class="btn btn-primary mb-2 w-100" href="/AccountManagement">Account</NavLink>
+            <NavLink class="btn btn-primary mb-2 w-100" href="/Logout">Log out</NavLink>
         }
         else
         {
@@ -54,9 +56,4 @@
 <!-- Login/Signup buttons display conditions -->
 @code {
     bool UserLoggedIn = false;
-
-    //TODO: This function will update the UserLoggedIn status, needs the logic
-    private bool UserStatus() {
-        return false;
-    }
 }

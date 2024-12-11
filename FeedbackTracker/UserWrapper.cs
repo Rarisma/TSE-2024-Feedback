@@ -1,6 +1,9 @@
-﻿using System.Text;
+﻿using System.Security.Claims;
+using System.Text;
 using System.Text.Json;
 using FeedbackTrackerCommon.Definitions;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace Application;
 
@@ -52,15 +55,13 @@ public class UserAPI
 	/// <summary>
 	/// Creates a new user.
 	/// </summary>
-	public async Task<string> CreateUser(User user)
+	public async Task<string> CreateUser(string Username, string Password)
 	{
 		try
 		{
-			//Serialise
-			string jsonContent = JsonSerializer.Serialize(user);
-			StringContent content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
-
-			HttpResponseMessage response = await _httpClient.PostAsync("User/CreateUser", content);
+			string url = $"User/CreateUser?Username={Uri.EscapeDataString(Username)}" +
+						 $"&Password={Uri.EscapeDataString(Password)}";
+			HttpResponseMessage response = await _httpClient.PostAsync(url, null);
 			response.EnsureSuccessStatusCode();
 			return await response.Content.ReadAsStringAsync();
 		}
@@ -68,5 +69,30 @@ public class UserAPI
 		{
 			return $"Error: {ex.Message}";
 		}
+	}
+
+	/// <summary>
+	/// Authenticates a user.
+	/// </summary>
+	/// <param name="Username">Username</param>
+	/// <param name="Password">Password</param>
+	/// <returns>JWT if authentication is successful, otherwise, "".</returns>
+	public async Task<string> Authenticate(string Username, string Password)
+	{
+		try
+		{
+			// Send login request.
+			HttpResponseMessage response = await _httpClient.GetAsync($"User/Authenticate?Username={Username}&Password={Password}");
+			response.EnsureSuccessStatusCode();
+			// Read the JWT token from the response
+			return await response.Content.ReadAsStringAsync();
+
+		}
+		catch (Exception ex)
+		{
+
+		}
+
+		return string.Empty;
 	}
 }

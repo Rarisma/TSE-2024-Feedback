@@ -1,30 +1,42 @@
 ﻿@page "/LogIn"
-@inject IJSRuntime JSRuntime
+@inject NavigationManager NavigationManager
+@inject JAuth JAuth
+@code {
+	private async Task Submit()
+	{
+		string JWT = await new UserAPI("http://localhost:5189").Authenticate(Username, Password);
+		JAuth.Authorise(JWT,Username);
+		NavigationManager.NavigateTo("/");
+	}
+
+	public string Username { get; set; }
+
+	public string Password { get; set; }
+
+}
+@rendermode InteractiveServer
 
 <div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-md-6">
             <div class="card">
-                <div class="card-header">
-                    <!--Card header for formatting -->
+                <div class="card-header"> <!--Card header for formatting -->
                     <h3 class="text-center">Log In</h3>
                 </div>
                 <div class="card-body">
-
-
-                    <!-- Form destination needs adding to action attribute, # = null. onsubmit will need removing at some point -->
-                    <form action="#" onsubmit="alert('Username: ' + document.getElementById('username').value + ', Password: ' + document.getElementById('password').value); return false;">
-
-
+                    <!-- Form destination needs adding to action attribute, # = null -->
+                    <form action="#" @onsubmit="Submit">
                         <div class="mb-3">
-                            <!-- Header and text box for username -->
-                            <label for="username" class="form-label">Username</label>
-                            <input type="text" class="form-control" id="username" placeholder="Username">
+							<!-- Header and text box for username -->
+							<label for="username" class="form-label">Username</label>
+							<input type="username" class="form-control" id="email"
+								   placeholder="Username" @bind-value="Username">
                         </div>
                         <div class="mb-3">
                             <!-- Header and text box for password -->
                             <label for="password" class="form-label">Password</label>
-                            <input type="password" class="form-control" id="password" placeholder="Password">
+                            <input type="password" class="form-control" id="password"
+								   placeholder="Password" @bind-value="Password">
                         </div>
                         <div class="d-grid">
                             <!-- Button -->

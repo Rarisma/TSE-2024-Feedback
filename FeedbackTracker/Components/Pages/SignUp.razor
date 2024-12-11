@@ -1,5 +1,37 @@
 ﻿@page "/SignUp"
+@using FeedbackTrackerCommon.Definitions
+@rendermode InteractiveServer
+@code {
+	private async void Submit()
+	{
+		if (Password == Password2)
+		{
+			//Send req to create user.
+			await new UserAPI("http://localhost:5189").CreateUser(Username.ToString(), Password.ToString());
+		}
+		else
+		{
+			//Clear if invalid
+			Password = "";
+			Password2 = "";
+		}
+	}
+	/// <summary>
+	/// Entered Username
+	/// </summary>
+	public string Username { get; set; }
 
+	/// <summary>
+	/// Entered password
+	/// </summary>
+	public string Password { get; set; }
+
+	/// <summary>
+	/// Entered Password Confirmation
+	/// </summary>
+	public string Password2 { get; set; }
+
+}
 <div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-md-6">
@@ -7,16 +39,11 @@
                 <div class="card-header">
                     <h3 class="text-center">Sign Up</h3>
                 </div>
-                <div class="card-body">
-                    <!-- Card header for formatting -->
-
+                <div class="card-body"> <!-- Card header for formatting -->
 
 
                     <!-- Form destination needs adding to action attribute, # = null -->
                     <form action="#">
-
-
-
                         <!-- First name header and text box-->
                         <div class="mb-3">
                             <label for="firstName" class="form-label">First Name</label>
@@ -29,19 +56,21 @@
                         </div>
                         <div class="mb-3">
                             <!-- Email address header and text box-->
-                            <label for="email" class="form-label">Email address</label>
-                            <input type="email" class="form-control" id="email" placeholder="Enter email">
+                            <label for="email" class="form-label">Username</label>
+                            <input type="email" class="form-control" id="email" placeholder="Enter Username" @bind-value="Username">
                         </div>
                         <div class="mb-3">
                             <!-- Password header and text box-->
                             <label for="password" class="form-label">Password</label>
-                            <input type="password" class="form-control" id="password" placeholder="Create password">
+                            <input type="password" class="form-control" id="password"
+                                   placeholder="Create password" @bind-value="Password">
                         </div>
                         <div class="mb-3">
                             <!-- Password confirmation header and text box-->
-                            <label for="confirmPassword" class="form-label">Confirm Password</label>
-                            <input type="password" class="form-control" id="confirmPassword" placeholder="Repeat password">
-                        </div>
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="ConfirmPassword"
+                                   placeholder="Password" @bind-value="Password2">
+						</div>
                         <!-- Privacy Policy-->
                         <div class="mb-3 form-check">
                             <input type="checkbox" class="form-check-input" id="privacyPolicy" required>
@@ -51,7 +80,7 @@
                         </div>
                         <!-- Button -->
                         <div class="d-grid">
-                            <button type="submit" class="btn btn-primary">Create Account</button>
+                            <button type="submit" class="btn btn-primary" @onclick="Submit">Create Account</button>
                         </div>
                     </form>
                 </div>

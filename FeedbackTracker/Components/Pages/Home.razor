@@ -1,5 +1,8 @@
-﻿@page "/"
-
+@page "/"
+@rendermode InteractiveServer
+@inject JAuth JAuth
+@using FeedbackTrackerCommon.Definitions
+@using Application
 <PageTitle>Feedback Tracking Tool</PageTitle>
 
 <div>
@@ -18,17 +21,17 @@
     </div>
 
     <div>
-        <h3>Feedback List for @user</h3>
+        <h3>Feedback List for @user.Username</h3>
         @if (currentTab == "total")
         {
             <div>
                 @foreach (var feedback in allFeedback)
                 {
                     <div style="border: 1px solid black; margin: 5px; padding: 10px;">
-                        <h4>@feedback.textFeedbackName</h4>
-                        <p><strong>@feedback.textFeedbackText</strong></p>
-                        <p><strong>Due in: </strong> @feedback.DueDate</p>
-                        <p><strong>Completed:</strong> @feedback.Completed</p>
+                        <h4>@feedback.Title</h4>
+                        <p><strong>@feedback.FeedbackText</strong></p>
+                        <p><strong>Due in: </strong> @feedback.Deadline</p>
+                        <p><strong>Completed:</strong> @feedback.Closed</p>
                     </div>
                 }
             </div>
@@ -37,13 +40,13 @@
         @if (currentTab == "completed")
         {
             <div>
-                @foreach (var feedback in allFeedback.Where(f => f.Completed))
+                @foreach (var feedback in allFeedback.Where(f => f.Closed))
                 {
                     <div style="border: 1px solid black; margin: 5px; padding: 10px;">
-                        <h4>@feedback.textFeedbackName</h4>
-                        <p><strong>@feedback.textFeedbackText</strong></p>
-                        <p><strong>Due in: </strong> @feedback.DueDate</p>
-                        <p><strong>Completed:</strong> @feedback.Completed</p>
+                        <h4>@feedback.Title</h4>
+                        <p><strong>@feedback.FeedbackText</strong></p>
+                        <p><strong>Due in: </strong> @feedback.Deadline</p>
+                        <p><strong>Completed:</strong> @feedback.Closed</p>
                     </div>
                 }
             </div>
@@ -53,26 +56,119 @@
 </div>
 
 @code {
+	
+	protected override async Task OnInitializedAsync()	{
+		JAuth.EnforceAuth();        
+        
+        await LoadUser();
 
+        await LoadFeedback();
+	}
     private string currentTab = "total";
 
+    // current user, default is a guest
+    private User user = new User { UserID = 0, Username = "Guest" };
 
-    // Will be replaced with login page which will determine who is logged in
-    private string user = "Paul";
+    private List<Feedback> allFeedback = new();
 
-    // List of feedback
-    private List<Feedback> allFeedback = new()
+    // finds the user information by calling the UserAPI
+    private async Task LoadUser()
     {
-        new Feedback { textFeedbackName = "Team software", textFeedbackText = "This is where the feedback will go", DueDate = "1", Completed = false },
-        new Feedback { textFeedbackName = "Database", textFeedbackText = "This is where the feedback will go", DueDate = "3", Completed = true },
-    };
+        try
+        {
+            var UserApi = new UserAPI("http://localhost:7128");
 
+            // Temporary username
+            string username = "Paul";
+            var loadedUser = await UserApi.GetUserByUsername(username);
+
+            if (loadedUser != null)
+            {
+                user = loadedUser;
+            }
+            else
+            {
+                Console.WriteLine("User not found, using Guest.");
+                user = new User { UserID = 0, Username = "Guest" };
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading user: {ex.Message}");
+            user = new User { UserID = 0, Username = "Guest" };
+        }
+    }
+
+
+    // loads feedback from api
+    private async Task LoadFeedback()
+    {
+        try
+        {
+            var apiClient = new FeedbackApiClient("http://localhost:7128");
+            var feedbackList = await apiClient.GetAssignedFeedbacks(user.UserID);
+
+            if (feedbackList != null && feedbackList.Any())
+            {
+                allFeedback = feedbackList.Select(fb => new Feedback
+                    {
+                        Title = fb.Title,
+                        FeedbackText = fb.FeedbackText,
+                        Deadline = fb.Deadline,
+                        Closed = fb.Closed
+                    }).ToList();
+            }
+            else
+            {
+                Console.WriteLine("No feedback found. Using test data.");
+                TestFeedback();
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading feedback: {ex.Message}");
+            TestFeedback();
+        }
+    }
+
+    // creates test feedback
+    private void TestFeedback()
+    {
+        allFeedback = new List<Feedback>
+        {
+            new Feedback
+            {
+                Title = "Test 1",
+                FeedbackText = "Info about feedback",
+                Deadline = DateTime.Now.AddDays(4),
+                Closed = false
+            },
+        };
+    }
 
     public class Feedback
     {
-        public string textFeedbackName { get; set; }
-        public string DueDate { get; set; }
-        public bool Completed { get; set; }
-        public string textFeedbackText { get; set; }
+        public string Title { get; set; }
+        public string FeedbackText { get; set; }
+        public DateTime Deadline { get; set; }
+        public bool Closed { get; set; }
     }
+
+    //Old Code
+
+    // List of feedback
+    //private List<Feedback> allFeedback = new()
+    //{
+    //    new Feedback { textFeedbackName = "Team software", textFeedbackText = "This is where the feedback will go", DueDate = "1", Completed = false },
+    //    new Feedback { textFeedbackName = "Database", textFeedbackText = "This is where the feedback will go", DueDate = "3", Completed = true },
+    //};
+
+
+    //public class Feedback
+    //{
+    //    public string textFeedbackName { get; set; }
+    //   public string DueDate { get; set; }
+    //    public bool Completed { get; set; }
+    //    public string textFeedbackText { get; set; }
+    //}
 }
