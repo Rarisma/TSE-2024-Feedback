@@ -1,5 +1,5 @@
+@page "/viewfeedback/{FeedbackID}"
 @rendermode InteractiveServer
-@page "/viewfeedback"
 @using FeedbackTrackerCommon.Definitions
 @using Application
 @inject FeedbackApiClient FeedbackClientAccess
@@ -132,17 +132,32 @@
 		}else
 		{
 			<p>No feedback found</p>
-		}
+		}<NavLink class="btn btn-primary" href="usersfeedback">Back</NavLink>
 
 	}
 }
 
 
-@code {
+<h1>Feedback Viewer</h1>
 
-	private string currentTab = "total";
-	private FeedbackTrackerCommon.Definitions.Feedback SelectedFeedback;
-	private List<FeedbackTrackerCommon.Definitions.FeedbackComments> SelectedComments;
+@code {
+    private string currentTab = "total";
+    private FeedbackTrackerCommon.Definitions.Feedback SelectedFeedback;
+    private User SelectedUser;
+    private List<FeedbackComments> SelectedComments;
+    Dictionary<int, string> UserComments = new Dictionary<int, string>();
+
+    [Parameter]
+    public string FeedbackID { get; set; }
+
+    private async Task LoadFeedback(int ID)
+    {
+        SelectedFeedback = await FeedbackClientAccess.GetFeedbackByID(ID);
+        if (SelectedFeedback == null)
+        {
+            Console.WriteLine("Failed to load feedback.");
+        }
+    }
 
 	//private string UsernameForComments;
 
@@ -309,5 +324,27 @@
 		await LoadFeedback();
 	}
 
+    private async Task LoadComments(int ID)
+    {
+        SelectedComments = await FeedbackClientAccess.GetComments(ID);
+        if (SelectedComments == null)
+        {
+            Console.WriteLine("No comments found.");
+        }
+        else
+        {
+            UserComments.Clear();
+            foreach (var comment in SelectedComments)
+            {
+                var user = await UserClientAccess.GetUserByID(comment.CommenterID);
+                UserComments[comment.CommentID] = user.Username;
+            }
+        }
+    }
 
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadFeedback(int.Parse(FeedbackID));
+        await LoadComments(int.Parse(FeedbackID));
+    }
 }
