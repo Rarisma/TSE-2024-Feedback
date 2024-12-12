@@ -109,7 +109,41 @@ public class FeedbackApiClient
 		}
 	}
 
+  /*
 	/// <summary>
+	/// Updates a feedback title and description.
+	/// </summary>
+	/// <param name="feedbackID">Database ID of Feedback</param>
+	/// <param name="newTitle">Updated title</param>
+	/// <param name="newDescription">Updated text</param>
+	public async Task UpdateFeedback(int feedbackID, string newTitle, string newDescription)
+	{
+		try
+		{
+			//Create updated feedback object
+			Feedback UpdatedFeedback = new()
+			{
+				FeedbackID = feedbackID,
+				Title = newTitle,
+				FeedbackText = newDescription
+			};
+
+			//Serialise
+			string jsonContent = JsonSerializer.Serialize(UpdatedFeedback);
+			StringContent content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+
+			//Send
+			HttpResponseMessage response = 
+				await _httpClient.PostAsync($"Feedback/UpdateFeedback?FeedbackID={feedbackID}", content);
+			response.EnsureSuccessStatusCode();
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine($"Encountered an error: {ex.Message}");
+		}
+	}
+*/
+
 	/// create extension
 	/// </summary>
 	/// <param name="extension"></param>
