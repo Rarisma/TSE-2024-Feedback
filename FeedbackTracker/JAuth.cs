@@ -117,7 +117,7 @@ public class JAuth
 		{
 
 		}
-		Navi.NavigateTo("/Unauthorised");
+		Navi.NavigateTo("/LogIn");
 
 	}
 }
