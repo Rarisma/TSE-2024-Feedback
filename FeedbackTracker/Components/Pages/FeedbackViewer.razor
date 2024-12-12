@@ -2,7 +2,6 @@
 @page "/viewfeedback"
 @using FeedbackTrackerCommon.Definitions
 @using Application
-@rendermode InteractiveServer
 @inject FeedbackApiClient FeedbackClientAccess
 @inject UserAPI UserClientAccess
 @{
@@ -21,79 +20,78 @@
 		<h4>All Feedback</h4>
 		@if (SelectedFeedback != null)
 		{
-		<div class="container mb-3">
-			<div class="card mb-3 justify-content:center">
-				<div class="card-body">
 			@if (!isEditing)
 			{
-						// display feedback {title,deadline,description,create extension request button}
-						<div class="flex-row">
-							<div class="flex-column">
-								<p class="card-text"><strong>Title:</strong> @SelectedFeedback.Title</p>
-								<p class="card-text"><strong>deadline:</strong> @SelectedFeedback.Deadline</p>
-								<p class="card-text"><strong>Description:</strong> @SelectedFeedback.FeedbackText</p>
+				// display feedback {title,deadline,description,create extension request button}
+				<div class="flex-row">
+					<div class="flex-column">
+						<p class="card-text"><strong>Title:</strong> @SelectedFeedback.Title</p>
+						<p class="card-text"><strong>deadline:</strong> @SelectedFeedback.Deadline</p>
+						<p class="card-text"><strong>Description:</strong> @SelectedFeedback.FeedbackText</p>
+					</div>
+					<div>
+						<button class="btn btn-primary mt-2" @onclick=ChangeExtensionView>Extension request @if (extensionView)
+							{
+								<span>v</span>
+							} else { <span>></span>}
+						</button>
+
+						@if (extensionView == true) // check extension toggle then display extension form {length,reason,submit button}
+						{
+							<div id="extensionForm" class="card">
+								<form class="flex-column">
+
+									<div class="card-header">
+										<h3 class="card-text"> Extension request</h3>
+									</div>
+									<div class="card-body">
+
+										<div class="card-text">
+											<label for="length">Length: </label>
+											<input name="length" type="number" min="1" max="10" placeholder="1" @bind=newExtension.Length/>
+										</div>
+										<div class="card-text flex-row">
+											<label for="reason">reason:</label>
+											<textarea name="reason" placeholder="reason" @bind=newExtension.Reason></textarea>
+										</div>
+									</div>	
+
+									<div>
+										<button name="extensionButton" @onclick=requestExtension> Send request </button>
+									</div>
+								</form>
 							</div>
-							<div>
-								<button class="btn btn-primary mt-2" @onclick=ChangeExtensionView>Extension request @if (extensionView)
-									{
-										<span>v</span>
-									} else { <span>></span>}
-								</button>
 
-								@if (extensionView == true) // check extension toggle then display extension form {length,reason,submit button}
-								{
-									<div id="extensionForm" class="card">
-										<form class="flex-column">
+						}
 
-											<div class="card-header">
-												<h3 class="card-text"> Extension request</h3>
-											</div>
-											<div class="card-body">
-
-												<div class="card-text">
-													<label for="length">Length: </label>
-													<input name="length" type="number" min="1" max="10" placeholder="1" @bind=newExtension.Length/>
-												</div>
-												<div class="card-text flex-row">
-													<label for="reason">reason:</label>
-													<textarea name="reason" placeholder="reason" @bind=newExtension.Reason></textarea>
-												</div>
-											</div>	
-
-											<div>
-												<button name="extensionButton" @onclick=requestExtension> Send request </button>
-											</div>
-										</form>
+						@if(extensions != null)// if extensions are found
+						{
+							@foreach(Extension extension in extensions)// display extension {status,reason,length,accept/decline buttons}
+							{
+								<div class="card">
+									<div class="card-header">
+										<h3 class="card-text">ExtensionID : @extension.ExtensionId</h3>
 									</div>
 
-								}
+									<div class="card-body">
+										<p>Status: @extension.Status</p>
+										<p>Reason: @extension.Reason</p>
+										<p>Extra time amount: @extension.Length</p>
 
-								@if(extensions != null)// if extensions are found
-								{
-									@foreach(Extension extension in extensions)// display extension {status,reason,length,accept/decline buttons}
-									{
-										<div class="card">
-											<div class="card-header">
-												<h3 class="card-text">ExtensionID : @extension.ExtensionId</h3>
-											</div>
+										@if(extension.Status == "to review"){
+											<button @onclick='() => {extension.Status="accepted"; deadlineResponse(extension);}'>accept</button>
+											<button @onclick='() => {extension.Status="declined"; deadlineResponse(extension);}'>decline</button>
+										}
+									</div>
+								</div>
+							}
+						}
 
-											<div class="card-body">
-												<p>Status: @extension.Status</p>
-												<p>Reason: @extension.Reason</p>
-												<p>Extra time amount: @extension.Length</p>
-
-												@if(extension.Status == "to review"){
-													<button @onclick='() => {extension.Status="accepted"; deadlineResponse(extension);}'>accept</button>
-													<button @onclick='() => {extension.Status="declined"; deadlineResponse(extension);}'>decline</button>
-												}
-											</div>
-										</div>
-									}
-								}
-							</div>
-				<button @onclick="EnableEditing">Edit </button>
+						<button @onclick="EnableEditing">Edit </button>
+					</div>
+				</div>
 			}
-			else
+			@if (isEditing)
 			{
 				<div>
 					<label for="editTitle">Title:</label>
@@ -104,20 +102,20 @@
 					<textarea id="editDescription" @bind="editingDescription"></textarea>
 				</div>
 				<button @onclick="SaveChanges">Save</button>
-				<button @onclick="CancelEditing">Cancel</button>
+				<button @onclick="CancelEditing">Cancel</button>	
 			}
 
 
 
 
-			try
+			@try
 			{
 				if (SelectedComments != null)
 				{
 					foreach (var comment in SelectedComments)
 					{
-						<p>@comment.CommenterID</p>
-						<p>@comment.Body</p>
+						<p>comment.CommenterID</p>
+						<p>comment.Body</p>
 					}
 				}
 				else
@@ -128,15 +126,16 @@
 			catch (Exception ex)
 			{
 				Console.WriteLine("error view");
-			}
-		}
-		else
+			}			
+
+
+		}else
 		{
 			<p>No feedback found</p>
 		}
+
 	}
 }
-
 
 
 @code {
@@ -156,7 +155,7 @@
 	private string editingDescription;
 
 	// selected feedback
-	private FeedbackTrackerCommon.Definitions.Feedback? SelectedFeedback;
+	//private FeedbackTrackerCommon.Definitions.Feedback? SelectedFeedback;
 
 	// extensions from feedback
 	private List<FeedbackTrackerCommon.Definitions.Extension>? extensions;
@@ -231,10 +230,11 @@
 	{
 		if (SelectedFeedback != null)
 		{
-				
-			await FeedbackClientAccess.UpdateFeedback(SelectedFeedback.FeedbackID, editingTitle, editingDescription);
-			SelectedFeedback.Title = editingTitle;
-			SelectedFeedback.FeedbackText = editingDescription;
+			FeedbackTrackerCommon.Definitions.Feedback editFeedback = SelectedFeedback;
+			editFeedback.Title = editingTitle;
+			editFeedback.FeedbackText = editingDescription;
+			string apiFeedback = await FeedbackClientAccess.UpdateFeedback(editFeedback);
+			Console.WriteLine(apiFeedback); // log
 			StateHasChanged();
 
 		}
