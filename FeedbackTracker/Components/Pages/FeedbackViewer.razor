@@ -114,8 +114,8 @@
 				{
 					foreach (var comment in SelectedComments)
 					{
-						<p>comment.CommenterID</p>
-						<p>comment.Body</p>
+						<p>Comment ID: @comment.CommenterID</p>
+						<p>Content: @comment.Body</p>
 					}
 				}
 				else
@@ -137,27 +137,34 @@
 	}
 }
 
-
-<h1>Feedback Viewer</h1>
-
 @code {
-    private string currentTab = "total";
-    private FeedbackTrackerCommon.Definitions.Feedback SelectedFeedback;
-    private User SelectedUser;
-    private List<FeedbackComments> SelectedComments;
-    Dictionary<int, string> UserComments = new Dictionary<int, string>();
 
-    [Parameter]
-    public string FeedbackID { get; set; }
 
-    private async Task LoadFeedback(int ID)
-    {
-        SelectedFeedback = await FeedbackClientAccess.GetFeedbackByID(ID);
-        if (SelectedFeedback == null)
-        {
-            Console.WriteLine("Failed to load feedback.");
-        }
-    }
+
+	private string currentTab = "total";
+	private FeedbackTrackerCommon.Definitions.Feedback SelectedFeedback;
+	private User SelectedUser;
+	private List<FeedbackComments> SelectedComments;
+	Dictionary<int, string> UserComments = new Dictionary<int, string>();
+
+	[Parameter]
+	public string FeedbackID { get; set; }
+
+	private async Task LoadFeedback(int ID)
+	{
+		SelectedFeedback = await FeedbackClientAccess.GetFeedbackByID(ID);
+
+		if (SelectedFeedback != null)
+
+		{
+
+			extensions = await FeedbackClientAccess.GetExtensions(SelectedFeedback.FeedbackID);
+
+			StateHasChanged();
+
+
+		} else { Console.WriteLine("Failed to load feedback."); }
+	}
 
 	//private string UsernameForComments;
 
@@ -191,14 +198,14 @@
 		extensionView = !extensionView;
 		StateHasChanged();
 	}
-
+	/*
 	/// <summary>
 	/// Get feedback to display and related extensions
 	/// </summary>
 	/// <returns>task -  updates stored feedback and extensions</returns>
 	private async Task LoadFeedback()
 	{
-		var feedback = await FeedbackClientAccess.GetFeedbackByID(3);
+		var feedback = await FeedbackClientAccess.GetFeedbackByID(ID);
 
 		if (feedback != null)
 		{
@@ -212,18 +219,9 @@
 			Console.WriteLine("Failed to load feedback.");
 		}
 
-		await LoadComments(SelectedFeedback.FeedbackID);
+		//await LoadComments(SelectedFeedback.FeedbackID);
 	}
-
-	private async Task LoadComments(int ID)
-	{
-		var comments = await FeedbackClientAccess.GetComments(ID);
-
-		if (comments != null)
-		{
-			SelectedComments = comments;
-		}
-	}
+*/
 
 	private void EnableEditing()
 	{
@@ -312,16 +310,6 @@
 		string apiExtension = await FeedbackClientAccess.UpdateExtension(extension);
 		Console.WriteLine(apiExtension); // log
 		StateHasChanged();
-	}
-
-	/// <summary>
-	/// function that runs on page load
-	/// </summary>
-	/// <returns></returns>
-	protected override async Task OnInitializedAsync()
-	{
-		await LoadUser();
-		await LoadFeedback();
 	}
 
     private async Task LoadComments(int ID)

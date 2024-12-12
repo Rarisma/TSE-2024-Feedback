@@ -4,7 +4,6 @@
 @using FeedbackTrackerCommon.Definitions
 @using Application
 @inject FeedbackApiClient FeedbackClientAccess
-	private FeedbackTrackerCommon.Definitions.Feedback SelectedFeedback;
 
 
 
@@ -17,7 +16,7 @@
 
     <div>
         <h3>Next Deadlines</h3>
-        {
+        
             <div>
             @foreach (var feedback in allFeedback)
                 {
@@ -29,7 +28,7 @@
                     </div>
                 }
             </div>
-        }
+        
     </div>
 </div>
 
