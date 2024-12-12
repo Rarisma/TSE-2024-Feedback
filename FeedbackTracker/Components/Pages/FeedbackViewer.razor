@@ -2,6 +2,7 @@
 @using FeedbackTrackerCommon.Definitions
 @using Application
 @inject FeedbackApiClient FeedbackClientAccess
+@inject UserAPI UserClientAccess
 
 <PageTitle>Feedback Viewer</PageTitle>
 
@@ -25,12 +26,12 @@
         <p><strong>Title:</strong> @SelectedFeedback.Title</p>
         <p><strong>Description:</strong> @SelectedFeedback.FeedbackText</p>
 
-        @if (SelectedComments != null && SelectedComments.Any())
+        @if (SelectedComments != null)
         {
             <h4>Comments:</h4>
             @foreach (var comment in SelectedComments)
             {
-                <p><strong>Commenter ID:</strong> @comment.CommenterID</p>
+                <p><strong>Commenter Username:</strong> @UserComments[comment.CommentID]</p>
                 <p>@comment.Body</p>
             }
         }
@@ -43,12 +44,15 @@
     {
         <p>No feedback found.</p>
     }
+    <NavLink class="btn btn-primary" href="usersfeedback">Back</NavLink>
 }
 
 @code {
     private string currentTab = "total";
     private FeedbackTrackerCommon.Definitions.Feedback SelectedFeedback;
+    private User SelectedUser;
     private List<FeedbackComments> SelectedComments;
+    Dictionary<int, string> UserComments = new Dictionary<int, string>();
 
     [Parameter]
     public string FeedbackID { get; set; }
@@ -68,6 +72,15 @@
         if (SelectedComments == null)
         {
             Console.WriteLine("No comments found.");
+        }
+        else
+        {
+            UserComments.Clear();
+            foreach (var comment in SelectedComments)
+            {
+                var user = await UserClientAccess.GetUserByID(comment.CommenterID);
+                UserComments[comment.CommentID] = user.Username;
+            }
         }
     }
 

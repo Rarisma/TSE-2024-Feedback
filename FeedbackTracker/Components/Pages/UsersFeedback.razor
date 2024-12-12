@@ -9,9 +9,9 @@
     {
         foreach (var feedback in SelectedFeedbacks)
         {
-            <center><p><strong>Title:</strong> @feedback.Title</p></center>
-            <center><p><strong>Description:</strong> @feedback.FeedbackText</p></center>
-            <center><NavLink class="btn btn-primary" href="@($"/viewfeedback/{feedback.FeedbackID}")">View</NavLink></center>
+            <p><strong>Title:</strong> @feedback.Title</p
+            <p><strong>Description:</strong> @feedback.FeedbackText</p>
+            <NavLink class="btn btn-primary" href="@($"/viewfeedback/{feedback.FeedbackID}")">View</NavLink>
         }
     }
     else
@@ -23,9 +23,9 @@
 @code {
     private List<FeedbackTrackerCommon.Definitions.Feedback> SelectedFeedbacks;
 
-    private async Task LoadAllFeedback()
+    private async Task LoadAllFeedback(int ID)
     {
-        var feedbacks = await FeedbackClientAccess.GetAssignedFeedbacks(4);
+        var feedbacks = await FeedbackClientAccess.GetAssignedFeedbacks(ID);
         if (feedbacks != null)
         {
             SelectedFeedbacks = feedbacks;
@@ -36,14 +36,8 @@
         }
     }
 
-    // private async Task LoadUser()
-    // {
-    //     Not finished as was waiting for whoever finished login system, can be done soon
-    // }
-
     protected override async Task OnInitializedAsync()
     {
-        // await LoadUser();
-        await LoadAllFeedback();
+        await LoadAllFeedback(JAuth.User.UserID);
     }
 }
