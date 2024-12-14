@@ -108,7 +108,7 @@ public class JAuth
 			{
 				Navi.NavigateTo("/Unauthorised");
 			}
-			if (UserData.Identity.IsAuthenticated)
+			else if (UserData.Identity.IsAuthenticated)
 			{
 				return;
 			}
@@ -119,5 +119,5 @@ public class JAuth
 		}
 		Navi.NavigateTo("/Unauthorised");
 
-	}
+	}	
 }

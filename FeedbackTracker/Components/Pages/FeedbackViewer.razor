@@ -3,30 +3,43 @@
 @using FeedbackTrackerCommon.Definitions
 @using Application
 @inject FeedbackApiClient FeedbackClientAccess
-@{
-		<PageTitle>Feedback Viewer</PageTitle>
-		<h1>Feedback Viewer</h1>
-		<h3>Select Feedback To View</h3>
-		<div style="margin: 20px 0">
-			<button @onclick='() => currentTab = "total"'>All Feedback</button>
-			<button @onclick='() => currentTab = "completed"'>Completed</button>
-			<button @onclick='() => currentTab = "todo"'>Not Completed</button>
-		</div>
+@rendermode InteractiveServer
 
-		<p>Current Tab: @currentTab</p>
-		@if (currentTab == "total")
+@{
+	<PageTitle>Feedback Viewer</PageTitle>
+	<h1>Feedback Viewer</h1>
+	<h3>Select Feedback To View</h3>
+	<div style="margin: 20px 0">
+		<button @onclick='() => currentTab = "total"'>All Feedback</button>
+		<button @onclick='() => currentTab = "completed"'>Completed</button>
+		<button @onclick='() => currentTab = "todo"'>Not Completed</button>
+	</div>
+
+	<h3>Select User</h3>
+	//<select @bind="users">
+	<select @bind="selectedUserId">
+		@foreach (var user in users)
 		{
-			<h4>All Feedback</h4>
-			@if (SelectedFeedback != null)
-			{
-				<p><strong>Title:</strong> @SelectedFeedback.Title</p>
-				<p><strong>Description:</strong> @SelectedFeedback.FeedbackText</p>
-			}
-			else
-			{
-				<p>No feedback found</p>
-			}
+			<option value="@user.UserID">@user.Username</option>
 		}
+	</select>
+
+	<p>You selected: @selectedUserId</p>
+
+	<p>Current Tab: @currentTab</p>
+	@if (currentTab == "total")
+	{
+		<h4>All Feedback</h4>
+		@if (SelectedFeedback != null)
+		{
+			<p><strong>Title:</strong> @SelectedFeedback.Title</p>
+			<p><strong>Description:</strong> @SelectedFeedback.FeedbackText</p>
+		}
+		else
+		{
+			<p>No feedback found</p>
+		}
+	}
 }
 
 
@@ -34,6 +47,8 @@
 @code {
 	private string currentTab = "total";
 	private FeedbackTrackerCommon.Definitions.Feedback SelectedFeedback;
+	private List<User> users = new List<User>();
+	private int selectedUserId;
 
 	private async Task LoadFeedback()
 	{
@@ -49,9 +64,26 @@
 		}
 	}
 
+	private async Task LoadUsers()
+	{
+		var AllUsers = await FeedbackClientAccess.GetAllUsersAsync();
+
+		if (AllUsers != null)
+		{
+			users = AllUsers;
+
+		}
+		else
+		{
+			Console.WriteLine("Failed to load users.");
+		}
+	}
+
+
 	protected override async Task OnInitializedAsync()
 	{
 		await LoadFeedback();
+		await LoadUsers();
 	}
 
 
