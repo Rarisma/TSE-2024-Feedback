@@ -95,4 +95,22 @@ public class UserAPI
 
 		return string.Empty;
 	}
+
+    /// <summary>
+    /// return users modules
+    /// </summary>
+    public async Task<List<Modules?>?> GetModules(int user)
+    {
+        try
+        {
+            HttpResponseMessage response = await _httpClient.GetAsync($"User/GetModules?Userid={Uri.EscapeDataString(user.ToString())}");
+            response.EnsureSuccessStatusCode();
+            string jsonString = await response.Content.ReadAsStringAsync();
+            return JsonSerializer.Deserialize<List<Modules?>?>(jsonString);
+        }
+        catch (Exception ex)
+        {
+            return null;
+        }
+    }
 }

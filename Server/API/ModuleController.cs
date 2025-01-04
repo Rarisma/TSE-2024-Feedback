@@ -78,7 +78,6 @@ public class ModuleController : Controller
 
             //Serialise to JSON
             string json = JsonSerializer.Serialize(users);
-            Console.Write(json);
             return json;
         }
         catch (Exception ex) { return "Encountered an error: " + ex.Message; }

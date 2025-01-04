@@ -1,4 +1,6 @@
-﻿using System.Text.Json;
+﻿using System.ComponentModel;
+using System.Reflection;
+using System.Text.Json;
 using FeedbackTrackerCommon.Definitions;
 using Microsoft.AspNetCore.Mvc;
 
@@ -95,5 +97,35 @@ public class UserController : Controller
 	public Task<string> Authenticate(string Username, string Password)
 	{
 		return _authService.AuthenticateUserAsync(Username, Password);
+	}
+
+	/// <summary>
+	/// Creates a new user object.
+	/// </summary>
+	/// <param name="Username">Account username</param>
+	/// <param name="Password">Account password (in plaintext)</param>
+	/// <returns></returns>
+	[HttpGet("GetModules")]
+	public string GetModules(int Userid)
+	{
+		try
+		{
+            //Find account
+            using TrackerContext Ctx = new();
+            var modules = (from UsersModules usermodule in Ctx.users_modules
+                         join moduledata in Ctx.modules on usermodule.ModuleID equals moduledata.ModuleID
+                         where usermodule.UserID == Userid
+                         select new
+                         {
+                             ModuleID = moduledata.ModuleID,
+							 Module = moduledata.Module,
+
+                         }).ToList();
+
+            //Serialise to JSON
+            string json = JsonSerializer.Serialize(modules);
+            return json;
+        }
+		catch (Exception ex) { return "Encountered an error: " + ex.Message; }
 	}
 }

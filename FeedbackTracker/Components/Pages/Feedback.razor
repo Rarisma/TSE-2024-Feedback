@@ -156,18 +156,14 @@
 
         //#TODO get modules user is in
 
-        // Call API
-        // returns Module
-        FeedbackTrackerCommon.Definitions.Modules? mod1 = await new ModuleAPI("http://localhost:5189").GetModuleByID(1);
-        FeedbackTrackerCommon.Definitions.Modules? mod2 = await new ModuleAPI("http://localhost:5189").GetModuleByID(2);
+        List<FeedbackTrackerCommon.Definitions.Modules?>? newmodules = await UserCLient.GetModules(assignee.UserID);
 
-        // if a module is returned
-        if(mod1 != null && mod2 != null){
-            // replace modules variable with retrieved modules
-            modules = [mod1,mod2];
-            moduleID = mod1.ModuleID;
+        if(newmodules != null){
+            modules = newmodules;
+            moduleID = modules.FirstOrDefault().ModuleID;
         }
 
+        getAssignableUsers();
         // refresh ui with new data
         StateHasChanged();
     }
@@ -219,9 +215,8 @@
     {
         
         if (JAuth.IsAuthorised())
-        {      
+        {   
             await GetModules();
-            getAssignableUsers();
         }
     }
 }
