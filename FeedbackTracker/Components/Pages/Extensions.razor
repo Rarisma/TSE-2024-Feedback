@@ -6,16 +6,38 @@
 @inject JAuth JAuth
 
 @{
-	<button class="btn btn-primary mt-2" @onclick=ChangeExtensionView>
-		Extension request @if (extensionView)
-		{
-			<span>v</span>
+	<div>
+		<h3>Select Extensions To View</h3>
+		<div style="margin: 20px 0">
+			<button @onclick='() => extensionTab = "to review"'>Pending</button>
+			<button @onclick='() => extensionTab = "accepted"'>Accepted</button>
+			<button @onclick='() => extensionTab = "declined"'>Declined</button>		
+			<button class="btn btn-primary mt-2" @onclick=ChangeExtensionView>
+				Extension request @if (extensionView)
+				{
+					<span>v</span>
+				}
+				else
+				{
+					<span>></span>
+				}
+			</button>
+		</div>
+
+		@if(@SelectedFeedback != null){
+			<div class="card">
+			<div class="card-body">
+			<p class="card-text">Feedback: @SelectedFeedback.Title | Deadline: @SelectedFeedback.Deadline | For user id: @SelectedFeedback.AssignedUserID</p>
+			</div>
+			</div>
 		}
-		else
-		{
-			<span>></span>
-		}
-	</button>
+
+
+	</div>
+
+
+
+
 
 	@if (extensionView == true) // check extension toggle then display extension form {length,reason,submit button}
 	{
@@ -49,6 +71,7 @@
 	{
 		@foreach (Extension extension in extensions)// display extension {status,reason,length,accept/decline buttons}
 		{
+			@if(extension.Status == extensionTab){
 			<div class="card">
 				<div class="card-header">
 					<h3 class="card-text">ExtensionID : @extension.ExtensionId</h3>
@@ -65,7 +88,8 @@
 						<button @onclick='() => {extension.Status="declined"; deadlineResponse(extension);}'>decline</button>
 					}
 				</div>
-			</div>
+				</div>
+			}
 		}
 	}
 }
@@ -81,6 +105,7 @@
 
 	// show extension toggle
 	private bool extensionView = false;
+	private string extensionTab = "to review";
 
 	[Parameter]
 	public string FeedbackID { get; set; }
