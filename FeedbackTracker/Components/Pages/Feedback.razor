@@ -159,9 +159,13 @@
         List<FeedbackTrackerCommon.Definitions.Modules?>? newmodules = await UserCLient.GetModules(assignee.UserID);
 
         if(newmodules != null){
-            modules = newmodules;
-            moduleID = modules.FirstOrDefault().ModuleID;
-        }
+            try
+            {
+                modules = newmodules;
+                moduleID = modules.FirstOrDefault().ModuleID;
+            }
+            catch{}
+    }
 
         getAssignableUsers();
         // refresh ui with new data
