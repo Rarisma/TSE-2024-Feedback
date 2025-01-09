@@ -16,7 +16,7 @@ public class FeedbackApiClient
 	/// <summary>
 	/// Get all feedbacks for the user.
 	/// </summary>
-	public async Task<List<Feedback>?> GetAssignedFeedbacks(int userID)
+	public async Task<List<Feedback>?> GetAssignedFeedbacks(int? userID)
 	{
 		try
 		{
