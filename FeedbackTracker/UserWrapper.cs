@@ -1,9 +1,5 @@
-﻿using System.Security.Claims;
-using System.Text;
-using System.Text.Json;
+﻿using System.Text.Json;
 using FeedbackTrackerCommon.Definitions;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace Application;
 

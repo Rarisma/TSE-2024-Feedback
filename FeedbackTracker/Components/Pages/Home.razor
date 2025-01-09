@@ -1,8 +1,6 @@
-
 @rendermode InteractiveServer
 @inject JAuth JAuth
 @using FeedbackTrackerCommon.Definitions
-@using Application
 <PageTitle>Feedback Tracking Tool</PageTitle>
 
 <div>
@@ -60,9 +58,9 @@
 	protected override async Task OnInitializedAsync()	{
 		JAuth.EnforceAuth();        
         
-        await LoadUser();
+        //await LoadUser();
 
-        await LoadFeedback();
+        //await LoadFeedback();
 	}
     private string currentTab = "total";
 

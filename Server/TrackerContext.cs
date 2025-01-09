@@ -1,32 +1,28 @@
-﻿using System;
-using FeedbackTrackerCommon.Definitions;
+﻿using FeedbackTrackerCommon.Definitions;
 using Microsoft.EntityFrameworkCore;
 
-namespace Server
+namespace Server;
+
+public class TrackerContext(
+	string connectionString =
+		"Server=www.hallon.rarisma.net;Database=feedbacktracker;User ID=trackeradmin;Password=RaZZmATazz0043_@@!;")
+	: DbContext
 {
-    public class TrackerContext : DbContext
-    {
-	    public string ConnectionString { get; set; }
+	public string ConnectionString { get; set; } = connectionString;
 
-		public TrackerContext(string connectionString = "Server=www.hallon.rarisma.net;Database=feedbacktracker;User ID=trackeradmin;Password=RaZZmATazz0043_@@!;")
-		{
-			ConnectionString = connectionString;
-		}
+	public DbSet<User> User { get; set; }
+	public DbSet<Feedback> Feedback { get; set; }
+	public DbSet<Modules> Modules { get; set; }
+	public DbSet<FeedbackFolders> FeedbackFolders { get; set; }
+	public DbSet<UsersModules> UsersModules { get; set; }
+	public DbSet<FeedbackComments> FeedbackComments { get; set; }
+	public DbSet<FolderLinks> FolderLinks { get; set; }
 
-	    public DbSet<User> user { get; set; }
-        public DbSet<Feedback> feedback { get; set; }
-        public DbSet<Modules> modules { get; set; }
-        public DbSet<FeedbackFolders> feedback_folders { get; set; }
-        public DbSet<UsersModules> users_modules { get; set; }
-        public DbSet<FeedbackComments> feedback_comments { get; set; }
-        public DbSet<FolderLinks> folder_links { get; set; }
+	public DbSet<Extension> Extension { get; set; }
 
-        public DbSet<Extension> extension { get; set; }
+	protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+	{
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-
-            optionsBuilder.UseMySql(ConnectionString, ServerVersion.AutoDetect(ConnectionString));
-        }
-    }
+		optionsBuilder.UseMySql(ConnectionString, ServerVersion.AutoDetect(ConnectionString));
+	}
 }

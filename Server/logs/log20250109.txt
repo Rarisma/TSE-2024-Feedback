@@ -1,0 +1,12 @@
+2025-01-09 09:54:04.165 +00:00 [INF] User profile is available. Using 'C:\Users\RARI\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-01-09 09:54:04.383 +00:00 [INF] Now listening on: https://localhost:7184
+2025-01-09 09:54:04.384 +00:00 [INF] Now listening on: http://localhost:5189
+2025-01-09 09:54:04.523 +00:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-01-09 09:54:04.524 +00:00 [INF] Hosting environment: Development
+2025-01-09 09:54:04.524 +00:00 [INF] Content root path: C:\Users\RARI\Documents\Repos\University Work\TSE-2024-Feedback\Server
+2025-01-09 09:54:06.154 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7184/ - null null
+2025-01-09 09:54:17.278 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7184/ - 404 0 null 11127.4394ms
+2025-01-09 09:54:17.283 +00:00 [INF] Request reached the end of the middleware pipeline without being handled by application code. Request path: GET https://localhost:7184/, Response status code: 404
+2025-01-09 09:54:17.330 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7184/favicon.ico - null null
+2025-01-09 09:54:17.357 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7184/favicon.ico - 404 0 null 27.6116ms
+2025-01-09 09:54:17.421 +00:00 [INF] Request reached the end of the middleware pipeline without being handled by application code. Request path: GET https://localhost:7184/favicon.ico, Response status code: 404
