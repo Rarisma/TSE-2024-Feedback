@@ -35,16 +35,6 @@
 		@if (SelectedFeedback != null)
 		{
 
-			<p><strong>Title:</strong> @SelectedFeedback.Title</p>
-			<p><strong>Description:</strong> @SelectedFeedback.FeedbackText</p>
-		}
-		else
-		{
-			<p>No feedback found</p>
-		}
-	}
-}
-
 			@if (!isEditing)
 			{
 				// display feedback {title,deadline,description,create extension request button}
@@ -56,7 +46,8 @@
 					</div>
 					<div>
 						<NavLink class="btn btn-primary" href="@($"/extension/{FeedbackID}")">Extensions</NavLink>
-						<button @onclick="EnableEditing">Edit </button>
+						<button class="btn btn-primary" @onclick="EnableEditing">Edit </button>
+						<button class="btn btn-primary" @onclick="showComments">Comments </button>
 					</div>
 				</div>
 			}
@@ -71,7 +62,7 @@
 					<textarea id="editDescription" @bind="editingDescription"></textarea>
 				</div>
 				<button @onclick="SaveChanges">Save</button>
-				<button @onclick="CancelEditing">Cancel</button>	
+				<button @onclick="CancelEditing">Cancel</button>
 			}
 
 
@@ -80,7 +71,7 @@
 
 			@try
 			{
-				if (SelectedComments != null)
+				if (SelectedComments != null && showcomments)
 				{
 					foreach (var comment in SelectedComments)
 					{
@@ -88,7 +79,7 @@
 						<p>Content: @comment.Body</p>
 					}
 				}
-				else
+				else if(showcomments)
 				{
 					<p>No comments yet!</p>
 				}
@@ -96,21 +87,30 @@
 			catch (Exception ex)
 			{
 				Console.WriteLine("error view");
-			}			
+			}
 
-
-		}else
+		}
+		else
 		{
 			<p>No feedback found</p>
-		}<NavLink class="btn btn-primary" href="usersfeedback">Back</NavLink>
-
+		}
+		<NavLink class="btn btn-primary" href="usersfeedback">Back</NavLink>
 	}
+
+
+
+
+
 }
 
 @code {
 
 
 
+
+
+
+	private bool showcomments = false;
 	private string currentTab = "total";
 	private FeedbackTrackerCommon.Definitions.Feedback SelectedFeedback;
 
@@ -161,18 +161,18 @@
 	/// </summary>
 	/// <returns>task -  updates stored feedback and extensions</returns>
 	private async Task LoadFeedback()
-	{
+		{
 		var feedback = await FeedbackClientAccess.GetFeedbackByID(ID);
 
-		if (feedback != null)
-		{
+			if (feedback != null)
+			{
 			SelectedFeedback = feedback;
 			extensions = await FeedbackClientAccess.GetExtensions(SelectedFeedback.FeedbackID);
 
-			StateHasChanged();
-		}
-		else
-		{
+		StateHasChanged();
+			}
+			else
+			{
 			Console.WriteLine("Failed to load feedback.");
 		}
 
@@ -185,6 +185,11 @@
 		isEditing = true;
 		editingTitle = SelectedFeedback.Title;
 		editingDescription = SelectedFeedback.FeedbackText;
+	}
+
+	private void showComments()
+	{
+		showcomments = !showcomments;
 	}
 
 
@@ -203,11 +208,6 @@
 		}
 	}
 
-
-	protected override async Task OnInitializedAsync()
-	{
-		await LoadFeedback();
-		await LoadUsers();
 
 	private void CancelEditing()
 	{
@@ -273,7 +273,10 @@
 
     protected override async Task OnInitializedAsync()
     {
+		await LoadUsers();
         await LoadFeedback(int.Parse(FeedbackID));
         await LoadComments(int.Parse(FeedbackID));
-    }
+		
+	}
+
 }
