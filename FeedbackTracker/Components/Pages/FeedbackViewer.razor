@@ -4,6 +4,7 @@
 @using Application
 @inject FeedbackApiClient FeedbackClientAccess
 @inject UserAPI UserClientAccess
+
 @{
 	<PageTitle>Feedback Viewer</PageTitle>
 	<h1>Feedback Viewer</h1>
@@ -14,12 +15,36 @@
 		<button @onclick='() => currentTab = "todo"'>Not Completed</button>
 	</div>
 
+
+	<h3>Select User</h3>
+	//<select @bind="users">
+	<select @bind="selectedUserId">
+		@foreach (var user in users)
+		{
+			<option value="@user.UserID">@user.Username</option>
+		}
+	</select>
+
+	<p>You selected: @selectedUserId</p>
+
+
 	<p>Current Tab: @currentTab</p>
 	@if (currentTab == "total")
 	{
 		<h4>All Feedback</h4>
 		@if (SelectedFeedback != null)
 		{
+
+			<p><strong>Title:</strong> @SelectedFeedback.Title</p>
+			<p><strong>Description:</strong> @SelectedFeedback.FeedbackText</p>
+		}
+		else
+		{
+			<p>No feedback found</p>
+		}
+	}
+}
+
 			@if (!isEditing)
 			{
 				// display feedback {title,deadline,description,create extension request button}
@@ -48,6 +73,7 @@
 				<button @onclick="SaveChanges">Save</button>
 				<button @onclick="CancelEditing">Cancel</button>	
 			}
+
 
 
 
@@ -87,6 +113,10 @@
 
 	private string currentTab = "total";
 	private FeedbackTrackerCommon.Definitions.Feedback SelectedFeedback;
+
+	private List<User> users = new List<User>();
+	private int selectedUserId;
+
 	private User SelectedUser;
 	private List<FeedbackComments> SelectedComments;
 	Dictionary<int, string> UserComments = new Dictionary<int, string>();
@@ -107,6 +137,7 @@
 
 		} else { Console.WriteLine("Failed to load feedback."); }
 	}
+
 
 	//private string UsernameForComments;
 
@@ -156,6 +187,28 @@
 		editingDescription = SelectedFeedback.FeedbackText;
 	}
 
+
+	private async Task LoadUsers()
+	{
+		var AllUsers = await FeedbackClientAccess.GetAllUsersAsync();
+
+		if (AllUsers != null)
+		{
+			users = AllUsers;
+
+		}
+		else
+		{
+			Console.WriteLine("Failed to load users.");
+		}
+	}
+
+
+	protected override async Task OnInitializedAsync()
+	{
+		await LoadFeedback();
+		await LoadUsers();
+
 	private void CancelEditing()
 	{
 		isEditing = false;
@@ -197,6 +250,7 @@
 		{
 			Console.WriteLine("Failed to load user.");
 		}
+
 	}
 
     private async Task LoadComments(int ID)

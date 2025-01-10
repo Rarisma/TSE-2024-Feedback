@@ -109,6 +109,23 @@ public class FeedbackApiClient
 		}
 	}
 
+
+	public async Task<List<User>?> GetAllUsersAsync()
+	{
+		try
+		{
+			HttpResponseMessage response = await _httpClient.GetAsync("User/GetUsers");
+			response.EnsureSuccessStatusCode();
+			string jsonString = await response.Content.ReadAsStringAsync();
+			var users = JsonSerializer.Deserialize<List<User>?>(jsonString);
+			return await Task.FromResult(users);
+		}
+		catch (Exception ex)
+		{
+			return null;
+		}
+	}
+
   /*
 	/// <summary>
 	/// Updates a feedback title and description.
@@ -226,4 +243,5 @@ public class FeedbackApiClient
             return null;
         }
     }
+
 }

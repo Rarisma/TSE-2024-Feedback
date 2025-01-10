@@ -99,6 +99,28 @@ public class UserController : Controller
 		return _authService.AuthenticateUserAsync(Username, Password);
 	}
 
+
+
+	[HttpGet("GetUsers")]
+	public Task<string> GetUsers()
+	{
+		try
+		{
+			//Find accounts
+
+			using TrackerContext Ctx = new();
+			List<User> Accounts = Ctx.user.ToList();
+			var result = Accounts.ToList();
+
+			Accounts.ForEach(acc => acc.Password = "");
+			return Task.FromResult(JsonSerializer.Serialize(result));
+		}
+		catch (Exception ex) {
+			return null;
+		}
+	}
+
+
 	/// <summary>
 	/// Creates a new user object.
 	/// </summary>
@@ -128,4 +150,5 @@ public class UserController : Controller
         }
 		catch (Exception ex) { return "Encountered an error: " + ex.Message; }
 	}
+
 }
