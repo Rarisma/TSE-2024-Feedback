@@ -1,0 +1,98 @@
+﻿@page "/"
+@rendermode InteractiveServer
+@inject JAuth JAuth
+@using FeedbackTrackerCommon.Definitions
+@using Application
+@inject FeedbackApiClient FeedbackClientAccess
+
+
+
+<PageTitle>Feedback Tracking Tool</PageTitle>
+
+<div>
+    <center><h1>Feedback Tracking Tool</h1></center>
+    <br><br />
+    <center><h2>Dashboard</h2></center>
+
+    <div>
+        <h3>Next Deadlines</h3>
+        
+            <div>
+            @foreach (var feedback in allFeedback)
+                {
+                    <div style="border: 1px solid black; margin: 5px; padding: 10px;">
+                        <h4>@feedback.Title</h4>
+                        <p><strong>@feedback.FeedbackText</strong></p>
+                        <p><strong>Due in: </strong> @feedback.Deadline</p>
+                        <p><strong>Completed:</strong> @feedback.Closed</p>
+                    </div>
+                }
+            </div>
+        
+    </div>
+</div>
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        JAuth.EnforceAuth();
+        await LoadFeedback();
+    }
+
+    private List<Feedback> allFeedback = new();
+    private User user = new User { UserID = 0, Username = "Guest" };
+
+    // loads feedback from api
+    private async Task LoadFeedback()
+    {
+        try
+        {
+            var apiClient = new FeedbackApiClient("http://localhost:7128");
+            var feedbackList = await apiClient.GetAssignedFeedbacks(user.UserID);
+
+            if (feedbackList != null && feedbackList.Any())
+            {
+                allFeedback = feedbackList.Select(fb => new Feedback
+                    {
+                        Title = fb.Title,
+                        FeedbackText = fb.FeedbackText,
+                        Deadline = fb.Deadline,
+                        Closed = fb.Closed
+                    }).ToList();
+            }
+            else
+            {
+                Console.WriteLine("No feedback found. Using test data.");
+                TestFeedback();
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading feedback: {ex.Message}");
+            TestFeedback();
+        }
+    }
+
+    // creates test feedback
+    private void TestFeedback()
+    {
+        allFeedback = new List<Feedback>
+        {
+            new Feedback
+            {
+                Title = "Test 1",
+                FeedbackText = "Info about feedback",
+                Deadline = DateTime.Now.AddDays(4),
+                Closed = false
+            },
+        };
+    }
+
+    public class Feedback
+    {
+        public string Title { get; set; }
+        public string FeedbackText { get; set; }
+        public DateTime Deadline { get; set; }
+        public bool Closed { get; set; }
+    }
+}

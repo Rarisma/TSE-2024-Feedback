@@ -1,19 +1,26 @@
 ﻿@page "/SignUp"
 @using FeedbackTrackerCommon.Definitions
+@inject NavigationManager NavigationManager
 @rendermode InteractiveServer
+@inject IJSRuntime JSRuntime
+
 @code {
-	private async void Submit()
-	{
-		if (Password == Password2)
-		{
-			//Send req to create user.
-			await new UserAPI("http://localhost:5189").CreateUser(Username.ToString(), Password.ToString());
-		}
+
+    private async void Submit()
+    {
+        if (Password == Password2)
+        {
+            //Send req to create user.
+            await new UserAPI("http://localhost:5189").CreateUser(Username.ToString(), Password.ToString());
+            await JSRuntime.InvokeVoidAsync("alert", "user created");
+            NavigationManager.NavigateTo("/");
+        }
 		else
 		{
 			//Clear if invalid
 			Password = "";
 			Password2 = "";
+            await JSRuntime.InvokeVoidAsync("alert", "The entered passwords don't match.");
 		}
 	}
 	/// <summary>
@@ -30,61 +37,88 @@
 	/// Entered Password Confirmation
 	/// </summary>
 	public string Password2 { get; set; }
-
 }
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="text-center">Sign Up</h3>
-                </div>
-                <div class="card-body"> <!-- Card header for formatting -->
 
+<!-- Image and header. Looks ok but alignment needs fixing -->
+<div class="d-flex justify-content-center align-items-center" style="min-height: 90vh; flex-direction: column;">
+    <img src="Images/UniLogo.png" alt="University of Lincoln Logo" style="width: 150px; height: auto; margin-bottom: 10px;"> 
+    <h3 class="text-center mb-4" style="font-family: 'Lato', sans-serif; color: #4A4A4A; margin-top: -10px;"> University of Lincoln TSE Feedback Tracking Tool! </h3>
 
-                    <!-- Form destination needs adding to action attribute, # = null -->
-                    <form action="#">
-                        <!-- First name header and text box-->
-                        <div class="mb-3">
-                            <label for="firstName" class="form-label">First Name</label>
-                            <input type="text" class="form-control" id="firstName" placeholder="Enter first name">
-                        </div>
-                        <!-- Last name header and text box-->
-                        <div class="mb-3">
-                            <label for="lastName" class="form-label">Last Name</label>
-                            <input type="text" class="form-control" id="lastName" placeholder="Enter last name">
-                        </div>
-                        <div class="mb-3">
-                            <!-- Email address header and text box-->
-                            <label for="email" class="form-label">Username</label>
-                            <input type="email" class="form-control" id="email" placeholder="Enter Username" @bind-value="Username">
-                        </div>
-                        <div class="mb-3">
-                            <!-- Password header and text box-->
-                            <label for="password" class="form-label">Password</label>
-                            <input type="password" class="form-control" id="password"
-                                   placeholder="Create password" @bind-value="Password">
-                        </div>
-                        <div class="mb-3">
-                            <!-- Password confirmation header and text box-->
-                            <label for="password" class="form-label">Password</label>
-                            <input type="password" class="form-control" id="ConfirmPassword"
-                                   placeholder="Password" @bind-value="Password2">
-						</div>
-                        <!-- Privacy Policy-->
-                        <div class="mb-3 form-check">
-                            <input type="checkbox" class="form-check-input" id="privacyPolicy" required>
-                            <label class="form-check-label" for="privacyPolicy">
-                                I agree to the Privacy Policy and Terms of Service
-                            </label>
-                        </div>
-                        <!-- Button -->
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-primary" @onclick="Submit">Create Account</button>
-                        </div>
-                    </form>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header d-flex">
+                        <button class="btn btn-outline-primary flex-grow-1 me-2" @onclick="LoginTab">Log In</button>
+                        <button class="btn btn-primary flex-grow-1">Sign Up</button>
+                    </div>
+                    <div class="card-body">
+                        <form @onsubmit="Submit">
+                            <!-- First name header and text box-->
+                            <div class="mb-3">
+                                <label for="firstName" class="form-label">First Name</label>
+                                <input type="text" class="form-control" id="firstName" placeholder="Enter first name">
+                            </div>
+                            <!-- Last name header and text box-->
+                            <div class="mb-3">
+                                <label for="lastName" class="form-label">Last Name</label>
+                                <input type="text" class="form-control" id="lastName" placeholder="Enter last name">
+                            </div>
+                            <div class="mb-3">
+                                <!-- Username header and text box-->
+                                <label for="username" class="form-label">Username</label>
+                                <input type="text" class="form-control" id="username" placeholder="Enter Username" @bind-value="Username">
+                            </div>
+                            <div class="mb-3">
+                                <!-- Password header and text box-->
+                                <label for="password" class="form-label">Password</label>
+                                <input type="password" class="form-control" id="password"
+                                       placeholder="Create password" @bind-value="Password">
+                            </div>
+                            <div class="mb-3">
+                                <!-- Password confirmation header and text box-->
+                                <label for="confirmPassword" class="form-label">Confirm Password</label>
+                                <input type="password" class="form-control" id="confirmPassword"
+                                       placeholder="Confirm password" @bind-value="Password2">
+                            </div>
+                            <!-- Privacy Policy-->
+                            <div class="mb-3 form-check">
+                                <input type="checkbox" class="form-check-input" id="privacyPolicy" required>
+                                <label class="form-check-label" for="privacyPolicy">
+                                    I agree to the Privacy Policy and Terms of Service
+                                </label>
+                            </div>
+                            <!-- Button -->
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary">Create Account</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<style> 
+    html, body {
+        height: 100%;
+        margin: 0;
+        overflow: hidden;
+    }
+
+    .card {
+        background-color: #EBF0F5;
+        width: 100%;
+        max-width: 600px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+    }
+</style>
+
+@code {
+    private void LoginTab()
+    {
+        NavigationManager.NavigateTo("/LogIn");
+    }
+}

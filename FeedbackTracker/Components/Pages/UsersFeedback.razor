@@ -1,0 +1,43 @@
+﻿@page "/usersfeedback"
+@using FeedbackTrackerCommon.Definitions
+@using Application
+@inject FeedbackApiClient FeedbackClientAccess
+
+@{
+    <center><h1>Your Feedback</h1></center>
+    @if (SelectedFeedbacks != null)
+    {
+        foreach (var feedback in SelectedFeedbacks)
+        {
+            <p><strong>Title:</strong> @feedback.Title</p
+            <p><strong>Description:</strong> @feedback.FeedbackText</p>
+            <NavLink class="btn btn-primary" href="@($"/viewfeedback/{feedback.FeedbackID}")">View</NavLink>
+        }
+    }
+    else
+    {
+        <center><p>No feedback to view!</p></center>
+    }
+}
+
+@code {
+    private List<FeedbackTrackerCommon.Definitions.Feedback> SelectedFeedbacks;
+
+    private async Task LoadAllFeedback(int ID)
+    {
+        var feedbacks = await FeedbackClientAccess.GetAssignedFeedbacks(ID);
+        if (feedbacks != null)
+        {
+            SelectedFeedbacks = feedbacks;
+        }
+        else
+        {
+            Console.WriteLine("Failed to load feedback.");
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadAllFeedback(JAuth.User.UserID);
+    }
+}

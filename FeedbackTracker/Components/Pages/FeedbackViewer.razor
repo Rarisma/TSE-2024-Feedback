@@ -1,9 +1,9 @@
-
-@page "/viewfeedback"
+@page "/viewfeedback/{FeedbackID}"
+@rendermode InteractiveServer
 @using FeedbackTrackerCommon.Definitions
 @using Application
 @inject FeedbackApiClient FeedbackClientAccess
-@rendermode InteractiveServer
+@inject UserAPI UserClientAccess
 
 @{
 	<PageTitle>Feedback Viewer</PageTitle>
@@ -14,6 +14,7 @@
 		<button @onclick='() => currentTab = "completed"'>Completed</button>
 		<button @onclick='() => currentTab = "todo"'>Not Completed</button>
 	</div>
+
 
 	<h3>Select User</h3>
 	//<select @bind="users">
@@ -26,12 +27,14 @@
 
 	<p>You selected: @selectedUserId</p>
 
+
 	<p>Current Tab: @currentTab</p>
 	@if (currentTab == "total")
 	{
 		<h4>All Feedback</h4>
 		@if (SelectedFeedback != null)
 		{
+
 			<p><strong>Title:</strong> @SelectedFeedback.Title</p>
 			<p><strong>Description:</strong> @SelectedFeedback.FeedbackText</p>
 		}
@@ -42,27 +45,148 @@
 	}
 }
 
+			@if (!isEditing)
+			{
+				// display feedback {title,deadline,description,create extension request button}
+				<div class="flex-row">
+					<div class="flex-column">
+						<p class="card-text"><strong>Title:</strong> @SelectedFeedback.Title</p>
+						<p class="card-text"><strong>deadline:</strong> @SelectedFeedback.Deadline</p>
+						<p class="card-text"><strong>Description:</strong> @SelectedFeedback.FeedbackText</p>
+					</div>
+					<div>
+						<NavLink class="btn btn-primary" href="@($"/extension/{FeedbackID}")">Extensions</NavLink>
+						<button @onclick="EnableEditing">Edit </button>
+					</div>
+				</div>
+			}
+			@if (isEditing)
+			{
+				<div>
+					<label for="editTitle">Title:</label>
+					<input id="editTitle" type="text" @bind="editingTitle" />
+				</div>
+				<div>
+					<label for="editDescription">Description:</label>
+					<textarea id="editDescription" @bind="editingDescription"></textarea>
+				</div>
+				<button @onclick="SaveChanges">Save</button>
+				<button @onclick="CancelEditing">Cancel</button>	
+			}
 
+
+
+
+
+			@try
+			{
+				if (SelectedComments != null)
+				{
+					foreach (var comment in SelectedComments)
+					{
+						<p>Comment ID: @comment.CommenterID</p>
+						<p>Content: @comment.Body</p>
+					}
+				}
+				else
+				{
+					<p>No comments yet!</p>
+				}
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine("error view");
+			}			
+
+
+		}else
+		{
+			<p>No feedback found</p>
+		}<NavLink class="btn btn-primary" href="usersfeedback">Back</NavLink>
+
+	}
+}
 
 @code {
+
+
+
 	private string currentTab = "total";
 	private FeedbackTrackerCommon.Definitions.Feedback SelectedFeedback;
+
 	private List<User> users = new List<User>();
 	private int selectedUserId;
 
+	private User SelectedUser;
+	private List<FeedbackComments> SelectedComments;
+	Dictionary<int, string> UserComments = new Dictionary<int, string>();
+
+	[Parameter]
+	public string FeedbackID { get; set; }
+
+	private async Task LoadFeedback(int ID)
+	{
+		SelectedFeedback = await FeedbackClientAccess.GetFeedbackByID(ID);
+
+		if (SelectedFeedback != null)
+
+		{
+
+			StateHasChanged();
+
+
+		} else { Console.WriteLine("Failed to load feedback."); }
+	}
+
+
+	//private string UsernameForComments;
+
+
+
+	//Editing
+
+	private bool isEditing = false;
+	private string editingTitle;
+	private string editingDescription;
+
+	// selected feedback
+	//private FeedbackTrackerCommon.Definitions.Feedback? SelectedFeedback;
+
+	// logged user
+	private FeedbackTrackerCommon.Definitions.User? loggedUser;
+
+	/*
+	/// <summary>
+	/// Get feedback to display and related extensions
+	/// </summary>
+	/// <returns>task -  updates stored feedback and extensions</returns>
 	private async Task LoadFeedback()
 	{
-		var feedback = await FeedbackClientAccess.GetFeedbackByID(1);
+		var feedback = await FeedbackClientAccess.GetFeedbackByID(ID);
 
 		if (feedback != null)
 		{
 			SelectedFeedback = feedback;
+			extensions = await FeedbackClientAccess.GetExtensions(SelectedFeedback.FeedbackID);
+
+			StateHasChanged();
 		}
 		else
 		{
 			Console.WriteLine("Failed to load feedback.");
 		}
+
+		//await LoadComments(SelectedFeedback.FeedbackID);
 	}
+*/
+
+	private void EnableEditing()
+	{
+		isEditing = true;
+		editingTitle = SelectedFeedback.Title;
+		editingDescription = SelectedFeedback.FeedbackText;
+	}
+
 
 	private async Task LoadUsers()
 	{
@@ -84,7 +208,72 @@
 	{
 		await LoadFeedback();
 		await LoadUsers();
+
+	private void CancelEditing()
+	{
+		isEditing = false;
+		// Revert changes
+		editingTitle = SelectedFeedback.Title;
+		editingDescription = SelectedFeedback.FeedbackText;
 	}
 
 
+	private async Task SaveChanges()
+	{
+		if (SelectedFeedback != null)
+		{
+			FeedbackTrackerCommon.Definitions.Feedback editFeedback = SelectedFeedback;
+			editFeedback.Title = editingTitle;
+			editFeedback.FeedbackText = editingDescription;
+			string apiFeedback = await FeedbackClientAccess.UpdateFeedback(editFeedback);
+			Console.WriteLine(apiFeedback); // log
+			StateHasChanged();
+
+		}
+		isEditing = false;
+	}
+
+
+	/// <summary>
+	///  logged user
+	/// </summary>
+	/// <returns>Task - user</returns>
+	private async Task LoadUser()
+	{
+		var user = await UserClientAccess.GetUserByID(3);
+
+		if (user != null)
+		{
+			loggedUser = user;
+		}
+		else
+		{
+			Console.WriteLine("Failed to load user.");
+		}
+
+	}
+
+    private async Task LoadComments(int ID)
+    {
+        SelectedComments = await FeedbackClientAccess.GetComments(ID);
+        if (SelectedComments == null)
+        {
+            Console.WriteLine("No comments found.");
+        }
+        else
+        {
+            UserComments.Clear();
+            foreach (var comment in SelectedComments)
+            {
+                var user = await UserClientAccess.GetUserByID(comment.CommenterID);
+                UserComments[comment.CommentID] = user.Username;
+            }
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadFeedback(int.Parse(FeedbackID));
+        await LoadComments(int.Parse(FeedbackID));
+    }
 }

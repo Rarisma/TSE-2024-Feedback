@@ -21,6 +21,8 @@ namespace Server
         public DbSet<FeedbackComments> feedback_comments { get; set; }
         public DbSet<FolderLinks> folder_links { get; set; }
 
+        public DbSet<Extension> extension { get; set; }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
 

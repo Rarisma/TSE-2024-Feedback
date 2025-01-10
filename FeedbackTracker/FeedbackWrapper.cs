@@ -16,7 +16,7 @@ public class FeedbackApiClient
 	/// <summary>
 	/// Get all feedbacks for the user.
 	/// </summary>
-	public async Task<List<Feedback>?> GetAssignedFeedbacks(int userID)
+	public async Task<List<Feedback>?> GetAssignedFeedbacks(int? userID)
 	{
 		try
 		{
@@ -109,6 +109,7 @@ public class FeedbackApiClient
 		}
 	}
 
+
 	public async Task<List<User>?> GetAllUsersAsync()
 	{
 		try
@@ -124,4 +125,123 @@ public class FeedbackApiClient
 			return null;
 		}
 	}
+
+  /*
+	/// <summary>
+	/// Updates a feedback title and description.
+	/// </summary>
+	/// <param name="feedbackID">Database ID of Feedback</param>
+	/// <param name="newTitle">Updated title</param>
+	/// <param name="newDescription">Updated text</param>
+	public async Task UpdateFeedback(int feedbackID, string newTitle, string newDescription)
+	{
+		try
+		{
+			//Create updated feedback object
+			Feedback UpdatedFeedback = new()
+			{
+				FeedbackID = feedbackID,
+				Title = newTitle,
+				FeedbackText = newDescription
+			};
+
+			//Serialise
+			string jsonContent = JsonSerializer.Serialize(UpdatedFeedback);
+			StringContent content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+
+			//Send
+			HttpResponseMessage response = 
+				await _httpClient.PostAsync($"Feedback/UpdateFeedback?FeedbackID={feedbackID}", content);
+			response.EnsureSuccessStatusCode();
+		}
+		catch (Exception ex)
+		{
+			Console.WriteLine($"Encountered an error: {ex.Message}");
+		}
+	}
+*/
+
+	/// create extension
+	/// </summary>
+	/// <param name="extension"></param>
+	/// <returns></returns>
+	public async Task<string> CreateExtension(Extension extension)
+	{
+		try
+		{
+			//Serialise
+			string jsonContent = JsonSerializer.Serialize(extension);
+			StringContent content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+
+			//Send
+			HttpResponseMessage response = await _httpClient.PostAsync("Feedback/Extension", content);
+			response.EnsureSuccessStatusCode();
+			return await response.Content.ReadAsStringAsync();
+		}
+		catch (Exception ex)
+		{
+			return $"Encountered an error: {ex.Message}";
+		}
+	}
+
+    /// <summary>
+    /// Gets extension request for a feedback
+    /// </summary>
+    public async Task<List<Extension>?> GetExtensions(int feedbackID)
+    {
+        try
+        {
+            HttpResponseMessage response = await _httpClient.GetAsync($"Feedback/EXtension?FeedbackID={feedbackID}");
+            response.EnsureSuccessStatusCode();
+            string jsonString = await response.Content.ReadAsStringAsync();
+            return JsonSerializer.Deserialize<List<Extension>>(jsonString);
+        }
+        catch (Exception ex)
+        {
+            return null;
+        }
+    }
+
+    /// <summary>
+    /// Gets extension request for a feedback
+    /// </summary>
+    public async Task<string> UpdateFeedback(Feedback feedback)
+    {
+        try
+        {
+            //Serialise
+            string jsonContent = JsonSerializer.Serialize(feedback);
+            StringContent content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+            //Send
+            HttpResponseMessage response = await _httpClient.PutAsync("Feedback/Feedback", content);
+            response.EnsureSuccessStatusCode();
+			return await response.Content.ReadAsStringAsync();
+        }
+        catch (Exception ex)
+        {
+            return null;
+        }
+    }
+
+    /// <summary>
+    /// Gets extension request for a feedback
+    /// </summary>
+    public async Task<string> UpdateExtension(Extension extension)
+    {
+        try
+        {
+            //Serialise
+            string jsonContent = JsonSerializer.Serialize(extension);
+            StringContent content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+            //Send
+            HttpResponseMessage response = await _httpClient.PutAsync("Feedback/Extension", content);
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadAsStringAsync();
+        }
+        catch (Exception ex)
+        {
+            return null;
+        }
+    }
+
 }
