@@ -1,5 +1,6 @@
 @rendermode InteractiveServer
 @inject JAuth JAuth
+@using Application.API
 @using FeedbackTrackerCommon.Definitions
 <PageTitle>Feedback Tracking Tool</PageTitle>
 
@@ -103,7 +104,7 @@
     {
         try
         {
-            var apiClient = new FeedbackApiClient("http://localhost:7128");
+            var apiClient = new FeedbackAPI("http://localhost:7128");
             var feedbackList = await apiClient.GetAssignedFeedbacks(user.UserID);
 
             if (feedbackList != null && feedbackList.Any())

@@ -1,7 +1,8 @@
 @page "/viewfeedback/{FeedbackID}"
 @rendermode InteractiveServer
+@using Application.API
 @using FeedbackTrackerCommon.Definitions
-@inject FeedbackApiClient FeedbackClientAccess
+@inject FeedbackAPI FeedbackClientAccess
 @inject UserAPI UserClientAccess
 @{
 	<PageTitle>Feedback Viewer</PageTitle>
@@ -245,8 +246,7 @@
 			FeedbackTrackerCommon.Definitions.Feedback editFeedback = SelectedFeedback;
 			editFeedback.Title = editingTitle;
 			editFeedback.FeedbackText = editingDescription;
-			string apiFeedback = await FeedbackClientAccess.UpdateFeedback(editFeedback);
-			Console.WriteLine(apiFeedback); // log
+			await FeedbackClientAccess.UpdateFeedback(editFeedback);
 			StateHasChanged();
 
 		}
@@ -301,13 +301,11 @@
 			SelectedFeedback.Deadline = SelectedFeedback.Deadline.Add(new TimeSpan(extension.Length, 0, 0, 0)); // update deadline
 
 			// update feedback in db
-			string apiFeedback = await FeedbackClientAccess.UpdateFeedback(SelectedFeedback);
-			Console.WriteLine(apiFeedback); // log
+			await FeedbackClientAccess.UpdateFeedback(SelectedFeedback);
 		}
 
 		// update extension
-		string apiExtension = await FeedbackClientAccess.UpdateExtension(extension);
-		Console.WriteLine(apiExtension); // log
+		await FeedbackClientAccess.UpdateExtension(extension);
 		StateHasChanged();
 	}
 

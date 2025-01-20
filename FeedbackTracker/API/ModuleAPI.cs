@@ -1,16 +1,12 @@
 ﻿using System.Text.Json;
 using FeedbackTrackerCommon.Definitions;
+using Serilog;
 
-namespace Application;
+namespace Application.API;
 
-public class ModuleAPI
+public class ModuleAPI(string baseEndpoint)
 {
-    private readonly HttpClient _httpClient;
-
-    public ModuleAPI(string baseEndpoint)
-    {
-        _httpClient = new HttpClient { BaseAddress = new Uri(baseEndpoint) };
-    }
+    private readonly HttpClient _httpClient = new() { BaseAddress = new Uri(baseEndpoint) };
 
     /// <summary>
     /// Gets a module by ID
@@ -27,6 +23,7 @@ public class ModuleAPI
         }
         catch (Exception ex)
         {
+			Log.Error(ex, $"Error getting module {ID}");
             return null;
         }
     }
@@ -45,7 +42,8 @@ public class ModuleAPI
         }
         catch (Exception ex)
         {
-            return null;
+	        Log.Error(ex, $"Error getting module name {name}");
+			return null;
         }
     }
 

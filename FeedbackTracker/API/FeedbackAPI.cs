@@ -1,17 +1,14 @@
 ﻿using System.Text;
 using System.Text.Json;
 using FeedbackTrackerCommon.Definitions;
+using Serilog;
+using Serilog.Core;
 
-namespace Application;
+namespace Application.API;
 
-public class FeedbackApiClient
+public class FeedbackAPI(string baseEndpoint)
 {
-	private readonly HttpClient _httpClient;
-
-	public FeedbackApiClient(string baseEndpoint)
-	{
-		_httpClient = new HttpClient { BaseAddress = new Uri(baseEndpoint) };
-	}
+	private readonly HttpClient _httpClient = new() { BaseAddress = new Uri(baseEndpoint) };
 
 	/// <summary>
 	/// Get all feedbacks for the user.
@@ -30,6 +27,7 @@ public class FeedbackApiClient
 		}
 		catch (Exception ex)
 		{
+			Log.Error(ex, "Exception Getting assigned feedbacks");
 			return null;
 		}
 	}
@@ -48,6 +46,7 @@ public class FeedbackApiClient
 		}
 		catch (Exception ex)
 		{
+			Log.Error(ex, $"Exception getting feedback ID {feedbackID}");
 			return null;
 		}
 	}
@@ -70,6 +69,7 @@ public class FeedbackApiClient
 		}
 		catch (Exception ex)
 		{
+			Log.Error(ex, "Exception creating feedback");
 			return $"Encountered an error: {ex.Message}";
 		}
 	}
@@ -87,6 +87,7 @@ public class FeedbackApiClient
 		}
 		catch (Exception ex)
 		{
+			Log.Error(ex, $"Exception deleting feedback id={feedbackID}");
 			return $"Encountered an error: {ex.Message}";
 		}
 	}
@@ -105,46 +106,13 @@ public class FeedbackApiClient
 		}
 		catch (Exception ex)
 		{
+			Log.Error(ex, $"Exception getting comments for feedback id={feedbackID}");
 			return null;
 		}
 	}
 
-  /*
 	/// <summary>
-	/// Updates a feedback title and description.
-	/// </summary>
-	/// <param name="feedbackID">Database ID of Feedback</param>
-	/// <param name="newTitle">Updated title</param>
-	/// <param name="newDescription">Updated text</param>
-	public async Task UpdateFeedback(int feedbackID, string newTitle, string newDescription)
-	{
-		try
-		{
-			//Create updated feedback object
-			Feedback UpdatedFeedback = new()
-			{
-				FeedbackID = feedbackID,
-				Title = newTitle,
-				FeedbackText = newDescription
-			};
-
-			//Serialise
-			string jsonContent = JsonSerializer.Serialize(UpdatedFeedback);
-			StringContent content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
-
-			//Send
-			HttpResponseMessage response = 
-				await _httpClient.PostAsync($"Feedback/UpdateFeedback?FeedbackID={feedbackID}", content);
-			response.EnsureSuccessStatusCode();
-		}
-		catch (Exception ex)
-		{
-			Console.WriteLine($"Encountered an error: {ex.Message}");
-		}
-	}
-*/
-
-	/// create extension
+	/// Creates extension request for a feedback
 	/// </summary>
 	/// <param name="extension"></param>
 	/// <returns></returns>
@@ -163,6 +131,7 @@ public class FeedbackApiClient
 		}
 		catch (Exception ex)
 		{
+			Log.Error(ex, "Exception creating extension");
 			return $"Encountered an error: {ex.Message}";
 		}
 	}
@@ -181,14 +150,15 @@ public class FeedbackApiClient
         }
         catch (Exception ex)
         {
-            return null;
+	        Log.Error(ex, $"Exception getting extension for feedback {feedbackID}");
+			return null;
         }
     }
 
     /// <summary>
     /// Gets extension request for a feedback
     /// </summary>
-    public async Task<string> UpdateFeedback(Feedback feedback)
+    public async Task UpdateFeedback(Feedback feedback)
     {
         try
         {
@@ -198,18 +168,18 @@ public class FeedbackApiClient
             //Send
             HttpResponseMessage response = await _httpClient.PutAsync("Feedback/Feedback", content);
             response.EnsureSuccessStatusCode();
-			return await response.Content.ReadAsStringAsync();
+			await response.Content.ReadAsStringAsync();
         }
         catch (Exception ex)
         {
-            return null;
+	        Log.Error(ex, $"Exception updating feedback {feedback.FeedbackID}");
         }
     }
 
     /// <summary>
     /// Gets extension request for a feedback
     /// </summary>
-    public async Task<string> UpdateExtension(Extension extension)
+    public async Task UpdateExtension(Extension extension)
     {
         try
         {
@@ -219,11 +189,11 @@ public class FeedbackApiClient
             //Send
             HttpResponseMessage response = await _httpClient.PutAsync("Feedback/Extension", content);
             response.EnsureSuccessStatusCode();
-            return await response.Content.ReadAsStringAsync();
+            await response.Content.ReadAsStringAsync();
         }
         catch (Exception ex)
         {
-            return null;
+	        Log.Error(ex, $"Exception updating extension {extension.ExtensionId}");
         }
-    }
+	}
 }

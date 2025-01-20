@@ -16,7 +16,7 @@ builder.Services.AddSwaggerGen();
 //Configure Serilog
 Log.Logger = new LoggerConfiguration()
 	.WriteTo.Console()
-	.WriteTo.File("logs/log.txt", rollingInterval: RollingInterval.Day)
+	.WriteTo.File("logs/log-server.txt", rollingInterval: RollingInterval.Day)
 	.CreateLogger();
 
 //Configure Entity Framework Core with MySQL

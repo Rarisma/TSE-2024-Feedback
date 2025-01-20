@@ -1,8 +1,9 @@
 ﻿@page "/"
 @rendermode InteractiveServer
 @inject JAuth JAuth
+@using Application.API
 @using FeedbackTrackerCommon.Definitions
-@inject FeedbackApiClient FeedbackClientAccess
+@inject FeedbackAPI FeedbackClientAccess
 
 
 
@@ -39,15 +40,14 @@
     }
 
     private List<Feedback> allFeedback = new();
-    private User user = new User { UserID = 0, Username = "Guest" };
 
     // loads feedback from api
     private async Task LoadFeedback()
     {
         try
         {
-            var apiClient = new FeedbackApiClient("http://localhost:7128");
-            var feedbackList = await apiClient.GetAssignedFeedbacks(user.UserID);
+            var apiClient = new FeedbackAPI("http://localhost:7128");
+            var feedbackList = await apiClient.GetAssignedFeedbacks(JAuth.User.UserID);
 
             if (feedbackList != null && feedbackList.Any())
             {
