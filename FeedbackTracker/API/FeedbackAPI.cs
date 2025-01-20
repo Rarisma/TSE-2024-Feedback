@@ -128,7 +128,6 @@ public class FeedbackAPI(string baseEndpoint)
 		}
 	}
 
-  /*
 	/// <summary>
 	/// Creates extension request for a feedback
 	/// </summary>

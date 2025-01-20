@@ -106,7 +106,7 @@ public class UserController(AuthService authService) : Controller
 			//Find accounts
 
 			using TrackerContext Ctx = new();
-			List<User> Accounts = Ctx.user.ToList();
+			List<User> Accounts = Ctx.User.ToList();
 			var result = Accounts.ToList();
 
 			Accounts.ForEach(acc => acc.Password = "");
@@ -131,8 +131,8 @@ public class UserController(AuthService authService) : Controller
 		{
             //Find account
             using TrackerContext Ctx = new();
-            var modules = (from UsersModules usermodule in Ctx.users_modules
-                         join moduledata in Ctx.modules on usermodule.ModuleID equals moduledata.ModuleID
+            var modules = (from UsersModules usermodule in Ctx.UsersModules
+                         join moduledata in Ctx.Modules on usermodule.ModuleID equals moduledata.ModuleID
                          where usermodule.UserID == Userid
                          select new
                          {
