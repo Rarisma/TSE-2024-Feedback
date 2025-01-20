@@ -110,5 +110,5 @@ public class JAuth(NavigationManager NavigationManager)
 		}
 		NavigationManager.NavigateTo("/LogIn");
 
-	}
+	}	
 }

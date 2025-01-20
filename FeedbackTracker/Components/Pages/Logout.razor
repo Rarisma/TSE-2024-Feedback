@@ -1,15 +1,24 @@
 ﻿@page "/Logout"
 @inject JAuth Auth
+@inject NavigationManager navigation
 @rendermode InteractiveServer
 
 <h3>Are you sure you want to logout?</h3>
 <button @onclick="DeleteSession">Yes</button>
-<NavLink href="/Dashboard">No</NavLink>
+<NavLink href="/">No</NavLink>
 @code {
+
+
+
+
+
+
 
 	private void DeleteSession()
 	{
 		Auth.Deauthorise();
+
+		navigation.NavigateTo("/");
 	}
 
 }

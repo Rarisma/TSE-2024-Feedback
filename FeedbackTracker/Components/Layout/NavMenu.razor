@@ -10,17 +10,21 @@
                 <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
             </NavLink>
         </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="feedback">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Create-Feedback
-            </NavLink>
-        </div>
+        @if (auth.IsAuthorised())
+        {
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="feedback">
+                    <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Create-Feedback
+                </NavLink>
+            </div>
 
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="usersfeedback">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Your-Feedback
-            </NavLink>
-        </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="usersfeedback">
+                    <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Your-Feedback
+                </NavLink>
+            </div>
+
+        }
     </nav>
 
     <!-- Buttons for logging in, signing up and account management -->

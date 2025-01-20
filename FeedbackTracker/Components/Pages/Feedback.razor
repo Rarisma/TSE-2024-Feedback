@@ -1,11 +1,15 @@
 @page "/feedback"
 @using Application.API
 @rendermode InteractiveServer
+@inject FeedbackApiClient FeedbackCLient
+@inject JAuth JAuth
+@inject ModuleAPI ModuleClient
+@inject UserAPI UserCLient
 
 <PageTitle>Feedback Page</PageTitle>
 <div class="card justify-content-center">
     <div class="card-header">
-        <h1 class="card-title text-center">Feedback form</h1>
+        <h1 class="card-title text-center">Creating as user: @assignee.Username - Feedback form</h1>
     </div>
     <!-- Feedback form -->
     <div class="card-body">
@@ -25,7 +29,7 @@
             <!--module-->
             <div class="mb-3">
                 <label for="module">Feedback module:</label>
-                <select id="module" @bind="moduleID">
+                <select id="module" @onchange="moduleSelected">
                     <!-- add each module to select options-->
                     @if (modules.Count > 0)
                     {
@@ -45,7 +49,7 @@
 
             <!--Assign-->
             <div class="mb-3">
-                <label for="assign">Asign feedback:</label>
+                <label for="assign">Asign to user in module:</label>
                 <select id="assign" @bind=assignedUserID>
 
                     <!-- add each user to select options-->
@@ -112,10 +116,9 @@
     // get logged in user
     private static FeedbackTrackerCommon.Definitions.User getUser()
     {
-        //#TODO get logged in user
 
-        // create test user
-        return new FeedbackTrackerCommon.Definitions.User {UserID=1,Username="awdwdaw" };
+        // return logged user
+        return JAuth.User;
     }
 
     // get users that can be assigned feedback
@@ -124,35 +127,48 @@
         //#TODO get assignable users (within selected module?)
 
         // Get users
-        FeedbackTrackerCommon.Definitions.User? user1 = await new UserAPI("http://localhost:5189").GetUserByID(3);
-        FeedbackTrackerCommon.Definitions.User? user2 = await new UserAPI("http://localhost:5189").GetUserByID(4);
 
-        if (user1 != null && user2 != null)
-        {
-            users = [user1, user2];
+        List<FeedbackTrackerCommon.Definitions.User?>? modusers = await ModuleClient.GetUsersInModule(moduleID);
+
+        if(modusers != null){
+            users = modusers;
         }
 
         StateHasChanged();
 
     }
 
+    // get users that can be assigned feedback
+    private async void moduleSelected(ChangeEventArgs e)
+    {
+
+        // Get users
+
+        moduleID = int.Parse(e.Value?.ToString());
+
+        getAssignableUsers();
+
+
+    }
+
     // getModules (get modules user in / can access)
 
-    private async void GetModules() {
+    private async Task GetModules() {
 
-        //#TODO get modules by UserModule
+        //#TODO get modules user is in
 
-        // Call API
-            // returns Module
-        FeedbackTrackerCommon.Definitions.Modules? mod1 = await new ModuleAPI("http://localhost:5189").GetModuleByID(1);
-        FeedbackTrackerCommon.Definitions.Modules? mod2 = await new ModuleAPI("http://localhost:5189").GetModuleByID(2);
+        List<FeedbackTrackerCommon.Definitions.Modules?>? newmodules = await UserCLient.GetModules(assignee.UserID);
 
-        // if a module is returned
-        if(mod1 != null && mod2 != null){
-            // replace modules variable with retrieved modules
-            modules = [mod1,mod2];
-        }
+        if(newmodules != null){
+            try
+            {
+                modules = newmodules;
+                moduleID = modules.First().ModuleID;
+            }
+            catch{}
+    }
 
+        getAssignableUsers();
         // refresh ui with new data
         StateHasChanged();
     }
@@ -197,7 +213,15 @@
     }
 
     public Feedback(){
-        GetModules();
-        getAssignableUsers();
+
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        
+        if (JAuth.IsAuthorised())
+        {   
+            await GetModules();
+        }
     }
 }

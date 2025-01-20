@@ -14,11 +14,13 @@ public class Program
 		builder.Services.AddRazorComponents()
 			.AddInteractiveServerComponents();
 			
-		builder.Services.AddSingleton<FeedbackAPI>(sp => 
-            new FeedbackAPI("http://localhost:5189"));
-		builder.Services.AddSingleton<UserAPI>(sp =>
-			new UserAPI("http://localhost:5189"));
-		builder.Services.AddScoped<JAuth>();
+			builder.Services.AddSingleton<FeedbackApiClient>(sp => 
+                new FeedbackApiClient("http://localhost:5189"));
+			builder.Services.AddSingleton<UserAPI>(sp =>
+				new UserAPI("http://localhost:5189"));
+        builder.Services.AddSingleton<ModuleAPI>(sp =>
+    new ModuleAPI("http://localhost:5189"));
+        builder.Services.AddScoped<JAuth>();
 
 		builder.Services.AddSingleton<UserAPI>(sp =>
 		new UserAPI("http://localhost:5189"));
