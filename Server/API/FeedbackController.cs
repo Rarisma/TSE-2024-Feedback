@@ -136,7 +136,7 @@ public class FeedbackController : Controller
 	/// </summary>
 	/// <param name="ExtensionObject"></param>
 	/// <returns></returns>
-	[HttpPost("PostExtension")]
+	[HttpPost("Extension")]
 	public IActionResult ExtensionPost([FromBody] Extension? ExtensionObject)
 	{
         try
@@ -167,7 +167,7 @@ public class FeedbackController : Controller
     /// </summary>
     /// <param name="FeedbackID">Feedback ID</param>
     /// <returns>Gets comments</returns>
-    [HttpGet("GetExtension")]
+    [HttpGet("Extension")]
     public string ExtensionsGet(int FeedbackID)
     {
         try
@@ -190,7 +190,7 @@ public class FeedbackController : Controller
     /// </summary>
     /// <param name="Feedback">Feedback</param>
     /// <returns>Gets comments</returns>
-    [HttpPut("PutFeedback")]
+    [HttpPut("Feedback")]
     public IActionResult FeedbackPut([FromBody]Feedback? Feedback)
     {
         try
@@ -225,7 +225,7 @@ public class FeedbackController : Controller
     /// </summary>
     /// <param name="extension">extension</param>
     /// <returns>Gets comments</returns>
-    [HttpPut("PutExtension")]
+    [HttpPut("Extension")]
     public IActionResult ExtensionPut([FromBody] Extension extension)
     {
         try

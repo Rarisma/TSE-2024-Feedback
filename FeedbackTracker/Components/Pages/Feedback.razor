@@ -207,7 +207,7 @@
         //Console.WriteLine(fb.Title); // log
 
         // call api createfeedback
-        string apiFeedback = await new FeedbackAPI("http://localhost:5189").CreateFeedback(fb);
+        string apiFeedback = await new FeedbackAPI().CreateFeedback(fb);
 
         //Console.WriteLine(apiFeedback); // log
     }

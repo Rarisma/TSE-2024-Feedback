@@ -46,7 +46,7 @@
     {
         try
         {
-            var apiClient = new FeedbackAPI("http://localhost:7128");
+            var apiClient = new FeedbackAPI();
             var feedbackList = await apiClient.GetAssignedFeedbacks(JAuth.User.UserID);
 
             if (feedbackList != null && feedbackList.Any())
