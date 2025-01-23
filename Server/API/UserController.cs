@@ -1,8 +1,14 @@
-﻿using System.ComponentModel;
+﻿using System.Collections;
+using System.ComponentModel;
 using System.Reflection;
+using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Text;
 using System.Text.Json;
 using FeedbackTrackerCommon.Definitions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using OtpNet;
 
 namespace Server.API;
 [ApiController]
@@ -79,9 +85,9 @@ public class UserController : Controller
 
 
 			//Add user to database
-			using TrackerContext Ctx = new();
+			await using TrackerContext Ctx = new();
 			Ctx.user.Add(Account);
-			Ctx.SaveChanges();
+			await Ctx.SaveChangesAsync();
 			await Ctx.DisposeAsync();
 		}
 		catch (Exception ex) {  }
@@ -98,8 +104,6 @@ public class UserController : Controller
 	{
 		return _authService.AuthenticateUserAsync(Username, Password);
 	}
-
-
 
 	[HttpGet("GetUsers")]
 	public Task<string> GetUsers()
@@ -122,10 +126,9 @@ public class UserController : Controller
 
 
 	/// <summary>
-	/// Creates a new user object.
+	/// Gets modules for user
 	/// </summary>
-	/// <param name="Username">Account username</param>
-	/// <param name="Password">Account password (in plaintext)</param>
+	/// <param name="Userid">Account ID</param>
 	/// <returns></returns>
 	[HttpGet("GetModules")]
 	public string GetModules(int Userid)
@@ -151,4 +154,21 @@ public class UserController : Controller
 		catch (Exception ex) { return "Encountered an error: " + ex.Message; }
 	}
 
+	[HttpGet("CreateTOTPKey")]
+	public string CreateTOTPKey()
+	{
+		var secret  = KeyGeneration.GenerateRandomKey(20);
+		string base32Secret = Base32Encoding.ToString(secret);
+		return base32Secret;
+
+	}
+
+	[HttpGet("VerifyTOTPKey")]
+	public bool VerifyTOTPKey(string Secret, string Code)
+	{
+		var base32Bytes = Base32Encoding.ToBytes(Secret);
+		var totp = new Totp(base32Bytes, mode: OtpHashMode.Sha1);
+		string Verify = totp.ComputeTotp();
+		return Code == Verify;
+	}
 }

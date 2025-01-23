@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-
 namespace Server;
 
 public class AuthService 
@@ -22,12 +21,16 @@ public class AuthService
 	public async Task<string> AuthenticateUserAsync(string Username, string password)
 	{
 		User? user = await _context.user.FirstOrDefaultAsync(u => u.Username == Username);
-		if (user == null) {return null;} 
+		if (user == null) { return null; } 
 
 		// Verify password
 		bool isPasswordValid = BCrypt.Net.BCrypt.Verify(password, user.Password);
 		if (!isPasswordValid)
-			return null; // Invalid password
+			return null; // Invalid password|
+
+		//Update login time.
+		user.LastLogin = DateTime.Now;
+		_context.user.Update(user);
 
 		// Generate JWT token
 		string token = GenerateJwtToken(user);

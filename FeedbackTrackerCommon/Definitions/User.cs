@@ -35,4 +35,8 @@ public class User
 	/// </summary>
 	[Column("ISTEACHER")]
 	public bool IsTeacher { get; set; }
+
+
+	[Column("LASTLOGIN")]
+	public DateTime LastLogin { get; set; }
 }
