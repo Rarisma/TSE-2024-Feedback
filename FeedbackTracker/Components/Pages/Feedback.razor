@@ -1,6 +1,7 @@
 @page "/feedback"
+@using Application.API
 @rendermode InteractiveServer
-@inject FeedbackApiClient FeedbackCLient
+@inject FeedbackAPI FeedbackCLient
 @inject JAuth JAuth
 @inject ModuleAPI ModuleClient
 @inject UserAPI UserCLient
@@ -206,7 +207,7 @@
         //Console.WriteLine(fb.Title); // log
 
         // call api createfeedback
-        string apiFeedback = await new FeedbackApiClient("http://localhost:5189").CreateFeedback(fb);
+        string apiFeedback = await new FeedbackAPI().CreateFeedback(fb);
 
         //Console.WriteLine(apiFeedback); // log
     }
