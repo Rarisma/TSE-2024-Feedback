@@ -67,3 +67,9 @@ input.form-control {
     margin: 30px 0;
     letter-spacing: 1px;
 }
+
+.logo-icon {
+    width: 100px;
+    height: auto;
+    margin-right: 30px;
+}
