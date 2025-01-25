@@ -5,91 +5,117 @@
 @inject JAuth JAuth
 @inject ModuleAPI ModuleClient
 @inject UserAPI UserCLient
+@inject NavigationManager NavigationManager
 
-<PageTitle>Feedback Page</PageTitle>
-<div class="card justify-content-center">
-    <div class="card-header">
-        <h1 class="card-title text-center">Creating as user: @assignee.Username - Feedback form</h1>
-    </div>
-    <!-- Feedback form -->
-    <div class="card-body">
-        <form class="create-form">
+<title>TSE Feedback: Create Feedback </title>
 
-            <!--Name-->
-            <div class="mb-3">
-                <label for="title">Feedback Name:</label>
-                <input id="title" type="text" @bind="title" placeholder="What is the Feedback Name" class="form-control" />
-            </div>
+@if (JAuth.IsAuthorised()) {
+    <PageTitle>Feedback Page</PageTitle>
+    <div class="card justify-content-center">
+        <div class="card-header">
+            <h1 class="card-title text-center">Creating as user: @assignee.Username - Feedback form</h1>
+        </div>
+        <!-- Feedback form -->
+        <div class="card-body">
+            <form class="create-form">
 
-            <!--Text-->
-            <div class="mb-3">
-                <label for="text">Feedback Text:</label>
-                <textarea id="text" type="text" @bind="text" placeholder="Write your feedback here" class="form-control" />
-            </div>
-            <!--module-->
-            <div class="mb-3">
-                <label for="module">Feedback module:</label>
-                <select id="module" @onchange="moduleSelected">
-                    <!-- add each module to select options-->
-                    @if (modules.Count > 0)
-                    {
-                        for (int i = 0; i < modules.Count; i++)
+                <!--Name-->
+                <div class="mb-3">
+                    <label for="title">Feedback Name:</label>
+                    <input id="title" type="text" @bind="title" placeholder="What is the Feedback Name" class="form-control" />
+                </div>
+
+                <!--Text-->
+                <div class="mb-3">
+                    <label for="text">Feedback Text:</label>
+                    <textarea id="text" type="text" @bind="text" placeholder="Write your feedback here" class="form-control" />
+                </div>
+                <!--module-->
+                <div class="mb-3">
+                    <label for="module">Feedback module:</label>
+                    <select id="module" @onchange="moduleSelected">
+                        <!-- add each module to select options-->
+                        @if (modules.Count > 0)
                         {
-                            <option value="@modules[i].ModuleID">@modules[i].Module</option>
+                            for (int i = 0; i < modules.Count; i++)
+                            {
+                                <option value="@modules[i].ModuleID">@modules[i].Module</option>
+                            }
                         }
-                    }
-                    else
-                    {
-                        <option value="">No modules</option>
-                    }
-
-
-                </select>
-            </div>
-
-            <!--Assign-->
-            <div class="mb-3">
-                <label for="assign">Asign to user in module:</label>
-                <select id="assign" @bind=assignedUserID>
-
-                    <!-- add each user to select options-->
-                    @if (users.Count > 0)
-                    {
-                        for (int i = 0; i < users.Count; i++)
+                        else
                         {
-                            <option value="@users[i].UserID">@users[i].Username</option>
+                            <option value="">No modules</option>
                         }
-                    }
-                    else
-                    {
-                        <option value="">No users</option>
-                    }
-
-                </select>
-            </div>
-
-            <div class="mb-3">
-            </div>
 
 
-            <!--Deadline-->
-            <div class="mb-3">
-                <label for="deadline">Deadline:</label>
-                <input id="deadline" type="date" @bind="deadline" min="@DateTime.Now" />
-            </div>
+                    </select>
+                </div>
 
-            <div class="mb-3">
-                <button class="btn btn-primary mt-2" @onclick="Sendfeedback">send feedback</button>
-            </div>
-        </form>
+                <!--Assign-->
+                <div class="mb-3">
+                    <label for="assign">Asign to user in module:</label>
+                    <select id="assign" @bind=assignedUserID>
+
+                        <!-- add each user to select options-->
+                        @if (users.Count > 0)
+                        {
+                            for (int i = 0; i < users.Count; i++)
+                            {
+                                <option value="@users[i].UserID">@users[i].Username</option>
+                            }
+                        }
+                        else
+                        {
+                            <option value="">No users</option>
+                        }
+
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                </div>
+
+
+                <!--Deadline-->
+                <div class="mb-3">
+                    <label for="deadline">Deadline:</label>
+                    <input id="deadline" type="date" @bind="deadline" min="@DateTime.Now" />
+                </div>
+
+                <div class="mb-3">
+                    <button class="btn btn-primary mt-2" @onclick="Sendfeedback">send feedback</button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+}
+
+//For users that aren't logged in
+else
+{
+    <style>
+        body {
+            overflow: hidden;
+        }
+    </style>
+    <div class="loggedout">
+        <div class="loggedout-msg">
+            <img src="/Images/LoginCone.png" alt="Login Required" class="cone-img">
+            <h3>Please log in to create feedback.</h3>
+            <button class="btn btn-loggedout" @onclick=HomeButton>Return Home</button>
+        </div>
     </div>
 
-</div>
 
-
-
+}
 
 @code {
+    //Goes back to the login page
+    private void HomeButton()
+    {
+        NavigationManager.NavigateTo("/LogIn");
+    }
 
     // name
     private string title = string.Empty;
