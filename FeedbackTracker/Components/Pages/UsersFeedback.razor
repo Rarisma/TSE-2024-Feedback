@@ -1,17 +1,62 @@
 ﻿@page "/usersfeedback"
+@rendermode InteractiveServer
 @using FeedbackTrackerCommon.Definitions
 @using Application
 @inject FeedbackApiClient FeedbackClientAccess
+@inject UserAPI UserClientAccess
 
 @{
-    <center><h1>Your Feedback</h1></center>
-    @if (SelectedFeedbacks != null)
+    <div class="title-box">
+        <center><h1><strong>Your Feedback</strong></h1></center>
+    </div>
+
+    <div class="sort-container">
+        <div class="sort-box">
+            <label for="teachername">Sort By Teacher:</label>
+            <select id="teachername" @onchange="SortByTeacher">
+                <option value="all">Show All</option>
+                @if (Teachers != null)
+                {
+                    foreach (var teacher in Teachers)
+                    {
+                        <option value="@teacher.UserID">@teacher.Username</option>
+                    }
+                }
+                else
+                {
+                    <option value="">No Assignments</option>
+                }
+            </select>
+        </div>
+
+        <div class="sort-box">
+            <label for="sorting">Sort By:</label>
+            <select id="sorting" @onchange="SortBySelected">
+                <option value="az">A-Z</option>
+                <option value="za">Z-A</option>
+                <option value="deadline">Deadline</option>
+                <option value="priority">Priority</option>
+            </select>
+        </div>
+    </div>
+
+    @if (SpecificFeedbacks != null)
     {
-        foreach (var feedback in SelectedFeedbacks)
+        foreach (var feedback in SpecificFeedbacks)
         {
-            <p><strong>Title:</strong> @feedback.Title</p
-            <p><strong>Description:</strong> @feedback.FeedbackText</p>
-            <NavLink class="btn btn-primary" href="@($"/viewfeedback/{feedback.FeedbackID}")">View</NavLink>
+            <NavLink class="feedback-box" href="@($"/viewfeedback/{feedback.FeedbackID}")">
+                <p>@feedback.Title</p>
+                @foreach (var teacher in Teachers)
+                {
+                    if (teacher.UserID == feedback.AssigneeID)
+                    {
+                        <p><strong>@teacher.Username</strong></p>
+                    }
+                }
+                <p>@feedback.FeedbackText</p>
+                <p><strong>Due For: @feedback.Deadline</strong></p>
+                <p><strong>PRIORITY LEVEL: @feedback.Priority</strong></p>
+            </NavLink>
         }
     }
     else
@@ -20,24 +65,157 @@
     }
 }
 
-@code {
-    private List<FeedbackTrackerCommon.Definitions.Feedback> SelectedFeedbacks;
+<style>
 
-    private async Task LoadAllFeedback(int ID)
+    .title-box
     {
-        var feedbacks = await FeedbackClientAccess.GetAssignedFeedbacks(ID);
-        if (feedbacks != null)
+        background-color: #1f1f1f;
+        color: white;
+        width: 100%;
+        padding: 32px;
+        text-align: center;
+    }
+
+    .sort-container {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .sort-box
+    {
+        background-color: #1f1f1f;
+        border-style: solid;
+        border-color: #1f1f1f;
+        border-radius: 8px;
+        width: 300px;
+        padding: 16px;
+        margin: 16px;
+        text-align: center;
+        color: white;
+    }
+
+    .feedback-box 
+    {
+        position: center;
+        display: block;
+        background-color: #EBF0F5;
+        border-style: solid;
+        border-color: black;
+        border-radius: 8px;
+        width: 300px;
+        padding: 16px;
+        margin-top: 16px;
+        margin-bottom: 16px;
+        margin-left: 185px;
+        text-align: center;
+        color: black;
+        text-decoration: none;
+    }
+
+    .feedback-box:hover 
+    {
+        transform: translateY(-2px);
+    }
+</style>
+
+@code {
+    private List<FeedbackTrackerCommon.Definitions.Feedback> AllFeedbacks;
+
+    private List<FeedbackTrackerCommon.Definitions.Feedback> SpecificFeedbacks;
+
+    private List<FeedbackTrackerCommon.Definitions.User> Teachers = new List<FeedbackTrackerCommon.Definitions.User>();
+
+    private string SelectedOption { get; set; } = "";
+
+    private string SelectedTeacherID { get; set; } = "";
+
+    private void SortBySelected(ChangeEventArgs e)
+    {
+        SelectedOption = e.Value?.ToString();
+
+        if (SelectedOption == "az")
         {
-            SelectedFeedbacks = feedbacks;
+            SpecificFeedbacks.Sort((x, y) => x.Title.CompareTo(y.Title));
+        }
+
+        else if (SelectedOption == "za")
+        {
+            SpecificFeedbacks.Sort((x, y) => y.Title.CompareTo(x.Title));
+        }
+
+        else if (SelectedOption == "deadline")
+        {
+            SpecificFeedbacks.Sort((x, y) => x.Deadline.CompareTo(y.Deadline));
+        }
+
+        else if (SelectedOption == "priority")
+        {
+            SpecificFeedbacks.Sort((x, y) => x.Priority.CompareTo(y.Priority));
+        }
+    }
+
+    private void SortByTeacher(ChangeEventArgs e)
+    {
+        SelectedTeacherID = e.Value.ToString();
+        if (SelectedTeacherID == "all")
+        {
+            SpecificFeedbacks = new List<FeedbackTrackerCommon.Definitions.Feedback>(AllFeedbacks);
         }
         else
         {
+            SpecificFeedbacks.Clear();
+            foreach (var feedback in AllFeedbacks)
+            {
+                if (int.Parse(SelectedTeacherID) == feedback.AssigneeID)
+                {
+                    SpecificFeedbacks.Add(feedback);
+                }
+            }
+        }
+    }
+
+
+    private async Task LoadAllFeedback(int ID)
+    {
+        try
+        {
+            var feedbacks = await FeedbackClientAccess.GetAssignedFeedbacks(ID);
+            AllFeedbacks = feedbacks;
+            SpecificFeedbacks = new List<FeedbackTrackerCommon.Definitions.Feedback>(feedbacks);
+
+        }
+        catch (Exception ex)
+        {
             Console.WriteLine("Failed to load feedback.");
+        }
+
+        StateHasChanged();
+    }
+
+    private async Task LoadTeachers()
+    {
+        Teachers.Clear();
+        foreach (var feedback in AllFeedbacks)
+        {
+            if (!Teachers.Any(teach => teach.UserID == feedback.AssigneeID))
+            {
+                var user = await UserClientAccess.GetUserByID(feedback.AssigneeID);
+                if (user != null)
+                {
+                    Teachers.Add(user);
+                }
+                else
+                {
+                    Console.WriteLine("Failed to load teacher.");
+                }
+            }
         }
     }
 
     protected override async Task OnInitializedAsync()
     {
         await LoadAllFeedback(JAuth.User.UserID);
+        await LoadTeachers();
     }
 }

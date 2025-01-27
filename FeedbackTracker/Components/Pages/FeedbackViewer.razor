@@ -238,20 +238,6 @@
 	///  logged user
 	/// </summary>
 	/// <returns>Task - user</returns>
-	private async Task LoadUser()
-	{
-		var user = await UserClientAccess.GetUserByID(3);
-
-		if (user != null)
-		{
-			loggedUser = user;
-		}
-		else
-		{
-			Console.WriteLine("Failed to load user.");
-		}
-
-	}
 
     private async Task LoadComments(int ID)
     {

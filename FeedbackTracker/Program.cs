@@ -17,7 +17,7 @@ public class Program
 			builder.Services.AddSingleton<UserAPI>(sp =>
 				new UserAPI("http://localhost:5189"));
         builder.Services.AddSingleton<ModuleAPI>(sp =>
-    new ModuleAPI("http://localhost:5189"));
+				new ModuleAPI("http://localhost:5189"));
         builder.Services.AddScoped<JAuth>();
 
 
