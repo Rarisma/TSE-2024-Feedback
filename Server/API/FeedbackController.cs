@@ -1,8 +1,7 @@
 ﻿using System.Text.Json;
-using System.Text.Json.Serialization;
 using FeedbackTrackerCommon.Definitions;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration.UserSecrets;
+using Serilog;
 
 namespace Server.API;
 [Route("Feedback")]
@@ -21,7 +20,7 @@ public class FeedbackController : Controller
 
 			//Find feedbacks for account
 			using TrackerContext Ctx = new();
-			List<Feedback> Feedback = Ctx.feedback
+			List<Feedback> Feedback = Ctx.Feedback
 				.Where(f => f.AssignedUserID == UserID 
 				|| f.AssignedUserID  == UserID).ToList();
 
@@ -43,10 +42,10 @@ public class FeedbackController : Controller
 		{
 			//Find feedback
 			using TrackerContext Ctx = new();
-			Feedback Feedback = Ctx.feedback.First(f => f.FeedbackID == FeedbackID);
+			Feedback Feedback = Ctx.Feedback.First(f => f.FeedbackID == FeedbackID);
 
 			//Serialise to JSON
-			return JsonSerializer.Serialize(Feedback); ;
+			return JsonSerializer.Serialize(Feedback);
 		}
 		catch (Exception ex) { return "Encountered an error: " + ex.Message; }
 	}
@@ -71,13 +70,10 @@ public class FeedbackController : Controller
 				return "Invalid feedback object";
 			}
 			
-			//Add user to database
+			//Add user to database, and save.
 			using TrackerContext Ctx = new();
-
-            Ctx.feedback.Add(Feedback);
-
+            Ctx.Feedback.Add(Feedback);
             Ctx.SaveChanges();
-
 
 			return "Feedback created successfully";
 		}
@@ -107,8 +103,8 @@ public class FeedbackController : Controller
 		using TrackerContext ctx = new();
 
 		//Delete feedback
-		var Feedback = ctx.feedback.First(f => f.FeedbackID == FeedbackID);
-		ctx.feedback.Remove(Feedback);
+		var Feedback = ctx.Feedback.First(f => f.FeedbackID == FeedbackID);
+		ctx.Feedback.Remove(Feedback);
 	}
 
 	/// <summary>
@@ -123,7 +119,7 @@ public class FeedbackController : Controller
 		{
 			using TrackerContext ctx = new();
 			//Find all comments for the feedback
-			List<FeedbackComments> comments = ctx.feedback_comments
+			List<FeedbackComments> comments = ctx.FeedbackComments
 				.Where(comment => comment.FeedbackID == FeedbackID).ToList();
 				
 			return JsonSerializer.Serialize(comments);
@@ -138,36 +134,31 @@ public class FeedbackController : Controller
 	/// <summary>
 	/// create extension
 	/// </summary>
-	/// <param name="extensionobject"></param>
+	/// <param name="ExtensionObject"></param>
 	/// <returns></returns>
 	[HttpPost("Extension")]
-	public string ExtensionPost([FromBody] Extension extensionobject)
+	public IActionResult ExtensionPost([FromBody] Extension? ExtensionObject)
 	{
         try
         {
-            //Deserialize
-            /*
-			Feedback? Feedback = JsonSerializer.Deserialize<Feedback>(FeedbackObject);
-			*/
-            Extension? extension = extensionobject;
+            Extension? extension = ExtensionObject;
             if (extension == null)
             {
-                return "Invalid extension object";
+	            return StatusCode(400);
             }
 
             //Add user to database
             using TrackerContext Ctx = new();
-
-            Ctx.extension.Add(extension);
-			
+            Ctx.Extension.Add(extension);
             Ctx.SaveChanges();
 
 
-            return "extension created successfully";
-        }
+            return StatusCode(200);
+		}
         catch (Exception ex)
         {
-            return " : Encountered an error: " + ex.Message;
+			Log.Error(ex, "Failed to post extension correctly.");
+	        return StatusCode(500);
         }
     }
 
@@ -183,7 +174,7 @@ public class FeedbackController : Controller
         {
             using TrackerContext ctx = new();
 			//Find all comments for the feedback
-			List<Extension> extensions = ctx.extension
+			List<Extension> extensions = ctx.Extension
                 .Where(extension => extension.FeedbackId == FeedbackID).ToList();
 
             return JsonSerializer.Serialize(extensions);
@@ -200,32 +191,34 @@ public class FeedbackController : Controller
     /// <param name="Feedback">Feedback</param>
     /// <returns>Gets comments</returns>
     [HttpPut("Feedback")]
-    public string FeedbackPut([FromBody]Feedback feedback)
+    public IActionResult FeedbackPut([FromBody]Feedback? Feedback)
     {
         try
         {
-            using TrackerContext ctx = new();
+			//Check for null/invalid object.
+			if (Feedback == null) { return StatusCode(400); }
+
 			//get feedback
-			var fb = ctx.feedback.Single(feedbackid => feedbackid.FeedbackID == feedback.FeedbackID);
+			using TrackerContext ctx = new();
+			Feedback? fb = ctx.Feedback.SingleOrDefault(fb => fb.FeedbackID == Feedback.FeedbackID);
 			
 			if (fb != null)
 			{
 				// set feedback to new values
-                ctx.Entry(fb).CurrentValues.SetValues(feedback);
-				//save
+                ctx.Entry(fb).CurrentValues.SetValues(Feedback);
+				//save, return success
 				ctx.SaveChanges();
-            }
-			else
-			{
-				return "no feedback found";
+				return StatusCode(200);
 			}
-            return "feedback updated success";
-        }
-        catch (Exception e)
+			//Not found, return 404.
+			return StatusCode(404);
+		}
+		catch (Exception e)
         {
-            return "Encountered an error: " + e.Message;
+			Log.Error(e, "failed to update the ");
+	        return StatusCode(500);
         }
-    }
+	}
 
     /// <summary>
     /// update extension
@@ -233,31 +226,30 @@ public class FeedbackController : Controller
     /// <param name="extension">extension</param>
     /// <returns>Gets comments</returns>
     [HttpPut("Extension")]
-    public string ExtensionPut([FromBody] Extension extension)
+    public IActionResult ExtensionPut([FromBody] Extension extension)
     {
         try
         {
+			//Get feedback
             using TrackerContext ctx = new();
-            //get feedback
-            var ext = ctx.extension.Single(ex => ex.ExtensionId == extension.ExtensionId);
+            var ext = ctx.Extension.SingleOrDefault(ex => ex.ExtensionId == extension.ExtensionId);
 
             if (ext != null)
             {
                 // set feedback to new values
                 ctx.Entry(ext).CurrentValues.SetValues(extension);
-                //save
+                //save, return success code.
                 ctx.SaveChanges();
-            }
-            else
-            {
-                return "no extension found";
-            }
+                return StatusCode(200);
+			}
 
-            return "extension updated success";
+			//Extension invalid/not found, return 400
+			return StatusCode(400);
         }
-        catch (Exception e)
+		catch (Exception ex)
         {
-            return "Encountered an error: " + e.Message;
+			Log.Error(ex, "Failed to put extension correctly");
+	        return StatusCode(500);
         }
-    }
+	}
 }

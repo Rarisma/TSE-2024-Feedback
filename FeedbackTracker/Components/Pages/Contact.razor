@@ -1,0 +1,42 @@
+﻿@page "/contact"
+
+<title>TSE Feedback: Contact Us </title>
+<h3>Get In Touch!</h3>
+
+<div class="contact-grid">
+    <div class="contact-page">
+        <!--
+        Using Formspree
+        This feedback form allows users to submit messages, for our porject it'll most likely be bug reports from testers. All messages are forwarded to this account:
+
+        GMAIL
+        Email: tsecontactform@gmail.com
+        Password: UniversityOfLincoln2025#
+
+        -->
+        <form method="POST" action="https://formspree.io/f/xzzdzzlj">
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" required placeholder="Enter your name" />
+
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required placeholder="Enter your email address" />
+
+            <label for="message">Message</label>
+            <textarea id="message" name="message" required placeholder="Enter your message" maxlength="3000"></textarea>
+
+            <button type="submit" class="btn btn-primary">Submit Message</button>
+        </form>
+</div>
+
+<!-- 2nd and 3rd containers -->
+    <div class="info-cards">
+        <h2>Report Bugs</h2>
+        <p>Please fill out the form to submit a message. We aim to get back as soon as possible.</p>
+        <p>We appreciate any feedback as well as improvement suggestions</p>
+    </div>
+
+    <div class="info-cards">
+        <h2>How To Use</h2>
+        <p>(To complete as the program is further developed)</p>
+    </div>
+</div>

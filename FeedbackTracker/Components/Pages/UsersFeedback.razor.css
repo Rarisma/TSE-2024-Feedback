@@ -1,0 +1,37 @@
+﻿/* Page Layout */
+
+/* FOR USERS NOT LOGGED IN */
+
+.loggedout {
+    display: block;
+}
+
+.cone-img {
+    display: block;
+    margin: 100px auto 15px;
+    height: auto;
+    max-width: 70%;
+}
+
+.btn.btn-loggedout {
+    background-color: #1B6EC2;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    display: block;
+    margin: 50px auto 15px;
+    width: auto;
+    max-width: 350px;
+}
+
+    .btn.btn-loggedout:hover {
+        background-color: #0B5ED7;
+    }
+
+.loggedout-msg h3 {
+    text-align: center;
+    margin: 0 auto 15px;
+}

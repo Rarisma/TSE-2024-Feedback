@@ -1,8 +1,7 @@
-
 @rendermode InteractiveServer
 @inject JAuth JAuth
+@using Application.API
 @using FeedbackTrackerCommon.Definitions
-@using Application
 <PageTitle>Feedback Tracking Tool</PageTitle>
 
 <div>
@@ -60,9 +59,9 @@
 	protected override async Task OnInitializedAsync()	{
 		JAuth.EnforceAuth();        
         
-        await LoadUser();
+        //await LoadUser();
 
-        await LoadFeedback();
+        //await LoadFeedback();
 	}
     private string currentTab = "total";
 
@@ -105,7 +104,7 @@
     {
         try
         {
-            var apiClient = new FeedbackApiClient("http://localhost:7128");
+            var apiClient = new FeedbackAPI("http://localhost:7128");
             var feedbackList = await apiClient.GetAssignedFeedbacks(user.UserID);
 
             if (feedbackList != null && feedbackList.Any())

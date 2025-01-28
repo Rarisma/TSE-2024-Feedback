@@ -1,0 +1,1012 @@
+2025-01-20 09:13:05.388 +00:00 [INF] User profile is available. Using 'C:\Users\RARI\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-01-20 09:13:09.120 +00:00 [INF] Now listening on: https://localhost:7128
+2025-01-20 09:13:09.121 +00:00 [INF] Now listening on: http://localhost:5062
+2025-01-20 09:13:09.127 +00:00 [INF] No action descriptors found. This may indicate an incorrectly configured application or missing application parts. To learn more, visit https://aka.ms/aspnet/mvc/app-parts
+2025-01-20 09:13:09.154 +00:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-01-20 09:13:09.155 +00:00 [INF] Hosting environment: Development
+2025-01-20 09:13:09.155 +00:00 [INF] Content root path: C:\Users\RARI\Documents\Repos\University Work\TSE-2024-Feedback\FeedbackTracker
+2025-01-20 09:13:09.830 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/ - null null
+2025-01-20 09:13:10.737 +00:00 [INF] Executing endpoint '/ (/)'
+2025-01-20 09:13:11.117 +00:00 [INF] Checking user information...
+2025-01-20 09:13:11.119 +00:00 [INF] User unauthorised.
+2025-01-20 09:13:11.156 +00:00 [ERR] Error enforcing authentication
+Microsoft.AspNetCore.Components.NavigationException: Exception of type 'Microsoft.AspNetCore.Components.NavigationException' was thrown.
+   at Microsoft.AspNetCore.Components.Server.Circuits.RemoteNavigationManager.NavigateToCore(String uri, NavigationOptions options)
+   at Microsoft.AspNetCore.Components.NavigationManager.NavigateToCore(String uri, Boolean forceLoad)
+   at Microsoft.AspNetCore.Components.NavigationManager.NavigateTo(String uri, Boolean forceLoad, Boolean replace)
+   at Application.JAuth.EnforceAuth() in C:\Users\RARI\Documents\Repos\University Work\TSE-2024-Feedback\FeedbackTracker\JAuth.cs:line 102
+2025-01-20 09:13:13.023 +00:00 [INF] Executed endpoint '/ (/)'
+2025-01-20 09:13:13.028 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/ - 302 null text/html; charset=utf-8 3200.7742ms
+2025-01-20 09:13:13.029 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/LogIn - null null
+2025-01-20 09:13:13.036 +00:00 [INF] Executing endpoint '/LogIn (/LogIn)'
+2025-01-20 09:13:13.862 +00:00 [INF] Executed endpoint '/LogIn (/LogIn)'
+2025-01-20 09:13:13.864 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/LogIn - 200 null text/html; charset=utf-8 835.2308ms
+2025-01-20 09:13:13.888 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/bootstrap/bootstrap.min.css - null null
+2025-01-20 09:13:13.888 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/app.css - null null
+2025-01-20 09:13:13.888 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/Application.styles.css - null null
+2025-01-20 09:13:13.888 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/Images/UniLogo.png - null null
+2025-01-20 09:13:13.888 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/_framework/blazor.web.js - null null
+2025-01-20 09:13:13.895 +00:00 [INF] Executing endpoint 'Blazor web static files'
+2025-01-20 09:13:13.936 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/_vs/browserLink - null null
+2025-01-20 09:13:13.937 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/_framework/aspnetcore-browser-refresh.js - null null
+2025-01-20 09:13:14.000 +00:00 [INF] Sending file. Request path: '/Application.styles.css'. Physical path: 'C:\Users\RARI\Documents\Repos\University Work\TSE-2024-Feedback\FeedbackTracker\obj\Debug\net9.0\scopedcss\bundle\Application.styles.css'
+2025-01-20 09:13:14.000 +00:00 [INF] Sending file. Request path: '/Images/UniLogo.png'. Physical path: 'C:\Users\RARI\Documents\Repos\University Work\TSE-2024-Feedback\FeedbackTracker\wwwroot\Images\UniLogo.png'
+2025-01-20 09:13:14.001 +00:00 [INF] Sending file. Request path: '/_framework/blazor.web.js'. Physical path: 'N/A'
+2025-01-20 09:13:14.000 +00:00 [INF] Sending file. Request path: '/app.css'. Physical path: 'C:\Users\RARI\Documents\Repos\University Work\TSE-2024-Feedback\FeedbackTracker\wwwroot\app.css'
+2025-01-20 09:13:14.003 +00:00 [INF] Sending file. Request path: '/bootstrap/bootstrap.min.css'. Physical path: 'C:\Users\RARI\Documents\Repos\University Work\TSE-2024-Feedback\FeedbackTracker\wwwroot\bootstrap\bootstrap.min.css'
+2025-01-20 09:13:14.003 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/_framework/aspnetcore-browser-refresh.js - 200 13758 application/javascript; charset=utf-8 67.2148ms
+2025-01-20 09:13:14.004 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/Images/UniLogo.png - 200 59784 image/png 115.7794ms
+2025-01-20 09:13:14.004 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/Application.styles.css - 200 5983 text/css 115.7958ms
+2025-01-20 09:13:14.005 +00:00 [INF] Executed endpoint 'Blazor web static files'
+2025-01-20 09:13:14.005 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/app.css - 200 3071 text/css 117.1141ms
+2025-01-20 09:13:14.006 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/bootstrap/bootstrap.min.css - 200 162720 text/css 118.1205ms
+2025-01-20 09:13:14.012 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/_framework/blazor.web.js - 200 187521 text/javascript 123.9712ms
+2025-01-20 09:13:14.033 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/_vs/browserLink - 200 null text/javascript; charset=UTF-8 97.3373ms
+2025-01-20 09:13:14.044 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/favicon.png - null null
+2025-01-20 09:13:14.046 +00:00 [INF] Sending file. Request path: '/favicon.png'. Physical path: 'C:\Users\RARI\Documents\Repos\University Work\TSE-2024-Feedback\FeedbackTracker\wwwroot\favicon.png'
+2025-01-20 09:13:14.047 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/favicon.png - 200 1148 image/png 2.8553ms
+2025-01-20 09:13:14.071 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/_blazor/initializers - null null
+2025-01-20 09:13:14.072 +00:00 [INF] Executing endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 09:13:14.075 +00:00 [INF] Executed endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 09:13:14.076 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/_blazor/initializers - 200 null application/json; charset=utf-8 4.9173ms
+2025-01-20 09:13:14.111 +00:00 [INF] Request starting HTTP/2 POST https://localhost:7128/_blazor/negotiate?negotiateVersion=1 - null 0
+2025-01-20 09:13:14.113 +00:00 [INF] Executing endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 09:13:14.122 +00:00 [INF] Executed endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 09:13:14.123 +00:00 [INF] Request finished HTTP/2 POST https://localhost:7128/_blazor/negotiate?negotiateVersion=1 - 200 316 application/json 11.9738ms
+2025-01-20 09:13:14.135 +00:00 [INF] Request starting HTTP/2 CONNECT https://localhost:7128/_blazor?id=FJAS4_06dDPFeBT4yjnC1Q - null null
+2025-01-20 09:13:14.137 +00:00 [INF] Executing endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 09:13:22.211 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/SignUp - null null
+2025-01-20 09:13:22.214 +00:00 [INF] Executing endpoint '/SignUp (/SignUp)'
+2025-01-20 09:13:22.220 +00:00 [INF] Executed endpoint '/SignUp (/SignUp)'
+2025-01-20 09:13:22.221 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/SignUp - 200 null text/html; charset=utf-8 9.4755ms
+2025-01-20 09:13:23.322 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/LogIn - null null
+2025-01-20 09:13:23.324 +00:00 [INF] Executing endpoint '/LogIn (/LogIn)'
+2025-01-20 09:13:23.326 +00:00 [INF] Executed endpoint '/LogIn (/LogIn)'
+2025-01-20 09:13:23.327 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/LogIn - 200 null text/html; charset=utf-8 5.2238ms
+2025-01-20 09:13:37.065 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/LogIn - null null
+2025-01-20 09:13:37.075 +00:00 [ERR] Authenticating user 123
+System.Net.Http.HttpRequestException: Response status code does not indicate success: 500 (Internal Server Error).
+   at System.Net.Http.HttpResponseMessage.EnsureSuccessStatusCode()
+   at Application.API.UserAPI.Authenticate(String Username, String Password)
+2025-01-20 09:13:37.077 +00:00 [INF] Executing endpoint '/LogIn (/LogIn)'
+2025-01-20 09:13:37.078 +00:00 [INF] Executed endpoint '/LogIn (/LogIn)'
+2025-01-20 09:13:37.079 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/LogIn - 200 null text/html; charset=utf-8 13.8769ms
+2025-01-20 09:13:40.701 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/ - null null
+2025-01-20 09:13:40.703 +00:00 [INF] Executing endpoint '/ (/)'
+2025-01-20 09:13:40.705 +00:00 [INF] Checking user information...
+2025-01-20 09:13:41.594 +00:00 [INF] User unauthorised.
+2025-01-20 09:13:41.618 +00:00 [ERR] Error enforcing authentication
+Microsoft.AspNetCore.Components.NavigationException: Exception of type 'Microsoft.AspNetCore.Components.NavigationException' was thrown.
+   at Microsoft.AspNetCore.Components.Server.Circuits.RemoteNavigationManager.NavigateToCore(String uri, NavigationOptions options)
+   at Microsoft.AspNetCore.Components.NavigationManager.NavigateToCore(String uri, Boolean forceLoad)
+   at Microsoft.AspNetCore.Components.NavigationManager.NavigateTo(String uri, Boolean forceLoad, Boolean replace)
+   at Application.JAuth.EnforceAuth()
+2025-01-20 09:13:45.378 +00:00 [INF] Executed endpoint '/ (/)'
+2025-01-20 09:13:45.381 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/ - 302 null text/html; charset=utf-8 4680.4021ms
+2025-01-20 09:13:45.383 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/LogIn - null null
+2025-01-20 09:13:45.418 +00:00 [INF] Executing endpoint '/LogIn (/LogIn)'
+2025-01-20 09:13:45.420 +00:00 [INF] Executed endpoint '/LogIn (/LogIn)'
+2025-01-20 09:13:45.421 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/LogIn - 200 null text/html; charset=utf-8 37.9255ms
+2025-01-20 09:13:46.274 +00:00 [ERR] Authenticating user 123
+System.Net.Http.HttpRequestException: Response status code does not indicate success: 500 (Internal Server Error).
+   at System.Net.Http.HttpResponseMessage.EnsureSuccessStatusCode()
+   at Application.API.UserAPI.Authenticate(String Username, String Password)
+2025-01-20 09:14:23.760 +00:00 [INF] User profile is available. Using 'C:\Users\RARI\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-01-20 09:14:24.125 +00:00 [INF] Now listening on: https://localhost:7128
+2025-01-20 09:14:24.127 +00:00 [INF] Now listening on: http://localhost:5062
+2025-01-20 09:14:24.135 +00:00 [INF] No action descriptors found. This may indicate an incorrectly configured application or missing application parts. To learn more, visit https://aka.ms/aspnet/mvc/app-parts
+2025-01-20 09:14:24.177 +00:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-01-20 09:14:24.179 +00:00 [INF] Hosting environment: Development
+2025-01-20 09:14:24.179 +00:00 [INF] Content root path: C:\Users\RARI\Documents\Repos\University Work\TSE-2024-Feedback\FeedbackTracker
+2025-01-20 09:14:24.968 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/ - null null
+2025-01-20 09:14:25.065 +00:00 [INF] Executing endpoint '/ (/)'
+2025-01-20 09:14:25.121 +00:00 [INF] Checking user information...
+2025-01-20 09:14:25.122 +00:00 [INF] User unauthorised.
+2025-01-20 09:14:25.159 +00:00 [ERR] Error enforcing authentication
+Microsoft.AspNetCore.Components.NavigationException: Exception of type 'Microsoft.AspNetCore.Components.NavigationException' was thrown.
+   at Microsoft.AspNetCore.Components.Server.Circuits.RemoteNavigationManager.NavigateToCore(String uri, NavigationOptions options)
+   at Microsoft.AspNetCore.Components.NavigationManager.NavigateToCore(String uri, Boolean forceLoad)
+   at Microsoft.AspNetCore.Components.NavigationManager.NavigateTo(String uri, Boolean forceLoad, Boolean replace)
+   at Application.JAuth.EnforceAuth() in C:\Users\RARI\Documents\Repos\University Work\TSE-2024-Feedback\FeedbackTracker\JAuth.cs:line 102
+2025-01-20 09:14:25.350 +00:00 [INF] Executed endpoint '/ (/)'
+2025-01-20 09:14:25.355 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/ - 302 null text/html; charset=utf-8 391.5746ms
+2025-01-20 09:14:25.358 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/LogIn - null null
+2025-01-20 09:14:25.365 +00:00 [INF] Executing endpoint '/LogIn (/LogIn)'
+2025-01-20 09:14:25.455 +00:00 [INF] Executed endpoint '/LogIn (/LogIn)'
+2025-01-20 09:14:25.457 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/LogIn - 200 null text/html; charset=utf-8 98.9321ms
+2025-01-20 09:14:25.477 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/_framework/blazor.web.js - null null
+2025-01-20 09:14:25.480 +00:00 [INF] Executing endpoint 'Blazor web static files'
+2025-01-20 09:14:25.484 +00:00 [INF] The file /_framework/blazor.web.js was not modified
+2025-01-20 09:14:25.486 +00:00 [INF] Executed endpoint 'Blazor web static files'
+2025-01-20 09:14:25.487 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/_framework/blazor.web.js - 304 null text/javascript 9.62ms
+2025-01-20 09:14:25.495 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/_framework/aspnetcore-browser-refresh.js - null null
+2025-01-20 09:14:25.495 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/_vs/browserLink - null null
+2025-01-20 09:14:25.500 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/_framework/aspnetcore-browser-refresh.js - 200 13758 application/javascript; charset=utf-8 5.3038ms
+2025-01-20 09:14:25.522 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/_vs/browserLink - 200 null text/javascript; charset=UTF-8 27.1246ms
+2025-01-20 09:14:25.546 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/_blazor/initializers - null null
+2025-01-20 09:14:25.549 +00:00 [INF] Executing endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 09:14:25.551 +00:00 [INF] Executed endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 09:14:25.552 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/_blazor/initializers - 200 null application/json; charset=utf-8 5.6933ms
+2025-01-20 09:14:25.558 +00:00 [INF] Request starting HTTP/2 POST https://localhost:7128/_blazor/negotiate?negotiateVersion=1 - null 0
+2025-01-20 09:14:25.560 +00:00 [INF] Executing endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 09:14:25.566 +00:00 [INF] Executed endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 09:14:25.567 +00:00 [INF] Request finished HTTP/2 POST https://localhost:7128/_blazor/negotiate?negotiateVersion=1 - 200 316 application/json 9.0274ms
+2025-01-20 09:14:25.572 +00:00 [INF] Request starting HTTP/2 CONNECT https://localhost:7128/_blazor?id=AFQP5jUjR4mNZOO4Z_hwwg - null null
+2025-01-20 09:14:25.573 +00:00 [INF] Executing endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 09:54:30.757 +00:00 [INF] User profile is available. Using 'C:\Users\RARI\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-01-20 09:54:31.023 +00:00 [INF] Now listening on: https://localhost:7128
+2025-01-20 09:54:31.024 +00:00 [INF] Now listening on: http://localhost:5062
+2025-01-20 09:54:31.031 +00:00 [INF] No action descriptors found. This may indicate an incorrectly configured application or missing application parts. To learn more, visit https://aka.ms/aspnet/mvc/app-parts
+2025-01-20 09:54:31.060 +00:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-01-20 09:54:31.060 +00:00 [INF] Hosting environment: Development
+2025-01-20 09:54:31.061 +00:00 [INF] Content root path: C:\Users\RARI\Documents\Repos\University Work\TSE-2024-Feedback\FeedbackTracker
+2025-01-20 09:54:31.740 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/ - null null
+2025-01-20 09:54:31.824 +00:00 [INF] Executing endpoint '/ (/)'
+2025-01-20 09:54:31.894 +00:00 [INF] Checking user information...
+2025-01-20 09:54:31.896 +00:00 [INF] User unauthorised.
+2025-01-20 09:54:31.930 +00:00 [ERR] Error enforcing authentication
+Microsoft.AspNetCore.Components.NavigationException: Exception of type 'Microsoft.AspNetCore.Components.NavigationException' was thrown.
+   at Microsoft.AspNetCore.Components.Server.Circuits.RemoteNavigationManager.NavigateToCore(String uri, NavigationOptions options)
+   at Microsoft.AspNetCore.Components.NavigationManager.NavigateToCore(String uri, Boolean forceLoad)
+   at Microsoft.AspNetCore.Components.NavigationManager.NavigateTo(String uri, Boolean forceLoad, Boolean replace)
+   at Application.JAuth.EnforceAuth() in C:\Users\RARI\Documents\Repos\University Work\TSE-2024-Feedback\FeedbackTracker\JAuth.cs:line 102
+2025-01-20 09:54:32.097 +00:00 [INF] Executed endpoint '/ (/)'
+2025-01-20 09:54:32.101 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/ - 302 null text/html; charset=utf-8 364.6129ms
+2025-01-20 09:54:32.104 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/LogIn - null null
+2025-01-20 09:54:32.109 +00:00 [INF] Executing endpoint '/LogIn (/LogIn)'
+2025-01-20 09:54:32.155 +00:00 [INF] Executed endpoint '/LogIn (/LogIn)'
+2025-01-20 09:54:32.156 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/LogIn - 200 null text/html; charset=utf-8 51.6154ms
+2025-01-20 09:54:32.194 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/_framework/aspnetcore-browser-refresh.js - null null
+2025-01-20 09:54:32.194 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/_framework/blazor.web.js - null null
+2025-01-20 09:54:32.194 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/_vs/browserLink - null null
+2025-01-20 09:54:32.198 +00:00 [INF] Executing endpoint 'Blazor web static files'
+2025-01-20 09:54:32.198 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/_framework/aspnetcore-browser-refresh.js - 200 13758 application/javascript; charset=utf-8 4.7394ms
+2025-01-20 09:54:32.205 +00:00 [INF] The file /_framework/blazor.web.js was not modified
+2025-01-20 09:54:32.206 +00:00 [INF] Executed endpoint 'Blazor web static files'
+2025-01-20 09:54:32.207 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/_framework/blazor.web.js - 304 null text/javascript 13.3945ms
+2025-01-20 09:54:32.219 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/_vs/browserLink - 200 null text/javascript; charset=UTF-8 25.7177ms
+2025-01-20 09:54:32.238 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/favicon.png - null null
+2025-01-20 09:54:32.302 +00:00 [INF] Sending file. Request path: '/favicon.png'. Physical path: 'C:\Users\RARI\Documents\Repos\University Work\TSE-2024-Feedback\FeedbackTracker\wwwroot\favicon.png'
+2025-01-20 09:54:32.303 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/favicon.png - 499 1148 image/png 65.8354ms
+2025-01-20 09:54:32.304 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/_blazor/initializers - null null
+2025-01-20 09:54:32.307 +00:00 [INF] Executing endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 09:54:32.309 +00:00 [INF] Executed endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 09:54:32.310 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/_blazor/initializers - 200 null application/json; charset=utf-8 5.5768ms
+2025-01-20 09:54:32.324 +00:00 [INF] Request starting HTTP/2 POST https://localhost:7128/_blazor/negotiate?negotiateVersion=1 - null 0
+2025-01-20 09:54:32.326 +00:00 [INF] Executing endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 09:54:32.332 +00:00 [INF] Executed endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 09:54:32.333 +00:00 [INF] Request finished HTTP/2 POST https://localhost:7128/_blazor/negotiate?negotiateVersion=1 - 200 316 application/json 9.2431ms
+2025-01-20 09:54:32.339 +00:00 [INF] Request starting HTTP/2 CONNECT https://localhost:7128/_blazor?id=iuYuIcnElAXs8CwGHiL0Vw - null null
+2025-01-20 09:54:32.340 +00:00 [INF] Executing endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 09:54:38.893 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/ - null null
+2025-01-20 09:54:38.896 +00:00 [INF] Executing endpoint '/ (/)'
+2025-01-20 09:54:38.898 +00:00 [INF] Checking user information...
+2025-01-20 09:54:38.899 +00:00 [INF] User authorised.
+2025-01-20 09:54:50.612 +00:00 [ERR] Exception Getting assigned feedbacks
+System.Net.Http.HttpRequestException: An error occurred while sending the request.
+ ---> System.Net.Http.HttpIOException: The response ended prematurely. (ResponseEnded)
+   at System.Net.Http.HttpConnection.SendAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   --- End of inner exception stack trace ---
+   at System.Net.Http.HttpConnection.SendAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.SendWithVersionDetectionAndRetryAsync(HttpRequestMessage request, Boolean async, Boolean doRequestAuth, CancellationToken cancellationToken)
+   at System.Net.Http.DiagnosticsHandler.SendAsyncCore(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.RedirectHandler.SendAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpClient.<SendAsync>g__Core|83_0(HttpRequestMessage request, HttpCompletionOption completionOption, CancellationTokenSource cts, Boolean disposeCts, CancellationTokenSource pendingRequestsCts, CancellationToken originalCancellationToken)
+   at Application.API.FeedbackAPI.GetAssignedFeedbacks(Int32 userID) in C:\Users\RARI\Documents\Repos\University Work\TSE-2024-Feedback\FeedbackTracker\API\FeedbackAPI.cs:line 21
+2025-01-20 09:54:50.621 +00:00 [INF] Executed endpoint '/ (/)'
+2025-01-20 09:54:50.623 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/ - 200 null text/html; charset=utf-8 11730.3669ms
+2025-01-20 09:54:51.649 +00:00 [INF] Checking user information...
+2025-01-20 09:54:51.650 +00:00 [INF] User authorised.
+2025-01-20 09:56:06.417 +00:00 [INF] User profile is available. Using 'C:\Users\RARI\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-01-20 09:56:06.729 +00:00 [INF] Now listening on: https://localhost:7128
+2025-01-20 09:56:06.731 +00:00 [INF] Now listening on: http://localhost:5062
+2025-01-20 09:56:06.868 +00:00 [INF] No action descriptors found. This may indicate an incorrectly configured application or missing application parts. To learn more, visit https://aka.ms/aspnet/mvc/app-parts
+2025-01-20 09:56:06.895 +00:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-01-20 09:56:06.896 +00:00 [INF] Hosting environment: Development
+2025-01-20 09:56:06.897 +00:00 [INF] Content root path: C:\Users\RARI\Documents\Repos\University Work\TSE-2024-Feedback\FeedbackTracker
+2025-01-20 09:56:07.377 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/ - null null
+2025-01-20 09:56:07.496 +00:00 [INF] Executing endpoint '/ (/)'
+2025-01-20 09:56:07.551 +00:00 [INF] Checking user information...
+2025-01-20 09:56:07.552 +00:00 [INF] User unauthorised.
+2025-01-20 09:56:07.589 +00:00 [ERR] Error enforcing authentication
+Microsoft.AspNetCore.Components.NavigationException: Exception of type 'Microsoft.AspNetCore.Components.NavigationException' was thrown.
+   at Microsoft.AspNetCore.Components.Server.Circuits.RemoteNavigationManager.NavigateToCore(String uri, NavigationOptions options)
+   at Microsoft.AspNetCore.Components.NavigationManager.NavigateToCore(String uri, Boolean forceLoad)
+   at Microsoft.AspNetCore.Components.NavigationManager.NavigateTo(String uri, Boolean forceLoad, Boolean replace)
+   at Application.JAuth.EnforceAuth() in C:\Users\RARI\Documents\Repos\University Work\TSE-2024-Feedback\FeedbackTracker\JAuth.cs:line 102
+2025-01-20 09:56:07.775 +00:00 [INF] Executed endpoint '/ (/)'
+2025-01-20 09:56:07.779 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/ - 302 null text/html; charset=utf-8 405.2418ms
+2025-01-20 09:56:07.782 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/LogIn - null null
+2025-01-20 09:56:07.789 +00:00 [INF] Executing endpoint '/LogIn (/LogIn)'
+2025-01-20 09:56:07.848 +00:00 [INF] Executed endpoint '/LogIn (/LogIn)'
+2025-01-20 09:56:07.849 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/LogIn - 200 null text/html; charset=utf-8 67.0683ms
+2025-01-20 09:56:07.870 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/_framework/blazor.web.js - null null
+2025-01-20 09:56:07.872 +00:00 [INF] Executing endpoint 'Blazor web static files'
+2025-01-20 09:56:07.877 +00:00 [INF] The file /_framework/blazor.web.js was not modified
+2025-01-20 09:56:07.878 +00:00 [INF] Executed endpoint 'Blazor web static files'
+2025-01-20 09:56:07.879 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/_framework/blazor.web.js - 304 null text/javascript 8.5446ms
+2025-01-20 09:56:07.887 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/_framework/aspnetcore-browser-refresh.js - null null
+2025-01-20 09:56:07.887 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/_vs/browserLink - null null
+2025-01-20 09:56:07.892 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/_framework/aspnetcore-browser-refresh.js - 200 13758 application/javascript; charset=utf-8 5.2038ms
+2025-01-20 09:56:07.917 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/_vs/browserLink - 200 null text/javascript; charset=UTF-8 30.1878ms
+2025-01-20 09:56:07.960 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/_blazor/initializers - null null
+2025-01-20 09:56:07.962 +00:00 [INF] Executing endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 09:56:07.965 +00:00 [INF] Executed endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 09:56:07.965 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/_blazor/initializers - 200 null application/json; charset=utf-8 5.0822ms
+2025-01-20 09:56:07.973 +00:00 [INF] Request starting HTTP/2 POST https://localhost:7128/_blazor/negotiate?negotiateVersion=1 - null 0
+2025-01-20 09:56:07.975 +00:00 [INF] Executing endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 09:56:07.980 +00:00 [INF] Executed endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 09:56:07.981 +00:00 [INF] Request finished HTTP/2 POST https://localhost:7128/_blazor/negotiate?negotiateVersion=1 - 200 316 application/json 8.48ms
+2025-01-20 09:56:07.986 +00:00 [INF] Request starting HTTP/2 CONNECT https://localhost:7128/_blazor?id=8-VOjnWVoNMSpib1Eu4OKw - null null
+2025-01-20 09:56:07.988 +00:00 [INF] Executing endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 09:56:09.592 +00:00 [INF] Executed endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 09:56:09.594 +00:00 [INF] Request finished HTTP/2 CONNECT https://localhost:7128/_blazor?id=8-VOjnWVoNMSpib1Eu4OKw - 200 null null 1607.5276ms
+2025-01-20 09:56:09.598 +00:00 [INF] Connection id "0HN9P72KAN2LR", Request id "0HN9P72KAN2LR:00000011": the application completed without reading the entire request body.
+2025-01-20 09:56:36.319 +00:00 [INF] User profile is available. Using 'C:\Users\RARI\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-01-20 09:56:36.650 +00:00 [INF] Now listening on: https://localhost:7128
+2025-01-20 09:56:36.651 +00:00 [INF] Now listening on: http://localhost:5062
+2025-01-20 09:56:36.657 +00:00 [INF] No action descriptors found. This may indicate an incorrectly configured application or missing application parts. To learn more, visit https://aka.ms/aspnet/mvc/app-parts
+2025-01-20 09:56:36.693 +00:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-01-20 09:56:36.693 +00:00 [INF] Hosting environment: Development
+2025-01-20 09:56:36.694 +00:00 [INF] Content root path: C:\Users\RARI\Documents\Repos\University Work\TSE-2024-Feedback\FeedbackTracker
+2025-01-20 09:56:37.856 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/ - null null
+2025-01-20 09:56:37.946 +00:00 [INF] Executing endpoint '/ (/)'
+2025-01-20 09:56:38.004 +00:00 [INF] Checking user information...
+2025-01-20 09:56:38.006 +00:00 [INF] User unauthorised.
+2025-01-20 09:56:38.045 +00:00 [ERR] Error enforcing authentication
+Microsoft.AspNetCore.Components.NavigationException: Exception of type 'Microsoft.AspNetCore.Components.NavigationException' was thrown.
+   at Microsoft.AspNetCore.Components.Server.Circuits.RemoteNavigationManager.NavigateToCore(String uri, NavigationOptions options)
+   at Microsoft.AspNetCore.Components.NavigationManager.NavigateToCore(String uri, Boolean forceLoad)
+   at Microsoft.AspNetCore.Components.NavigationManager.NavigateTo(String uri, Boolean forceLoad, Boolean replace)
+   at Application.JAuth.EnforceAuth() in C:\Users\RARI\Documents\Repos\University Work\TSE-2024-Feedback\FeedbackTracker\JAuth.cs:line 102
+2025-01-20 09:56:38.210 +00:00 [INF] Executed endpoint '/ (/)'
+2025-01-20 09:56:38.215 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/ - 302 null text/html; charset=utf-8 362.7297ms
+2025-01-20 09:56:38.218 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/LogIn - null null
+2025-01-20 09:56:38.223 +00:00 [INF] Executing endpoint '/LogIn (/LogIn)'
+2025-01-20 09:56:38.278 +00:00 [INF] Executed endpoint '/LogIn (/LogIn)'
+2025-01-20 09:56:38.280 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/LogIn - 200 null text/html; charset=utf-8 62.0622ms
+2025-01-20 09:56:38.303 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/_framework/blazor.web.js - null null
+2025-01-20 09:56:38.305 +00:00 [INF] Executing endpoint 'Blazor web static files'
+2025-01-20 09:56:38.310 +00:00 [INF] The file /_framework/blazor.web.js was not modified
+2025-01-20 09:56:38.311 +00:00 [INF] Executed endpoint 'Blazor web static files'
+2025-01-20 09:56:38.312 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/_framework/blazor.web.js - 304 null text/javascript 9.3416ms
+2025-01-20 09:56:38.322 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/_vs/browserLink - null null
+2025-01-20 09:56:38.322 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/_framework/aspnetcore-browser-refresh.js - null null
+2025-01-20 09:56:38.330 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/_framework/aspnetcore-browser-refresh.js - 200 13758 application/javascript; charset=utf-8 7.4474ms
+2025-01-20 09:56:38.358 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/_vs/browserLink - 200 null text/javascript; charset=UTF-8 35.7218ms
+2025-01-20 09:56:38.392 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/_blazor/initializers - null null
+2025-01-20 09:56:38.394 +00:00 [INF] Executing endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 09:56:38.396 +00:00 [INF] Executed endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 09:56:38.397 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/_blazor/initializers - 200 null application/json; charset=utf-8 5.2687ms
+2025-01-20 09:56:38.405 +00:00 [INF] Request starting HTTP/2 POST https://localhost:7128/_blazor/negotiate?negotiateVersion=1 - null 0
+2025-01-20 09:56:38.407 +00:00 [INF] Executing endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 09:56:38.412 +00:00 [INF] Executed endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 09:56:38.412 +00:00 [INF] Request finished HTTP/2 POST https://localhost:7128/_blazor/negotiate?negotiateVersion=1 - 200 316 application/json 7.4612ms
+2025-01-20 09:56:38.419 +00:00 [INF] Request starting HTTP/2 CONNECT https://localhost:7128/_blazor?id=PcTGGMqKJBYOyN-rS61hzg - null null
+2025-01-20 09:56:38.420 +00:00 [INF] Executing endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 09:56:49.909 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/ - null null
+2025-01-20 09:56:54.340 +00:00 [INF] Executing endpoint '/ (/)'
+2025-01-20 09:56:54.342 +00:00 [INF] Checking user information...
+2025-01-20 09:56:54.343 +00:00 [INF] User authorised.
+2025-01-20 09:56:56.202 +00:00 [ERR] Exception Getting assigned feedbacks
+System.Net.Http.HttpRequestException: An error occurred while sending the request.
+ ---> System.Net.Http.HttpIOException: The response ended prematurely. (ResponseEnded)
+   at System.Net.Http.HttpConnection.SendAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   --- End of inner exception stack trace ---
+   at System.Net.Http.HttpConnection.SendAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.SendWithVersionDetectionAndRetryAsync(HttpRequestMessage request, Boolean async, Boolean doRequestAuth, CancellationToken cancellationToken)
+   at System.Net.Http.DiagnosticsHandler.SendAsyncCore(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.RedirectHandler.SendAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpClient.<SendAsync>g__Core|83_0(HttpRequestMessage request, HttpCompletionOption completionOption, CancellationTokenSource cts, Boolean disposeCts, CancellationTokenSource pendingRequestsCts, CancellationToken originalCancellationToken)
+   at Application.API.FeedbackAPI.GetAssignedFeedbacks(Int32 userID) in C:\Users\RARI\Documents\Repos\University Work\TSE-2024-Feedback\FeedbackTracker\API\FeedbackAPI.cs:line 21
+2025-01-20 09:56:56.211 +00:00 [INF] Executed endpoint '/ (/)'
+2025-01-20 09:56:56.212 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/ - 200 null text/html; charset=utf-8 6303.9409ms
+2025-01-20 09:56:56.562 +00:00 [INF] Checking user information...
+2025-01-20 09:56:56.562 +00:00 [INF] User authorised.
+2025-01-20 09:57:17.733 +00:00 [INF] User profile is available. Using 'C:\Users\RARI\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-01-20 09:57:18.071 +00:00 [INF] Now listening on: https://localhost:7128
+2025-01-20 09:57:18.073 +00:00 [INF] Now listening on: http://localhost:5062
+2025-01-20 09:57:18.085 +00:00 [INF] No action descriptors found. This may indicate an incorrectly configured application or missing application parts. To learn more, visit https://aka.ms/aspnet/mvc/app-parts
+2025-01-20 09:57:18.117 +00:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-01-20 09:57:18.118 +00:00 [INF] Hosting environment: Development
+2025-01-20 09:57:18.118 +00:00 [INF] Content root path: C:\Users\RARI\Documents\Repos\University Work\TSE-2024-Feedback\FeedbackTracker
+2025-01-20 09:57:19.597 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/ - null null
+2025-01-20 09:57:19.696 +00:00 [INF] Executing endpoint '/ (/)'
+2025-01-20 09:57:19.754 +00:00 [INF] Checking user information...
+2025-01-20 09:57:19.755 +00:00 [INF] User unauthorised.
+2025-01-20 09:57:19.792 +00:00 [ERR] Error enforcing authentication
+Microsoft.AspNetCore.Components.NavigationException: Exception of type 'Microsoft.AspNetCore.Components.NavigationException' was thrown.
+   at Microsoft.AspNetCore.Components.Server.Circuits.RemoteNavigationManager.NavigateToCore(String uri, NavigationOptions options)
+   at Microsoft.AspNetCore.Components.NavigationManager.NavigateToCore(String uri, Boolean forceLoad)
+   at Microsoft.AspNetCore.Components.NavigationManager.NavigateTo(String uri, Boolean forceLoad, Boolean replace)
+   at Application.JAuth.EnforceAuth() in C:\Users\RARI\Documents\Repos\University Work\TSE-2024-Feedback\FeedbackTracker\JAuth.cs:line 102
+2025-01-20 09:57:19.977 +00:00 [INF] Executed endpoint '/ (/)'
+2025-01-20 09:57:19.985 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/ - 302 null text/html; charset=utf-8 392.3462ms
+2025-01-20 09:57:19.989 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/LogIn - null null
+2025-01-20 09:57:19.996 +00:00 [INF] Executing endpoint '/LogIn (/LogIn)'
+2025-01-20 09:57:20.062 +00:00 [INF] Executed endpoint '/LogIn (/LogIn)'
+2025-01-20 09:57:20.063 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/LogIn - 200 null text/html; charset=utf-8 74.1533ms
+2025-01-20 09:57:20.095 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/_framework/blazor.web.js - null null
+2025-01-20 09:57:20.098 +00:00 [INF] Executing endpoint 'Blazor web static files'
+2025-01-20 09:57:20.104 +00:00 [INF] The file /_framework/blazor.web.js was not modified
+2025-01-20 09:57:20.106 +00:00 [INF] Executed endpoint 'Blazor web static files'
+2025-01-20 09:57:20.106 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/_framework/aspnetcore-browser-refresh.js - null null
+2025-01-20 09:57:20.106 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/_vs/browserLink - null null
+2025-01-20 09:57:20.107 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/_framework/blazor.web.js - 304 null text/javascript 11.2815ms
+2025-01-20 09:57:20.111 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/_framework/aspnetcore-browser-refresh.js - 200 13758 application/javascript; charset=utf-8 4.823ms
+2025-01-20 09:57:20.135 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/_vs/browserLink - 200 null text/javascript; charset=UTF-8 29.1214ms
+2025-01-20 09:57:20.174 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/_blazor/initializers - null null
+2025-01-20 09:57:20.176 +00:00 [INF] Executing endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 09:57:20.178 +00:00 [INF] Executed endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 09:57:20.179 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/_blazor/initializers - 200 null application/json; charset=utf-8 4.851ms
+2025-01-20 09:57:20.190 +00:00 [INF] Request starting HTTP/2 POST https://localhost:7128/_blazor/negotiate?negotiateVersion=1 - null 0
+2025-01-20 09:57:20.192 +00:00 [INF] Executing endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 09:57:20.197 +00:00 [INF] Executed endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 09:57:20.198 +00:00 [INF] Request finished HTTP/2 POST https://localhost:7128/_blazor/negotiate?negotiateVersion=1 - 200 316 application/json 8.2395ms
+2025-01-20 09:57:20.207 +00:00 [INF] Request starting HTTP/2 CONNECT https://localhost:7128/_blazor?id=Vfe4ZtBnVjseuJ8Lq2ejTQ - null null
+2025-01-20 09:57:20.212 +00:00 [INF] Executing endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 09:57:24.207 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/ - null null
+2025-01-20 09:57:24.210 +00:00 [INF] Executing endpoint '/ (/)'
+2025-01-20 09:57:24.211 +00:00 [INF] Checking user information...
+2025-01-20 09:57:24.212 +00:00 [INF] User authorised.
+2025-01-20 09:57:24.720 +00:00 [ERR] Exception Getting assigned feedbacks
+System.Net.Http.HttpRequestException: An error occurred while sending the request.
+ ---> System.Net.Http.HttpIOException: The response ended prematurely. (ResponseEnded)
+   at System.Net.Http.HttpConnection.SendAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   --- End of inner exception stack trace ---
+   at System.Net.Http.HttpConnection.SendAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.SendWithVersionDetectionAndRetryAsync(HttpRequestMessage request, Boolean async, Boolean doRequestAuth, CancellationToken cancellationToken)
+   at System.Net.Http.DiagnosticsHandler.SendAsyncCore(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.RedirectHandler.SendAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpClient.<SendAsync>g__Core|83_0(HttpRequestMessage request, HttpCompletionOption completionOption, CancellationTokenSource cts, Boolean disposeCts, CancellationTokenSource pendingRequestsCts, CancellationToken originalCancellationToken)
+   at Application.API.FeedbackAPI.GetAssignedFeedbacks(Int32 userID) in C:\Users\RARI\Documents\Repos\University Work\TSE-2024-Feedback\FeedbackTracker\API\FeedbackAPI.cs:line 21
+2025-01-20 09:57:24.728 +00:00 [INF] Executed endpoint '/ (/)'
+2025-01-20 09:57:24.730 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/ - 200 null text/html; charset=utf-8 522.7344ms
+2025-01-20 09:57:24.753 +00:00 [INF] Checking user information...
+2025-01-20 09:57:24.754 +00:00 [INF] User authorised.
+2025-01-20 09:58:22.634 +00:00 [INF] User profile is available. Using 'C:\Users\RARI\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-01-20 09:58:22.934 +00:00 [INF] Now listening on: https://localhost:7128
+2025-01-20 09:58:22.936 +00:00 [INF] Now listening on: http://localhost:5062
+2025-01-20 09:58:22.943 +00:00 [INF] No action descriptors found. This may indicate an incorrectly configured application or missing application parts. To learn more, visit https://aka.ms/aspnet/mvc/app-parts
+2025-01-20 09:58:22.980 +00:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-01-20 09:58:22.981 +00:00 [INF] Hosting environment: Development
+2025-01-20 09:58:22.982 +00:00 [INF] Content root path: C:\Users\RARI\Documents\Repos\University Work\TSE-2024-Feedback\FeedbackTracker
+2025-01-20 09:58:23.991 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/ - null null
+2025-01-20 09:58:24.080 +00:00 [INF] Executing endpoint '/ (/)'
+2025-01-20 09:58:27.010 +00:00 [INF] Checking user information...
+2025-01-20 09:58:27.012 +00:00 [INF] User unauthorised.
+2025-01-20 09:58:27.030 +00:00 [ERR] Error enforcing authentication
+Microsoft.AspNetCore.Components.NavigationException: Exception of type 'Microsoft.AspNetCore.Components.NavigationException' was thrown.
+   at Microsoft.AspNetCore.Components.Server.Circuits.RemoteNavigationManager.NavigateToCore(String uri, NavigationOptions options)
+   at Microsoft.AspNetCore.Components.NavigationManager.NavigateToCore(String uri, Boolean forceLoad)
+   at Microsoft.AspNetCore.Components.NavigationManager.NavigateTo(String uri, Boolean forceLoad, Boolean replace)
+   at Application.JAuth.EnforceAuth() in C:\Users\RARI\Documents\Repos\University Work\TSE-2024-Feedback\FeedbackTracker\JAuth.cs:line 102
+2025-01-20 09:58:27.188 +00:00 [INF] Executed endpoint '/ (/)'
+2025-01-20 09:58:27.193 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/ - 302 null text/html; charset=utf-8 3204.7288ms
+2025-01-20 09:58:27.195 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/LogIn - null null
+2025-01-20 09:58:27.201 +00:00 [INF] Executing endpoint '/LogIn (/LogIn)'
+2025-01-20 09:58:27.291 +00:00 [INF] Executed endpoint '/LogIn (/LogIn)'
+2025-01-20 09:58:27.292 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/LogIn - 200 null text/html; charset=utf-8 97.1719ms
+2025-01-20 09:58:27.312 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/_framework/blazor.web.js - null null
+2025-01-20 09:58:27.314 +00:00 [INF] Executing endpoint 'Blazor web static files'
+2025-01-20 09:58:27.319 +00:00 [INF] The file /_framework/blazor.web.js was not modified
+2025-01-20 09:58:27.320 +00:00 [INF] Executed endpoint 'Blazor web static files'
+2025-01-20 09:58:27.320 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/_framework/blazor.web.js - 304 null text/javascript 8.6081ms
+2025-01-20 09:58:27.329 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/_vs/browserLink - null null
+2025-01-20 09:58:27.329 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/_framework/aspnetcore-browser-refresh.js - null null
+2025-01-20 09:58:27.338 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/_framework/aspnetcore-browser-refresh.js - 200 13758 application/javascript; charset=utf-8 8.716ms
+2025-01-20 09:58:27.360 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/_vs/browserLink - 200 null text/javascript; charset=UTF-8 31.4273ms
+2025-01-20 09:58:28.043 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/_blazor/initializers - null null
+2025-01-20 09:58:28.045 +00:00 [INF] Executing endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 09:58:28.048 +00:00 [INF] Executed endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 09:58:28.049 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/_blazor/initializers - 200 null application/json; charset=utf-8 6.3003ms
+2025-01-20 09:58:28.074 +00:00 [INF] Request starting HTTP/2 POST https://localhost:7128/_blazor/negotiate?negotiateVersion=1 - null 0
+2025-01-20 09:58:28.076 +00:00 [INF] Executing endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 09:58:28.081 +00:00 [INF] Executed endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 09:58:28.082 +00:00 [INF] Request finished HTTP/2 POST https://localhost:7128/_blazor/negotiate?negotiateVersion=1 - 200 316 application/json 8.2934ms
+2025-01-20 09:58:28.086 +00:00 [INF] Request starting HTTP/2 CONNECT https://localhost:7128/_blazor?id=CESFui6-rnFooUpRaahGtQ - null null
+2025-01-20 09:58:28.087 +00:00 [INF] Executing endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 09:58:33.242 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/ - null null
+2025-01-20 09:58:33.244 +00:00 [INF] Executing endpoint '/ (/)'
+2025-01-20 09:58:35.640 +00:00 [INF] Checking user information...
+2025-01-20 09:58:35.641 +00:00 [INF] User authorised.
+2025-01-20 09:59:19.285 +00:00 [INF] User profile is available. Using 'C:\Users\RARI\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-01-20 09:59:19.575 +00:00 [INF] Now listening on: https://localhost:7128
+2025-01-20 09:59:19.576 +00:00 [INF] Now listening on: http://localhost:5062
+2025-01-20 09:59:19.582 +00:00 [INF] No action descriptors found. This may indicate an incorrectly configured application or missing application parts. To learn more, visit https://aka.ms/aspnet/mvc/app-parts
+2025-01-20 09:59:19.615 +00:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-01-20 09:59:19.616 +00:00 [INF] Hosting environment: Development
+2025-01-20 09:59:19.616 +00:00 [INF] Content root path: C:\Users\RARI\Documents\Repos\University Work\TSE-2024-Feedback\FeedbackTracker
+2025-01-20 09:59:20.404 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/ - null null
+2025-01-20 09:59:20.496 +00:00 [INF] Executing endpoint '/ (/)'
+2025-01-20 09:59:28.602 +00:00 [INF] User profile is available. Using 'C:\Users\RARI\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-01-20 09:59:28.877 +00:00 [INF] Now listening on: https://localhost:7128
+2025-01-20 09:59:28.878 +00:00 [INF] Now listening on: http://localhost:5062
+2025-01-20 09:59:28.885 +00:00 [INF] No action descriptors found. This may indicate an incorrectly configured application or missing application parts. To learn more, visit https://aka.ms/aspnet/mvc/app-parts
+2025-01-20 09:59:28.925 +00:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-01-20 09:59:28.926 +00:00 [INF] Hosting environment: Development
+2025-01-20 09:59:28.926 +00:00 [INF] Content root path: C:\Users\RARI\Documents\Repos\University Work\TSE-2024-Feedback\FeedbackTracker
+2025-01-20 09:59:29.882 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/ - null null
+2025-01-20 09:59:29.974 +00:00 [INF] Executing endpoint '/ (/)'
+2025-01-20 09:59:39.474 +00:00 [INF] Checking user information...
+2025-01-20 09:59:39.476 +00:00 [INF] User unauthorised.
+2025-01-20 09:59:39.493 +00:00 [ERR] Error enforcing authentication
+Microsoft.AspNetCore.Components.NavigationException: Exception of type 'Microsoft.AspNetCore.Components.NavigationException' was thrown.
+   at Microsoft.AspNetCore.Components.Server.Circuits.RemoteNavigationManager.NavigateToCore(String uri, NavigationOptions options)
+   at Microsoft.AspNetCore.Components.NavigationManager.NavigateToCore(String uri, Boolean forceLoad)
+   at Microsoft.AspNetCore.Components.NavigationManager.NavigateTo(String uri, Boolean forceLoad, Boolean replace)
+   at Application.JAuth.EnforceAuth() in C:\Users\RARI\Documents\Repos\University Work\TSE-2024-Feedback\FeedbackTracker\JAuth.cs:line 102
+2025-01-20 10:00:05.224 +00:00 [INF] User profile is available. Using 'C:\Users\RARI\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-01-20 10:00:05.361 +00:00 [INF] Now listening on: https://localhost:7128
+2025-01-20 10:00:05.362 +00:00 [INF] Now listening on: http://localhost:5062
+2025-01-20 10:00:05.366 +00:00 [INF] No action descriptors found. This may indicate an incorrectly configured application or missing application parts. To learn more, visit https://aka.ms/aspnet/mvc/app-parts
+2025-01-20 10:00:05.382 +00:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-01-20 10:00:05.383 +00:00 [INF] Hosting environment: Development
+2025-01-20 10:00:05.383 +00:00 [INF] Content root path: C:\Users\RARI\Documents\Repos\University Work\TSE-2024-Feedback\FeedbackTracker
+2025-01-20 10:00:05.643 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/ - null null
+2025-01-20 10:00:05.712 +00:00 [INF] Executing endpoint '/ (/)'
+2025-01-20 10:00:05.772 +00:00 [INF] Checking user information...
+2025-01-20 10:00:05.774 +00:00 [INF] User unauthorised.
+2025-01-20 10:00:05.775 +00:00 [ERR] Error enforcing authentication
+Microsoft.AspNetCore.Components.NavigationException: Exception of type 'Microsoft.AspNetCore.Components.NavigationException' was thrown.
+   at Microsoft.AspNetCore.Components.Server.Circuits.RemoteNavigationManager.NavigateToCore(String uri, NavigationOptions options)
+   at Microsoft.AspNetCore.Components.NavigationManager.NavigateToCore(String uri, Boolean forceLoad)
+   at Microsoft.AspNetCore.Components.NavigationManager.NavigateTo(String uri, Boolean forceLoad, Boolean replace)
+   at Application.JAuth.EnforceAuth() in C:\Users\RARI\Documents\Repos\University Work\TSE-2024-Feedback\FeedbackTracker\JAuth.cs:line 102
+2025-01-20 10:00:05.804 +00:00 [INF] Executed endpoint '/ (/)'
+2025-01-20 10:00:05.808 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/ - 302 null text/html; charset=utf-8 165.8624ms
+2025-01-20 10:00:05.810 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/LogIn - null null
+2025-01-20 10:00:05.821 +00:00 [INF] Executing endpoint '/LogIn (/LogIn)'
+2025-01-20 10:00:05.891 +00:00 [INF] Executed endpoint '/LogIn (/LogIn)'
+2025-01-20 10:00:05.893 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/LogIn - 200 null text/html; charset=utf-8 82.555ms
+2025-01-20 10:00:05.925 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/_framework/blazor.web.js - null null
+2025-01-20 10:00:05.928 +00:00 [INF] Executing endpoint 'Blazor web static files'
+2025-01-20 10:00:05.931 +00:00 [INF] The file /_framework/blazor.web.js was not modified
+2025-01-20 10:00:05.932 +00:00 [INF] Executed endpoint 'Blazor web static files'
+2025-01-20 10:00:05.933 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/_framework/blazor.web.js - 304 null text/javascript 8.3688ms
+2025-01-20 10:00:05.935 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/_framework/aspnetcore-browser-refresh.js - null null
+2025-01-20 10:00:05.935 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/_vs/browserLink - null null
+2025-01-20 10:00:05.940 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/_framework/aspnetcore-browser-refresh.js - 200 13758 application/javascript; charset=utf-8 4.9081ms
+2025-01-20 10:00:05.964 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/_vs/browserLink - 200 null text/javascript; charset=UTF-8 28.079ms
+2025-01-20 10:00:06.028 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/_blazor/initializers - null null
+2025-01-20 10:00:06.035 +00:00 [INF] Executing endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 10:00:06.038 +00:00 [INF] Executed endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 10:00:06.039 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/_blazor/initializers - 200 null application/json; charset=utf-8 10.8253ms
+2025-01-20 10:00:06.042 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/favicon.png - null null
+2025-01-20 10:00:06.048 +00:00 [INF] Sending file. Request path: '/favicon.png'. Physical path: 'C:\Users\RARI\Documents\Repos\University Work\TSE-2024-Feedback\FeedbackTracker\wwwroot\favicon.png'
+2025-01-20 10:00:06.050 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/favicon.png - 499 1148 image/png 7.5591ms
+2025-01-20 10:00:06.051 +00:00 [INF] Request starting HTTP/2 POST https://localhost:7128/_blazor/negotiate?negotiateVersion=1 - null 0
+2025-01-20 10:00:06.054 +00:00 [INF] Executing endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 10:00:06.060 +00:00 [INF] Executed endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 10:00:06.061 +00:00 [INF] Request finished HTTP/2 POST https://localhost:7128/_blazor/negotiate?negotiateVersion=1 - 200 316 application/json 9.8919ms
+2025-01-20 10:00:06.074 +00:00 [INF] Request starting HTTP/2 CONNECT https://localhost:7128/_blazor?id=Cmt0100XXyCbeiqcJuSyew - null null
+2025-01-20 10:00:06.075 +00:00 [INF] Executing endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 10:00:45.963 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/ - null null
+2025-01-20 10:00:45.967 +00:00 [INF] Executing endpoint '/ (/)'
+2025-01-20 10:00:45.970 +00:00 [INF] Checking user information...
+2025-01-20 10:00:45.970 +00:00 [INF] User authorised.
+2025-01-20 10:00:45.980 +00:00 [ERR] Exception Getting assigned feedbacks
+System.Net.Http.HttpRequestException: An error occurred while sending the request.
+ ---> System.Net.Http.HttpIOException: The response ended prematurely. (ResponseEnded)
+   at System.Net.Http.HttpConnection.SendAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   --- End of inner exception stack trace ---
+   at System.Net.Http.HttpConnection.SendAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.SendWithVersionDetectionAndRetryAsync(HttpRequestMessage request, Boolean async, Boolean doRequestAuth, CancellationToken cancellationToken)
+   at System.Net.Http.DiagnosticsHandler.SendAsyncCore(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.RedirectHandler.SendAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpClient.<SendAsync>g__Core|83_0(HttpRequestMessage request, HttpCompletionOption completionOption, CancellationTokenSource cts, Boolean disposeCts, CancellationTokenSource pendingRequestsCts, CancellationToken originalCancellationToken)
+   at Application.API.FeedbackAPI.GetAssignedFeedbacks(Int32 userID) in C:\Users\RARI\Documents\Repos\University Work\TSE-2024-Feedback\FeedbackTracker\API\FeedbackAPI.cs:line 21
+2025-01-20 10:00:45.992 +00:00 [INF] Executed endpoint '/ (/)'
+2025-01-20 10:00:45.994 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/ - 200 null text/html; charset=utf-8 30.9587ms
+2025-01-20 10:00:46.012 +00:00 [INF] Checking user information...
+2025-01-20 10:00:46.012 +00:00 [INF] User authorised.
+2025-01-20 10:00:46.019 +00:00 [ERR] Exception Getting assigned feedbacks
+System.Net.Http.HttpRequestException: An error occurred while sending the request.
+ ---> System.Net.Http.HttpIOException: The response ended prematurely. (ResponseEnded)
+   at System.Net.Http.HttpConnection.SendAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   --- End of inner exception stack trace ---
+   at System.Net.Http.HttpConnection.SendAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpConnectionPool.SendWithVersionDetectionAndRetryAsync(HttpRequestMessage request, Boolean async, Boolean doRequestAuth, CancellationToken cancellationToken)
+   at System.Net.Http.RedirectHandler.SendAsync(HttpRequestMessage request, Boolean async, CancellationToken cancellationToken)
+   at System.Net.Http.HttpClient.<SendAsync>g__Core|83_0(HttpRequestMessage request, HttpCompletionOption completionOption, CancellationTokenSource cts, Boolean disposeCts, CancellationTokenSource pendingRequestsCts, CancellationToken originalCancellationToken)
+   at Application.API.FeedbackAPI.GetAssignedFeedbacks(Int32 userID) in C:\Users\RARI\Documents\Repos\University Work\TSE-2024-Feedback\FeedbackTracker\API\FeedbackAPI.cs:line 21
+2025-01-20 10:01:02.959 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/AccountManagement - null null
+2025-01-20 10:01:02.962 +00:00 [INF] Executing endpoint '/AccountManagement (/AccountManagement)'
+2025-01-20 10:01:02.965 +00:00 [INF] Checking user information...
+2025-01-20 10:01:02.966 +00:00 [INF] User authorised.
+2025-01-20 10:01:02.969 +00:00 [INF] Executed endpoint '/AccountManagement (/AccountManagement)'
+2025-01-20 10:01:02.969 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/AccountManagement - 200 null text/html; charset=utf-8 10.329ms
+2025-01-20 10:01:02.992 +00:00 [INF] Checking user information...
+2025-01-20 10:01:02.993 +00:00 [INF] User authorised.
+2025-01-20 10:01:26.376 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/feedback - null null
+2025-01-20 10:01:26.378 +00:00 [INF] Executing endpoint '/feedback (/feedback)'
+2025-01-20 10:01:26.387 +00:00 [INF] Executed endpoint '/feedback (/feedback)'
+2025-01-20 10:01:26.388 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/feedback - 200 null text/html; charset=utf-8 12.5136ms
+2025-01-20 10:01:27.527 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/usersfeedback - null null
+2025-01-20 10:01:27.529 +00:00 [INF] Executing endpoint '/usersfeedback (/usersfeedback)'
+2025-01-20 10:01:27.596 +00:00 [INF] Executed endpoint '/usersfeedback (/usersfeedback)'
+2025-01-20 10:01:27.596 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/usersfeedback - 200 null text/html; charset=utf-8 69.7793ms
+2025-01-20 10:01:29.626 +00:00 [INF] Request starting HTTP/2 POST https://localhost:7128/_blazor/disconnect - multipart/form-data; boundary=---------------------------157099267933446037511387522901 397
+2025-01-20 10:01:29.628 +00:00 [INF] Executing endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 10:01:29.630 +00:00 [INF] Executed endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 10:01:29.631 +00:00 [INF] Request finished HTTP/2 CONNECT https://localhost:7128/_blazor?id=Cmt0100XXyCbeiqcJuSyew - 200 null null 83557.22ms
+2025-01-20 10:01:29.634 +00:00 [INF] Connection id "0HN9P74RFN8NC", Request id "0HN9P74RFN8NC:00000013": the application completed without reading the entire request body.
+2025-01-20 10:01:29.638 +00:00 [INF] Executed endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 10:01:29.639 +00:00 [INF] Request finished HTTP/2 POST https://localhost:7128/_blazor/disconnect - 200 0 null 12.5563ms
+2025-01-20 10:01:35.240 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/usersfeedback - null null
+2025-01-20 10:01:35.242 +00:00 [INF] Executing endpoint '/usersfeedback (/usersfeedback)'
+2025-01-20 10:01:35.268 +00:00 [INF] Executed endpoint '/usersfeedback (/usersfeedback)'
+2025-01-20 10:01:35.269 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/usersfeedback - 200 null text/html; charset=utf-8 28.8808ms
+2025-01-20 10:01:35.642 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/feedback - null null
+2025-01-20 10:01:35.645 +00:00 [INF] Executing endpoint '/feedback (/feedback)'
+2025-01-20 10:01:35.647 +00:00 [INF] Executed endpoint '/feedback (/feedback)'
+2025-01-20 10:01:35.648 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/feedback - 200 null text/html; charset=utf-8 5.5627ms
+2025-01-20 10:01:35.684 +00:00 [INF] Request starting HTTP/2 POST https://localhost:7128/_blazor/negotiate?negotiateVersion=1 - null 0
+2025-01-20 10:01:35.686 +00:00 [INF] Executing endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 10:01:35.687 +00:00 [INF] Executed endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 10:01:35.687 +00:00 [INF] Request finished HTTP/2 POST https://localhost:7128/_blazor/negotiate?negotiateVersion=1 - 200 316 application/json 3.806ms
+2025-01-20 10:01:35.695 +00:00 [INF] Request starting HTTP/2 CONNECT https://localhost:7128/_blazor?id=5bNBxbJxlxGLZrfdfn4wLA - null null
+2025-01-20 10:01:35.696 +00:00 [INF] Executing endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 10:02:07.695 +00:00 [INF] Executed endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 10:02:07.696 +00:00 [INF] Request finished HTTP/2 CONNECT https://localhost:7128/_blazor?id=5bNBxbJxlxGLZrfdfn4wLA - 200 null null 32000.4597ms
+2025-01-20 10:02:07.698 +00:00 [INF] Connection id "0HN9P74RFN8NC", Request id "0HN9P74RFN8NC:00000025": the application completed without reading the entire request body.
+2025-01-20 10:02:07.707 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/feedback? - null null
+2025-01-20 10:02:07.711 +00:00 [INF] Executing endpoint '/feedback (/feedback)'
+2025-01-20 10:02:07.712 +00:00 [INF] Executed endpoint '/feedback (/feedback)'
+2025-01-20 10:02:07.713 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/feedback? - 200 null text/html; charset=utf-8 5.5722ms
+2025-01-20 10:02:07.723 +00:00 [INF] Request starting HTTP/2 POST https://localhost:7128/_blazor/negotiate?negotiateVersion=1 - null 0
+2025-01-20 10:02:07.724 +00:00 [INF] Executing endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 10:02:07.725 +00:00 [INF] Executed endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 10:02:07.726 +00:00 [INF] Request finished HTTP/2 POST https://localhost:7128/_blazor/negotiate?negotiateVersion=1 - 200 316 application/json 3.5783ms
+2025-01-20 10:02:07.766 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/_framework/blazor.web.js - null null
+2025-01-20 10:02:07.766 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/_framework/aspnetcore-browser-refresh.js - null null
+2025-01-20 10:02:07.766 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/_vs/browserLink - null null
+2025-01-20 10:02:07.769 +00:00 [INF] Executing endpoint 'Blazor web static files'
+2025-01-20 10:02:07.770 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/_framework/aspnetcore-browser-refresh.js - 200 13758 application/javascript; charset=utf-8 4.232ms
+2025-01-20 10:02:07.772 +00:00 [INF] The file /_framework/blazor.web.js was not modified
+2025-01-20 10:02:07.775 +00:00 [INF] Executed endpoint 'Blazor web static files'
+2025-01-20 10:02:07.776 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/_framework/blazor.web.js - 304 null text/javascript 9.8534ms
+2025-01-20 10:02:07.780 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/_vs/browserLink - 200 null text/javascript; charset=UTF-8 13.6695ms
+2025-01-20 10:02:07.807 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/_blazor/initializers - null null
+2025-01-20 10:02:07.809 +00:00 [INF] Executing endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 10:02:07.809 +00:00 [INF] Executed endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 10:02:07.810 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/_blazor/initializers - 200 null application/json; charset=utf-8 3.0431ms
+2025-01-20 10:02:07.820 +00:00 [INF] Request starting HTTP/2 POST https://localhost:7128/_blazor/negotiate?negotiateVersion=1 - null 0
+2025-01-20 10:02:07.822 +00:00 [INF] Executing endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 10:02:07.822 +00:00 [INF] Executed endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 10:02:07.823 +00:00 [INF] Request finished HTTP/2 POST https://localhost:7128/_blazor/negotiate?negotiateVersion=1 - 200 316 application/json 2.8204ms
+2025-01-20 10:02:07.825 +00:00 [INF] Request starting HTTP/2 CONNECT https://localhost:7128/_blazor?id=avkL0nEJVVaRya1KRUIT_A - null null
+2025-01-20 10:02:07.826 +00:00 [INF] Executing endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 10:02:07.829 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/favicon.png - null null
+2025-01-20 10:02:07.831 +00:00 [INF] Sending file. Request path: '/favicon.png'. Physical path: 'C:\Users\RARI\Documents\Repos\University Work\TSE-2024-Feedback\FeedbackTracker\wwwroot\favicon.png'
+2025-01-20 10:02:07.833 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/favicon.png - 200 1148 image/png 3.7934ms
+2025-01-20 10:02:09.404 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/usersfeedback - null null
+2025-01-20 10:02:09.407 +00:00 [INF] Executing endpoint '/usersfeedback (/usersfeedback)'
+2025-01-20 10:02:09.432 +00:00 [INF] Executed endpoint '/usersfeedback (/usersfeedback)'
+2025-01-20 10:02:09.433 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/usersfeedback - 200 null text/html; charset=utf-8 28.1178ms
+2025-01-20 10:02:10.840 +00:00 [INF] Executed endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 10:02:10.840 +00:00 [INF] Request finished HTTP/2 CONNECT https://localhost:7128/_blazor?id=avkL0nEJVVaRya1KRUIT_A - 200 null null 3015.5343ms
+2025-01-20 10:02:10.842 +00:00 [INF] Connection id "0HN9P74RFN8NC", Request id "0HN9P74RFN8NC:00000035": the application completed without reading the entire request body.
+2025-01-20 10:02:10.850 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/usersfeedback - null null
+2025-01-20 10:02:10.852 +00:00 [INF] Executing endpoint '/usersfeedback (/usersfeedback)'
+2025-01-20 10:02:10.853 +00:00 [INF] Request starting HTTP/2 POST https://localhost:7128/_blazor/negotiate?negotiateVersion=1 - null 0
+2025-01-20 10:02:10.855 +00:00 [INF] Executing endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 10:02:10.855 +00:00 [INF] Executed endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 10:02:10.856 +00:00 [INF] Request finished HTTP/2 POST https://localhost:7128/_blazor/negotiate?negotiateVersion=1 - 200 316 application/json 3.1838ms
+2025-01-20 10:02:10.858 +00:00 [INF] Request starting HTTP/2 CONNECT https://localhost:7128/_blazor?id=6rXzuFxjMl8P7uH2UZAOSg - null null
+2025-01-20 10:02:10.860 +00:00 [INF] Executing endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 10:02:10.877 +00:00 [INF] Executed endpoint '/usersfeedback (/usersfeedback)'
+2025-01-20 10:02:10.878 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/usersfeedback - 200 null text/html; charset=utf-8 28.1377ms
+2025-01-20 10:02:10.883 +00:00 [INF] Executed endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 10:02:10.884 +00:00 [INF] Request finished HTTP/2 CONNECT https://localhost:7128/_blazor?id=6rXzuFxjMl8P7uH2UZAOSg - 200 null null 25.1205ms
+2025-01-20 10:02:10.885 +00:00 [INF] Connection id "0HN9P74RFN8NC", Request id "0HN9P74RFN8NC:0000003F": the application completed without reading the entire request body.
+2025-01-20 10:02:10.897 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/_vs/browserLink - null null
+2025-01-20 10:02:10.897 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/_framework/blazor.web.js - null null
+2025-01-20 10:02:10.898 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/_framework/aspnetcore-browser-refresh.js - null null
+2025-01-20 10:02:10.901 +00:00 [INF] Executing endpoint 'Blazor web static files'
+2025-01-20 10:02:10.902 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/_framework/aspnetcore-browser-refresh.js - 200 13758 application/javascript; charset=utf-8 4.4666ms
+2025-01-20 10:02:10.902 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/_vs/browserLink - 200 null text/javascript; charset=UTF-8 4.61ms
+2025-01-20 10:02:10.903 +00:00 [INF] The file /_framework/blazor.web.js was not modified
+2025-01-20 10:02:10.907 +00:00 [INF] Executed endpoint 'Blazor web static files'
+2025-01-20 10:02:10.908 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/_framework/blazor.web.js - 304 null text/javascript 10.2694ms
+2025-01-20 10:02:10.932 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/favicon.png - null null
+2025-01-20 10:02:10.934 +00:00 [INF] Sending file. Request path: '/favicon.png'. Physical path: 'C:\Users\RARI\Documents\Repos\University Work\TSE-2024-Feedback\FeedbackTracker\wwwroot\favicon.png'
+2025-01-20 10:02:10.935 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/favicon.png - 499 1148 image/png 2.6162ms
+2025-01-20 10:02:17.506 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/feedback - null null
+2025-01-20 10:02:17.509 +00:00 [INF] Executing endpoint '/feedback (/feedback)'
+2025-01-20 10:02:17.510 +00:00 [INF] Executed endpoint '/feedback (/feedback)'
+2025-01-20 10:02:17.511 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/feedback - 200 null text/html; charset=utf-8 4.7581ms
+2025-01-20 10:02:17.585 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/_blazor/initializers - null null
+2025-01-20 10:02:17.587 +00:00 [INF] Executing endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 10:02:17.588 +00:00 [INF] Executed endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 10:02:17.588 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/_blazor/initializers - 200 null application/json; charset=utf-8 3.2731ms
+2025-01-20 10:02:17.600 +00:00 [INF] Request starting HTTP/2 POST https://localhost:7128/_blazor/negotiate?negotiateVersion=1 - null 0
+2025-01-20 10:02:17.602 +00:00 [INF] Executing endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 10:02:17.603 +00:00 [INF] Executed endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 10:02:17.603 +00:00 [INF] Request finished HTTP/2 POST https://localhost:7128/_blazor/negotiate?negotiateVersion=1 - 200 316 application/json 2.7528ms
+2025-01-20 10:02:17.606 +00:00 [INF] Request starting HTTP/2 CONNECT https://localhost:7128/_blazor?id=89fXpiWSu1m_mGLxXozSwQ - null null
+2025-01-20 10:02:17.607 +00:00 [INF] Executing endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 10:03:37.489 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/usersfeedback - null null
+2025-01-20 10:03:37.492 +00:00 [INF] Executing endpoint '/usersfeedback (/usersfeedback)'
+2025-01-20 10:03:37.528 +00:00 [INF] Executed endpoint '/usersfeedback (/usersfeedback)'
+2025-01-20 10:03:37.529 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/usersfeedback - 200 null text/html; charset=utf-8 39.6391ms
+2025-01-20 10:03:39.556 +00:00 [INF] Executed endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 10:03:39.556 +00:00 [INF] Request starting HTTP/2 POST https://localhost:7128/_blazor/disconnect - multipart/form-data; boundary=---------------------------259533903837855221274088480940 397
+2025-01-20 10:03:39.557 +00:00 [INF] Request finished HTTP/2 CONNECT https://localhost:7128/_blazor?id=89fXpiWSu1m_mGLxXozSwQ - 200 null null 81950.7517ms
+2025-01-20 10:03:39.558 +00:00 [INF] Executing endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 10:03:39.560 +00:00 [INF] Connection id "0HN9P74RFN8NC", Request id "0HN9P74RFN8NC:0000004F": the application completed without reading the entire request body.
+2025-01-20 10:03:39.561 +00:00 [INF] Executed endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 10:03:39.561 +00:00 [INF] Request finished HTTP/2 POST https://localhost:7128/_blazor/disconnect - 200 0 null 5.2895ms
+2025-01-20 10:03:41.062 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/feedback - null null
+2025-01-20 10:03:41.065 +00:00 [INF] Executing endpoint '/feedback (/feedback)'
+2025-01-20 10:03:41.067 +00:00 [INF] Executed endpoint '/feedback (/feedback)'
+2025-01-20 10:03:41.067 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/feedback - 200 null text/html; charset=utf-8 5.1437ms
+2025-01-20 10:03:41.102 +00:00 [INF] Request starting HTTP/2 POST https://localhost:7128/_blazor/negotiate?negotiateVersion=1 - null 0
+2025-01-20 10:03:41.104 +00:00 [INF] Executing endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 10:03:41.105 +00:00 [INF] Executed endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 10:03:41.106 +00:00 [INF] Request finished HTTP/2 POST https://localhost:7128/_blazor/negotiate?negotiateVersion=1 - 200 316 application/json 3.4512ms
+2025-01-20 10:03:41.119 +00:00 [INF] Request starting HTTP/2 CONNECT https://localhost:7128/_blazor?id=kkDjgUlThHzKRvL8_lX2SA - null null
+2025-01-20 10:03:41.120 +00:00 [INF] Executing endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 10:03:41.627 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/usersfeedback - null null
+2025-01-20 10:03:41.629 +00:00 [INF] Executing endpoint '/usersfeedback (/usersfeedback)'
+2025-01-20 10:03:41.653 +00:00 [INF] Executed endpoint '/usersfeedback (/usersfeedback)'
+2025-01-20 10:03:41.654 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/usersfeedback - 200 null text/html; charset=utf-8 26.864ms
+2025-01-20 10:03:43.145 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/viewfeedback/26 - null null
+2025-01-20 10:03:43.148 +00:00 [INF] Executing endpoint '/viewfeedback/{FeedbackID} (/viewfeedback/{FeedbackID})'
+2025-01-20 10:03:43.185 +00:00 [ERR] Exception getting extension for feedback 26
+System.Net.Http.HttpRequestException: Response status code does not indicate success: 404 (Not Found).
+   at System.Net.Http.HttpResponseMessage.EnsureSuccessStatusCode()
+   at Application.API.FeedbackAPI.GetExtensions(Int32 feedbackID) in C:\Users\RARI\Documents\Repos\University Work\TSE-2024-Feedback\FeedbackTracker\API\FeedbackAPI.cs:line 147
+2025-01-20 10:03:43.221 +00:00 [ERR] Exception getting comments for feedback id=26
+System.Text.Json.JsonException: 'E' is an invalid start of a value. Path: $ | LineNumber: 0 | BytePositionInLine: 0.
+ ---> System.Text.Json.JsonReaderException: 'E' is an invalid start of a value. LineNumber: 0 | BytePositionInLine: 0.
+   at System.Text.Json.ThrowHelper.ThrowJsonReaderException(Utf8JsonReader& json, ExceptionResource resource, Byte nextByte, ReadOnlySpan`1 bytes)
+   at System.Text.Json.Utf8JsonReader.ConsumeValue(Byte marker)
+   at System.Text.Json.Utf8JsonReader.ReadFirstToken(Byte first)
+   at System.Text.Json.Utf8JsonReader.ReadSingleSegment()
+   at System.Text.Json.Serialization.JsonConverter`1.ReadCore(Utf8JsonReader& reader, T& value, JsonSerializerOptions options, ReadStack& state)
+   --- End of inner exception stack trace ---
+   at System.Text.Json.ThrowHelper.ReThrowWithPath(ReadStack& state, JsonReaderException ex)
+   at System.Text.Json.Serialization.JsonConverter`1.ReadCore(Utf8JsonReader& reader, T& value, JsonSerializerOptions options, ReadStack& state)
+   at System.Text.Json.JsonSerializer.ReadFromSpan[TValue](ReadOnlySpan`1 json, JsonTypeInfo`1 jsonTypeInfo)
+   at System.Text.Json.JsonSerializer.Deserialize[TValue](String json, JsonSerializerOptions options)
+   at Application.API.FeedbackAPI.GetComments(Int32 feedbackID) in C:\Users\RARI\Documents\Repos\University Work\TSE-2024-Feedback\FeedbackTracker\API\FeedbackAPI.cs:line 105
+2025-01-20 10:03:43.226 +00:00 [INF] Executed endpoint '/viewfeedback/{FeedbackID} (/viewfeedback/{FeedbackID})'
+2025-01-20 10:03:43.227 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/viewfeedback/26 - 200 null text/html; charset=utf-8 81.6074ms
+2025-01-20 10:03:43.271 +00:00 [ERR] Exception getting extension for feedback 26
+System.Net.Http.HttpRequestException: Response status code does not indicate success: 404 (Not Found).
+   at System.Net.Http.HttpResponseMessage.EnsureSuccessStatusCode()
+   at Application.API.FeedbackAPI.GetExtensions(Int32 feedbackID) in C:\Users\RARI\Documents\Repos\University Work\TSE-2024-Feedback\FeedbackTracker\API\FeedbackAPI.cs:line 147
+2025-01-20 10:03:43.294 +00:00 [ERR] Exception getting comments for feedback id=26
+System.Text.Json.JsonException: 'E' is an invalid start of a value. Path: $ | LineNumber: 0 | BytePositionInLine: 0.
+ ---> System.Text.Json.JsonReaderException: 'E' is an invalid start of a value. LineNumber: 0 | BytePositionInLine: 0.
+   at System.Text.Json.ThrowHelper.ThrowJsonReaderException(Utf8JsonReader& json, ExceptionResource resource, Byte nextByte, ReadOnlySpan`1 bytes)
+   at System.Text.Json.Utf8JsonReader.ConsumeValue(Byte marker)
+   at System.Text.Json.Utf8JsonReader.ReadFirstToken(Byte first)
+   at System.Text.Json.Utf8JsonReader.ReadSingleSegment()
+   at System.Text.Json.Serialization.JsonConverter`1.ReadCore(Utf8JsonReader& reader, T& value, JsonSerializerOptions options, ReadStack& state)
+   --- End of inner exception stack trace ---
+   at System.Text.Json.ThrowHelper.ReThrowWithPath(ReadStack& state, JsonReaderException ex)
+   at System.Text.Json.Serialization.JsonConverter`1.ReadCore(Utf8JsonReader& reader, T& value, JsonSerializerOptions options, ReadStack& state)
+   at System.Text.Json.JsonSerializer.ReadFromSpan[TValue](ReadOnlySpan`1 json, JsonTypeInfo`1 jsonTypeInfo)
+   at System.Text.Json.JsonSerializer.Deserialize[TValue](String json, JsonSerializerOptions options)
+   at Application.API.FeedbackAPI.GetComments(Int32 feedbackID) in C:\Users\RARI\Documents\Repos\University Work\TSE-2024-Feedback\FeedbackTracker\API\FeedbackAPI.cs:line 105
+2025-01-20 10:09:42.301 +00:00 [INF] Executed endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 10:09:42.301 +00:00 [INF] Request finished HTTP/2 CONNECT https://localhost:7128/_blazor?id=kkDjgUlThHzKRvL8_lX2SA - 200 null null 361182.3793ms
+2025-01-20 10:09:42.303 +00:00 [INF] Connection id "0HN9P74RFN8NC", Request id "0HN9P74RFN8NC:00000059": the application completed without reading the entire request body.
+2025-01-20 17:08:29.673 +00:00 [INF] User profile is available. Using 'C:\Users\RARI\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-01-20 17:08:30.109 +00:00 [INF] Now listening on: https://localhost:7128
+2025-01-20 17:08:30.111 +00:00 [INF] Now listening on: http://localhost:5062
+2025-01-20 17:08:30.122 +00:00 [INF] No action descriptors found. This may indicate an incorrectly configured application or missing application parts. To learn more, visit https://aka.ms/aspnet/mvc/app-parts
+2025-01-20 17:08:30.150 +00:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-01-20 17:08:30.151 +00:00 [INF] Hosting environment: Development
+2025-01-20 17:08:30.152 +00:00 [INF] Content root path: C:\Users\RARI\Documents\Repos\University Work\TSE-2024-Feedback\FeedbackTracker
+2025-01-20 17:08:30.731 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/ - null null
+2025-01-20 17:08:30.892 +00:00 [INF] Executing endpoint '/ (/)'
+2025-01-20 17:08:38.199 +00:00 [INF] Checking user information...
+2025-01-20 17:08:38.201 +00:00 [INF] User unauthorised.
+2025-01-20 17:08:38.223 +00:00 [ERR] Error enforcing authentication
+Microsoft.AspNetCore.Components.NavigationException: Exception of type 'Microsoft.AspNetCore.Components.NavigationException' was thrown.
+   at Microsoft.AspNetCore.Components.Server.Circuits.RemoteNavigationManager.NavigateToCore(String uri, NavigationOptions options)
+   at Microsoft.AspNetCore.Components.NavigationManager.NavigateToCore(String uri, Boolean forceLoad)
+   at Microsoft.AspNetCore.Components.NavigationManager.NavigateTo(String uri, Boolean forceLoad, Boolean replace)
+   at Application.JAuth.EnforceAuth() in C:\Users\RARI\Documents\Repos\University Work\TSE-2024-Feedback\FeedbackTracker\JAuth.cs:line 102
+2025-01-20 17:08:38.417 +00:00 [INF] Executed endpoint '/ (/)'
+2025-01-20 17:08:38.425 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/ - 302 null text/html; charset=utf-8 7699.9837ms
+2025-01-20 17:08:38.432 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/LogIn - null null
+2025-01-20 17:08:38.439 +00:00 [INF] Executing endpoint '/LogIn (/LogIn)'
+2025-01-20 17:08:38.556 +00:00 [INF] Executed endpoint '/LogIn (/LogIn)'
+2025-01-20 17:08:38.557 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/LogIn - 200 null text/html; charset=utf-8 124.99ms
+2025-01-20 17:08:38.609 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/_framework/aspnetcore-browser-refresh.js - null null
+2025-01-20 17:08:38.614 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/_framework/aspnetcore-browser-refresh.js - 200 13758 application/javascript; charset=utf-8 5.2391ms
+2025-01-20 17:08:38.614 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/_framework/blazor.web.js - null null
+2025-01-20 17:08:38.618 +00:00 [INF] Executing endpoint 'Blazor web static files'
+2025-01-20 17:08:38.625 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/_vs/browserLink - null null
+2025-01-20 17:08:38.628 +00:00 [INF] The file /_framework/blazor.web.js was not modified
+2025-01-20 17:08:38.630 +00:00 [INF] Executed endpoint 'Blazor web static files'
+2025-01-20 17:08:38.631 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/_framework/blazor.web.js - 304 null text/javascript 16.4405ms
+2025-01-20 17:08:38.685 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/_blazor/initializers - null null
+2025-01-20 17:08:38.688 +00:00 [INF] Executing endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 17:08:38.691 +00:00 [INF] Executed endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 17:08:38.692 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/_blazor/initializers - 200 null application/json; charset=utf-8 6.9361ms
+2025-01-20 17:08:38.710 +00:00 [INF] Request starting HTTP/2 POST https://localhost:7128/_blazor/negotiate?negotiateVersion=1 - null 0
+2025-01-20 17:08:38.711 +00:00 [INF] Executing endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 17:08:38.717 +00:00 [INF] Executed endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 17:08:38.718 +00:00 [INF] Request finished HTTP/2 POST https://localhost:7128/_blazor/negotiate?negotiateVersion=1 - 200 316 application/json 8.743ms
+2025-01-20 17:08:38.728 +00:00 [INF] Request starting HTTP/2 CONNECT https://localhost:7128/_blazor?id=tzzf4jeIKtcVkDn9kuHLfg - null null
+2025-01-20 17:08:38.730 +00:00 [INF] Executing endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 17:08:38.825 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/favicon.png - null null
+2025-01-20 17:08:38.885 +00:00 [INF] Sending file. Request path: '/favicon.png'. Physical path: 'C:\Users\RARI\Documents\Repos\University Work\TSE-2024-Feedback\FeedbackTracker\wwwroot\favicon.png'
+2025-01-20 17:08:38.886 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/favicon.png - 499 1148 image/png 61.2314ms
+2025-01-20 17:08:38.920 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/_vs/browserLink - 200 null text/javascript; charset=UTF-8 294.5116ms
+2025-01-20 17:08:46.947 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/ - null null
+2025-01-20 17:08:46.951 +00:00 [INF] Executing endpoint '/ (/)'
+2025-01-20 17:08:49.284 +00:00 [INF] Checking user information...
+2025-01-20 17:08:49.285 +00:00 [INF] User authorised.
+2025-01-20 17:09:01.582 +00:00 [INF] User profile is available. Using 'C:\Users\RARI\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-01-20 17:09:01.881 +00:00 [INF] Now listening on: https://localhost:7128
+2025-01-20 17:09:01.883 +00:00 [INF] Now listening on: http://localhost:5062
+2025-01-20 17:09:01.889 +00:00 [INF] No action descriptors found. This may indicate an incorrectly configured application or missing application parts. To learn more, visit https://aka.ms/aspnet/mvc/app-parts
+2025-01-20 17:09:01.926 +00:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-01-20 17:09:01.927 +00:00 [INF] Hosting environment: Development
+2025-01-20 17:09:01.934 +00:00 [INF] Content root path: C:\Users\RARI\Documents\Repos\University Work\TSE-2024-Feedback\FeedbackTracker
+2025-01-20 17:09:02.613 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/ - null null
+2025-01-20 17:09:02.747 +00:00 [INF] Executing endpoint '/ (/)'
+2025-01-20 17:09:19.097 +00:00 [INF] Checking user information...
+2025-01-20 17:09:19.099 +00:00 [INF] User unauthorised.
+2025-01-20 17:09:19.123 +00:00 [ERR] Error enforcing authentication
+Microsoft.AspNetCore.Components.NavigationException: Exception of type 'Microsoft.AspNetCore.Components.NavigationException' was thrown.
+   at Microsoft.AspNetCore.Components.Server.Circuits.RemoteNavigationManager.NavigateToCore(String uri, NavigationOptions options)
+   at Microsoft.AspNetCore.Components.NavigationManager.NavigateToCore(String uri, Boolean forceLoad)
+   at Microsoft.AspNetCore.Components.NavigationManager.NavigateTo(String uri, Boolean forceLoad, Boolean replace)
+   at Application.JAuth.EnforceAuth() in C:\Users\RARI\Documents\Repos\University Work\TSE-2024-Feedback\FeedbackTracker\JAuth.cs:line 102
+2025-01-20 17:09:29.270 +00:00 [INF] Executed endpoint '/ (/)'
+2025-01-20 17:09:29.280 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/ - 302 null text/html; charset=utf-8 26675.1922ms
+2025-01-20 17:09:29.282 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/LogIn - null null
+2025-01-20 17:09:29.292 +00:00 [INF] Executing endpoint '/LogIn (/LogIn)'
+2025-01-20 17:09:29.359 +00:00 [INF] Executed endpoint '/LogIn (/LogIn)'
+2025-01-20 17:09:29.360 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/LogIn - 200 null text/html; charset=utf-8 78.3827ms
+2025-01-20 17:09:29.396 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/app.css - null null
+2025-01-20 17:09:29.396 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/bootstrap/bootstrap.min.css - null null
+2025-01-20 17:09:29.396 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/_framework/blazor.web.js - null null
+2025-01-20 17:09:29.401 +00:00 [INF] Executing endpoint 'Blazor web static files'
+2025-01-20 17:09:29.464 +00:00 [INF] The file /_framework/blazor.web.js was not modified
+2025-01-20 17:09:29.471 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/_vs/browserLink - null null
+2025-01-20 17:09:29.471 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/_framework/aspnetcore-browser-refresh.js - null null
+2025-01-20 17:09:29.618 +00:00 [INF] Executed endpoint 'Blazor web static files'
+2025-01-20 17:09:29.619 +00:00 [INF] Sending file. Request path: '/app.css'. Physical path: 'C:\Users\RARI\Documents\Repos\University Work\TSE-2024-Feedback\FeedbackTracker\wwwroot\app.css'
+2025-01-20 17:09:29.619 +00:00 [INF] Sending file. Request path: '/bootstrap/bootstrap.min.css'. Physical path: 'C:\Users\RARI\Documents\Repos\University Work\TSE-2024-Feedback\FeedbackTracker\wwwroot\bootstrap\bootstrap.min.css'
+2025-01-20 17:09:29.624 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/app.css - 499 3071 text/css 226.9003ms
+2025-01-20 17:09:29.626 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/bootstrap/bootstrap.min.css - 499 162720 text/css 230.8063ms
+2025-01-20 17:09:29.621 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/_framework/blazor.web.js - 304 null text/javascript 225.4598ms
+2025-01-20 17:09:29.632 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/_framework/aspnetcore-browser-refresh.js - 200 13758 application/javascript; charset=utf-8 168.7597ms
+2025-01-20 17:09:29.651 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/_vs/browserLink - 200 null text/javascript; charset=UTF-8 187.5553ms
+2025-01-20 17:09:29.660 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/favicon.png - null null
+2025-01-20 17:09:29.712 +00:00 [INF] Sending file. Request path: '/favicon.png'. Physical path: 'C:\Users\RARI\Documents\Repos\University Work\TSE-2024-Feedback\FeedbackTracker\wwwroot\favicon.png'
+2025-01-20 17:09:29.713 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/favicon.png - 499 1148 image/png 53.2951ms
+2025-01-20 17:09:30.141 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/_blazor/initializers - null null
+2025-01-20 17:09:30.143 +00:00 [INF] Executing endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 17:09:30.145 +00:00 [INF] Executed endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 17:09:30.146 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/_blazor/initializers - 200 null application/json; charset=utf-8 5.2104ms
+2025-01-20 17:09:30.158 +00:00 [INF] Request starting HTTP/2 POST https://localhost:7128/_blazor/negotiate?negotiateVersion=1 - null 0
+2025-01-20 17:09:30.160 +00:00 [INF] Executing endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 17:09:30.165 +00:00 [INF] Executed endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 17:09:30.166 +00:00 [INF] Request finished HTTP/2 POST https://localhost:7128/_blazor/negotiate?negotiateVersion=1 - 200 316 application/json 8.331ms
+2025-01-20 17:09:30.178 +00:00 [INF] Request starting HTTP/2 CONNECT https://localhost:7128/_blazor?id=zgSFPeYH-XQFtX1mv4si4A - null null
+2025-01-20 17:09:30.179 +00:00 [INF] Executing endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 17:09:36.576 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/ - null null
+2025-01-20 17:09:36.585 +00:00 [INF] Executing endpoint '/ (/)'
+2025-01-20 17:09:38.996 +00:00 [INF] Checking user information...
+2025-01-20 17:09:38.996 +00:00 [INF] User authorised.
+2025-01-20 17:10:19.776 +00:00 [INF] User profile is available. Using 'C:\Users\RARI\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-01-20 17:10:20.189 +00:00 [INF] Now listening on: https://localhost:7128
+2025-01-20 17:10:20.191 +00:00 [INF] Now listening on: http://localhost:5062
+2025-01-20 17:10:20.199 +00:00 [INF] No action descriptors found. This may indicate an incorrectly configured application or missing application parts. To learn more, visit https://aka.ms/aspnet/mvc/app-parts
+2025-01-20 17:10:20.248 +00:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-01-20 17:10:20.249 +00:00 [INF] Hosting environment: Development
+2025-01-20 17:10:20.250 +00:00 [INF] Content root path: C:\Users\RARI\Documents\Repos\University Work\TSE-2024-Feedback\FeedbackTracker
+2025-01-20 17:10:20.982 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/ - null null
+2025-01-20 17:10:21.101 +00:00 [INF] Executing endpoint '/ (/)'
+2025-01-20 17:10:28.139 +00:00 [INF] Checking user information...
+2025-01-20 17:10:28.141 +00:00 [INF] User unauthorised.
+2025-01-20 17:10:28.164 +00:00 [ERR] Error enforcing authentication
+Microsoft.AspNetCore.Components.NavigationException: Exception of type 'Microsoft.AspNetCore.Components.NavigationException' was thrown.
+   at Microsoft.AspNetCore.Components.Server.Circuits.RemoteNavigationManager.NavigateToCore(String uri, NavigationOptions options)
+   at Microsoft.AspNetCore.Components.NavigationManager.NavigateToCore(String uri, Boolean forceLoad)
+   at Microsoft.AspNetCore.Components.NavigationManager.NavigateTo(String uri, Boolean forceLoad, Boolean replace)
+   at Application.JAuth.EnforceAuth() in C:\Users\RARI\Documents\Repos\University Work\TSE-2024-Feedback\FeedbackTracker\JAuth.cs:line 102
+2025-01-20 17:10:28.347 +00:00 [INF] Executed endpoint '/ (/)'
+2025-01-20 17:10:28.352 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/ - 302 null text/html; charset=utf-8 7374.1769ms
+2025-01-20 17:10:28.355 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/LogIn - null null
+2025-01-20 17:10:28.361 +00:00 [INF] Executing endpoint '/LogIn (/LogIn)'
+2025-01-20 17:10:28.433 +00:00 [INF] Executed endpoint '/LogIn (/LogIn)'
+2025-01-20 17:10:28.435 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/LogIn - 200 null text/html; charset=utf-8 79.7099ms
+2025-01-20 17:10:28.480 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/_framework/blazor.web.js - null null
+2025-01-20 17:10:28.483 +00:00 [INF] Executing endpoint 'Blazor web static files'
+2025-01-20 17:10:28.489 +00:00 [INF] The file /_framework/blazor.web.js was not modified
+2025-01-20 17:10:28.491 +00:00 [INF] Executed endpoint 'Blazor web static files'
+2025-01-20 17:10:28.492 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/_framework/blazor.web.js - 304 null text/javascript 11.9675ms
+2025-01-20 17:10:28.492 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/_framework/aspnetcore-browser-refresh.js - null null
+2025-01-20 17:10:28.493 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/_vs/browserLink - null null
+2025-01-20 17:10:28.500 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/_framework/aspnetcore-browser-refresh.js - 200 13758 application/javascript; charset=utf-8 7.4198ms
+2025-01-20 17:10:28.533 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/_vs/browserLink - 200 null text/javascript; charset=UTF-8 40.8201ms
+2025-01-20 17:10:28.538 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/favicon.png - null null
+2025-01-20 17:10:28.593 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/_blazor/initializers - null null
+2025-01-20 17:10:28.623 +00:00 [INF] Executing endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 17:10:28.623 +00:00 [INF] Sending file. Request path: '/favicon.png'. Physical path: 'C:\Users\RARI\Documents\Repos\University Work\TSE-2024-Feedback\FeedbackTracker\wwwroot\favicon.png'
+2025-01-20 17:10:28.624 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/favicon.png - 499 1148 image/png 86.5282ms
+2025-01-20 17:10:28.625 +00:00 [INF] Executed endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 17:10:28.627 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/_blazor/initializers - 200 null application/json; charset=utf-8 64.9574ms
+2025-01-20 17:10:28.631 +00:00 [INF] Request starting HTTP/2 POST https://localhost:7128/_blazor/negotiate?negotiateVersion=1 - null 0
+2025-01-20 17:10:28.633 +00:00 [INF] Executing endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 17:10:28.639 +00:00 [INF] Executed endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 17:10:28.640 +00:00 [INF] Request finished HTTP/2 POST https://localhost:7128/_blazor/negotiate?negotiateVersion=1 - 200 316 application/json 8.8686ms
+2025-01-20 17:10:28.644 +00:00 [INF] Request starting HTTP/2 CONNECT https://localhost:7128/_blazor?id=x8kFFHmmIOLtyDpH4ri70g - null null
+2025-01-20 17:10:28.645 +00:00 [INF] Executing endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 17:10:36.167 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/ - null null
+2025-01-20 17:10:36.172 +00:00 [INF] Executing endpoint '/ (/)'
+2025-01-20 17:10:38.642 +00:00 [INF] Checking user information...
+2025-01-20 17:10:38.642 +00:00 [INF] User authorised.
+2025-01-20 17:16:50.468 +00:00 [INF] User profile is available. Using 'C:\Users\RARI\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-01-20 17:16:50.839 +00:00 [INF] Now listening on: https://localhost:7128
+2025-01-20 17:16:50.841 +00:00 [INF] Now listening on: http://localhost:5062
+2025-01-20 17:16:50.850 +00:00 [INF] No action descriptors found. This may indicate an incorrectly configured application or missing application parts. To learn more, visit https://aka.ms/aspnet/mvc/app-parts
+2025-01-20 17:16:50.900 +00:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-01-20 17:16:50.900 +00:00 [INF] Hosting environment: Development
+2025-01-20 17:16:50.901 +00:00 [INF] Content root path: C:\Users\RARI\Documents\Repos\University Work\TSE-2024-Feedback\FeedbackTracker
+2025-01-20 17:16:51.901 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/ - null null
+2025-01-20 17:16:52.036 +00:00 [INF] Executing endpoint '/ (/)'
+2025-01-20 17:16:53.857 +00:00 [INF] Checking user information...
+2025-01-20 17:16:53.860 +00:00 [INF] User unauthorised.
+2025-01-20 17:16:53.883 +00:00 [ERR] Error enforcing authentication
+Microsoft.AspNetCore.Components.NavigationException: Exception of type 'Microsoft.AspNetCore.Components.NavigationException' was thrown.
+   at Microsoft.AspNetCore.Components.Server.Circuits.RemoteNavigationManager.NavigateToCore(String uri, NavigationOptions options)
+   at Microsoft.AspNetCore.Components.NavigationManager.NavigateToCore(String uri, Boolean forceLoad)
+   at Microsoft.AspNetCore.Components.NavigationManager.NavigateTo(String uri, Boolean forceLoad, Boolean replace)
+   at Application.JAuth.EnforceAuth() in C:\Users\RARI\Documents\Repos\University Work\TSE-2024-Feedback\FeedbackTracker\JAuth.cs:line 102
+2025-01-20 17:16:54.057 +00:00 [INF] Executed endpoint '/ (/)'
+2025-01-20 17:16:54.062 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/ - 302 null text/html; charset=utf-8 2165.4338ms
+2025-01-20 17:16:54.086 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/LogIn - null null
+2025-01-20 17:16:54.093 +00:00 [INF] Executing endpoint '/LogIn (/LogIn)'
+2025-01-20 17:16:54.159 +00:00 [INF] Executed endpoint '/LogIn (/LogIn)'
+2025-01-20 17:16:54.161 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/LogIn - 200 null text/html; charset=utf-8 74.646ms
+2025-01-20 17:16:54.190 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/_framework/blazor.web.js - null null
+2025-01-20 17:16:54.192 +00:00 [INF] Executing endpoint 'Blazor web static files'
+2025-01-20 17:16:54.198 +00:00 [INF] The file /_framework/blazor.web.js was not modified
+2025-01-20 17:16:54.200 +00:00 [INF] Executed endpoint 'Blazor web static files'
+2025-01-20 17:16:54.201 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/_framework/blazor.web.js - 304 null text/javascript 11.2291ms
+2025-01-20 17:16:54.213 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/_framework/aspnetcore-browser-refresh.js - null null
+2025-01-20 17:16:54.214 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/_vs/browserLink - null null
+2025-01-20 17:16:54.221 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/_framework/aspnetcore-browser-refresh.js - 200 13758 application/javascript; charset=utf-8 7.499ms
+2025-01-20 17:16:54.251 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/_vs/browserLink - 200 null text/javascript; charset=UTF-8 36.9074ms
+2025-01-20 17:16:54.267 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/favicon.png - null null
+2025-01-20 17:16:54.330 +00:00 [INF] Sending file. Request path: '/favicon.png'. Physical path: 'C:\Users\RARI\Documents\Repos\University Work\TSE-2024-Feedback\FeedbackTracker\wwwroot\favicon.png'
+2025-01-20 17:16:54.331 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/favicon.png - 499 1148 image/png 64.7692ms
+2025-01-20 17:16:54.877 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/_blazor/initializers - null null
+2025-01-20 17:16:54.880 +00:00 [INF] Executing endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 17:16:54.883 +00:00 [INF] Executed endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 17:16:54.884 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/_blazor/initializers - 200 null application/json; charset=utf-8 7.2861ms
+2025-01-20 17:16:54.909 +00:00 [INF] Request starting HTTP/2 POST https://localhost:7128/_blazor/negotiate?negotiateVersion=1 - null 0
+2025-01-20 17:16:54.911 +00:00 [INF] Executing endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 17:16:54.917 +00:00 [INF] Executed endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 17:16:54.918 +00:00 [INF] Request finished HTTP/2 POST https://localhost:7128/_blazor/negotiate?negotiateVersion=1 - 200 316 application/json 9.5788ms
+2025-01-20 17:16:54.927 +00:00 [INF] Request starting HTTP/2 CONNECT https://localhost:7128/_blazor?id=AL0GphRIhBUvGlpMBdSaiQ - null null
+2025-01-20 17:16:54.929 +00:00 [INF] Executing endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 17:17:07.445 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/ - null null
+2025-01-20 17:17:07.449 +00:00 [INF] Executing endpoint '/ (/)'
+2025-01-20 17:17:09.447 +00:00 [INF] Checking user information...
+2025-01-20 17:17:09.448 +00:00 [INF] User authorised.
+2025-01-20 17:18:19.602 +00:00 [INF] Request starting HTTP/2 POST https://localhost:7128/_blazor/negotiate?negotiateVersion=1 - null 0
+2025-01-20 17:18:19.701 +00:00 [INF] Request starting HTTP/2 POST https://localhost:7128/_blazor/negotiate?negotiateVersion=1 - null 0
+2025-01-20 17:18:19.701 +00:00 [INF] Executing endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 17:18:19.821 +00:00 [INF] Executing endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 17:18:19.829 +00:00 [INF] Executed endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 17:18:19.834 +00:00 [INF] Executed endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 17:18:19.932 +00:00 [INF] Request finished HTTP/2 POST https://localhost:7128/_blazor/negotiate?negotiateVersion=1 - 200 316 application/json 298.0164ms
+2025-01-20 17:18:19.944 +00:00 [INF] Request finished HTTP/2 POST https://localhost:7128/_blazor/negotiate?negotiateVersion=1 - 200 316 application/json 277.6065ms
+2025-01-20 17:18:30.977 +00:00 [INF] User profile is available. Using 'C:\Users\RARI\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-01-20 17:18:31.401 +00:00 [INF] Now listening on: https://localhost:7128
+2025-01-20 17:18:31.413 +00:00 [INF] Now listening on: http://localhost:5062
+2025-01-20 17:18:31.553 +00:00 [INF] No action descriptors found. This may indicate an incorrectly configured application or missing application parts. To learn more, visit https://aka.ms/aspnet/mvc/app-parts
+2025-01-20 17:18:31.601 +00:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-01-20 17:18:31.603 +00:00 [INF] Hosting environment: Development
+2025-01-20 17:18:31.604 +00:00 [INF] Content root path: C:\Users\RARI\Documents\Repos\University Work\TSE-2024-Feedback\FeedbackTracker
+2025-01-20 17:18:32.226 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/ - null null
+2025-01-20 17:18:32.351 +00:00 [INF] Executing endpoint '/ (/)'
+2025-01-20 17:18:36.743 +00:00 [INF] Checking user information...
+2025-01-20 17:18:42.556 +00:00 [INF] User unauthorised.
+2025-01-20 17:18:42.580 +00:00 [ERR] Error enforcing authentication
+Microsoft.AspNetCore.Components.NavigationException: Exception of type 'Microsoft.AspNetCore.Components.NavigationException' was thrown.
+   at Microsoft.AspNetCore.Components.Server.Circuits.RemoteNavigationManager.NavigateToCore(String uri, NavigationOptions options)
+   at Microsoft.AspNetCore.Components.NavigationManager.NavigateToCore(String uri, Boolean forceLoad)
+   at Microsoft.AspNetCore.Components.NavigationManager.NavigateTo(String uri, Boolean forceLoad, Boolean replace)
+   at Application.JAuth.EnforceAuth() in C:\Users\RARI\Documents\Repos\University Work\TSE-2024-Feedback\FeedbackTracker\JAuth.cs:line 102
+2025-01-20 17:18:42.750 +00:00 [INF] Executed endpoint '/ (/)'
+2025-01-20 17:18:42.756 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/ - 302 null text/html; charset=utf-8 10534.4496ms
+2025-01-20 17:18:42.759 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/LogIn - null null
+2025-01-20 17:18:42.765 +00:00 [INF] Executing endpoint '/LogIn (/LogIn)'
+2025-01-20 17:18:42.823 +00:00 [INF] Executed endpoint '/LogIn (/LogIn)'
+2025-01-20 17:18:42.824 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/LogIn - 200 null text/html; charset=utf-8 64.8725ms
+2025-01-20 17:18:42.851 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/_framework/blazor.web.js - null null
+2025-01-20 17:18:42.854 +00:00 [INF] Executing endpoint 'Blazor web static files'
+2025-01-20 17:18:42.861 +00:00 [INF] The file /_framework/blazor.web.js was not modified
+2025-01-20 17:18:42.862 +00:00 [INF] Executed endpoint 'Blazor web static files'
+2025-01-20 17:18:42.863 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/_framework/blazor.web.js - 304 null text/javascript 12.2648ms
+2025-01-20 17:18:42.868 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/_vs/browserLink - null null
+2025-01-20 17:18:42.868 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/_framework/aspnetcore-browser-refresh.js - null null
+2025-01-20 17:18:42.877 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/_framework/aspnetcore-browser-refresh.js - 200 13758 application/javascript; charset=utf-8 8.6206ms
+2025-01-20 17:18:42.896 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/_vs/browserLink - 200 null text/javascript; charset=UTF-8 27.1565ms
+2025-01-20 17:18:43.863 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/_blazor/initializers - null null
+2025-01-20 17:18:43.865 +00:00 [INF] Executing endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 17:18:43.867 +00:00 [INF] Executed endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 17:18:43.868 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/_blazor/initializers - 200 null application/json; charset=utf-8 5.0123ms
+2025-01-20 17:18:43.873 +00:00 [INF] Request starting HTTP/2 POST https://localhost:7128/_blazor/negotiate?negotiateVersion=1 - null 0
+2025-01-20 17:18:43.875 +00:00 [INF] Executing endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 17:18:43.880 +00:00 [INF] Executed endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 17:18:43.881 +00:00 [INF] Request finished HTTP/2 POST https://localhost:7128/_blazor/negotiate?negotiateVersion=1 - 200 316 application/json 8.0214ms
+2025-01-20 17:18:44.010 +00:00 [INF] Request starting HTTP/2 CONNECT https://localhost:7128/_blazor?id=NTDi6oWnRFkA8GnyZ12Gig - null null
+2025-01-20 17:18:44.011 +00:00 [INF] Executing endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 17:18:48.267 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/ - null null
+2025-01-20 17:18:48.271 +00:00 [INF] Executing endpoint '/ (/)'
+2025-01-20 17:18:50.618 +00:00 [INF] Checking user information...
+2025-01-20 17:19:07.004 +00:00 [INF] User authorised.
+2025-01-20 17:19:48.204 +00:00 [INF] User profile is available. Using 'C:\Users\RARI\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-01-20 17:19:48.607 +00:00 [INF] Now listening on: https://localhost:7128
+2025-01-20 17:19:48.609 +00:00 [INF] Now listening on: http://localhost:5062
+2025-01-20 17:19:48.630 +00:00 [INF] No action descriptors found. This may indicate an incorrectly configured application or missing application parts. To learn more, visit https://aka.ms/aspnet/mvc/app-parts
+2025-01-20 17:19:48.779 +00:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-01-20 17:19:48.780 +00:00 [INF] Hosting environment: Development
+2025-01-20 17:19:48.781 +00:00 [INF] Content root path: C:\Users\RARI\Documents\Repos\University Work\TSE-2024-Feedback\FeedbackTracker
+2025-01-20 17:19:49.271 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/ - null null
+2025-01-20 17:19:49.385 +00:00 [INF] Executing endpoint '/ (/)'
+2025-01-20 17:19:51.563 +00:00 [INF] Checking user information...
+2025-01-20 17:19:51.565 +00:00 [INF] User unauthorised.
+2025-01-20 17:19:51.590 +00:00 [ERR] Error enforcing authentication
+Microsoft.AspNetCore.Components.NavigationException: Exception of type 'Microsoft.AspNetCore.Components.NavigationException' was thrown.
+   at Microsoft.AspNetCore.Components.Server.Circuits.RemoteNavigationManager.NavigateToCore(String uri, NavigationOptions options)
+   at Microsoft.AspNetCore.Components.NavigationManager.NavigateToCore(String uri, Boolean forceLoad)
+   at Microsoft.AspNetCore.Components.NavigationManager.NavigateTo(String uri, Boolean forceLoad, Boolean replace)
+   at Application.JAuth.EnforceAuth() in C:\Users\RARI\Documents\Repos\University Work\TSE-2024-Feedback\FeedbackTracker\JAuth.cs:line 102
+2025-01-20 17:19:51.774 +00:00 [INF] Executed endpoint '/ (/)'
+2025-01-20 17:19:51.779 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/ - 302 null text/html; charset=utf-8 2512.5144ms
+2025-01-20 17:19:51.783 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/LogIn - null null
+2025-01-20 17:19:51.789 +00:00 [INF] Executing endpoint '/LogIn (/LogIn)'
+2025-01-20 17:19:51.854 +00:00 [INF] Executed endpoint '/LogIn (/LogIn)'
+2025-01-20 17:19:51.855 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/LogIn - 200 null text/html; charset=utf-8 72.6706ms
+2025-01-20 17:19:51.884 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/_framework/blazor.web.js - null null
+2025-01-20 17:19:51.887 +00:00 [INF] Executing endpoint 'Blazor web static files'
+2025-01-20 17:19:51.893 +00:00 [INF] The file /_framework/blazor.web.js was not modified
+2025-01-20 17:19:51.895 +00:00 [INF] Executed endpoint 'Blazor web static files'
+2025-01-20 17:19:51.896 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/_framework/blazor.web.js - 304 null text/javascript 11.7075ms
+2025-01-20 17:19:51.903 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/_vs/browserLink - null null
+2025-01-20 17:19:51.903 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/_framework/aspnetcore-browser-refresh.js - null null
+2025-01-20 17:19:51.913 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/_framework/aspnetcore-browser-refresh.js - 200 13758 application/javascript; charset=utf-8 9.1847ms
+2025-01-20 17:19:51.934 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/_vs/browserLink - 200 null text/javascript; charset=UTF-8 30.938ms
+2025-01-20 17:19:51.958 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/favicon.png - null null
+2025-01-20 17:19:52.016 +00:00 [INF] Sending file. Request path: '/favicon.png'. Physical path: 'C:\Users\RARI\Documents\Repos\University Work\TSE-2024-Feedback\FeedbackTracker\wwwroot\favicon.png'
+2025-01-20 17:19:52.018 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/favicon.png - 499 1148 image/png 59.7706ms
+2025-01-20 17:19:52.661 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/_blazor/initializers - null null
+2025-01-20 17:19:52.664 +00:00 [INF] Executing endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 17:19:52.666 +00:00 [INF] Executed endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 17:19:52.667 +00:00 [INF] Request finished HTTP/2 GET https://localhost:7128/_blazor/initializers - 200 null application/json; charset=utf-8 6.3627ms
+2025-01-20 17:19:52.718 +00:00 [INF] Request starting HTTP/2 POST https://localhost:7128/_blazor/negotiate?negotiateVersion=1 - null 0
+2025-01-20 17:19:52.721 +00:00 [INF] Executing endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 17:19:52.726 +00:00 [INF] Executed endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 17:19:52.727 +00:00 [INF] Request finished HTTP/2 POST https://localhost:7128/_blazor/negotiate?negotiateVersion=1 - 200 316 application/json 9.0371ms
+2025-01-20 17:19:52.732 +00:00 [INF] Request starting HTTP/2 CONNECT https://localhost:7128/_blazor?id=oVg3f75wg7X44bmxgDoz8g - null null
+2025-01-20 17:19:52.733 +00:00 [INF] Executing endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 17:19:57.828 +00:00 [INF] Request starting HTTP/2 GET https://localhost:7128/ - null null
+2025-01-20 17:19:57.831 +00:00 [INF] Executing endpoint '/ (/)'
+2025-01-20 17:19:57.834 +00:00 [INF] Checking user information...
+2025-01-20 17:19:57.835 +00:00 [INF] User authorised.
+2025-01-20 17:21:08.420 +00:00 [INF] Request starting HTTP/2 POST https://localhost:7128/_blazor/negotiate?negotiateVersion=1 - null 0
+2025-01-20 17:21:08.506 +00:00 [INF] Executing endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 17:21:08.537 +00:00 [INF] Request starting HTTP/2 POST https://localhost:7128/_blazor/negotiate?negotiateVersion=1 - null 0
+2025-01-20 17:21:08.537 +00:00 [INF] Executed endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 17:21:08.575 +00:00 [INF] Executing endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 17:21:08.616 +00:00 [INF] Request finished HTTP/2 POST https://localhost:7128/_blazor/negotiate?negotiateVersion=1 - 200 316 application/json 552.5831ms
+2025-01-20 17:21:08.623 +00:00 [INF] Executed endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 17:21:08.757 +00:00 [INF] Request finished HTTP/2 POST https://localhost:7128/_blazor/negotiate?negotiateVersion=1 - 200 316 application/json 220.5905ms
+2025-01-20 17:21:08.802 +00:00 [INF] Request starting HTTP/2 CONNECT https://localhost:7128/_blazor?id=pEmhHKobc6ysLVuslNN7zg - null null
+2025-01-20 17:21:09.002 +00:00 [INF] Executing endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'
+2025-01-20 17:21:10.100 +00:00 [INF] Executed endpoint 'Microsoft.AspNetCore.Routing.RouteEndpoint'

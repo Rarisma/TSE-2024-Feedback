@@ -4,7 +4,12 @@
 @using Application
 @inject FeedbackApiClient FeedbackClientAccess
 @inject UserAPI UserClientAccess
-
+@using Application.API
+@inject FeedbackAPI FeedbackClientAccess
+@inject JAuth JAuth
+@inject NavigationManager NavigationManager
+@rendermode InteractiveServer
+                      
 @{
     <div class="title-box">
         <center><h1><strong>Your Feedback</strong></h1></center>
@@ -58,13 +63,6 @@
                 <p><strong>PRIORITY LEVEL: @feedback.Priority</strong></p>
             </NavLink>
         }
-    }
-    else
-    {
-        <center><p>No feedback to view!</p></center>
-    }
-}
-
 <style>
 
     .title-box {
@@ -115,7 +113,50 @@
     }
 </style>
 
-@code {
+<title>TSE Feedback: Your Feedback</title>
+
+@if (JAuth.IsAuthorised())
+{
+    <center><h1>Your Feedback</h1></center>
+@if (SelectedFeedbacks != null && SelectedFeedbacks.Any())
+{
+    foreach (var feedback in SelectedFeedbacks)
+    {
+        <p><strong>Title:</strong> @feedback.Title</p>
+        <p><strong>Description:</strong> @feedback.FeedbackText</p>
+        <NavLink class="btn btn-primary" href="@($"/viewfeedback/{feedback.FeedbackID}")">View</NavLink>
+    }
+}
+else
+{
+    <center><p>No feedback to view!</p></center>
+}
+}
+//For users that aren't logged in
+else
+{
+    <style>
+        body {
+            overflow: hidden;
+        }
+    </style>
+    <div class="loggedout">
+        <div class="loggedout-msg">
+            <img src="/Images/LoginCone.png" alt="Login Required" class="cone-img">
+            <h3>Please log in to access the feedback form.</h3>
+            <button class="btn btn-loggedout" @onclick=HomeButton>Return Home</button>
+        </div>
+    </div>
+}
+
+
+@code {  
+    private void HomeButton()
+    {
+        NavigationManager.NavigateTo("/LogIn");
+    }
+
+    private List<FeedbackTrackerCommon.Definitions.Feedback> SelectedFeedbacks;
 
     /// <summary>
     /// These are lists that contain the data from the related
@@ -235,7 +276,10 @@
     /// </summary>
     protected override async Task OnInitializedAsync()
     {
-        await LoadAllFeedback(JAuth.User.UserID);
-        await LoadTeachers();
+        if (JAuth.IsAuthorised())
+        {
+            await LoadAllFeedback(JAuth.User.UserID);
+            await LoadTeachers();
+        }
     }
 }
