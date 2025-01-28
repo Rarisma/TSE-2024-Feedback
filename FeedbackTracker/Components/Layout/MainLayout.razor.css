@@ -6,7 +6,24 @@
 
 main {
     flex: 1;
-    background-color: #f8f6e7 !important; 
+    /*background: linear-gradient(135deg,#79b54a, #f8f6e7, #f8f6e7, #fff, #fff, #f0f0f0, #f0f0f0, #d0e1f9, #a6c8f7, #f79d9d, #ffe4b5);*/
+    background: linear-gradient(135deg, #79b54a, #f8f6e7, #fff, #d0e1f9, #a6c8f7, #f79d9d, #ffe4b5);
+    background-size: 600% 600%;
+    animation: gradient 500s ease-in-out infinite;
+}
+
+@keyframes gradient {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
 }
 
 .sidebar {
@@ -22,20 +39,20 @@ main {
     align-items: center;
 }
 
-    .top-row ::deep a, .top-row ::deep .btn-link {
-        white-space: nowrap;
-        margin-left: 1.5rem;
-        text-decoration: none;
-    }
+.top-row ::deep a, .top-row ::deep .btn-link {
+    white-space: nowrap;
+    margin-left: 1.5rem;
+    text-decoration: none;
+}
 
-    .top-row ::deep a:hover, .top-row ::deep .btn-link:hover {
-        text-decoration: underline;
-    }
+.top-row ::deep a:hover, .top-row ::deep .btn-link:hover {
+    text-decoration: underline;
+}
 
-    .top-row ::deep a:first-child {
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
+.top-row ::deep a:first-child {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
 
 @media (max-width: 640.98px) {
     .top-row {

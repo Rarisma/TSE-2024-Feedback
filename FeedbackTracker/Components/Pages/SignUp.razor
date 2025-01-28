@@ -4,6 +4,8 @@
 @rendermode InteractiveServer
 @inject IJSRuntime JSRuntime
 
+<title>TSE Feedback: Sign Up </title>
+
 @code {
 
     private async void Submit()
@@ -15,107 +17,103 @@
             await JSRuntime.InvokeVoidAsync("alert", "user created");
             NavigationManager.NavigateTo("/");
         }
-		else
-		{
-			//Clear if invalid
-			Password = "";
-			Password2 = "";
+        else
+        {
+            //Clear if invalid
+            Password = "";
+            Password2 = "";
             await JSRuntime.InvokeVoidAsync("alert", "The entered passwords don't match.");
-		}
-	}
-	/// <summary>
-	/// Entered Username
-	/// </summary>
-	public string Username { get; set; }
+        }
+    }
+    /// <summary>
+    /// Entered Username
+    /// </summary>
+    public string Username { get; set; }
 
-	/// <summary>
-	/// Entered password
-	/// </summary>
-	public string Password { get; set; }
+    /// <summary>
+    /// Entered Email
+    /// </summary>
+    public string Email { get; set; }
 
-	/// <summary>
-	/// Entered Password Confirmation
-	/// </summary>
-	public string Password2 { get; set; }
+    /// <summary>
+    /// Entered password
+    /// </summary>
+    public string Password { get; set; }
+
+    /// <summary>
+    /// Entered Password Confirmation
+    /// </summary>
+    public string Password2 { get; set; }
 }
 
-<!-- Image and header. Looks ok but alignment needs fixing -->
-<div class="d-flex justify-content-center align-items-center" style="min-height: 90vh; flex-direction: column;">
-    <img src="Images/UniLogo.png" alt="University of Lincoln Logo" style="width: 150px; height: auto; margin-bottom: 10px;"> 
-    <h3 class="text-center mb-4" style="font-family: 'Lato', sans-serif; color: #4A4A4A; margin-top: -10px;"> University of Lincoln TSE Feedback Tracking Tool! </h3>
+<!-- Page Structure -->
+<div class="container-fluid" style="min-height: 100vh;">
+    <!-- Top Section with Logo and Heading -->
+    <!-- Image from: https://giphy.com/gifs/sandisk-bubble-loading-speech-2gHUXJe61iM0y7TpNu-->
+    <div class="row justify-content-center align-items-center pt-3">
+        <div class="col text-center d-flex justify-content-center align-items-center">
+            <img src="Images/HomeBubble.gif" alt="Icon" class="logo-icon" style="width: 100px; height: auto;">
+            <h3 class="top-heading">CMP2804-24/25 TSE Feedback Tracking Tool!</h3>
+        </div>
+    </div>
 
-    <div class="container mt-5">
-        <div class="row justify-content-center">
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-header d-flex">
-                        <button class="btn btn-outline-primary flex-grow-1 me-2" @onclick="LoginTab">Log In</button>
-                        <button class="btn btn-primary flex-grow-1">Sign Up</button>
+
+    <div class="container mt-4">
+        <div class="sign-up-box mx-auto" style="max-width: 500px;">
+            <div class="card-header d-flex">
+                <button class="btn btn-outline-primary flex-grow-1 me-2" @onclick="LoginTab">Log In</button>
+                <button class="btn btn-primary flex-grow-1">Sign Up</button>
+            </div>
+            <div class="card-body">
+                <form @onsubmit="Submit">
+                    <!-- Account creation textboxes/fields -->
+                    <div class="mb-3">
+                        <label for="firstName" class="form-label">First Name</label>
+                        <input type="text" class="form-control" id="firstName" placeholder="Enter first name" required>
                     </div>
-                    <div class="card-body">
-                        <form @onsubmit="Submit">
-                            <!-- First name header and text box-->
-                            <div class="mb-3">
-                                <label for="firstName" class="form-label">First Name</label>
-                                <input type="text" class="form-control" id="firstName" placeholder="Enter first name">
-                            </div>
-                            <!-- Last name header and text box-->
-                            <div class="mb-3">
-                                <label for="lastName" class="form-label">Last Name</label>
-                                <input type="text" class="form-control" id="lastName" placeholder="Enter last name">
-                            </div>
-                            <div class="mb-3">
-                                <!-- Username header and text box-->
-                                <label for="username" class="form-label">Username</label>
-                                <input type="text" class="form-control" id="username" placeholder="Enter Username" @bind-value="Username">
-                            </div>
-                            <div class="mb-3">
-                                <!-- Password header and text box-->
-                                <label for="password" class="form-label">Password</label>
-                                <input type="password" class="form-control" id="password"
-                                       placeholder="Create password" @bind-value="Password">
-                            </div>
-                            <div class="mb-3">
-                                <!-- Password confirmation header and text box-->
-                                <label for="confirmPassword" class="form-label">Confirm Password</label>
-                                <input type="password" class="form-control" id="confirmPassword"
-                                       placeholder="Confirm password" @bind-value="Password2">
-                            </div>
-                            <!-- Privacy Policy-->
-                            <div class="mb-3 form-check">
-                                <input type="checkbox" class="form-check-input" id="privacyPolicy" required>
-                                <label class="form-check-label" for="privacyPolicy">
-                                    I agree to the Privacy Policy and Terms of Service
-                                </label>
-                            </div>
-                            <!-- Button -->
-                            <div class="d-grid">
-                                <button type="submit" class="btn btn-primary">Create Account</button>
-                            </div>
-                        </form>
+                    <div class="mb-3">
+                        <label for="lastName" class="form-label">Last Name</label>
+                        <input type="text" class="form-control" id="lastName" placeholder="Enter last name" required>
                     </div>
-                </div>
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Username</label>
+                        <input type="text" class="form-control" id="username" placeholder="Enter Username" @bind-value="Username" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" placeholder="Enter Email" @bind-value="Email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="password" placeholder="Create password" @bind-value="Password" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="confirmPassword" class="form-label">Confirm Password</label>
+                        <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm password" @bind-value="Password2" required>
+                    </div>
+                    <!-- Privacy Policy -->
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="privacyPolicy" required>
+                        <label class="form-check-label" for="privacyPolicy">I agree to the Privacy Policy and Terms of Service</label>
+                    </div>
+                    <!-- Button -->
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">Create Account</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
 </div>
 
-<style> 
-    html, body {
-        height: 100%;
-        margin: 0;
+<!-- For alignment. If removed the logo and text will shift -->
+<style>
+    body {
         overflow: hidden;
-    }
-
-    .card {
-        background-color: #EBF0F5;
-        width: 100%;
-        max-width: 600px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        border-radius: 8px;
     }
 </style>
 
+<!-- Function to navigate users to the signup tab -->
 @code {
     private void LoginTab()
     {
