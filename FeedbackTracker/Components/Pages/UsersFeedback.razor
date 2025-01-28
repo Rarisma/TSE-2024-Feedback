@@ -67,106 +67,117 @@
 
 <style>
 
-    .title-box
-    {
-        background-color: #1f1f1f;
-        color: white;
-        width: 100%;
-        padding: 32px;
-        text-align: center;
+    .title-box {
+    background-color: #1f1f1f;
+    color: white;
+    width: 100%;
+    padding: 32px;
+    text-align: center;
     }
 
     .sort-container {
-        display: flex;
-        align-items: center;
-        gap: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
     }
 
-    .sort-box
-    {
-        background-color: #1f1f1f;
-        border-style: solid;
-        border-color: #1f1f1f;
-        border-radius: 8px;
-        width: 300px;
-        padding: 16px;
-        margin: 16px;
-        text-align: center;
-        color: white;
+    .sort-box {
+    background-color: #1f1f1f;
+    border-style: solid;
+    border-color: #1f1f1f;
+    border-radius: 8px;
+    width: 300px;
+    padding: 16px;
+    margin: 16px;
+    text-align: center;
+    color: white;
     }
 
-    .feedback-box 
-    {
-        position: center;
-        display: block;
-        background-color: #EBF0F5;
-        border-style: solid;
-        border-color: black;
-        border-radius: 8px;
-        width: 300px;
-        padding: 16px;
-        margin-top: 16px;
-        margin-bottom: 16px;
-        margin-left: 185px;
-        text-align: center;
-        color: black;
-        text-decoration: none;
+    .feedback-box {
+    position: center;
+    display: block;
+    background-color: #EBF0F5;
+    border-style: solid;
+    border-color: black;
+    border-radius: 8px;
+    width: 300px;
+    padding: 16px;
+    margin-top: 16px;
+    margin-bottom: 16px;
+    margin-left: 185px;
+    text-align: center;
+    color: black;
+    text-decoration: none;
     }
 
-    .feedback-box:hover 
-    {
-        transform: translateY(-2px);
+    .feedback-box:hover {
+    transform: translateY(-2px);
     }
 </style>
 
 @code {
-    private List<FeedbackTrackerCommon.Definitions.Feedback> AllFeedbacks;
 
-    private List<FeedbackTrackerCommon.Definitions.Feedback> SpecificFeedbacks;
+    /// <summary>
+    /// These are lists that contain the data from the related
+    /// datbase, e.g. Teachers contains data about the user
+    /// </summary>
+    private List<FeedbackTrackerCommon.Definitions.Feedback> AllFeedbacks = new();
 
-    private List<FeedbackTrackerCommon.Definitions.User> Teachers = new List<FeedbackTrackerCommon.Definitions.User>();
+    private List<FeedbackTrackerCommon.Definitions.Feedback> SpecificFeedbacks = new();
 
+    private List<FeedbackTrackerCommon.Definitions.User> Teachers = new();
+
+    // the values that will be assigned for these are from when the user filters their feedback
     private string SelectedOption { get; set; } = "";
 
     private string SelectedTeacherID { get; set; } = "";
 
+    /// <summary>
+    /// Sorts the feedbacks based on the specific filter applied
+    /// by the user, by rearranging the lists
+    /// </summary>
     private void SortBySelected(ChangeEventArgs e)
     {
         SelectedOption = e.Value?.ToString();
 
-        if (SelectedOption == "az")
+        if (SelectedOption == "az") // alphabetical
         {
-            SpecificFeedbacks.Sort((x, y) => x.Title.CompareTo(y.Title));
+            SpecificFeedbacks.Sort((current, next) => current.Title.CompareTo(next.Title));
         }
 
-        else if (SelectedOption == "za")
+        else if (SelectedOption == "za") // reverse alphabetical
         {
-            SpecificFeedbacks.Sort((x, y) => y.Title.CompareTo(x.Title));
+            SpecificFeedbacks.Sort((current, next) => next.Title.CompareTo(current.Title));
         }
 
-        else if (SelectedOption == "deadline")
+        else if (SelectedOption == "deadline") // closest due dates first
         {
-            SpecificFeedbacks.Sort((x, y) => x.Deadline.CompareTo(y.Deadline));
+            SpecificFeedbacks.Sort((current, next) => current.Deadline.CompareTo(next.Deadline));
         }
 
-        else if (SelectedOption == "priority")
+        else if (SelectedOption == "priority") // lowest priority first
         {
-            SpecificFeedbacks.Sort((x, y) => x.Priority.CompareTo(y.Priority));
+            SpecificFeedbacks.Sort((current, next) => current.Priority.CompareTo(next.Priority));
         }
     }
 
+    /// <summary>
+    /// Creates a new list depending on the username of the teacher,
+    /// all feedbacks not associated with that teacher will be excluded
+    /// </summary>
     private void SortByTeacher(ChangeEventArgs e)
     {
         SelectedTeacherID = e.Value.ToString();
-        if (SelectedTeacherID == "all")
+        if (SelectedTeacherID == "all") // if the user wishes to see all of their feedbacks
         {
             SpecificFeedbacks = new List<FeedbackTrackerCommon.Definitions.Feedback>(AllFeedbacks);
         }
         else
         {
             SpecificFeedbacks.Clear();
-            foreach (var feedback in AllFeedbacks)
+            foreach (var feedback in AllFeedbacks) // loops through original list to add all related feedbacks
             {
+                // checks if the teacher assigned the feedback by seeing if they have the same ID as the assignee ID
                 if (int.Parse(SelectedTeacherID) == feedback.AssigneeID)
                 {
                     SpecificFeedbacks.Add(feedback);
@@ -175,37 +186,43 @@
         }
     }
 
-
+    /// <summary>
+    /// Loads all the feedbacks into the two specific feedback lists
+    /// by communicating with the API
+    /// </summary>
     private async Task LoadAllFeedback(int ID)
     {
         try
         {
-            var feedbacks = await FeedbackClientAccess.GetAssignedFeedbacks(ID);
+            var feedbacks = await FeedbackClientAccess.GetAssignedFeedbacks(ID); // communicates with API
+            // different assignments to make sure All and Specific don't point to the same object in memory
             AllFeedbacks = feedbacks;
             SpecificFeedbacks = new List<FeedbackTrackerCommon.Definitions.Feedback>(feedbacks);
 
         }
-        catch (Exception ex)
+        catch (Exception ex) // feedbacks fails to load
         {
             Console.WriteLine("Failed to load feedback.");
         }
-
-        StateHasChanged();
     }
 
+    /// <summary>
+    /// Loads the data for teachers that have assigned feedback to the current user
+    /// </summary>
     private async Task LoadTeachers()
     {
-        Teachers.Clear();
+        Teachers.Clear(); // empties teacher
         foreach (var feedback in AllFeedbacks)
         {
+            // checks to see if a teacher is already in the list, as otherwise the filter dropdown could be cluttered by the same teacher
             if (!Teachers.Any(teach => teach.UserID == feedback.AssigneeID))
             {
-                var user = await UserClientAccess.GetUserByID(feedback.AssigneeID);
-                if (user != null)
+                var user = await UserClientAccess.GetUserByID(feedback.AssigneeID); // gets a single user based on a provided ID
+                try
                 {
-                    Teachers.Add(user);
+                    Teachers.Add(user); // adds to list
                 }
-                else
+                catch (Exception ex) // teachers fails to load
                 {
                     Console.WriteLine("Failed to load teacher.");
                 }
@@ -213,6 +230,9 @@
         }
     }
 
+    /// <summary>
+    /// Loads the feedback data and teacher data as soon as the page is loaded
+    /// </summary>
     protected override async Task OnInitializedAsync()
     {
         await LoadAllFeedback(JAuth.User.UserID);
