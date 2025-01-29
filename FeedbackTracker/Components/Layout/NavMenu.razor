@@ -1,4 +1,5 @@
 @inject JAuth auth
+@inject NavigationManager NavigationManager
 
 <input type="checkbox" title="Navigation menu" class="navbar-toggler" />
 
@@ -11,12 +12,20 @@
         </div>
         @if (auth.IsAuthorised())
         {
+<div class="navbar-toggler-wrapper">
+    <input type="checkbox" title="Navigation menu" class="navbar-toggler" />
+    <div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
+        <nav class="flex-column">
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                    <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
+                </NavLink>
+            </div>
             <div class="nav-item px-3">
                 <NavLink class="nav-link" href="feedback">
                     <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Create-Feedback
                 </NavLink>
             </div>
-
             <div class="nav-item px-3">
                 <NavLink class="nav-link" href="usersfeedback">
                     <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Your-Feedback
@@ -91,8 +100,41 @@
         align-items: center;
     }
 </style>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="settings">
+                    <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Settings
+                </NavLink>
+            </div>
+        </nav>
 
-<!-- Login/Signup buttons display conditions -->
-@code {
-    bool UserLoggedIn = false;
+        <!-- Buttons for login/signup/account management -->
+        <div class="login-buttons fixed-bottom px-3 pb-3">
+            @if (auth.IsAuthorised())
+            {
+                <NavLink class="btn btn-primary mb-2 w-100" href="/AccountManagement">Account</NavLink>
+                <NavLink class="btn btn-primary mb-2 w-100" href="/Logout">Log Out</NavLink>
+            }
+            else
+            {
+                <NavLink class="btn btn-primary mb-2 w-100" href="/contact">Need Help?</NavLink>
+            }
+        </div>
+    </div>
+</div>
+
+@if (NavigationManager.Uri.Contains("LogIn") || NavigationManager.Uri.Contains("SignUp") || NavigationManager.Uri.Contains("about") || NavigationManager.Uri.Contains("privacypolicy") || NavigationManager.Uri.Contains("termsofservice"))
+{
+    <!-- About -->
+    <div class="about-navbar">
+        <nav class="d-flex justify-content-around align-items-center h-100">
+            <NavLink class="nav-link about-link" href="/about" style="color: #e0e0e0;">About</NavLink>
+            <NavLink class="nav-link about-link" href="/termsofservice" style="color: #e0e0e0;">Terms of Service</NavLink>
+            <NavLink class="nav-link about-link" href="/privacypolicy" style="color: #e0e0e0;">Privacy Policy</NavLink>
+
+        </nav>
+    </div>
+
 }
+
+
+

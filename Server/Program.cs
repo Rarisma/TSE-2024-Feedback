@@ -1,6 +1,7 @@
 using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Serilog;
 using Server;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,10 +13,19 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+//Configure Serilog
+Log.Logger = new LoggerConfiguration()
+	.WriteTo.Console()
+	.WriteTo.File("logs/log-server.txt", rollingInterval: RollingInterval.Day)
+	.CreateLogger();
+
 //Configure Entity Framework Core with MySQL
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<TrackerContext>(options =>
 	options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+
+//Enable Serilog.
+builder.Host.UseSerilog();
 
 //Register Services for Dependency Injection
 builder.Services.AddScoped<AuthService>();
@@ -33,6 +43,9 @@ builder.Services.AddAuthentication(options =>
 })
 .AddJwtBearer("JwtBearer", options =>
 {
+	//Check secret key is valid.
+	if (secretKey == null) { throw new Exception("Secret key is null"); }
+
 	options.TokenValidationParameters = new TokenValidationParameters
 	{
 		ValidateIssuer = true,

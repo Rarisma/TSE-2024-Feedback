@@ -1,0 +1,39 @@
+﻿@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.settings {
+    position: fixed;
+    top: 50%;
+    left: 56%;
+    width: 75%;
+    height: 80vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    text-align: left;
+    padding: 20px;
+    backdrop-filter: blur(200px);
+    border-radius: 12px;
+    box-shadow: 0 20px 35px rgba(0, 0, 0, 0.2);
+    transform: translate(-50%, -50%);
+    animation: fadeIn 0.5s ease-in;
+}
+
+h3 {
+    position: absolute;
+    top: 80px;
+    left: 80px;
+    margin: 0;
+    font-size: 3.5rem;
+    font-weight: 700;
+    color: #333333;
+    text-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+}

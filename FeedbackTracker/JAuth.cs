@@ -1,9 +1,11 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Application.API;
 using FeedbackTrackerCommon.Definitions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.IdentityModel.Tokens;
+using Serilog;
 
 namespace Application;
 /// <summary>
@@ -11,18 +13,11 @@ namespace Application;
 /// authentication methods, because if you can't get the .NET version of it
 /// to work, you might as well be on your own.
 /// </summary>
-public class JAuth
+public class JAuth(NavigationManager NavigationManager)
 {
 	public static User User;
 	private static ClaimsPrincipal? UserData;
-	private NavigationManager Navi;
 	private static string JWT;
-
-	public JAuth(NavigationManager NavigationManager)
-	{
-		
-		Navi = NavigationManager;
-	}
 
 	/// <summary>
 	/// Authorises a user.
@@ -65,25 +60,21 @@ public class JAuth
 
 	public bool IsAuthorised()
 	{
-		if (UserData == null)
+		//Check UserData.Identity is set.
+		if (UserData?.Identity == null)
 		{
 			return false;
 		}
-		if (UserData.Identity.IsAuthenticated)
-		{
-			return true;
-		}
 
-		return false;
+		return UserData.Identity.IsAuthenticated;
 	}
 
 	/// <summary>
 	/// De-Authorises the session, logs the user out.
 	/// </summary>
-	/// <returns></returns>
 	public void Deauthorise()
 	{
-		User = null;
+		User = new();
 		JWT = "";
 		UserData = null;
 	}
@@ -102,22 +93,22 @@ public class JAuth
 	/// </remarks>
 	public void EnforceAuth()
 	{
+		Log.Information("Checking user information...");
 		try
 		{
-			if (UserData == null)
+			if (!IsAuthorised())
 			{
-				Navi.NavigateTo("/Unauthorised");
+				Log.Information("User unauthorised.");
+				NavigationManager.NavigateTo("/Unauthorised");
 			}
-			else if (UserData.Identity.IsAuthenticated)
-			{
-				return;
-			}
+			Log.Information("User authorised.");
+			return;
 		}
-		catch
+		catch (Exception ex)
 		{
-
+			Log.Error(ex, "Error enforcing authentication");
 		}
-		Navi.NavigateTo("/LogIn");
+		NavigationManager.NavigateTo("/LogIn");
 
 	}	
 }
