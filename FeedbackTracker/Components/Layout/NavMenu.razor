@@ -1,6 +1,6 @@
-@inject JAuth auth
+﻿@inject JAuth auth
 @inject NavigationManager NavigationManager
-
+@inject API.UserAPI UserCLient
 <div class="navbar-toggler-wrapper">
     <input type="checkbox" title="Navigation menu" class="navbar-toggler" />
     <div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
@@ -17,7 +17,7 @@
             </div>
             <div class="nav-item px-3">
                 <NavLink class="nav-link" href="usersfeedback">
-                    <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Your-Feedback
+					<span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Your-Feedback @if (New_Feedback) {<span> 🔔 </span>;}
                 </NavLink>
             </div>
             <div class="nav-item px-3">
@@ -54,6 +54,20 @@
         </nav>
     </div>
 
+}
+@code{
+    bool New_Feedback = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // if logged in
+        if (auth.IsAuthorised())
+        {
+            // check if user has new feedback
+
+
+        }
+    }
 }
 
 

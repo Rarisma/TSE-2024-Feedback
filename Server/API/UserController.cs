@@ -148,4 +148,87 @@ public class UserController(AuthService authService) : Controller
 		catch (Exception ex) { return "Encountered an error: " + ex.Message; }
 	}
 
+    /// <summary>
+    /// Creates a new user object.
+    /// </summary>
+    /// <param Userid="user id">Account user id</param>
+    /// <returns></returns>
+    [HttpGet("NewFeedback")]
+    public string NewFeedbackGet(int Userid)
+    {
+        try
+        {
+            //Find account
+            using TrackerContext Ctx = new();
+            var notifications = (from Notification notificaiton in Ctx.Notification
+                                 where notificaiton.UserID == Userid
+                           select new
+                           {
+                               NotificationID = notificaiton.NotificationID,
+                               UserID = notificaiton.UserID,
+                               FeedbackID = notificaiton.FeedbackID,
+                               Timestamp = notificaiton.Timestamp,
+
+                           }).ToList();
+
+            //Serialise to JSON
+            string json = JsonSerializer.Serialize(notifications);
+            return json;
+        }
+        catch (Exception ex) { return "Encountered an error: " + ex.Message; }
+    }
+
+    /// <summary>
+    /// Creates a new user object.
+    /// </summary>
+    /// <param Userid="user id">Account user id</param>
+    /// <returns></returns>
+    [HttpPost("NewFeedback")]
+    public async void NewFeedbackPost(int Userid, int FeedbackID)
+    {
+        try
+        {
+			//Create account object
+			//NOTE: bCrypt is very secure. (Salting is handled automatically)
+			Notification notification = new()
+			{
+				UserID = Userid,
+				FeedbackID = FeedbackID,
+				Timestamp = DateTime.Now,
+			};
+
+
+            //Add user to database
+            await using TrackerContext Ctx = new();
+            Ctx.Notification.Add(notification);
+            await Ctx.SaveChangesAsync();
+
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Failed to create user");
+        }
+    }
+
+    /// <summary>
+    /// Creates a new user object.
+    /// </summary>
+    /// <param Userid="user id">Account user id</param>
+    /// <returns></returns>
+    [HttpDelete("NewFeedback")]
+    public async void NewFeedbackDelete(int Userid)
+    {
+        try
+        {
+			//Add user to database
+            await using TrackerContext Ctx = new();
+            Ctx.Notification.RemoveRange(Ctx.Notification.Where(notification => notification.UserID == Userid));
+            await Ctx.SaveChangesAsync();
+
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Failed to create user");
+        }
+    }
 }

@@ -20,7 +20,9 @@ public class TrackerContext(
 
 	public DbSet<Extension> Extension { get; set; }
 
-	protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    public DbSet<Notification> Notification { get; set; }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 	{
 
 		optionsBuilder.UseMySql(ConnectionString, ServerVersion.AutoDetect(ConnectionString));
