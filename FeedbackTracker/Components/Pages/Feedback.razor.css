@@ -1,0 +1,68 @@
+﻿/* MAIN PAGE */
+
+.create-form, .form-control, .form-select, textarea.form-control {
+    background-color: transparent;
+    border: none;
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.btn {
+    color: #000000;
+    width: 38%;
+}
+
+.form-label {
+    color: black;
+    margin-bottom: 0.5rem;
+}
+
+.card {
+    max-width: 100%;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: rgba(128, 0, 128, 0.5);
+    border-radius: 8px;
+    height: 800px;
+    backdrop-filter: blur(15px);
+    color: white;
+}
+
+
+/* FOR USERS NOT LOGGED IN */
+
+.loggedout {
+    display: block;
+}
+
+.cone-img {
+    display: block;
+    margin: 100px auto 15px;
+    height: auto;
+    max-width: 70%;
+}
+
+.btn.btn-loggedout {
+    background-color: #1B6EC2;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    display: block;
+    margin: 50px auto 15px;
+    width: auto;
+    max-width: 350px;
+}
+
+.btn.btn-loggedout:hover {
+    background-color: #0B5ED7;
+}
+
+.loggedout-msg h3 {
+    text-align: center;
+    margin: 0 auto 15px;
+}
+

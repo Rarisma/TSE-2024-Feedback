@@ -9,18 +9,13 @@ using FeedbackTrackerCommon.Definitions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using OtpNet;
+using Serilog;
 
 namespace Server.API;
 [ApiController]
 [Route("User")]
-public class UserController : Controller
+public class UserController(AuthService authService) : Controller
 {
-	private readonly AuthService _authService;
-
-	public UserController(AuthService authService)
-	{
-		_authService = authService;
-	}
 	/// <summary>
 	/// Gets a user by their User ID
 	/// </summary>
@@ -33,7 +28,7 @@ public class UserController : Controller
 		{
 			//Find account
 			using TrackerContext Ctx = new();
-			User Account = Ctx.user.First(User => User.UserID == ID);
+			User Account = Ctx.User.First(User => User.UserID == ID);
 
 			//Serialise to JSON
 			string json = JsonSerializer.Serialize(Account);
@@ -54,7 +49,7 @@ public class UserController : Controller
 		{
 			//Find account
 			using TrackerContext Ctx = new();
-			User Account = Ctx.user.First(User => User.Username == Username);
+			User Account = Ctx.User.First(User => User.Username == Username);
 
 			//Serialise to JSON
 			return JsonSerializer.Serialize(Account);
@@ -90,7 +85,6 @@ public class UserController : Controller
 			await Ctx.SaveChangesAsync();
 			await Ctx.DisposeAsync();
 		}
-		catch (Exception ex) {  }
 	}
 
 	/// <summary>
@@ -100,9 +94,9 @@ public class UserController : Controller
 	/// <param name="Password">account password</param>
 	/// <returns></returns>
 	[HttpGet("Authenticate")]
-	public Task<string> Authenticate(string Username, string Password)
+	public async Task<string?> Authenticate(string Username, string Password)
 	{
-		return _authService.AuthenticateUserAsync(Username, Password);
+		return await authService.AuthenticateUserAsync(Username, Password);
 	}
 
 	[HttpGet("GetUsers")]
@@ -113,7 +107,7 @@ public class UserController : Controller
 			//Find accounts
 
 			using TrackerContext Ctx = new();
-			List<User> Accounts = Ctx.user.ToList();
+			List<User> Accounts = Ctx.User.ToList();
 			var result = Accounts.ToList();
 
 			Accounts.ForEach(acc => acc.Password = "");
@@ -137,8 +131,8 @@ public class UserController : Controller
 		{
             //Find account
             using TrackerContext Ctx = new();
-            var modules = (from UsersModules usermodule in Ctx.users_modules
-                         join moduledata in Ctx.modules on usermodule.ModuleID equals moduledata.ModuleID
+            var modules = (from UsersModules usermodule in Ctx.UsersModules
+                         join moduledata in Ctx.Modules on usermodule.ModuleID equals moduledata.ModuleID
                          where usermodule.UserID == Userid
                          select new
                          {

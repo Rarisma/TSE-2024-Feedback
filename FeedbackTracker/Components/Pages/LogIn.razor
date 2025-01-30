@@ -1,7 +1,9 @@
 ﻿@page "/LogIn"
+@inject IJSRuntime JSRuntime
+@using Application.API
 @inject NavigationManager NavigationManager
 @inject JAuth JAuth
-
+<!-- Authentication method, ran once button is clicked -->
 @code {
     private async Task Submit()
     {
@@ -12,61 +14,71 @@
     public string Username { get; set; }
     public string Password { get; set; }
 }
-
 @rendermode InteractiveServer
-
-<!-- Image and header. Looks ok but alignment needs fixing -->
-<div class="d-flex justify-content-center align-items-center" style="min-height: 90vh; flex-direction: column;">
-    <img src="Images/UniLogo.png" alt="University of Lincoln Logo" style="width: 150px; height: auto; margin-bottom: 10px;">
-    <h3 class="text-center mb-4" style="font-family: 'Lato', sans-serif; color: #4A4A4A; margin-top: -10px;"> University of Lincoln TSE Feedback Tracking Tool! </h3>
-
-    <div class="container mt-5">
-        <div class="row justify-content-center">
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-header d-flex"> 
-                        <button class="btn btn-primary flex-grow-1 me-2">Log In</button>
-                        <button class="btn btn-outline-primary flex-grow-1" @onclick="SignupTab">Sign Up</button>
-                    </div>
-                    <div class="card-body">
-                        <form @onsubmit="Submit">
-                            <div class="mb-3">
-                                <label for="username" class="form-label">Username</label>
-                                <input type="username" class="form-control" id="email"
-                                       placeholder="Username" @bind-value="Username">
-                            </div>
-                            <div class="mb-3">
-                                <label for="password" class="form-label">Password</label>
-                                <input type="password" class="form-control" id="password"
-                                       placeholder="Password" @bind-value="Password">
-                            </div>
-                            <div class="d-grid">
-                                <button type="submit" class="btn btn-primary">Log In</button>
-                            </div>
-                        </form>
-                    </div>
+<title>TSE Feedback: Log In </title>
+<div class="login-page full-height">
+    <!-- Top Section with Logo and Heading -->
+    <!-- Image from: https://giphy.com/gifs/sandisk-bubble-loading-speech-2gHUXJe61iM0y7TpNu-->
+    <div class="row justify-content-center align-items-center pt-3">
+        <div class="col text-center d-flex justify-content-center align-items-center">
+            <img src="Images/HomeBubble.gif" alt="Icon" class="logo-icon">
+            <h3 class="top-heading">CMP2804-24/25 TSE Feedback Tracking Tool!</h3>
+        </div>
+    </div>
+    <!-- Uni Logo -->
+    <div class="row d-flex justify-content-center align-items-center half-height">
+        <div class="col-12 col-md-3 d-flex justify-content-center align-items-center">
+            <img src="Images/UniLogo.png" alt="Uni Logo" class="uni-logo">
+        </div>
+        <!-- Login form -->
+        <div class="col-12 col-md-6 d-flex justify-content-center login-section">
+            <div class="login-box mt-2 object" data-value="2" style="max-width: 400px;">
+                <div class="card-header d-flex">
+                    <button class="btn btn-primary flex-grow-1 me-2">Log In</button>
+                    <button class="btn btn-outline-primary flex-grow-1" @onclick="SignupTab">Sign Up</button>
                 </div>
+                <div class="card-body">
+                    <form @onsubmit="Submit">
+                        <input type="text" class="form-control mb-3" placeholder="Username" @bind-value="Username" aria-label="Enter username">
+                        <input type="password" class="form-control mb-3" placeholder="Password" @bind-value="Password" aria-label="Enter password">
+                        <button type="submit" class="btn btn-primary w-100" aria-label="Log in">Log In</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- Info section -->
+        <div class="row d-flex justify-content-center align-items-center half-height">
+            <div class="col-12 col-md-7 d-flex flex-column justify-content-center align-items-center info-section">
+                <h1 class="bright-title">Improve Your Workflow</h1>
+                <p class="bottom-box-text">This feedback tracking tool allows anyone to plan and prioritize their tasks according to their needs.</p>
+                <ul class="features-list">
+                    <li>Real-time feedback tracking</li>
+                    <li>Direct communication with lecturers</li>
+                    <li>Accessible anytime, anywhere!</li>
+                </ul>
             </div>
         </div>
     </div>
 </div>
 
+<!-- Animation! Thanks to: https://www.youtube.com/watch?v=ntg6tbGxP3k -->
+<script type="text/javascript">
+    document.addEventListener("mousemove", parallax);
+    function parallax(e) {
+    document.querySelectorAll(".object").forEach(function(move) {
+    var moving_value = move.getAttribute("data-value");
+    var x = (e.clientX * moving_value) / 250;
+    var y = (e.clientY * moving_value) / 250;
+    move.style.transform = "translateX(" + x + "px) translateY(" + y + "px)";});
+}
+</script>
+<!-- To fix scrolling bug -->
 <style>
-    html, body {
-        height: 100%;
-        margin: 0;
+    body {
         overflow: hidden;
     }
-
-    .card {
-        background-color: #EBF0F5;
-        width: 100%;
-        max-width: 600px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        border-radius: 8px;
-    }
 </style>
-
+<!-- Function to navigate users to the signup tab -->
 @code {
     private void SignupTab()
     {

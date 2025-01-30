@@ -1,20 +1,12 @@
-﻿using System.Security.Claims;
-using System.Text;
-using System.Text.Json;
+﻿using System.Text.Json;
 using FeedbackTrackerCommon.Definitions;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
+using Serilog;
 
-namespace Application;
+namespace Application.API;
 
-public class UserAPI
+public class UserAPI(string baseEndpoint)
 {
-	private readonly HttpClient _httpClient;
-
-	public UserAPI(string baseEndpoint)
-	{
-		_httpClient = new HttpClient { BaseAddress = new Uri(baseEndpoint) };
-	}
+	private readonly HttpClient _httpClient = new() { BaseAddress = new Uri(baseEndpoint) };
 
 	/// <summary>
 	/// Gets a user by their User ID.
@@ -30,6 +22,7 @@ public class UserAPI
 		}
 		catch (Exception ex)
 		{
+			Log.Error(ex,$"Error getting user by ID {ID}");
 			return null;
 		}
 	}
@@ -48,6 +41,7 @@ public class UserAPI
 		}
 		catch (Exception ex)
 		{
+			Log.Error(ex, $"Error getting user by name {username}");
 			return null;
 		}
 	}
@@ -55,7 +49,7 @@ public class UserAPI
 	/// <summary>
 	/// Creates a new user.
 	/// </summary>
-	public async Task<string> CreateUser(string Username, string Password)
+	public async Task CreateUser(string Username, string Password)
 	{
 		try
 		{
@@ -63,11 +57,11 @@ public class UserAPI
 						 $"&Password={Uri.EscapeDataString(Password)}";
 			HttpResponseMessage response = await _httpClient.PostAsync(url, null);
 			response.EnsureSuccessStatusCode();
-			return await response.Content.ReadAsStringAsync();
+			await response.Content.ReadAsStringAsync();
 		}
 		catch (Exception ex)
 		{
-			return $"Error: {ex.Message}";
+			Log.Error(ex, $"Error creating user");
 		}
 	}
 
@@ -90,10 +84,9 @@ public class UserAPI
 		}
 		catch (Exception ex)
 		{
-
+			Log.Error(ex, $"Authenticating user {Username}");
+			return string.Empty;
 		}
-
-		return string.Empty;
 	}
 
     /// <summary>

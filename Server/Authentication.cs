@@ -2,26 +2,17 @@
 using System.Security.Claims;
 using System.Text;
 using FeedbackTrackerCommon.Definitions;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 namespace Server;
 
-public class AuthService 
+public class AuthService(IConfiguration configuration, TrackerContext context)
 {
-	private readonly IConfiguration _configuration;
-	private readonly TrackerContext _context;
-	public AuthService(IConfiguration configuration, TrackerContext context)
-	{
-		_configuration = configuration;
-		_context = context;
-	}
 	// Authenticates a user and returns a JWT token if successful
-	public async Task<string> AuthenticateUserAsync(string Username, string password)
+	public async Task<string?> AuthenticateUserAsync(string Username, string password)
 	{
-		User? user = await _context.user.FirstOrDefaultAsync(u => u.Username == Username);
-		if (user == null) { return null; } 
+		User? user = await context.User.FirstOrDefaultAsync(u => u.Username == Username);
+		if (user == null) {return null;} 
 
 		// Verify password
 		bool isPasswordValid = BCrypt.Net.BCrypt.Verify(password, user.Password);
@@ -37,26 +28,32 @@ public class AuthService
 		return token;
 	}
 
-	// Generates a JWT token for the authenticated user
+	/// <summary>
+	/// Generates a Java Wev Token for a user
+	/// </summary>
+	/// <param name="user"></param>
+	/// <returns></returns>
+	/// <exception cref="Exception"></exception>
 	private string GenerateJwtToken(User user)
 	{
-		IConfigurationSection jwtSettings = _configuration.GetSection("JwtSettings");
+		//Get values from the configuration file
+		IConfigurationSection jwtSettings = configuration.GetSection("JwtSettings");
 		string? secretKey = jwtSettings.GetValue<string>("SecretKey");
 		string? issuer = jwtSettings.GetValue<string>("Issuer");
 		string? audience = jwtSettings.GetValue<string>("Audience");
 		int expiryMinutes = jwtSettings.GetValue<int>("ExpiryMinutes");
 
+		if (secretKey == null) { throw new Exception("Secret key is null"); }
 		SymmetricSecurityKey securityKey = new(Encoding.UTF8.GetBytes(secretKey));
 		SigningCredentials credentials = new(securityKey, SecurityAlgorithms.HmacSha256);
 
 		// Define claims
-		Claim[] claims = new[]
-		{
+		Claim[] claims =
+		[
 			new Claim(JwtRegisteredClaimNames.Sub, user.Username),
 			new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
 			new Claim(ClaimTypes.NameIdentifier, user.UserID.ToString())
-			// Add additional claims if necessary
-		};
+		];
 
 		// Create the token
 		JwtSecurityToken token = new(

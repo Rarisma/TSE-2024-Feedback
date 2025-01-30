@@ -1,8 +1,8 @@
 @page "/viewfeedback/{FeedbackID}"
 @rendermode InteractiveServer
+@using Application.API
 @using FeedbackTrackerCommon.Definitions
-@using Application
-@inject FeedbackApiClient FeedbackClientAccess
+@inject FeedbackAPI FeedbackClientAccess
 @inject UserAPI UserClientAccess
 
 @{
@@ -225,8 +225,7 @@
 			FeedbackTrackerCommon.Definitions.Feedback editFeedback = SelectedFeedback;
 			editFeedback.Title = editingTitle;
 			editFeedback.FeedbackText = editingDescription;
-			string apiFeedback = await FeedbackClientAccess.UpdateFeedback(editFeedback);
-			Console.WriteLine(apiFeedback); // log
+			await FeedbackClientAccess.UpdateFeedback(editFeedback);
 			StateHasChanged();
 
 		}
@@ -250,7 +249,43 @@
 		{
 			Console.WriteLine("Failed to load user.");
 		}
+	}
 
+	/// <summary>
+	/// Create a new extension
+	/// </summary>
+	private async void requestExtension()
+	{
+		// add extension request
+		var newExtension = new Extension();
+		newExtension.FeedbackId = SelectedFeedback.FeedbackID;
+		newExtension.Status = "to review";
+
+		//Console.WriteLine(fb.Title); // log
+
+		// call api createfeedback
+		string apiFeedback = await FeedbackClientAccess.CreateExtension(newExtension);
+
+		Console.WriteLine(apiFeedback); // log
+	}
+
+	/// <summary>
+	/// Deadline accepted
+	/// </summary>
+	/// <param name="extension">extension that has been accepted</param>
+	private async void deadlineResponse(Extension extension){
+		if (extension.Status == "accepted")
+		{
+			// feedback deadline
+			SelectedFeedback.Deadline = SelectedFeedback.Deadline.Add(new TimeSpan(extension.Length, 0, 0, 0)); // update deadline
+
+			// update feedback in db
+			await FeedbackClientAccess.UpdateFeedback(SelectedFeedback);
+		}
+
+		// update extension
+		await FeedbackClientAccess.UpdateExtension(extension);
+		StateHasChanged();
 	}
 
     private async Task LoadComments(int ID)
