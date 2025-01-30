@@ -21,7 +21,7 @@ public class AuthService(IConfiguration configuration, TrackerContext context)
 
 		//Update login time.
 		user.LastLogin = DateTime.Now;
-		_context.user.Update(user);
+		context.User.Update(user);
 
 		// Generate JWT token
 		string token = GenerateJwtToken(user);

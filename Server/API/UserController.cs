@@ -5,6 +5,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
+using System.Threading.Tasks;
 using FeedbackTrackerCommon.Definitions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
@@ -81,9 +82,13 @@ public class UserController(AuthService authService) : Controller
 
 			//Add user to database
 			await using TrackerContext Ctx = new();
-			Ctx.user.Add(Account);
+			Ctx.User.Add(Account);
 			await Ctx.SaveChangesAsync();
 			await Ctx.DisposeAsync();
+		}
+		catch (Exception ex)
+		{
+			Log.Error(ex, "failed to create account");
 		}
 	}
 
@@ -149,11 +154,30 @@ public class UserController(AuthService authService) : Controller
 	}
 
 	[HttpGet("CreateTOTPKey")]
-	public string CreateTOTPKey()
+	public async Task<StatusCodeResult> CreateTOTPKey(string UserID, string Password)
 	{
-		var secret  = KeyGeneration.GenerateRandomKey(20);
-		string base32Secret = Base32Encoding.ToString(secret);
-		return base32Secret;
+		try
+		{
+			using TrackerContext Ctx = new();
+			User Account = Ctx.User.First(User => User.UserID == Convert.ToInt32(UserID));
+
+			if (Account.MFASecret != null)
+			{
+				Log.Warning("User already has 2FA");
+				return StatusCode(405);
+			}
+			Log.Information("adding mfa for accounts without mfa");
+			var secret = KeyGeneration.GenerateRandomKey(20);
+			Account.MFASecret = Base32Encoding.ToString(secret);
+			Ctx.User.Update(Account);
+			await Ctx.SaveChangesAsync();
+			return StatusCode(200);
+		}
+		catch (Exception ex)
+		{
+			Log.Warning("Error occured during adding MFA");
+			return StatusCode(500);
+		}
 
 	}
 

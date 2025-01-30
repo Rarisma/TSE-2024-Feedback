@@ -106,4 +106,20 @@ public class UserAPI(string baseEndpoint)
             return null;
         }
     }
+
+	public async Task<bool> Enable2FA(string UserID, string Password)
+	{
+		try
+		{
+			HttpResponseMessage response = await _httpClient.GetAsync($"User/CreateTOTPKey?UserID]" +
+				$"={Uri.EscapeDataString(UserID)}&Password={Uri.EscapeDataString(Password)}");
+			response.EnsureSuccessStatusCode();
+			return true;
+		}
+		catch (Exception ex)
+		{
+			return false;
+		}
+	}
+
 }

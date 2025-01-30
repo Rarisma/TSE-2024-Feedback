@@ -38,5 +38,8 @@ public class User
 
 
 	[Column("LASTLOGIN")]
-	public DateTime LastLogin { get; set; }
+	public DateTime? LastLogin { get; set; }
+
+	[Column("TOTP")]
+	public string? MFASecret { get; set; }
 }

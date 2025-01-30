@@ -6,7 +6,7 @@ using Serilog.Core;
 
 namespace Application.API;
 
-public class FeedbackAPI(string baseEndpoint = "http://localhost:5189/")
+public class FeedbackAPI(string baseEndpoint = "http://localhost:7128/")
 {
 	private readonly HttpClient _httpClient = new() { BaseAddress = new Uri(baseEndpoint) };
 
