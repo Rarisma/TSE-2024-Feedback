@@ -273,9 +273,14 @@
         }
     }
 
-    private async Task clearNotifications(int userid){
+    private async Task clearNotifications(){
+        List<FeedbackTrackerCommon.Definitions.Notification?>? notifications = await UserClientAccess.GetNotification(JAuth.GetUser().UserID);
 
-        await UserClientAccess.DeleteNotification(userid);
+        if (notifications.Count > 0)
+        {
+            await UserClientAccess.DeleteNotification(JAuth.GetUser().UserID);
+
+        }
         return;
     }
     /// <summary>
@@ -289,7 +294,8 @@
             await LoadTeachers();
 
             // clear notifications
-            await clearNotifications(JAuth.GetUser().UserID);
+            await clearNotifications();
         }
     }
+
 }
