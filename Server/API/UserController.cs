@@ -131,7 +131,7 @@ public class UserController(AuthService authService) : Controller
 		{
             //Find account
             using TrackerContext Ctx = new();
-            var modules = (from UsersModules usermodule in Ctx.UsersModules
+            var modules = (from Users_Modules usermodule in Ctx.Users_Modules
                          join moduledata in Ctx.Modules on usermodule.ModuleID equals moduledata.ModuleID
                          where usermodule.UserID == Userid
                          select new
@@ -153,8 +153,8 @@ public class UserController(AuthService authService) : Controller
     /// </summary>
     /// <param Userid="user id">Account user id</param>
     /// <returns></returns>
-    [HttpGet("NewFeedback")]
-    public string NewFeedbackGet(int Userid)
+    [HttpGet("Notification")]
+    public string NotificationGet(int Userid)
     {
         try
         {
@@ -183,8 +183,8 @@ public class UserController(AuthService authService) : Controller
     /// </summary>
     /// <param Userid="user id">Account user id</param>
     /// <returns></returns>
-    [HttpPost("NewFeedback")]
-    public async void NewFeedbackPost(int Userid, int FeedbackID)
+    [HttpPost("Notification")]
+    public async void NotificationPost(int Userid, int FeedbackID)
     {
         try
         {
@@ -215,8 +215,8 @@ public class UserController(AuthService authService) : Controller
     /// </summary>
     /// <param Userid="user id">Account user id</param>
     /// <returns></returns>
-    [HttpDelete("NewFeedback")]
-    public async void NewFeedbackDelete(int Userid)
+    [HttpDelete("Notification")]
+    public async void NotificationDelete(int Userid)
     {
         try
         {

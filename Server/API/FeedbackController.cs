@@ -72,8 +72,21 @@ public class FeedbackController : Controller
 			
 			//Add user to database, and save.
 			using TrackerContext Ctx = new();
-            Ctx.Feedback.Add(Feedback);
+            var fb = Ctx.Feedback.Add(Feedback);
             Ctx.SaveChanges();
+
+			// notify
+
+			Notification notification = new Notification
+			{
+				// notification id
+				UserID = fb.Entity.AssignedUserID,
+				FeedbackID = fb.Entity.FeedbackID,
+				Timestamp = DateTime.Now,
+			};
+
+			Ctx.Notification.Add(notification);
+			Ctx.SaveChanges();
 
 			return "Feedback created successfully";
 		}

@@ -36,7 +36,10 @@
     protected override async Task OnInitializedAsync()
     {
         JAuth.EnforceAuth();
-        await LoadFeedback();
+        if(JAuth.IsAuthorised()){
+            await LoadFeedback();
+        }
+
     }
 
     private List<Feedback> allFeedback = new();
@@ -46,8 +49,8 @@
     {
         try
         {
-            var apiClient = new FeedbackAPI();
-            var feedbackList = await apiClient.GetAssignedFeedbacks(JAuth.User.UserID);
+
+            List<FeedbackTrackerCommon.Definitions.Feedback> feedbackList = await FeedbackClientAccess.GetAssignedFeedbacks(6);
 
             if (feedbackList != null && feedbackList.Any())
             {
