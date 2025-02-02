@@ -7,6 +7,36 @@ namespace Server.API;
 [Route("Module")]
 public class ModuleController : Controller
 {
+
+    /// <summary>
+    /// Creates new module
+    /// </summary>
+    /// <returns></returns>
+    [HttpPost("CreateModule")]
+    public string CreateModule([FromBody] Modules ModuleObject)
+    {
+        try
+        {
+            Modules? Module = ModuleObject;
+            if (Module == null)
+            {
+                return "Invalid module object";
+            }
+
+            using TrackerContext Ctx = new();
+            Ctx.Modules.Add(Module);
+            Ctx.SaveChanges();
+
+            return "Module created successfully";
+        }
+        catch (Exception ex)
+        {
+            return "Encountered an error: " + ex.Message;
+        }
+    }
+
+
+
     /// <summary>
     /// Get Module by ID
     /// </summary>

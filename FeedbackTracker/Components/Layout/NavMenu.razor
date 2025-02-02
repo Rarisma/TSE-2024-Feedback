@@ -1,6 +1,17 @@
 @inject JAuth auth
 @inject NavigationManager NavigationManager
 
+<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
+
+<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
+    <nav class="flex-column">
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
+            </NavLink>
+        </div>
+        @if (auth.IsAuthorised())
+        {
 <div class="navbar-toggler-wrapper">
     <input type="checkbox" title="Navigation menu" class="navbar-toggler" />
     <div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
@@ -20,6 +31,75 @@
                     <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Your-Feedback
                 </NavLink>
             </div>
+
+            <!-- Change to IsTeacher later -->
+            @if (auth.IsAuthorised())
+            {
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="TeacherDashboard">
+                        <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Teacher Dashboard
+                    </NavLink>
+                </div>
+            }
+        }
+    </nav>
+
+    <!-- Buttons for logging in, signing up and account management -->
+    <div class="login-buttons fixed-bottom px-3 pb-3">
+        @if (auth.IsAuthorised())
+        {
+            <NavLink class="btn btn-primary mb-2 w-100" href="/AccountManagement">Account</NavLink>
+            <NavLink class="btn btn-primary mb-2 w-100" href="/Logout">Log out</NavLink>
+        }
+    </div>
+
+    <!-- Button Styling -->
+    <style>
+        .btn-primary {
+            background-color: #007BFF;
+            border-color: #007BFF;
+            color: #fff;
+        }
+
+            .btn-primary:hover {
+                background-color: #0056b3;
+                border-color: #0056b3;
+            }
+
+        .fixed-bottom {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+        }
+    </style>
+</div>
+
+<!-- About -->
+<div class="about-navbar">
+    <nav class="d-flex justify-content-around align-items-center h-100">
+        <NavLink class="nav-link about-link" href="/about">About</NavLink>
+        <NavLink class="nav-link about-link" href="/termsofservice">Terms of Service</NavLink>
+        <NavLink class="nav-link about-link" href="/privacypolicy">Privacy Policy</NavLink>
+    </nav>
+</div>
+
+<style>
+    .about-navbar {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
+        background-color: #2b2b2b;
+        color: #fff;
+        height: 40px;
+        padding: 10px 20px;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+    }
+</style>
             <div class="nav-item px-3">
                 <NavLink class="nav-link" href="settings">
                     <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Settings
