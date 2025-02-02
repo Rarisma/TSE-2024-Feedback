@@ -5,154 +5,154 @@
 @inject JAuth JAuth
 @inject NavigationManager NavigationManager
 @rendermode InteractiveServer
-                      
+
 @{
-	<div class="title-box">
-		<center>
-			<h1><strong>Your Feedback</strong></h1></center>
-	</div>
+    <div class="title-box">
+        <center>
+            <h1><strong>Your Feedback</strong></h1></center>
+    </div>
 
-	<div class="sort-container">
-		<div class="sort-box">
-			<label for="teachername">Sort By Teacher:</label>
-			<select id="teachername" @onchange="SortByTeacher">
-				<option value="all">Show All</option>
-				@if (Teachers != null)
-				{
-					foreach (var teacher in Teachers)
-					{
-						<option value="@teacher.UserID">@teacher.Username</option>
-					}
-				}
-				else
-				{
-					<option value="">No Assignments</option>
-				}
-			</select>
-		</div>
+    <div class="sort-container">
+        <div class="sort-box">
+            <label for="teachername">Sort By Teacher:</label>
+            <select id="teachername" @onchange="SortByTeacher">
+                <option value="all">Show All</option>
+                @if (Teachers != null)
+                {
+                    foreach (var teacher in Teachers)
+                    {
+                        <option value="@teacher.UserID">@teacher.Username</option>
+                    }
+                }
+                else
+                {
+                    <option value="">No Assignments</option>
+                }
+            </select>
+        </div>
 
-		<div class="sort-box">
-			<label for="sorting">Sort By:</label>
-			<select id="sorting" @onchange="SortBySelected">
-				<option value="az">A-Z</option>
-				<option value="za">Z-A</option>
-				<option value="deadline">Deadline</option>
-				<option value="priority">Priority</option>
-			</select>
-		</div>
-	</div>
+        <div class="sort-box">
+            <label for="sorting">Sort By:</label>
+            <select id="sorting" @onchange="SortBySelected">
+                <option value="az">A-Z</option>
+                <option value="za">Z-A</option>
+                <option value="deadline">Deadline</option>
+                <option value="priority">Priority</option>
+            </select>
+        </div>
+    </div>
 
-	@if (SpecificFeedbacks != null)
-	{
-		foreach (var feedback in SpecificFeedbacks)
-		{
-			<NavLink class="feedback-box" href="@($"/viewfeedback/{feedback.FeedbackID}")">
-				<p>@feedback.Title</p>
-				@foreach (var teacher in Teachers)
-				{
-					if (teacher.UserID == feedback.AssigneeID)
-					{
-						<p><strong>@teacher.Username</strong></p>
-					}
-				}
-				<p>@feedback.FeedbackText</p>
-				<p><strong>Due For: @feedback.Deadline</strong></p>
-				<p><strong>PRIORITY LEVEL: @feedback.Priority</strong></p>
-			</NavLink>
-		}
-	}
-
-	<style>
-
-    .title-box {
-    background-color: #1f1f1f;
-    color: white;
-    width: 100%;
-    padding: 32px;
-    text-align: center;
+    @if (SpecificFeedbacks != null)
+    {
+        foreach (var feedback in SpecificFeedbacks)
+        {
+            <NavLink class="feedback-box" href="@($"/viewfeedback/{feedback.FeedbackID}")">
+                <p>@feedback.Title</p>
+                @foreach (var teacher in Teachers)
+                {
+                    if (teacher.UserID == feedback.AssigneeID)
+                    {
+                        <p><strong>@teacher.Username</strong></p>
+                    }
+                }
+                <p>@feedback.FeedbackText</p>
+                <p><strong>Due For: @feedback.Deadline</strong></p>
+                <p><strong>PRIORITY LEVEL: @feedback.Priority</strong></p>
+            </NavLink>
+        }
     }
 
-    .sort-container {
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    <style>
+
+        .title-box {
+        background-color: #1f1f1f;
+        color: white;
+        width: 100%;
+        padding: 32px;
+        text-align: center;
+        }
+
+        .sort-container {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        }
+
+        .sort-box {
+        background-color: #1f1f1f;
+        border-style: solid;
+        border-color: #1f1f1f;
+        border-radius: 8px;
+        width: 300px;
+        padding: 16px;
+        margin: 16px;
+        text-align: center;
+        color: white;
+        }
+
+        .feedback-box {
+        position: center;
+        display: block;
+        background-color: #EBF0F5;
+        border-style: solid;
+        border-color: black;
+        border-radius: 8px;
+        width: 300px;
+        padding: 16px;
+        margin-top: 16px;
+        margin-bottom: 16px;
+        margin-left: 185px;
+        text-align: center;
+        color: black;
+        text-decoration: none;
+        }
+
+        .feedback-box:hover {
+        transform: translateY(-2px);
+        }
+    </style>
+
+    <title>TSE Feedback: Your Feedback</title>
+
+    @if (JAuth.IsAuthorised())
+    {
+        <center>
+            <h1>Your Feedback</h1></center>
+        @if (SelectedFeedbacks != null && SelectedFeedbacks.Any())
+        {
+            foreach (var feedback in SelectedFeedbacks)
+            {
+                <p><strong>Title:</strong> @feedback.Title</p>
+                <p><strong>Description:</strong> @feedback.FeedbackText</p>
+                <NavLink class="btn btn-primary" href="@($"/viewfeedback/{feedback.FeedbackID}")">View</NavLink>
+            }
+        }
+        else
+        {
+            <center>
+                <p>No feedback to view!</p></center>
+        }
     }
 
-    .sort-box {
-    background-color: #1f1f1f;
-    border-style: solid;
-    border-color: #1f1f1f;
-    border-radius: 8px;
-    width: 300px;
-    padding: 16px;
-    margin: 16px;
-    text-align: center;
-    color: white;
+    else //For users that aren't logged in
+    {
+        <style>
+            body {
+            overflow: hidden;
+            }
+        </style>
+        <div class="loggedout">
+            <div class="loggedout-msg">
+                <img src="/Images/LoginCone.png" alt="Login Required" class="cone-img">
+                <h3>Please log in to access the feedback form.</h3>
+                <button class="btn btn-loggedout" @onclick=HomeButton>Return Home</button>
+            </div>
+        </div>
     }
-
-    .feedback-box {
-    position: center;
-    display: block;
-    background-color: #EBF0F5;
-    border-style: solid;
-    border-color: black;
-    border-radius: 8px;
-    width: 300px;
-    padding: 16px;
-    margin-top: 16px;
-    margin-bottom: 16px;
-    margin-left: 185px;
-    text-align: center;
-    color: black;
-    text-decoration: none;
-    }
-
-    .feedback-box:hover {
-    transform: translateY(-2px);
-    }
-</style>
-
-	<title>TSE Feedback: Your Feedback</title>
-
-	@if (JAuth.IsAuthorised())
-	{
-		<center>
-			<h1>Your Feedback</h1></center>
-		@if (SelectedFeedbacks != null && SelectedFeedbacks.Any())
-		{
-			foreach (var feedback in SelectedFeedbacks)
-			{
-				<p><strong>Title:</strong> @feedback.Title</p>
-				<p><strong>Description:</strong> @feedback.FeedbackText</p>
-				<NavLink class="btn btn-primary" href="@($"/viewfeedback/{feedback.FeedbackID}")">View</NavLink>
-			}
-		}
-		else
-		{
-			<center>
-				<p>No feedback to view!</p></center>
-		}
-	}
-
-	else //For users that aren't logged in
-	{
-		<style>
-	        body {
-	            overflow: hidden;
-	        }
-	    </style>
-		<div class="loggedout">
-			<div class="loggedout-msg">
-				<img src="/Images/LoginCone.png" alt="Login Required" class="cone-img">
-				<h3>Please log in to access the feedback form.</h3>
-				<button class="btn btn-loggedout" @onclick=HomeButton>Return Home</button>
-			</div>
-		</div>
-	}
 }
 
 
-@code {  
+@code {
     private void HomeButton()
     {
         NavigationManager.NavigateTo("/LogIn");
@@ -238,7 +238,7 @@
         try
         {
             var feedbacks = await FeedbackClientAccess.GetAssignedFeedbacks(ID); // communicates with API
-            // different assignments to make sure All and Specific don't point to the same object in memory
+                                                                                 // different assignments to make sure All and Specific don't point to the same object in memory
             AllFeedbacks = feedbacks;
             SpecificFeedbacks = new List<FeedbackTrackerCommon.Definitions.Feedback>(feedbacks);
 
@@ -273,6 +273,16 @@
         }
     }
 
+    private async Task clearNotifications(){
+        List<FeedbackTrackerCommon.Definitions.Notification?>? notifications = await UserClientAccess.GetNotification(JAuth.GetUser().UserID);
+
+        if (notifications.Count > 0)
+        {
+            await UserClientAccess.DeleteNotification(JAuth.GetUser().UserID);
+
+        }
+        return;
+    }
     /// <summary>
     /// Loads the feedback data and teacher data as soon as the page is loaded
     /// </summary>
@@ -282,6 +292,10 @@
         {
             await LoadAllFeedback(JAuth.User.UserID);
             await LoadTeachers();
+
+            // clear notifications
+            await clearNotifications();
         }
     }
+
 }

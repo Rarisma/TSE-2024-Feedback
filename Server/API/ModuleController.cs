@@ -89,7 +89,7 @@ public class ModuleController : Controller
         {
             //Find account
             using TrackerContext Ctx = new();
-            var users = (from UsersModules usermodule in Ctx.UsersModules
+            var users = (from Users_Modules usermodule in Ctx.Users_Modules
                          join userdata in Ctx.User on usermodule.UserID equals userdata.UserID
                          where usermodule.ModuleID == ModuleID
                          select new {

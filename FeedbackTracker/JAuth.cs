@@ -108,7 +108,20 @@ public class JAuth(NavigationManager NavigationManager)
 		{
 			Log.Error(ex, "Error enforcing authentication");
 		}
+		try
+		{
 		NavigationManager.NavigateTo("/LogIn");
+		}
+		catch (Exception ex)
+		{
+            Log.Error(ex, "Error redirecting to login");
+        }
+
 
 	}	
+
+	public User GetUser()
+	{
+		return User;
+	}
 }

@@ -14,13 +14,15 @@ public class TrackerContext(
 	public DbSet<Feedback> Feedback { get; set; }
 	public DbSet<Modules> Modules { get; set; }
 	public DbSet<FeedbackFolders> FeedbackFolders { get; set; }
-	public DbSet<UsersModules> UsersModules { get; set; }
+	public DbSet<Users_Modules> Users_Modules { get; set; }
 	public DbSet<FeedbackComments> FeedbackComments { get; set; }
 	public DbSet<FolderLinks> FolderLinks { get; set; }
 
 	public DbSet<Extension> Extension { get; set; }
 
-	protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    public DbSet<Notification> Notification { get; set; }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 	{
 
 		optionsBuilder.UseMySql(ConnectionString, ServerVersion.AutoDetect(ConnectionString));
