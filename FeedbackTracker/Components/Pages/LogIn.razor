@@ -7,12 +7,27 @@
 @code {
     private async Task Submit()
     {
-        string JWT = await new UserAPI("http://localhost:5189").Authenticate(Username, Password);
-        JAuth.Authorise(JWT, Username);
-        NavigationManager.NavigateTo("/");
+        UserAPI API = new UserAPI("http://localhost:5189");
+
+        int id = (await API.GetUserByUsername(Username)).UserID;
+
+        if (await API.getMFAStatus(id) && Code == 0)
+        {
+            Hide2FA = false;
+        }
+        else
+        {
+
+            string JWT = await API.Authenticate(Username, Password);
+            JAuth.Authorise(JWT, Username);
+            NavigationManager.NavigateTo("/");
+        }
     }
+
     public string Username { get; set; }
     public string Password { get; set; }
+    private bool Hide2FA { get; set; } = true;
+    public int Code { get; set; } = 0;
 }
 @rendermode InteractiveServer
 <title>TSE Feedback: Log In </title>
@@ -41,6 +56,7 @@
                     <form @onsubmit="Submit">
                         <input type="text" class="form-control mb-3" placeholder="Username" @bind-value="Username" aria-label="Enter username">
                         <input type="password" class="form-control mb-3" placeholder="Password" @bind-value="Password" aria-label="Enter password">
+                        <input type="number" hidden="@Hide2FA" class="form-control mb-3" placeholder="000000" @bind-value="Code" aria-label="Enter 2FA Code">
                         <button type="submit" class="btn btn-primary w-100" aria-label="Log in">Log In</button>
                     </form>
                 </div>

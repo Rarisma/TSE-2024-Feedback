@@ -189,4 +189,23 @@ public class UserController(AuthService authService) : Controller
 		string Verify = totp.ComputeTotp();
 		return Code == Verify;
 	}
+
+	[HttpGet("MFABool")]
+
+	public bool getMFAStatus(int UserID)
+	{
+		try
+		{
+			//Find account
+			using TrackerContext Ctx = new();
+			User Account = Ctx.User.First(User => User.UserID == UserID);
+			return !(string.IsNullOrEmpty(Account.MFASecret));
+		}
+		catch (Exception ex)
+		{
+			Log.Error(ex, "Unexpected error when getting MFA status for account: " + UserID);
+			return false;
+		}
+	}
+
 }

@@ -111,8 +111,8 @@ public class UserAPI(string baseEndpoint)
 	{
 		try
 		{
-			HttpResponseMessage response = await _httpClient.GetAsync($"User/CreateTOTPKey?UserID]" +
-				$"={Uri.EscapeDataString(UserID)}&Password={Uri.EscapeDataString(Password)}");
+			var endpoint = $"User/CreateTOTPKey?UserID={Uri.EscapeDataString(UserID)}&Password={Uri.EscapeDataString(Password)}";
+			HttpResponseMessage response = await _httpClient.GetAsync(endpoint);
 			response.EnsureSuccessStatusCode();
 			return true;
 		}
@@ -121,5 +121,22 @@ public class UserAPI(string baseEndpoint)
 			return false;
 		}
 	}
+
+	public async Task<bool>getMFAStatus(int UserID)
+	{
+		try 
+		{
+			var endpoint = $"User/MFABool?UserID={UserID}";
+			HttpResponseMessage response = await _httpClient.GetAsync(endpoint);
+			response.EnsureSuccessStatusCode();
+			return Boolean.Parse(await response.Content.ReadAsStringAsync());
+		}
+		catch (Exception ex)
+		{
+			return false;
+		}
+
+	}
+
 
 }
