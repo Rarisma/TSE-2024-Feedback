@@ -8,6 +8,11 @@
     <AssemblyName>Application</AssemblyName>
   </PropertyGroup>
 
+
+	<ItemGroup>
+		<PackageReference Include="Blazored.LocalStorage" Version="4.5.0" />
+	</ItemGroup>
+	
   <ItemGroup>
     <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.3.1" />
     <PackageReference Include="Serilog" Version="4.2.0" />
