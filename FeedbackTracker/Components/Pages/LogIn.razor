@@ -3,12 +3,20 @@
 @using Application.API
 @inject NavigationManager NavigationManager
 @inject JAuth JAuth
+@using Blazored.LocalStorage
+@inject ILocalStorageService LocalStorage
+
 <!-- Authentication method, ran once button is clicked -->
 @code {
+
+
     private async Task Submit()
     {
         string JWT = await new UserAPI("http://localhost:5189").Authenticate(Username, Password);
         JAuth.Authorise(JWT, Username);
+        string token = JAuth.GetToken();
+        await LocalStorage.SetItemAsStringAsync("TESTING2", token);
+        StateHasChanged();
         NavigationManager.NavigateTo("/");
     }
     public string Username { get; set; }
@@ -85,3 +93,4 @@
         NavigationManager.NavigateTo("/SignUp");
     }
 }
+

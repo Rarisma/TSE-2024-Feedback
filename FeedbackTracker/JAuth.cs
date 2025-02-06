@@ -50,6 +50,7 @@ public class JAuth(NavigationManager NavigationManager)
 			UserData = tokenHandler.ValidateToken(token,
 				validationParameters, out SecurityToken validatedToken);
 
+			JWT = token;
 			User = await new UserAPI("http://localhost:5189").GetUserByUsername(user);
 		}
 		catch (Exception ex)
@@ -118,8 +119,12 @@ public class JAuth(NavigationManager NavigationManager)
         }
 
 
-	}	
+	}
 
+	public string GetToken()
+	{
+		return JWT;
+	}
 	public User GetUser()
 	{
 		return User;

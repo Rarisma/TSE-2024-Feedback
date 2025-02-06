@@ -1,4 +1,3 @@
-using Blazored.LocalStorage;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -9,10 +8,6 @@ using Server;
 
 
 var builder = WebApplication.CreateBuilder(args);
-
-
-//Add Blazored Local Storage
-builder.Services.AddBlazoredLocalStorage();
 
 //Add API Controllers
 builder.Services.AddControllers();
