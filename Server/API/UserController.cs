@@ -3,6 +3,7 @@ using System.Reflection;
 using System.Text.Json;
 using FeedbackTrackerCommon.Definitions;
 using Microsoft.AspNetCore.Mvc;
+using OtpNet;
 using Serilog;
 
 namespace Server.API;
@@ -89,11 +90,12 @@ public class UserController(AuthService authService) : Controller
 	/// </summary>
 	/// <param name="Username">User's account username</param>
 	/// <param name="Password">account password</param>
+	/// <param name="Password">account MFA Code</param>
 	/// <returns></returns>
 	[HttpGet("Authenticate")]
-	public async Task<string?> Authenticate(string Username, string Password)
+	public async Task<string?> Authenticate(string Username, string Password, string Code)
 	{
-		return await authService.AuthenticateUserAsync(Username, Password);
+		return await authService.AuthenticateUserAsync(Username, Password, Code);
 	}
 
 
@@ -131,7 +133,7 @@ public class UserController(AuthService authService) : Controller
 		{
             //Find account
             using TrackerContext Ctx = new();
-            var modules = (from UsersModules usermodule in Ctx.UsersModules
+            var modules = (from Users_Modules usermodule in Ctx.UsersModules
                          join moduledata in Ctx.Modules on usermodule.ModuleID equals moduledata.ModuleID
                          where usermodule.UserID == Userid
                          select new

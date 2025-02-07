@@ -17,7 +17,7 @@ public class AuthService(IConfiguration configuration, TrackerContext context)
 	/// <param name="password">Accounts password</param>
 	/// <param name="TOTP">Account MFA code </param>
 	/// <returns></returns>
-	public async Task<string?> AuthenticateUserAsync(string Username, string password, int TOTP = 0)
+	public async Task<string?> AuthenticateUserAsync(string Username, string password, string TOTP = "0")
 	{
 		User? user = await context.User.FirstOrDefaultAsync(u => u.Username == Username);
 		if (user == null) {return null;} 
@@ -35,7 +35,7 @@ public class AuthService(IConfiguration configuration, TrackerContext context)
 			string Verify = totp.ComputeTotp();
 
 			//Invalid TOTP code, unauthorised.
-			if (Verify != TOTP.ToString())
+			if (Verify != TOTP)
 			{
 				return null;
 			}
