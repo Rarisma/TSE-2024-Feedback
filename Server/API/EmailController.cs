@@ -8,17 +8,6 @@ namespace Server.API
 	{
 
 		private readonly EmailSending emailSending;
-		private readonly string resetLink = "https://localhost:7128/VerifyPasswordChange?";
-
-		public string EmailBody = @"
-			<html>
-			<body>
-				<h1>Password Reset<h1>
-				<p>Hi, you recently requested to change your password. Please click the link below to reset it:<p>
-				<p><a href='https://localhost:7128/VerifyPasswordChange' target='_blank'>Reset Password</a></p>
-			<body>
-			<html>";
-		public string EmailSubject = "Password Reset";
 		public EmailController(EmailSending emailSendingConstructor)
 		{
 			emailSending = emailSendingConstructor;
@@ -27,6 +16,19 @@ namespace Server.API
 		[HttpPost]
 		public async Task<IActionResult> SendEmail([FromBody] string ReceivingAddress)
 		{
+			string EscapeEmail = Uri.EscapeDataString(ReceivingAddress);
+
+			string EmailBody = @"
+				<html>
+				<body>
+					<h1>Password Reset</h1>
+					<p>Hi, you recently requested to change your password. Please click the link below to reset it:</p>
+					<p><a href=""https://localhost:7128/VerifyPasswordChange/email=" + EscapeEmail + @""" target=""_blank"">Reset Password</a></p>
+				</body>
+				</html>";
+
+			string EmailSubject = "Password Reset";
+
 			if (string.IsNullOrEmpty(ReceivingAddress))
 			{
 				return StatusCode(400);

@@ -35,4 +35,7 @@ public class User
 	/// </summary>
 	[Column("ISTEACHER")]
 	public bool IsTeacher { get; set; }
+
+	[Column("Email")]
+	public string Email { get; set; }
 }

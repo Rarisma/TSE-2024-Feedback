@@ -49,12 +49,13 @@ public class UserAPI(string baseEndpoint)
 	/// <summary>
 	/// Creates a new user.
 	/// </summary>
-	public async Task CreateUser(string Username, string Password)
+	public async Task CreateUser(string Username, string Password, string Email)
 	{
 		try
 		{
 			string url = $"User/CreateUser?Username={Uri.EscapeDataString(Username)}" +
-						 $"&Password={Uri.EscapeDataString(Password)}";
+						 $"&Password={Uri.EscapeDataString(Password)}" +
+						 $"&Email={Uri.EscapeDataString(Email)}";
 			HttpResponseMessage response = await _httpClient.PostAsync(url, null);
 			response.EnsureSuccessStatusCode();
 			await response.Content.ReadAsStringAsync();
@@ -162,5 +163,22 @@ public class UserAPI(string baseEndpoint)
             Log.Error(ex, $"Error Deleting notification");
         }
     }
+
+	public async Task UpdatePassword(string Email, string Password)
+	{
+		try
+		{
+			string url = $"User/UpdatePassword?Email={Uri.EscapeDataString(Email)}" +
+			 $"&Password={Uri.EscapeDataString(Password)}";
+			HttpResponseMessage response = await _httpClient.PutAsync(url, null);
+			response.EnsureSuccessStatusCode();
+			await response.Content.ReadAsStringAsync();
+
+		}
+		catch (Exception ex)
+		{
+			Log.Error(ex, $"Error updating password");
+		}
+	}
 
 }

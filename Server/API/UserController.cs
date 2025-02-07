@@ -58,7 +58,7 @@ public class UserController(AuthService authService) : Controller
 	/// <param name="Password">Account password (in plaintext)</param>
 	/// <returns></returns>
 	[HttpPost("CreateUser")]
-	public async void CreateUser(string Username, string Password)
+	public async void CreateUser(string Username, string Password, string Email)
 	{
 		try
 		{
@@ -70,6 +70,7 @@ public class UserController(AuthService authService) : Controller
 				Password = BCrypt.Net.BCrypt.HashPassword(Password),
 				IsStudent = true,
 				IsTeacher = false,
+				Email = Email,
 			};
 
 
@@ -231,4 +232,23 @@ public class UserController(AuthService authService) : Controller
             Log.Error(ex, "Failed to create user");
         }
     }
+
+	[HttpPut("UpdatePassword")]
+	public async void UpdatePassword(string Email, string Password)
+	{
+		try
+		{
+			Console.WriteLine(Email);
+			Console.WriteLine(Password);
+			using TrackerContext Ctx = new();
+			User Account = Ctx.User.First(User => User.Email == Email);
+			Account.Password = BCrypt.Net.BCrypt.HashPassword(Password);
+			Ctx.User.Update(Account);
+			await Ctx.SaveChangesAsync();
+		}
+		catch (Exception ex)
+		{
+			Log.Error(ex, "Failed to update password");
+		}
+	}
 }
