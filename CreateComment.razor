@@ -1,0 +1,185 @@
+﻿@page "/CreateComment"
+@using Application.API
+@rendermode InteractiveServer
+@inject ModuleAPI ModuleClient
+@inject JAuth JAuth
+@inject UserAPI UserCLient
+@inject FeedbackAPI FeedbackClientAccess
+@inject UserAPI UserClientAccess
+@using FeedbackTrackerCommon.Definitions
+
+<title>TSE Modules: Create Comment</title>
+
+@if (JAuth.IsAuthorised())
+{
+    <div class="d-flex justify-content-center align-items-center" style="min-height: 90vh; flex-direction: column;">
+        <h3 class="text-center mb-4" style="font-family: 'Lato', sans-serif; color: #4A4A4A;">
+            Assign a comment to a user's feedback.
+        </h3>
+
+        <div class="container mt-5">
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <!-- Create Comment Card -->
+                    <div class="card">
+                        <div class="card-header bg-primary text-white text-center">
+                            <h5 class="mb-0">Create Comment For User</h5>
+                        </div>
+                        <div class="card-body">
+                            <form>
+                                <!-- Select User -->
+                                <div class="mb-3">
+                                    <label for="userSelect" class="form-label">Select User</label>
+                                    <select id="userSelect" class="form-control" @bind="selectedUserId">
+                                        @foreach (var user in users)
+                                        {
+                                            <option value="@user.UserID">@user.Username</option>
+                                        }
+                                    </select>
+                                </div>
+
+                                <!-- Select Module -->
+                                <div class="mb-3">
+                                    <label for="moduleSelect" class="form-label">Select Module</label>
+                                    <select id="moduleSelect" class="form-control" @bind="selectedModuleId">
+                                        @foreach (var module in modules)
+                                        {
+                                            <option value="@module.ModuleID">@module.Module</option>
+                                        }
+                                    </select>
+                                </div>
+
+                                <!-- Select Feedback -->
+                                <div class="mb-3">
+                                    <label for="feedbackSelect" class="form-label">Select Feedback</label>
+                                    <select id="feedbackSelect" class="form-control" @bind="selectedFeedbackID">
+                                        @foreach (var feedback in SpecificFeedbacks)
+                                        {
+                                            <option value="@feedback.FeedbackID">@feedback.FeedbackID</option>
+                                        }
+                                    </select>
+                                </div>
+
+                                <!-- Comment Text -->
+                                <div class="mb-3">
+                                    <label for="commentText" class="form-label">Enter Comment</label>
+                                    <textarea id="commentText" class="form-control" @bind="CommentName" placeholder="Enter your comment"></textarea>
+                                </div>
+
+                                <!-- Submit Button -->
+                                <div class="d-grid">
+                                    <button type="button" class="btn btn-success" @onclick="SendComment">Create Comment</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+}
+
+
+
+
+
+@code {
+
+    private List<User> users = new List<User>();
+    private int selectedUserId;
+    private string selectedModuleId;
+    private int selectedFeedbackID;
+    private string CommentName;
+
+    private List<FeedbackComments> Comments = new List<FeedbackComments>();
+
+    private List<FeedbackTrackerCommon.Definitions.Feedback> SelectedFeedbacks;
+
+    private List<FeedbackTrackerCommon.Definitions.Feedback> AllFeedbacks = new();
+
+    private List<FeedbackTrackerCommon.Definitions.Feedback> SpecificFeedbacks = new();
+    private List<Modules> modules = new List<Modules>();
+
+    private User SelectedUser;
+
+    // assigne
+    // author of feedback (get current user)
+    private FeedbackTrackerCommon.Definitions.User assignee = getUser();
+
+    // get logged in user
+    private static FeedbackTrackerCommon.Definitions.User getUser()
+    {
+
+        // return logged user
+        return JAuth.User;
+    }
+
+    private FeedbackTrackerCommon.Definitions.User? loggedUser;
+
+
+    private async void SendComment()
+    {
+        FeedbackTrackerCommon.Definitions.FeedbackComments newfeedbackComments = new FeedbackTrackerCommon.Definitions.FeedbackComments();
+
+    }
+
+
+
+    private async Task LoadUsers()
+    {
+        var AllUsers = await FeedbackClientAccess.GetAllUsersAsync();
+
+        if (AllUsers != null)
+        {
+            users = AllUsers;
+
+        }
+        else
+        {
+            Console.WriteLine("Failed to load users.");
+        }
+    }
+
+    private async Task LoadUser()
+    {
+        var user = await UserClientAccess.GetUserByID(3);
+
+        if (user != null)
+        {
+            loggedUser = user;
+        }
+        else
+        {
+            Console.WriteLine("Failed to load user.");
+        }
+    }
+
+    private async Task LoadAllFeedback(int ID)
+    {
+        try
+        {
+            var feedbacks = await FeedbackClientAccess.GetAssignedFeedbacks(ID); 
+
+            AllFeedbacks = feedbacks;
+            SpecificFeedbacks = new List<FeedbackTrackerCommon.Definitions.Feedback>(feedbacks);
+
+        }
+        catch (Exception ex) // feedbacks fails to load
+        {
+            Console.WriteLine("Failed to load feedback.");
+        }
+    }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (JAuth.IsAuthorised())
+        {
+            await LoadAllFeedback(JAuth.User.UserID);
+            await LoadUser();
+            await LoadUsers();
+        }
+}
+
+}
