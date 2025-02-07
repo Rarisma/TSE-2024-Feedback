@@ -22,7 +22,6 @@ public class TrackerContext(
 
 	protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 	{
-
 		optionsBuilder.UseMySql(ConnectionString, ServerVersion.AutoDetect(ConnectionString));
 	}
 }

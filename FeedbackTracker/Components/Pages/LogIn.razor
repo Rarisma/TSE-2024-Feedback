@@ -7,25 +7,30 @@
 @code {
     private async Task Submit()
     {
-        UserAPI API = new UserAPI("http://localhost:5189");
+        UserAPI API = new();
 
-        int id = (await API.GetUserByUsername(Username)).UserID;
+        var attempted_user = await API.GetUserByUsername(Username);
+        if (attempted_user == null)
+        {
+            return;
+        }
+        
+        int id = attempted_user.UserID;
 
-        if (await API.getMFAStatus(id) && Code == 0)
+        if (await API.getMFAStatus(id) && Hide2FA)
         {
             Hide2FA = false;
         }
         else
         {
-
-            string JWT = await API.Authenticate(Username, Password);
+            string JWT = await API.Authenticate(Username, Password, Code.ToString());
             JAuth.Authorise(JWT, Username);
             NavigationManager.NavigateTo("/");
         }
     }
 
-    public string Username { get; set; }
-    public string Password { get; set; }
+    public string Username { get; set; } = "";
+    public string Password { get; set; } = "";
     private bool Hide2FA { get; set; } = true;
     public int Code { get; set; } = 0;
 }

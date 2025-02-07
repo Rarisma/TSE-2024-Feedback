@@ -1,12 +1,13 @@
 ﻿using System.Text.Json;
+using Application.Components;
 using FeedbackTrackerCommon.Definitions;
 using Serilog;
 
 namespace Application.API;
 
-public class ModuleAPI(string baseEndpoint)
+public class ModuleAPI()
 {
-    private readonly HttpClient _httpClient = new() { BaseAddress = new Uri(baseEndpoint) };
+    private readonly HttpClient _httpClient = new() { BaseAddress = new Uri(App.Endpoint) };
 
     /// <summary>
     /// Gets a module by ID

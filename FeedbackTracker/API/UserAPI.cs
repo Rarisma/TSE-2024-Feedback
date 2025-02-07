@@ -1,12 +1,13 @@
 ﻿using System.Text.Json;
+using Application.Components;
 using FeedbackTrackerCommon.Definitions;
 using Serilog;
 
 namespace Application.API;
 
-public class UserAPI(string baseEndpoint)
+public class UserAPI()
 {
-	private readonly HttpClient _httpClient = new() { BaseAddress = new Uri(baseEndpoint) };
+	private readonly HttpClient _httpClient = new() { BaseAddress = new Uri(App.Endpoint) };
 
 	/// <summary>
 	/// Gets a user by their User ID.
@@ -71,12 +72,14 @@ public class UserAPI(string baseEndpoint)
 	/// <param name="Username">Username</param>
 	/// <param name="Password">Password</param>
 	/// <returns>JWT if authentication is successful, otherwise, "".</returns>
-	public async Task<string> Authenticate(string Username, string Password)
+	public async Task<string> Authenticate(string Username, string Password, string Code)
 	{
 		try
 		{
 			// Send login request.
-			HttpResponseMessage response = await _httpClient.GetAsync($"User/Authenticate?Username={Username}&Password={Password}");
+			HttpResponseMessage response = await _httpClient
+				.GetAsync($"User/Authenticate?Username={Uri.EscapeDataString(Username)}" +
+				          $"&Password={Uri.EscapeDataString(Password)}&TOTP={Code}");
 			response.EnsureSuccessStatusCode();
 			// Read the JWT token from the response
 			return await response.Content.ReadAsStringAsync();

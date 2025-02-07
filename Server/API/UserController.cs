@@ -79,7 +79,6 @@ public class UserController(AuthService authService) : Controller
 				IsTeacher = false,
 			};
 
-
 			//Add user to database
 			await using TrackerContext Ctx = new();
 			Ctx.User.Add(Account);
@@ -97,11 +96,12 @@ public class UserController(AuthService authService) : Controller
 	/// </summary>
 	/// <param name="Username">User's account username</param>
 	/// <param name="Password">account password</param>
+	/// <param name="TOTP">account MFA Code</param>
 	/// <returns></returns>
 	[HttpGet("Authenticate")]
-	public async Task<string?> Authenticate(string Username, string Password)
+	public async Task<string?> Authenticate(string Username, string Password, int TOTP = 0)
 	{
-		return await authService.AuthenticateUserAsync(Username, Password);
+		return await authService.AuthenticateUserAsync(Username, Password, TOTP);
 	}
 
 	[HttpGet("GetUsers")]
@@ -110,7 +110,6 @@ public class UserController(AuthService authService) : Controller
 		try
 		{
 			//Find accounts
-
 			using TrackerContext Ctx = new();
 			List<User> Accounts = Ctx.User.ToList();
 			var result = Accounts.ToList();
@@ -166,6 +165,14 @@ public class UserController(AuthService authService) : Controller
 				Log.Warning("User already has 2FA");
 				return StatusCode(405);
 			}
+
+			//prevent totp from being added where it shouldnt be.
+			if (Account.Password != Password)
+			{
+				Log.Warning("Invalid auth");
+				return StatusCode(401);
+			}
+			
 			Log.Information("adding mfa for accounts without mfa");
 			var secret = KeyGeneration.GenerateRandomKey(20);
 			Account.MFASecret = Base32Encoding.ToString(secret);
@@ -178,20 +185,9 @@ public class UserController(AuthService authService) : Controller
 			Log.Warning("Error occured during adding MFA");
 			return StatusCode(500);
 		}
-
 	}
-
-	[HttpGet("VerifyTOTPKey")]
-	public bool VerifyTOTPKey(string Secret, string Code)
-	{
-		var base32Bytes = Base32Encoding.ToBytes(Secret);
-		var totp = new Totp(base32Bytes, mode: OtpHashMode.Sha1);
-		string Verify = totp.ComputeTotp();
-		return Code == Verify;
-	}
-
+	
 	[HttpGet("MFABool")]
-
 	public bool getMFAStatus(int UserID)
 	{
 		try

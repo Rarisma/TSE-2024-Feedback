@@ -1,14 +1,15 @@
 ﻿using System.Text;
 using System.Text.Json;
+using Application.Components;
 using FeedbackTrackerCommon.Definitions;
 using Serilog;
 using Serilog.Core;
 
 namespace Application.API;
 
-public class FeedbackAPI(string baseEndpoint = "http://localhost:7128/")
+public class FeedbackAPI()
 {
-	private readonly HttpClient _httpClient = new() { BaseAddress = new Uri(baseEndpoint) };
+	private readonly HttpClient _httpClient = new() { BaseAddress = new Uri(App.Endpoint) };
 
 	/// <summary>
 	/// Get all feedbacks for the user.
