@@ -63,6 +63,7 @@
             <div class="card-header d-flex">
                 <button class="btn btn-outline-primary flex-grow-1 me-2" @onclick="LoginTab">Log In</button>
                 <button class="btn btn-primary flex-grow-1">Sign Up</button>
+                <button class="btn btn-outline-primary flex-grow-1" @onclick="ResetTab">Reset</button>
             </div>
             <div class="card-body">
                 <form @onsubmit="Submit">
@@ -118,5 +119,10 @@
     private void LoginTab()
     {
         NavigationManager.NavigateTo("/LogIn");
+    }
+
+    private void ResetTab()
+    {
+        NavigationManager.NavigateTo("/ResetPassword");
     }
 }

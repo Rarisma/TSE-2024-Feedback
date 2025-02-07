@@ -25,6 +25,9 @@ public class Program
 		builder.Services.AddSingleton<UserAPI>(sp =>
 		new UserAPI("http://localhost:5189"));
 
+		builder.Services.AddSingleton<EmailAPI>(sp =>
+			new EmailAPI("http://localhost:5189"));
+
 		//Configure Serilog
 		Log.Logger = new LoggerConfiguration()
 			.WriteTo.Console()
