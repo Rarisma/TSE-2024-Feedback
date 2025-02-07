@@ -2,14 +2,14 @@
 @using Application.API
 @rendermode InteractiveServer
 @inject FeedbackAPI FeedbackCLient
-@inject JAuth JAuth
+@inject JAuth Auth
 @inject ModuleAPI ModuleClient
 @inject UserAPI UserCLient
 @inject NavigationManager NavigationManager
 
 <title>TSE Feedback: Create Feedback </title>
 
-@if (JAuth.IsAuthorised()) {
+@if (Auth.IsAuthorised()) {
     <PageTitle>Feedback Page</PageTitle>
     <div class="card justify-content-center">
         <div class="card-header">
@@ -96,7 +96,7 @@ else
 {
     <style>
         body {
-            overflow: hidden;
+        overflow: hidden;
         }
     </style>
     <div class="loggedout">
@@ -132,7 +132,7 @@ else
 
     // assigne
     // author of feedback (get current user)
-    private FeedbackTrackerCommon.Definitions.User assignee = getUser();
+    private FeedbackTrackerCommon.Definitions.User assignee = new FeedbackTrackerCommon.Definitions.User { };
 
     // assigned user
     private int assignedUserID;
@@ -140,11 +140,11 @@ else
     private List<FeedbackTrackerCommon.Definitions.User> users = new List<FeedbackTrackerCommon.Definitions.User> { new FeedbackTrackerCommon.Definitions.User { UserID=0,Username="No users"} };
 
     // get logged in user
-    private static FeedbackTrackerCommon.Definitions.User getUser()
+    private async Task getUser()
     {
-
+        FeedbackTrackerCommon.Definitions.User? user = await UserCLient.GetUserByID(6);
         // return logged user
-        return JAuth.User;
+        assignee = user;
     }
 
     // get users that can be assigned feedback
@@ -158,6 +158,7 @@ else
 
         if(modusers != null){
             users = modusers;
+            assignedUserID = modusers[0].UserID;
         }
 
         StateHasChanged();
@@ -192,7 +193,7 @@ else
                 moduleID = modules.First().ModuleID;
             }
             catch{}
-    }
+        }
 
         getAssignableUsers();
         // refresh ui with new data
@@ -236,6 +237,7 @@ else
         string apiFeedback = await new FeedbackAPI().CreateFeedback(fb);
 
         //Console.WriteLine(apiFeedback); // log
+
     }
 
     public Feedback(){
@@ -244,9 +246,10 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        
-        if (JAuth.IsAuthorised())
-        {   
+
+        if (Auth.IsAuthorised())
+        {
+            await getUser();
             await GetModules();
         }
     }

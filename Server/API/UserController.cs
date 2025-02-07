@@ -1,15 +1,8 @@
-﻿using System.Collections;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Reflection;
-using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 using FeedbackTrackerCommon.Definitions;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using OtpNet;
 using Serilog;
 
 namespace Server.API;
@@ -79,15 +72,15 @@ public class UserController(AuthService authService) : Controller
 				IsTeacher = false,
 			};
 
+
 			//Add user to database
 			await using TrackerContext Ctx = new();
 			Ctx.User.Add(Account);
 			await Ctx.SaveChangesAsync();
-			await Ctx.DisposeAsync();
 		}
 		catch (Exception ex)
 		{
-			Log.Error(ex, "failed to create account");
+			Log.Error(ex, "Failed to create user");
 		}
 	}
 
@@ -96,13 +89,14 @@ public class UserController(AuthService authService) : Controller
 	/// </summary>
 	/// <param name="Username">User's account username</param>
 	/// <param name="Password">account password</param>
-	/// <param name="TOTP">account MFA Code</param>
 	/// <returns></returns>
 	[HttpGet("Authenticate")]
-	public async Task<string?> Authenticate(string Username, string Password, int TOTP = 0)
+	public async Task<string?> Authenticate(string Username, string Password)
 	{
-		return await authService.AuthenticateUserAsync(Username, Password, TOTP);
+		return await authService.AuthenticateUserAsync(Username, Password);
 	}
+
+
 
 	[HttpGet("GetUsers")]
 	public Task<string> GetUsers()
@@ -110,6 +104,7 @@ public class UserController(AuthService authService) : Controller
 		try
 		{
 			//Find accounts
+
 			using TrackerContext Ctx = new();
 			List<User> Accounts = Ctx.User.ToList();
 			var result = Accounts.ToList();
@@ -124,9 +119,10 @@ public class UserController(AuthService authService) : Controller
 
 
 	/// <summary>
-	/// Gets modules for user
+	/// Creates a new user object.
 	/// </summary>
-	/// <param name="Userid">Account ID</param>
+	/// <param name="Username">Account username</param>
+	/// <param name="Password">Account password (in plaintext)</param>
 	/// <returns></returns>
 	[HttpGet("GetModules")]
 	public string GetModules(int Userid)
@@ -151,7 +147,6 @@ public class UserController(AuthService authService) : Controller
         }
 		catch (Exception ex) { return "Encountered an error: " + ex.Message; }
 	}
-
 	[HttpGet("CreateTOTPKey")]
 	public async Task<StatusCodeResult> CreateTOTPKey(string UserID, string Password)
 	{
@@ -203,5 +198,88 @@ public class UserController(AuthService authService) : Controller
 			return false;
 		}
 	}
+	
+	    /// <summary>
+    /// Creates a new user object.
+    /// </summary>
+    /// <param Userid="user id">Account user id</param>
+    /// <returns></returns>
+    [HttpGet("Notification")]
+    public string NotificationGet(int Userid)
+    {
+        try
+        {
+            //Find account
+            using TrackerContext Ctx = new();
+            var notifications = (from Notification notificaiton in Ctx.Notification
+                                 where notificaiton.UserID == Userid
+                           select new
+                           {
+                               NotificationID = notificaiton.NotificationID,
+                               UserID = notificaiton.UserID,
+                               FeedbackID = notificaiton.FeedbackID,
+                               Timestamp = notificaiton.Timestamp,
 
+                           }).ToList();
+
+            //Serialise to JSON
+            string json = JsonSerializer.Serialize(notifications);
+            return json;
+        }
+        catch (Exception ex) { return "Encountered an error: " + ex.Message; }
+    }
+
+    /// <summary>
+    /// Creates a new user object.
+    /// </summary>
+    /// <param Userid="user id">Account user id</param>
+    /// <returns></returns>
+    [HttpPost("Notification")]
+    public async void NotificationPost(int Userid, int FeedbackID)
+    {
+        try
+        {
+			//Create account object
+			//NOTE: bCrypt is very secure. (Salting is handled automatically)
+			Notification notification = new()
+			{
+				UserID = Userid,
+				FeedbackID = FeedbackID,
+				Timestamp = DateTime.Now,
+			};
+
+
+            //Add user to database
+            await using TrackerContext Ctx = new();
+            Ctx.Notification.Add(notification);
+            await Ctx.SaveChangesAsync();
+
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Failed to create user");
+        }
+    }
+
+    /// <summary>
+    /// Creates a new user object.
+    /// </summary>
+    /// <param Userid="user id">Account user id</param>
+    /// <returns></returns>
+    [HttpDelete("Notification")]
+    public async void NotificationDelete(int Userid)
+    {
+        try
+        {
+			//Add user to database
+            await using TrackerContext Ctx = new();
+            Ctx.Notification.RemoveRange(Ctx.Notification.Where(notification => notification.UserID == Userid));
+            await Ctx.SaveChangesAsync();
+
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Failed to create user");
+        }
+    }
 }

@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FeedbackTrackerCommon.Definitions;
 
-public class UsersModules
+public class Users_Modules
 {
 	[Key]
 	[Column("USER_ID")]
