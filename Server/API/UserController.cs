@@ -238,8 +238,6 @@ public class UserController(AuthService authService) : Controller
 	{
 		try
 		{
-			Console.WriteLine(Email);
-			Console.WriteLine(Password);
 			using TrackerContext Ctx = new();
 			User Account = Ctx.User.First(User => User.Email == Email);
 			Account.Password = BCrypt.Net.BCrypt.HashPassword(Password);
