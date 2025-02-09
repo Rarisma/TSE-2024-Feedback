@@ -106,6 +106,9 @@ public class FeedbackController : Controller
 
 	}*/
 
+
+
+
 	/// <summary>
 	/// Deletes a feedback from the database
 	/// </summary>
@@ -120,12 +123,42 @@ public class FeedbackController : Controller
 		ctx.Feedback.Remove(Feedback);
 	}
 
-	/// <summary>
-	/// Gets comments for a thread
-	/// </summary>
-	/// <param name="FeedbackID">Feedback ID</param>
-	/// <returns>Gets comments</returns>
-	[HttpGet("GetComments")]	
+
+
+    /// <summary>
+    /// Create Commments
+ 	/// <param name="commentsObject"></param>
+    /// </summary>
+    [HttpPost("CreateComment")]
+    public string CreateComment([FromBody] FeedbackComments? commentsObject)
+    {
+        try
+        {
+            FeedbackComments? comments = commentsObject;
+
+
+            //Add comment to database
+            using TrackerContext Ctx = new();
+            Ctx.FeedbackComments.Add(comments);
+            Ctx.SaveChanges();
+
+            return "Comment created successfully";
+        }
+        catch (Exception ex)
+        {
+            return "Encountered an error: " + ex.Message;
+        }
+    }
+
+
+
+
+    /// <summary>
+    /// Gets comments for a thread
+    /// </summary>
+    /// <param name="FeedbackID">Feedback ID</param>
+    /// <returns>Gets comments</returns>
+    [HttpGet("GetComments")]	
 	public string GetComments(int FeedbackID)
 	{
 		try
