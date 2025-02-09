@@ -65,10 +65,6 @@
 				<button @onclick="CancelEditing">Cancel</button>
 			}
 
-
-
-
-
 			@try
 			{
 				if (SelectedComments != null && showcomments)
@@ -82,7 +78,7 @@
 
 
 					<!-- Comment input -->
-					@if (SelectedFeedback.Closed == true)
+					@if (!SelectedFeedback.Closed)
 					{
 						<div class="comment-box" style="margin-top: 20px;">
 							<textarea @bind="newCommentText"
@@ -318,19 +314,10 @@
 	/// </summary>
 	private async void SubmitComment()
 	{
-		var newComment = new FeedbackComments();
-
-		newComment.Body = newCommentText;
-		newComment.FeedbackID = SelectedFeedback.FeedbackID;
-
-
-		string result = await FeedbackClientAccess.CreateComment(newComment);
+		//Send comment then reset text.
+		await FeedbackClientAccess.CreateComment(SelectedFeedback.FeedbackID,JAuth.User.UserID,newCommentText);
 		newCommentText = "";
-
-
 	}
-
-
 
 	private async Task LoadComments(int ID)
 	{
