@@ -75,13 +75,6 @@
                 <div class="mb-3">
                 </div>
 
-
-                <!--Deadline-->
-                <div class="mb-3">
-                    <label for="deadline">Deadline:</label>
-                    <input id="deadline" type="date" @bind="deadline" min="@DateTime.Now" />
-                </div>
-
                 <div class="mb-3">
                     <button class="btn btn-primary mt-2" @onclick="Sendfeedback">send feedback</button>
                 </div>
@@ -127,8 +120,6 @@ else
     // get modules
     private List<FeedbackTrackerCommon.Definitions.Modules> modules = new List<FeedbackTrackerCommon.Definitions.Modules> { new FeedbackTrackerCommon.Definitions.Modules { ModuleID = 0, Module = "no module" }};
 
-    // deadline
-    private DateTime deadline = DateTime.Now;
 
     // assigne
     // author of feedback (get current user)
@@ -218,8 +209,7 @@ else
         fb.FeedbackText = text; // text of feedback
         fb.Closed = false; // Feedback starts open (close would be completed)
         fb.Title = title; // Name of feedback
-        fb.Priority = 5; //#TODO calaculate inital priority based on deadline date
-        fb.Deadline = deadline; // date feedback is due / response needed by
+        fb.Priority = 5;
 
         // fb.AssignedUSer;
 

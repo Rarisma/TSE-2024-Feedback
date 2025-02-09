@@ -36,7 +36,6 @@
             <select id="sorting" @onchange="SortBySelected">
                 <option value="az">A-Z</option>
                 <option value="za">Z-A</option>
-                <option value="deadline">Deadline</option>
                 <option value="priority">Priority</option>
             </select>
         </div>
@@ -56,7 +55,6 @@
                     }
                 }
                 <p>@feedback.FeedbackText</p>
-                <p><strong>Due For: @feedback.Deadline</strong></p>
                 <p><strong>PRIORITY LEVEL: @feedback.Priority</strong></p>
             </NavLink>
         }
@@ -187,17 +185,10 @@
         {
             SpecificFeedbacks.Sort((current, next) => current.Title.CompareTo(next.Title));
         }
-
         else if (SelectedOption == "za") // reverse alphabetical
         {
             SpecificFeedbacks.Sort((current, next) => next.Title.CompareTo(current.Title));
         }
-
-        else if (SelectedOption == "deadline") // closest due dates first
-        {
-            SpecificFeedbacks.Sort((current, next) => current.Deadline.CompareTo(next.Deadline));
-        }
-
         else if (SelectedOption == "priority") // lowest priority first
         {
             SpecificFeedbacks.Sort((current, next) => current.Priority.CompareTo(next.Priority));

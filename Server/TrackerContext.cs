@@ -17,9 +17,7 @@ public class TrackerContext(
 	public DbSet<Users_Modules> Users_Modules { get; set; }
 	public DbSet<FeedbackComments> FeedbackComments { get; set; }
 	public DbSet<FolderLinks> FolderLinks { get; set; }
-
-	public DbSet<Extension> Extension { get; set; }
-
+	
     public DbSet<Notification> Notification { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

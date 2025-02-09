@@ -41,16 +41,35 @@
 				<div class="flex-row">
 					<div class="flex-column">
 						<p class="card-text"><strong>Title:</strong> @SelectedFeedback.Title</p>
-						<p class="card-text"><strong>deadline:</strong> @SelectedFeedback.Deadline</p>
 						<p class="card-text"><strong>Description:</strong> @SelectedFeedback.FeedbackText</p>
 					</div>
 					<div>
-						<NavLink class="btn btn-primary" href="@($"/extension/{FeedbackID}")">Extensions</NavLink>
-						<button class="btn btn-primary" @onclick="EnableEditing">Edit </button>
+						@if (SelectedFeedback.Closed)
+						{
+							<p>This feedback is closed, it can't be edited and new comments can't be added.</p>
+						}
+						else
+						{
+							<button class="btn btn-primary" @onclick="EnableEditing">Edit </button>
+						}
 						<button class="btn btn-primary" @onclick="showComments">Comments </button>
+
+						@if (JAuth.User.IsTeacher)
+						{
+							@if (SelectedFeedback.Closed)
+							{
+								<button class="btn btn-primary" @onclick="MarkAsIncomplete">Mark as incomplete </button>
+							}
+							else
+							{								
+								<button class="btn btn-primary" @onclick="MarkAsComplete">Mark as Complete </button>
+							}
+						}
 					</div>
 				</div>
 			}
+			
+			
 			@if (isEditing)
 			{
 				<div>
@@ -64,9 +83,6 @@
 				<button @onclick="SaveChanges">Save</button>
 				<button @onclick="CancelEditing">Cancel</button>
 			}
-
-
-
 
 
 			@try
@@ -99,17 +115,9 @@
 
 
 
-
-
 }
 
 @code {
-
-
-
-
-
-
 	private bool showcomments = false;
 	private string currentTab = "total";
 	private FeedbackTrackerCommon.Definitions.Feedback SelectedFeedback;
@@ -138,11 +146,6 @@
 		} else { Console.WriteLine("Failed to load feedback."); }
 	}
 
-
-	//private string UsernameForComments;
-
-
-
 	//Editing
 
 	private bool isEditing = false;
@@ -151,34 +154,6 @@
 
 	// selected feedback
 	//private FeedbackTrackerCommon.Definitions.Feedback? SelectedFeedback;
-
-	// logged user
-	private FeedbackTrackerCommon.Definitions.User? loggedUser;
-
-	/*
-	/// <summary>
-	/// Get feedback to display and related extensions
-	/// </summary>
-	/// <returns>task -  updates stored feedback and extensions</returns>
-	private async Task LoadFeedback()
-		{
-		var feedback = await FeedbackClientAccess.GetFeedbackByID(ID);
-
-			if (feedback != null)
-			{
-			SelectedFeedback = feedback;
-			extensions = await FeedbackClientAccess.GetExtensions(SelectedFeedback.FeedbackID);
-
-		StateHasChanged();
-			}
-			else
-			{
-			Console.WriteLine("Failed to load feedback.");
-		}
-
-		//await LoadComments(SelectedFeedback.FeedbackID);
-	}
-*/
 
 	private void EnableEditing()
 	{
@@ -231,63 +206,7 @@
 		}
 		isEditing = false;
 	}
-
-
-	/// <summary>
-	///  logged user
-	/// </summary>
-	/// <returns>Task - user</returns>
-	private async Task LoadUser()
-	{
-		var user = await UserClientAccess.GetUserByID(3);
-
-		if (user != null)
-		{
-			loggedUser = user;
-		}
-		else
-		{
-			Console.WriteLine("Failed to load user.");
-		}
-	}
-
-	/// <summary>
-	/// Create a new extension
-	/// </summary>
-	private async void requestExtension()
-	{
-		// add extension request
-		var newExtension = new Extension();
-		newExtension.FeedbackId = SelectedFeedback.FeedbackID;
-		newExtension.Status = "to review";
-
-		//Console.WriteLine(fb.Title); // log
-
-		// call api createfeedback
-		string apiFeedback = await FeedbackClientAccess.CreateExtension(newExtension);
-
-		Console.WriteLine(apiFeedback); // log
-	}
-
-	/// <summary>
-	/// Deadline accepted
-	/// </summary>
-	/// <param name="extension">extension that has been accepted</param>
-	private async void deadlineResponse(Extension extension){
-		if (extension.Status == "accepted")
-		{
-			// feedback deadline
-			SelectedFeedback.Deadline = SelectedFeedback.Deadline.Add(new TimeSpan(extension.Length, 0, 0, 0)); // update deadline
-
-			// update feedback in db
-			await FeedbackClientAccess.UpdateFeedback(SelectedFeedback);
-		}
-
-		// update extension
-		await FeedbackClientAccess.UpdateExtension(extension);
-		StateHasChanged();
-	}
-
+	
     private async Task LoadComments(int ID)
     {
         SelectedComments = await FeedbackClientAccess.GetComments(ID);
@@ -313,5 +232,15 @@
         await LoadComments(int.Parse(FeedbackID));
 		
 	}
+
+    private void MarkAsIncomplete()
+    {
+	    new FeedbackAPI().SetState(int.Parse(FeedbackID), false);
+    }
+
+    private void MarkAsComplete()
+    {
+	    new FeedbackAPI().SetState(int.Parse(FeedbackID), true);
+    }
 
 }

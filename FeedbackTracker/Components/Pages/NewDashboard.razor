@@ -15,7 +15,7 @@
     <center><h2>Dashboard</h2></center>
 
     <div>
-        <h3>Next Deadlines</h3>
+        <h3>Recent Feedback</h3>
         
             <div>
             @foreach (var feedback in allFeedback)
@@ -23,7 +23,6 @@
                     <div style="border: 1px solid black; margin: 5px; padding: 10px;">
                         <h4>@feedback.Title</h4>
                         <p><strong>@feedback.FeedbackText</strong></p>
-                        <p><strong>Due in: </strong> @feedback.Deadline</p>
                         <p><strong>Completed:</strong> @feedback.Closed</p>
                     </div>
                 }
@@ -42,7 +41,7 @@
 
     }
 
-    private List<Feedback> allFeedback = new();
+    private List<FeedbackTrackerCommon.Definitions.Feedback> allFeedback = new();
 
     // loads feedback from api
     private async Task LoadFeedback()
@@ -54,47 +53,21 @@
 
             if (feedbackList != null && feedbackList.Any())
             {
-                allFeedback = feedbackList.Select(fb => new Feedback
+                allFeedback = feedbackList.Select(fb => new FeedbackTrackerCommon.Definitions.Feedback()
                     {
                         Title = fb.Title,
                         FeedbackText = fb.FeedbackText,
-                        Deadline = fb.Deadline,
                         Closed = fb.Closed
                     }).ToList();
             }
             else
             {
                 Console.WriteLine("No feedback found. Using test data.");
-                TestFeedback();
             }
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Error loading feedback: {ex.Message}");
-            TestFeedback();
         }
-    }
-
-    // creates test feedback
-    private void TestFeedback()
-    {
-        allFeedback = new List<Feedback>
-        {
-            new Feedback
-            {
-                Title = "Test 1",
-                FeedbackText = "Info about feedback",
-                Deadline = DateTime.Now.AddDays(4),
-                Closed = false
-            },
-        };
-    }
-
-    public class Feedback
-    {
-        public string Title { get; set; }
-        public string FeedbackText { get; set; }
-        public DateTime Deadline { get; set; }
-        public bool Closed { get; set; }
     }
 }
