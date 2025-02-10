@@ -58,8 +58,8 @@ namespace Server.API
 			await emailSending.SendEmailAsync(ReceivingAddress, EmailBody, EmailSubject);
 			return StatusCode(200);
 		}
-
-		public async Task<bool> AddCodeToDB(string Code, string Email)
+        [HttpGet("AddCodeToDB")]
+        public async Task<bool> AddCodeToDB(string Code, string Email)
 		{
 			try
 			{

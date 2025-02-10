@@ -1,3 +1,4 @@
+using System.Text;
 using System.Text.Json;
 using Application.Components;
 using FeedbackTrackerCommon.Definitions;
@@ -8,6 +9,28 @@ namespace Application.API;
 public class ModuleAPI()
 {
     private readonly HttpClient _httpClient = new() { BaseAddress = new Uri(App.Endpoint) };
+
+    /// <summary>
+    /// Creates a new module.
+    /// </summary>
+    public async Task<string?> CreateModule(Modules module)
+    {
+        try
+        {
+            string jsonContent = JsonSerializer.Serialize(module);
+            HttpContent content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+            HttpResponseMessage response = await _httpClient.PostAsync("Module/CreateModule", content);
+            response.EnsureSuccessStatusCode();
+            // Read response content
+            string responseContent = await response.Content.ReadAsStringAsync();
+            return responseContent;
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Error creating module");
+            return null;
+        }
+    }
 
     /// <summary>
     /// Gets a module by ID
