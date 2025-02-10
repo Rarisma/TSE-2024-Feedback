@@ -62,7 +62,7 @@ public class Feedback
     public int Priority { get; set; }
 
     [Column("Label")]
-    public FeedbackLabel Label { get; set; }
+    public FeedbackLabel? Label { get; set; }
     
     public User AssignedUser { get; set; }
 
