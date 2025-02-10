@@ -1,37 +1,115 @@
-﻿/* MAIN PAGE */
+﻿/* ANIMATION */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
 
-.create-form, .form-control, .form-select, textarea.form-control {
-    background-color: transparent;
-    border: none;
-    display: block;
+    to {
+        opacity: 1;
+    }
+}
+
+/* MAIN PAGE */
+.card-body {
     width: 100%;
-    box-sizing: border-box;
 }
 
-.btn {
-    color: #000000;
-    width: 38%;
-}
-
-.form-label {
-    color: black;
+.first-label, .label-text {
     margin-bottom: 0.5rem;
+    font-family: 'Inter', 'Roboto', sans-serif;
+    font-weight: 500;
+    letter-spacing: 0.5px;
 }
 
-.card {
-    max-width: 100%;
-    padding: 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    background-color: rgba(128, 0, 128, 0.5);
+.first-label {
+    margin-top: 80px;
+    color: #333;
+}
+
+.label-text {
+    margin-top: 20px;
+    color: #333;
+}
+
+.form-control, .form-select, textarea {
+    background-color: rgba(255, 255, 255, 0.15);
+    width: 100%;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 15px;
     border-radius: 8px;
-    height: 800px;
-    backdrop-filter: blur(15px);
-    color: white;
+    transition: all 0.3s ease-in-out;
+    height: 50px;
 }
 
+    .form-control:focus, .form-select:focus, textarea:focus {
+        background-color: rgba(255, 255, 255, 0.25);
+        border-color: rgba(0, 0, 0, 0.5);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        outline: none;
+    }
+
+.btn-primary {
+    background-color: #5563DE;
+    border: none;
+    color: #fff;
+    width: 30%;
+    display: block;
+    margin: 40px auto 0;
+    font-family: 'Inter', 'Roboto', sans-serif;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    font-size: 16px;
+    padding: 12px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+    .btn-primary:hover {
+        background-color: #6C7AE0;
+    }
+
+.btn-outline-primary {
+    border-color: #5563DE;
+    color: #5563DE;
+}
+
+    .btn-outline-primary:hover {
+        background-color: #5563DE;
+        color: #4A4A4A;
+    }
+
+.create-feedback {
+    position: fixed;
+    top: 50%;
+    left: 56%;
+    width: 75%;
+    height: 88vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    text-align: center;
+    padding: 30px;
+    backdrop-filter: blur(200px);
+    border-radius: 12px;
+    box-shadow: 0 20px 35px rgba(0, 0, 0, 0.2);
+    transform: translate(-50%, -50%);
+    animation: fadeIn 0.5s ease-in;
+}
+
+h3 {
+    position: absolute;
+    top: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    margin: 0;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #333333;
+    text-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+}
 
 /* FOR USERS NOT LOGGED IN */
-
 .loggedout {
     display: block;
 }
@@ -57,12 +135,11 @@
     max-width: 350px;
 }
 
-.btn.btn-loggedout:hover {
-    background-color: #0B5ED7;
-}
+    .btn.btn-loggedout:hover {
+        background-color: #0B5ED7;
+    }
 
-.loggedout-msg h3 {
+h2 {
     text-align: center;
     margin: 0 auto 15px;
 }
-
