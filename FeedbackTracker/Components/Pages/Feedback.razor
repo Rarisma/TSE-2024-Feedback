@@ -11,42 +11,52 @@
 
 <title>TSE Feedback: Create Feedback </title>
 
-@if (Auth.IsAuthorised()) {
+@if (Auth.IsAuthorised())
+{
     <PageTitle>Feedback Page</PageTitle>
-    <div class="card justify-content-center">
-        <div class="card-header">
-            <h1 class="card-title text-center">Creating as user: @assignee.Username - Feedback form</h1>
-        </div>
+    <div class="create-feedback">
+        <h3>Creating as user: @assignee.Username - Feedback form</h3>
         <!-- Feedback form -->
         <div class="card-body">
-            <form class="create-form">
+            <!--Name-->
+            <div class="mb-3">
+                <label for="title" class="first-label">Name:</label>
+                <input id="title" type="text" @bind="title" placeholder="Enter Feedback Here..." class="form-control" />
+            </div>
 
-                <!--Name-->
-                <div class="mb-3">
-                    <label for="title">Feedback Name:</label>
-                    <input id="title" type="text" @bind="title" placeholder="What is the Feedback Name" class="form-control" />
-                </div>
+            <!--Text-->
+            <div class="mb-3">
+                <label for="text" class="label-text">Feedback Information:</label>
+                <textarea id="text" type="text" @bind="text" placeholder="Enter Information About Feedback Here..." class="form-control" style="height: 100px; resize: none;" maxlength="8000"></textarea>
+            </div>
 
-                <!--Text-->
-                <div class="mb-3">
-                    <label for="text">Feedback Text:</label>
-                    <textarea id="text" type="text" @bind="text" placeholder="Write your feedback here" class="form-control" />
-                </div>
-                <!--module-->
-                <div class="mb-3">
-                    <label for="module">Feedback module:</label>
-                    <select id="module" @onchange="moduleSelected">
-                        <!-- add each module to select options-->
-                        @if (modules.Count > 0)
+            <!--Module-->
+            <div class="mb-3">
+                <label for="module" class="label-text">Feedback Module:</label>
+                <select id="module" @onchange="moduleSelected" class="form-select">
+                    @if (modules.Count > 0)
+                    {
+                        for (int i = 0; i < modules.Count; i++)
                         {
-                            for (int i = 0; i < modules.Count; i++)
-                            {
-                                <option value="@modules[i].ModuleID">@modules[i].Module</option>
-                            }
+                            <option value="@modules[i].ModuleID">@modules[i].Module</option>
                         }
-                        else
+                    }
+                    else
+                    {
+                        <option value="">No modules</option>
+                    }
+                </select>
+            </div>
+
+            <!--Assign-->
+            <div class="mb-3">
+                <label for="assign" class="label-text">User To Assign Feedback:</label>
+                <select id="assign" @bind=assignedUserID class="form-select">
+                    @if (users.Count > 0)
+                    {
+                        for (int i = 0; i < users.Count; i++)
                         {
-                            <option value="">No modules</option>
+                            <option value="@users[i].UserID">@users[i].Username</option>
                         }
                     </select>
                 </div>
@@ -87,13 +97,19 @@
 
                 <div class="mb-3">
                 </div>
-
-                <div class="mb-3">
-                    <button class="btn btn-primary mt-2" @onclick="Sendfeedback">send feedback</button>
-                </div>
             </form>
-        </div>
+                    }
+                    else
+                    {
+                        <option value="">No users</option>
+                    }
+                </select>
+            </div>
 
+            <div class="mb-3 text-center">
+                <button class="btn btn-primary" @onclick="Sendfeedback">Submit Feedback</button>
+            </div>
+        </div>
     </div>
 }
 
@@ -102,18 +118,16 @@ else
 {
     <style>
         body {
-        overflow: hidden;
+            overflow: hidden;
         }
     </style>
     <div class="loggedout">
         <div class="loggedout-msg">
             <img src="/Images/LoginCone.png" alt="Login Required" class="cone-img">
-            <h3>Please log in to create feedback.</h3>
+            <h2>Please log in to create feedback.</h2>
             <button class="btn btn-loggedout" @onclick=HomeButton>Return Home</button>
         </div>
     </div>
-
-
 }
 
 @code {
