@@ -213,21 +213,4 @@ public class UserAPI()
 	}
 
 
-    /// <summary>
-    /// Delete notification store
-    /// </summary>
-    public async Task DeleteNotification(int UserID)
-    {
-	    try
-	    {
-		    string url = $"User/Notification?Userid={Uri.EscapeDataString(UserID.ToString())}";
-		    HttpResponseMessage response = await _httpClient.DeleteAsync(url);
-		    response.EnsureSuccessStatusCode();
-		    await response.Content.ReadAsStringAsync();
-	    }
-	    catch (Exception ex)
-	    {
-		    Log.Error(ex, $"Error Deleting notification");
-	    }
-    }
 }
