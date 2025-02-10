@@ -1,5 +1,7 @@
 @page "/feedback"
+@using System.Data.SqlTypes
 @using Application.API
+@using FeedbackTrackerCommon.Definitions
 @rendermode InteractiveServer
 @inject FeedbackAPI FeedbackCLient
 @inject JAuth Auth
@@ -46,7 +48,18 @@
                         {
                             <option value="">No modules</option>
                         }
-
+                    </select>
+                </div>
+                
+                <!--Label-->
+                <div class="mb-3">
+                    <label for="Label">Label:</label>
+                    <select id="Label" @bind="Label">
+                        <!-- add each module to select options-->
+                        <option value="0">@FeedbackLabel.Positive</option>
+                        <option value="1">@FeedbackLabel.Improvement</option>
+                        <option value="2">@FeedbackLabel.Question</option>
+                        <option value="3">@FeedbackLabel.Error</option>
 
                     </select>
                 </div>
@@ -110,6 +123,8 @@ else
         NavigationManager.NavigateTo("/LogIn");
     }
 
+    private int Label;
+    
     // name
     private string title = string.Empty;
     // text
