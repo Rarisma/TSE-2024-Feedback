@@ -50,20 +50,28 @@
         <div class="col-12 col-md-3 d-flex justify-content-center align-items-center">
             <img src="Images/UniLogo.png" alt="Uni Logo" class="uni-logo">
         </div>
-        <!-- Login form -->
+        <!-- Login Form-->
         <div class="col-12 col-md-6 d-flex justify-content-center login-section">
             <div class="login-box mt-2 object" data-value="2" style="max-width: 400px;">
                 <div class="card-header d-flex">
                     <button class="btn btn-primary flex-grow-1 me-2">Log In</button>
                     <button class="btn btn-outline-primary flex-grow-1" @onclick="SignupTab">Sign Up</button>
-                    <button class="btn btn-outline-primary flex-grow-1" @onclick="ResetTab">Reset</button>
                 </div>
                 <div class="card-body">
                     <form @onsubmit="Submit">
                         <input type="text" class="form-control mb-3" placeholder="Username" @bind-value="Username" aria-label="Enter username">
                         <input type="password" class="form-control mb-3" placeholder="Password" @bind-value="Password" aria-label="Enter password">
-                        <input type="text" hidden="@Hide2FA" class="form-control mb-3" placeholder="000000" @bind-value="Code" aria-label="Enter 2FA Code">
+
+                        <!-- Remember me button, needs additional code-->
+                        <div class="d-flex align-items-center mb-3">
+                            <input type="checkbox" class="form-check-input me-2" id="rememberMe" aria-label="Remember me">
+                            <label for="rememberMe" class="form-check-label">Remember My Details</label>
+                        </div>
+
                         <button type="submit" class="btn btn-primary w-100" aria-label="Log in">Log In</button>
+
+                        <!-- Forgot password button needs linking to the form-->
+                        <a href="#" class="d-block text-center mt-3" aria-label="Forgot password">Forgot Password?</a>
                     </form>
                 </div>
             </div>
@@ -85,14 +93,14 @@
 
 <!-- Animation! Thanks to: https://www.youtube.com/watch?v=ntg6tbGxP3k -->
 <script type="text/javascript">
-    document.addEventListener("mousemove", parallax);
-    function parallax(e) {
-    document.querySelectorAll(".object").forEach(function(move) {
-    var moving_value = move.getAttribute("data-value");
-    var x = (e.clientX * moving_value) / 250;
-    var y = (e.clientY * moving_value) / 250;
-    move.style.transform = "translateX(" + x + "px) translateY(" + y + "px)";});
-}
+        document.addEventListener("mousemove", parallax);
+        function parallax(e) {
+        document.querySelectorAll(".object").forEach(function(move) {
+        var moving_value = move.getAttribute("data-value");
+        var x = (e.clientX * moving_value) / 250;
+        var y = (e.clientY * moving_value) / 250;
+        move.style.transform = "translateX(" + x + "px) translateY(" + y + "px)";});
+    }
 </script>
 <!-- To fix scrolling bug -->
 <style>
@@ -105,10 +113,5 @@
     private void SignupTab()
     {
         NavigationManager.NavigateTo("/SignUp");
-    }
-
-    private void ResetTab()
-    {
-        NavigationManager.NavigateTo("/ResetPassword");
     }
 }
