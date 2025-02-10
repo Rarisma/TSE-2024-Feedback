@@ -21,6 +21,7 @@ public class TrackerContext(
 	public DbSet<Extension> Extension { get; set; }
 
     public DbSet<Notification> Notification { get; set; }
+	public DbSet<CodeStorage> CodeStorage { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 	{

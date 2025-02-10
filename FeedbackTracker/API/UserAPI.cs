@@ -50,12 +50,13 @@ public class UserAPI()
 	/// <summary>
 	/// Creates a new user.
 	/// </summary>
-	public async Task CreateUser(string Username, string Password)
+	public async Task CreateUser(string Username, string Password, string Email)
 	{
 		try
 		{
 			string url = $"User/CreateUser?Username={Uri.EscapeDataString(Username)}" +
-						 $"&Password={Uri.EscapeDataString(Password)}";
+						 $"&Password={Uri.EscapeDataString(Password)}" +
+						 $"&Email={Uri.EscapeDataString(Email)}";
 			HttpResponseMessage response = await _httpClient.PostAsync(url, null);
 			response.EnsureSuccessStatusCode();
 			await response.Content.ReadAsStringAsync();
@@ -143,38 +144,74 @@ public class UserAPI()
     /// </summary>
     public async Task<List<Notification?>?> GetNotification(int user)
     {
-	    try
-	    {
-		    HttpResponseMessage response = await _httpClient.GetAsync($"User/Notification?Userid={Uri.EscapeDataString(user.ToString())}");
-		    response.EnsureSuccessStatusCode();
-		    string jsonString = await response.Content.ReadAsStringAsync();
-		    return JsonSerializer.Deserialize<List<Notification?>?>(jsonString);
-	    }
-	    catch (Exception ex)
-	    {
-		    Log.Error(ex, $"Error getting notification");
-		    return null;
-	    }
+        try
+        {
+            HttpResponseMessage response = await _httpClient.GetAsync($"User/Notification?Userid={Uri.EscapeDataString(user.ToString())}");
+            response.EnsureSuccessStatusCode();
+            string jsonString = await response.Content.ReadAsStringAsync();
+            return JsonSerializer.Deserialize<List<Notification?>?>(jsonString);
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, $"Error getting notification");
+            return null;
+        }
     }
 
-    /// <summary>
-    /// Add new notification
-    /// </summary>
-    public async Task NewNotification(int UserID, int FeedbackID)
+	/// <summary>
+	/// Add new notification
+	/// </summary>
+	public async Task NewNotification(int UserID, int FeedbackID)
+	{
+		try
+		{
+			string url = $"User/Notification?Userid={Uri.EscapeDataString(UserID.ToString())}" +
+						 $"&FeedbackID={Uri.EscapeDataString(FeedbackID.ToString())}";
+			HttpResponseMessage response = await _httpClient.PostAsync(url, null);
+			response.EnsureSuccessStatusCode();
+			await response.Content.ReadAsStringAsync();
+		}
+		catch (Exception ex)
+		{
+			Log.Error(ex, $"Error creating notification");
+		}
+	}
+
+            /// <summary>
+            /// Delete notification store
+            /// </summary>
+    public async Task DeleteNotification(int UserID)
     {
-	    try
-	    {
-		    string url = $"User/Notification?Userid={Uri.EscapeDataString(UserID.ToString())}" +
-		                 $"&FeedbackID={Uri.EscapeDataString(FeedbackID.ToString())}";
-		    HttpResponseMessage response = await _httpClient.PostAsync(url, null);
-		    response.EnsureSuccessStatusCode();
-		    await response.Content.ReadAsStringAsync();
-	    }
-	    catch (Exception ex)
-	    {
-		    Log.Error(ex, $"Error creating notification");
-	    }
+        try
+        {
+            string url = $"User/Notification?Userid={Uri.EscapeDataString(UserID.ToString())}";
+            HttpResponseMessage response = await _httpClient.DeleteAsync(url);
+            response.EnsureSuccessStatusCode();
+            await response.Content.ReadAsStringAsync();
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, $"Error Deleting notification");
+        }
     }
+
+	public async Task UpdatePassword(string Email, string Password)
+	{
+		try
+		{
+			string url = $"User/UpdatePassword?Email={Uri.EscapeDataString(Email)}" +
+			 $"&Password={Uri.EscapeDataString(Password)}";
+			HttpResponseMessage response = await _httpClient.PutAsync(url, null);
+			response.EnsureSuccessStatusCode();
+			await response.Content.ReadAsStringAsync();
+
+		}
+		catch (Exception ex)
+		{
+			Log.Error(ex, $"Error updating password");
+		}
+	}
+
 
     /// <summary>
     /// Delete notification store

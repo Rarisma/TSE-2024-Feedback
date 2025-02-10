@@ -20,6 +20,9 @@ public class Program
         builder.Services.AddScoped<JAuth>();
 
 
+		builder.Services.AddSingleton<EmailAPI>(sp =>
+			new EmailAPI("http://localhost:5189"));
+
 		//Configure Serilog
 		Log.Logger = new LoggerConfiguration()
 			.WriteTo.Console()

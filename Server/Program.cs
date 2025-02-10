@@ -60,6 +60,8 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization();
 
+builder.Services.AddSingleton<EmailSending>();
+
 // Build the app
 var app = builder.Build();
 
