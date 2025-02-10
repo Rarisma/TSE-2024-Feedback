@@ -251,25 +251,6 @@
         }
     }
 
-
-	/// <summary>
-	///  logged user
-	/// </summary>
-	/// <returns>Task - user</returns>
-	private async Task LoadUser()
-	{
-		var user = await UserClientAccess.GetUserByID(3);
-
-		if (user != null)
-		{
-			loggedUser = user;
-		}
-		else
-		{
-			Console.WriteLine("Failed to load user.");
-		}
-	}
-
 	/// <summary>
 	/// Create a new comment
 	/// </summary>
@@ -278,24 +259,6 @@
 		//Send comment then reset text.
 		await FeedbackClientAccess.CreateComment(SelectedFeedback.FeedbackID,JAuth.User.UserID,newCommentText);
 		newCommentText = "";
-	}
-
-	private async Task LoadComments(int ID)
-	{
-		SelectedComments = await FeedbackClientAccess.GetComments(ID);
-		if (SelectedComments == null)
-		{
-			Console.WriteLine("No comments found.");
-		}
-		else
-		{
-			UserComments.Clear();
-			foreach (var comment in SelectedComments)
-			{
-				var user = await UserClientAccess.GetUserByID(comment.CommenterID);
-				UserComments[comment.CommentID] = user.Username;
-			}
-		}
 	}
 
 	protected override async Task OnInitializedAsync()

@@ -58,8 +58,9 @@
                         {
                             <option value="@users[i].UserID">@users[i].Username</option>
                         }
-                    </select>
-                </div>
+                    }
+                </select>
+            </div>
                 
                 <!--Label-->
                 <div class="mb-3">
@@ -94,23 +95,12 @@
 
                     </select>
                 </div>
-
-                <div class="mb-3">
-                </div>
-            </form>
-                    }
-                    else
-                    {
-                        <option value="">No users</option>
-                    }
-                </select>
             </div>
 
             <div class="mb-3 text-center">
                 <button class="btn btn-primary" @onclick="Sendfeedback">Submit Feedback</button>
             </div>
         </div>
-    </div>
 }
 
 //For users that aren't logged in
