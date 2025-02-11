@@ -37,7 +37,7 @@
 
 			@if (!isEditing)
 			{
-			// display feedback {title,deadline,description,create extension request button}
+				// display feedback {title,deadline,description,create extension request button}
 				<div class="flex-row">
 					<div class="flex-column">
 						<p class="card-text"><strong>Title:</strong> @SelectedFeedback.Title</p>
@@ -65,6 +65,10 @@
 				<button @onclick="CancelEditing">Cancel</button>
 			}
 
+
+
+
+
 			@try
 			{
 				if (SelectedComments != null && showcomments)
@@ -74,33 +78,11 @@
 						<p>Comment ID: @comment.CommenterID</p>
 						<p>Content: @comment.Body</p>
 					}
-
-
-
-					<!-- Comment input -->
-					@if (!SelectedFeedback.Closed)
-					{
-						<div class="comment-box" style="margin-top: 20px;">
-							<textarea @bind="newCommentText"
-							placeholder="Add a comment..."
-							rows="3" cols="100"></textarea>
-							<br />
-							<button class="btn btn-primary" @onclick="SubmitComment">Submit Comment</button>
-						</div>
-					}
-					else 
-					{
-						<p><strong>Cannot create any new comments if feedback is completed.</strong></p>
-
-					}
 				}
 				else if(showcomments)
 				{
 					<p>No comments yet!</p>
 				}
-
-
-
 			}
 			catch (Exception ex)
 			{
@@ -125,7 +107,6 @@
 
 
 
-	private string newCommentText = "";
 
 
 
@@ -307,38 +288,26 @@
 		StateHasChanged();
 	}
 
+    private async Task LoadComments(int ID)
+    {
+        SelectedComments = await FeedbackClientAccess.GetComments(ID);
+        if (SelectedComments == null)
+        {
+            Console.WriteLine("No comments found.");
+        }
+        else
+        {
+            UserComments.Clear();
+            foreach (var comment in SelectedComments)
+            {
+                var user = await UserClientAccess.GetUserByID(comment.CommenterID);
+                UserComments[comment.CommentID] = user.Username;
+            }
+        }
+    }
 
-
-	/// <summary>
-	/// Create a new comment
-	/// </summary>
-	private async void SubmitComment()
-	{
-		//Send comment then reset text.
-		await FeedbackClientAccess.CreateComment(SelectedFeedback.FeedbackID,JAuth.User.UserID,newCommentText);
-		newCommentText = "";
-	}
-
-	private async Task LoadComments(int ID)
-	{
-		SelectedComments = await FeedbackClientAccess.GetComments(ID);
-		if (SelectedComments == null)
-		{
-			Console.WriteLine("No comments found.");
-		}
-		else
-		{
-			UserComments.Clear();
-			foreach (var comment in SelectedComments)
-			{
-				var user = await UserClientAccess.GetUserByID(comment.CommenterID);
-				UserComments[comment.CommentID] = user.Username;
-			}
-		}
-	}
-
-	protected override async Task OnInitializedAsync()
-	{
+    protected override async Task OnInitializedAsync()
+    {
 		await LoadUsers();
         await LoadFeedback(int.Parse(FeedbackID));
         await LoadComments(int.Parse(FeedbackID));

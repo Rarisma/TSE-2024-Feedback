@@ -3,7 +3,6 @@ using System.Reflection;
 using System.Text.Json;
 using FeedbackTrackerCommon.Definitions;
 using Microsoft.AspNetCore.Mvc;
-using OtpNet;
 using Serilog;
 
 namespace Server.API;
@@ -91,12 +90,11 @@ public class UserController(AuthService authService) : Controller
 	/// </summary>
 	/// <param name="Username">User's account username</param>
 	/// <param name="Password">account password</param>
-	/// <param name="Password">account MFA Code</param>
 	/// <returns></returns>
 	[HttpGet("Authenticate")]
-	public async Task<string?> Authenticate(string Username, string Password, string Code)
+	public async Task<string?> Authenticate(string Username, string Password)
 	{
-		return await authService.AuthenticateUserAsync(Username, Password, Code);
+		return await authService.AuthenticateUserAsync(Username, Password);
 	}
 
 
@@ -134,7 +132,7 @@ public class UserController(AuthService authService) : Controller
 		{
             //Find account
             using TrackerContext Ctx = new();
-            var modules = (from Users_Modules usermodule in Ctx.UsersModules
+            var modules = (from Users_Modules usermodule in Ctx.Users_Modules
                          join moduledata in Ctx.Modules on usermodule.ModuleID equals moduledata.ModuleID
                          where usermodule.UserID == Userid
                          select new
@@ -150,59 +148,8 @@ public class UserController(AuthService authService) : Controller
         }
 		catch (Exception ex) { return "Encountered an error: " + ex.Message; }
 	}
-	[HttpGet("CreateTOTPKey")]
-	public async Task<StatusCodeResult> CreateTOTPKey(string UserID, string Password)
-	{
-		try
-		{
-			using TrackerContext Ctx = new();
-			User Account = Ctx.User.First(User => User.UserID == Convert.ToInt32(UserID));
 
-			if (Account.MFASecret != null)
-			{
-				Log.Warning("User already has 2FA");
-				return StatusCode(405);
-			}
-
-			//prevent totp from being added where it shouldnt be.
-			if (Account.Password != Password)
-			{
-				Log.Warning("Invalid auth");
-				return StatusCode(401);
-			}
-			
-			Log.Information("adding mfa for accounts without mfa");
-			var secret = KeyGeneration.GenerateRandomKey(20);
-			Account.MFASecret = Base32Encoding.ToString(secret);
-			Ctx.User.Update(Account);
-			await Ctx.SaveChangesAsync();
-			return StatusCode(200);
-		}
-		catch (Exception ex)
-		{
-			Log.Warning("Error occured during adding MFA");
-			return StatusCode(500);
-		}
-	}
-	
-	[HttpGet("MFABool")]
-	public bool getMFAStatus(int UserID)
-	{
-		try
-		{
-			//Find account
-			using TrackerContext Ctx = new();
-			User Account = Ctx.User.First(User => User.UserID == UserID);
-			return !(string.IsNullOrEmpty(Account.MFASecret));
-		}
-		catch (Exception ex)
-		{
-			Log.Error(ex, "Unexpected error when getting MFA status for account: " + UserID);
-			return false;
-		}
-	}
-	
-	    /// <summary>
+    /// <summary>
     /// Creates a new user object.
     /// </summary>
     /// <param Userid="user id">Account user id</param>
