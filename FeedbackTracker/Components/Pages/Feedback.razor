@@ -140,7 +140,7 @@ else
         List<FeedbackTrackerCommon.Definitions.User?>? modusers = (await ModuleClient.GetUsersInModule(moduleID))
            .ToList();
         
-        if(modusers != null){
+        if(modusers != null && modusers.Count>0){
             users = modusers;
             assignedUserID = modusers[0].UserID;
         }
