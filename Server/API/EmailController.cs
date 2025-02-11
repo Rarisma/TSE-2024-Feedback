@@ -1,5 +1,6 @@
 ﻿using FeedbackTrackerCommon.Definitions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration.UserSecrets;
 using Serilog;
 
 namespace Server.API
@@ -91,9 +92,14 @@ namespace Server.API
 			}
 			else
 			{
-				Ctx.CodeStorage.Remove(Storage);
-				await Ctx.SaveChangesAsync();
-				return StatusCode(200,"CODE DELETED");
+				int UserID = Storage.UserID;
+				List<CodeStorage> SameUserEntries = Ctx.CodeStorage.Where(AllCodeStorage => AllCodeStorage.UserID == UserID).ToList();
+				foreach (var CodeEntry in SameUserEntries)
+				{
+					Ctx.CodeStorage.Remove(CodeEntry);
+					await Ctx.SaveChangesAsync();
+				}
+				return StatusCode(200, "All CODES DELETED");
 			}
 		}
 	}
