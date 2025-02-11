@@ -58,12 +58,10 @@
         }
     </style>
 
-    <title>TSE Feedback: Your Feedback</title>
+    <title>Your Feedback</title>
 
     @if (JAuth.IsAuthorised())
     {
-        <center>
-            <h1>Your Feedback</h1></center>
         @if (SelectedFeedbacks != null && SelectedFeedbacks.Any())
         {
             foreach (var feedback in SelectedFeedbacks)
@@ -73,11 +71,7 @@
                 <NavLink class="btn btn-primary" href="@($"/viewfeedback/{feedback.FeedbackID}")">View</NavLink>
             }
         }
-        else
-        {
-            <center>
-                <p>No feedback to view!</p></center>
-        }
+
         <div class="title-box">
             <center>
                 <h1><strong>Your Feedback</strong></h1>
@@ -128,8 +122,7 @@
                         }
                     }
                     <p>@feedback.FeedbackText</p>
-                    <p><strong>Due For: @feedback.Deadline</strong></p>
-                    <p><strong>PRIORITY LEVEL: @feedback.Priority</strong></p>
+                    <p><strong>Label: @feedback.Label</strong></p>
                 </NavLink>
             }
         }
@@ -233,7 +226,7 @@
         try
         {
             var feedbacks = await FeedbackClientAccess.GetAssignedFeedbacks(ID); // communicates with API
-                                                                                 // different assignments to make sure All and Specific don't point to the same object in memory
+                    // different assignments to make sure All and Specific don't point to the same object in memory
             AllFeedbacks = feedbacks;
             SpecificFeedbacks = new List<FeedbackTrackerCommon.Definitions.Feedback>(feedbacks);
 
