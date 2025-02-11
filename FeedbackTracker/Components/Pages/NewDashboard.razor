@@ -50,7 +50,6 @@
         JAuth.EnforceAuth();
         if(JAuth.IsAuthorised()){
             await LoadFeedback();
-            StateHasChanged();
         }
 
     }
@@ -63,9 +62,7 @@
         try
         {
 
-            List<FeedbackTrackerCommon.Definitions.Feedback> feedbackList = 
-                await FeedbackClientAccess.GetAssignedFeedbacks(JAuth.GetUser().UserID) ??
-                new List<FeedbackTrackerCommon.Definitions.Feedback>();
+            List<FeedbackTrackerCommon.Definitions.Feedback> feedbackList = await FeedbackClientAccess.GetAssignedFeedbacks(JAuth.GetUser().UserID) ?? new List<FeedbackTrackerCommon.Definitions.Feedback>();
 
             if (feedbackList != null && feedbackList.Any())
             {
@@ -75,6 +72,14 @@
                         FeedbackText = fb.FeedbackText,
                         Closed = fb.Closed
                     }).ToList();
+                if (JAuth.GetUser().IsTeacher)
+                {
+                    allFeedback = allFeedback.Where(f => f.AssignedUserID == JAuth.GetUser().UserID).ToList();
+                }
+                else
+                {
+                    allFeedback = allFeedback.Where(f => f.AssigneeID == JAuth.GetUser().UserID).ToList();
+                }
             }
             else
             {

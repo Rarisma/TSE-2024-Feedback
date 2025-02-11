@@ -6,7 +6,32 @@
 @inject UserAPI UserClientAccess
 
 @{
-		<h4>@SelectedFeedback.Title</h4>
+	<PageTitle>Feedback Viewer</PageTitle>
+	<h1>Feedback Viewer</h1>
+	<h3>Select Feedback To View</h3>
+	<div style="margin: 20px 0">
+		<button @onclick='() => currentTab = "total"'>All Feedback</button>
+		<button @onclick='() => currentTab = "completed"'>Completed</button>
+		<button @onclick='() => currentTab = "todo"'>Not Completed</button>
+	</div>
+
+
+	<h3>Select User</h3>
+	//<select @bind="users">
+	<select @bind="selectedUserId">
+		@foreach (var user in users)
+		{
+			<option value="@user.UserID">@user.Username</option>
+		}
+	</select>
+
+	<p>You selected: @selectedUserId</p>
+
+
+	<p>Current Tab: @currentTab</p>
+	@if (currentTab == "total")
+	{
+		<h4>All Feedback</h4>
 		@if (SelectedFeedback != null)
 		{
 
@@ -15,6 +40,7 @@
 			// display feedback {title,deadline,description,create extension request button}
 				<div class="flex-row">
 					<div class="flex-column">
+						<p class="card-text"><strong>Title:</strong> @SelectedFeedback.Title</p>
 						<p class="card-text"><strong>Description:</strong> @SelectedFeedback.FeedbackText</p>
 						<p class="card-text"><strong>Label:</strong> @SelectedFeedback.Label.ToString()</p>
 					</div>
@@ -64,10 +90,9 @@
 				if (SelectedComments != null && showcomments)
 				{
 					foreach (var comment in SelectedComments)
-					{						
-						<p>;nbsp</p>
-						<p>@comment.CommentID</p>
-						<p>@comment.Body</p>
+					{
+						<p>Comment ID: @comment.CommenterID</p>
+						<p>Content: @comment.Body</p>
 					}
 
 
@@ -108,6 +133,10 @@
 			<p>No feedback found</p>
 		}
 		<NavLink class="btn btn-primary" href="usersfeedback">Back</NavLink>
+	}
+
+
+
 }
 
 @code {
