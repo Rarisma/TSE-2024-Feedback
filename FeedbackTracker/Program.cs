@@ -4,6 +4,8 @@ using Application.Components;
 using Microsoft.AspNetCore.Components;
 using Serilog;
 
+
+
 namespace Application;
 
 public class Program

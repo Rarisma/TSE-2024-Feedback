@@ -8,19 +8,32 @@
 
 <!-- Authentication method, ran once button is clicked -->
 @code {
+    public string Username { get; set; }
+    public string Password { get; set; }
 
-
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var storedToken = await LocalStorage.GetItemAsStringAsync("User token: ");
+            if (!string.IsNullOrEmpty(storedToken))
+            {
+                JAuth.Authorise(storedToken, ""); // Restore session
+                StateHasChanged();
+                NavigationManager.NavigateTo("/");
+            }
+        }
+    }
     private async Task Submit()
     {
         string JWT = await new UserAPI("http://localhost:5189").Authenticate(Username, Password);
         JAuth.Authorise(JWT, Username);
         string token = JAuth.GetToken();
-        await LocalStorage.SetItemAsStringAsync("TESTING2", token);
+        await LocalStorage.SetItemAsStringAsync("User token: ", token);
         StateHasChanged();
         NavigationManager.NavigateTo("/");
     }
-    public string Username { get; set; }
-    public string Password { get; set; }
+
 }
 @rendermode InteractiveServer
 <title>TSE Feedback: Log In </title>
