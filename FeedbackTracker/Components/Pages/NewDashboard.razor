@@ -40,7 +40,7 @@
         }
     </div>
 
-    <center><a href="/CreateFeedback" class="btn btn-primary">Create new feedback</a></center>
+    <center><a href="/Feedback" class="btn btn-primary">Create new feedback</a></center>
 
 </div>
 
@@ -62,7 +62,7 @@
         try
         {
 
-            List<FeedbackTrackerCommon.Definitions.Feedback> feedbackList = await FeedbackClientAccess.GetAssignedFeedbacks(6);
+            List<FeedbackTrackerCommon.Definitions.Feedback> feedbackList = await FeedbackClientAccess.GetAssignedFeedbacks(JAuth.GetUser().UserID) ?? new List<FeedbackTrackerCommon.Definitions.Feedback>();
 
             if (feedbackList != null && feedbackList.Any())
             {
