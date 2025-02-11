@@ -138,7 +138,7 @@ else
     {
         // Get module teachers.
         List<FeedbackTrackerCommon.Definitions.User?>? modusers = (await ModuleClient.GetUsersInModule(moduleID))
-            .Where(m => m.IsTeacher).ToList();
+           .ToList();
         
         if(modusers != null){
             users = modusers;
@@ -222,10 +222,19 @@ else
 
     }
 
+    // get logged in user
+    private async Task getUser()
+    {
+        FeedbackTrackerCommon.Definitions.User? user = await UserCLient.GetUserByID(Auth.GetUser().UserID);
+        // return logged user
+        assignee = user;
+    }
+    
     protected override async Task OnInitializedAsync()
     {
         if (Auth.IsAuthorised())
         {
+            await getUser();
             await GetModules();
         }
     }

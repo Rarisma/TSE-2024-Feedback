@@ -7,58 +7,6 @@
 @rendermode InteractiveServer
 
 @{
-    <div class="title-box">
-        <center>
-            <h1><strong>Your Feedback</strong></h1></center>
-    </div>
-
-    <div class="sort-container">
-        <div class="sort-box">
-            <label for="teachername">Sort By Teacher:</label>
-            <select id="teachername" @onchange="SortByTeacher">
-                <option value="all">Show All</option>
-                @if (Teachers != null)
-                {
-                    foreach (var teacher in Teachers)
-                    {
-                        <option value="@teacher.UserID">@teacher.Username</option>
-                    }
-                }
-                else
-                {
-                    <option value="">No Assignments</option>
-                }
-            </select>
-        </div>
-
-        <div class="sort-box">
-            <label for="sorting">Sort By:</label>
-            <select id="sorting" @onchange="SortBySelected">
-                <option value="az">A-Z</option>
-                <option value="za">Z-A</option>
-                <option value="priority">Priority</option>
-            </select>
-        </div>
-    </div>
-
-    @if (SpecificFeedbacks != null)
-    {
-        foreach (var feedback in SpecificFeedbacks)
-        {
-            <NavLink class="feedback-box" href="@($"/viewfeedback/{feedback.FeedbackID}")">
-                <p>@feedback.Title</p>
-                @foreach (var teacher in Teachers)
-                {
-                    if (teacher.UserID == feedback.AssigneeID)
-                    {
-                        <p><strong>@teacher.Username</strong></p>
-                    }
-                }
-                <p>@feedback.FeedbackText</p>
-                <p><strong>PRIORITY LEVEL: @feedback.Priority</strong></p>
-            </NavLink>
-        }
-    }
 
     <style>
 
