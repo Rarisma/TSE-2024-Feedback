@@ -34,24 +34,10 @@
                             </NavLink>
                         </div>
                     }
-                    <div class="nav-item px-3">
-                        <NavLink class="nav-link" href="settings">
-                            <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Settings
-                        </NavLink>
-                    </div>
                 }
             </nav>
         </div>
-            
-
-    <!-- Buttons for logging in, signing up and account management -->
-    <div class="login-buttons fixed-bottom px-3 pb-3">
-        @if (auth.IsAuthorised())
-        {
-            <NavLink class="btn btn-primary mb-2 w-100" href="/AccountManagement">Account</NavLink>
-            <NavLink class="btn btn-primary mb-2 w-100" href="/Logout">Log out</NavLink>
-        }
-    </div>
+          
 
     <!-- Button Styling -->
     <style>
@@ -110,7 +96,7 @@
         <div class="login-buttons fixed-bottom px-3 pb-3">
             @if (auth.IsAuthorised())
             {
-                <NavLink class="btn btn-primary mb-2 w-100" href="/AccountManagement">Account</NavLink>
+                <NavLink class="btn btn-primary mb-2 w-100" href="/settings">Settings</NavLink>
                 <NavLink class="btn btn-primary mb-2 w-100" href="/Logout">Log Out</NavLink>
             }
             else

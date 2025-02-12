@@ -106,7 +106,7 @@ input.form-control {
     border-radius: 12px;
     box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-    margin-top: 80px;
+    margin-top: 50px;
     animation: fadeAnimation 1.2s ease-in;
 }
 
