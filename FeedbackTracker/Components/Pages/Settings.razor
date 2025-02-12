@@ -1,43 +1,10 @@
 ﻿@page "/settings"
-@rendermode InteractiveServer
-@inject JAuth JAuth
-@using Application.API
-@using FeedbackTrackerCommon.Definitions
-
-
 <title>TSE Feedback: Settings </title>
 <div class="settings">
     <h3>Settings</h3>
-    <div>
-        <h4><button type="button" @onclick="Click2FA" disabled="@isDisabled">@MFAButtonText</button></h4>
-    </div>
+
 </div>
 
-
-
 @code {
-    public bool isDisabled = false;
-    private string MFAButtonText = "Enable 2fa";
-    public async void Click2FA()
-    {
-        UserAPI API = new UserAPI();
-        await API.Enable2FA(JAuth.User.UserID.ToString(), JAuth.User.Password);
-        JAuth.User = await API.GetUserByID(JAuth.User.UserID);
-        isDisabled = true;
-        MFAButtonText = "2FA Enabled, your code is: " + JAuth.User.MFASecret;
 
-    }
-
-        
-    protected override async Task OnInitializedAsync()
-    {
-        if (JAuth.User.MFASecret != null)
-        {
-            MFAButtonText = "2FA Enabled, your code is: " + JAuth.User.MFASecret;
-            isDisabled = true;
-
-        }
-    }
 }
-
-

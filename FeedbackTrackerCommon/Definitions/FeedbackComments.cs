@@ -29,5 +29,9 @@ public class FeedbackComments
     /// Feedback thread this comment belongs to
     /// </summary>
 	[Column("FEEDBACK_ID")]
+
 	public int FeedbackID { get; set; }
+
+    public User Commenter { get; set; }
+    public Feedback FeedbackC { get; set; }
 }

@@ -1,13 +1,12 @@
 ﻿using System.Text.Json;
-using Application.Components;
 using FeedbackTrackerCommon.Definitions;
 using Serilog;
 
 namespace Application.API;
 
-public class UserAPI()
+public class UserAPI(string baseEndpoint)
 {
-	private readonly HttpClient _httpClient = new() { BaseAddress = new Uri(App.Endpoint) };
+	private readonly HttpClient _httpClient = new() { BaseAddress = new Uri(baseEndpoint) };
 
 	/// <summary>
 	/// Gets a user by their User ID.
@@ -73,13 +72,12 @@ public class UserAPI()
 	/// <param name="Username">Username</param>
 	/// <param name="Password">Password</param>
 	/// <returns>JWT if authentication is successful, otherwise, "".</returns>
-	public async Task<string> Authenticate(string Username, string Password, string Code)
+	public async Task<string> Authenticate(string Username, string Password)
 	{
 		try
 		{
 			// Send login request.
-			HttpResponseMessage response = await _httpClient.GetAsync(
-				$"User/Authenticate?Username={Uri.EscapeDataString(Username)}&Password={Uri.EscapeDataString(Password)}&Code={Code}");
+			HttpResponseMessage response = await _httpClient.GetAsync($"User/Authenticate?Username={Username}&Password={Password}");
 			response.EnsureSuccessStatusCode();
 			// Read the JWT token from the response
 			return await response.Content.ReadAsStringAsync();
@@ -109,36 +107,7 @@ public class UserAPI()
             return null;
         }
     }
-    public async Task<bool> Enable2FA(string UserID, string Password)
-    {
-	    try
-	    {
-		    var endpoint = $"User/CreateTOTPKey?UserID={Uri.EscapeDataString(UserID)}&Password={Uri.EscapeDataString(Password)}";
-		    HttpResponseMessage response = await _httpClient.GetAsync(endpoint);
-		    response.EnsureSuccessStatusCode();
-		    return true;
-	    }
-	    catch (Exception ex)
-	    {
-		    return false;
-	    }
-    }
 
-    public async Task<bool>getMFAStatus(int UserID)
-    {
-	    try 
-	    {
-		    var endpoint = $"User/MFABool?UserID={UserID}";
-		    HttpResponseMessage response = await _httpClient.GetAsync(endpoint);
-		    response.EnsureSuccessStatusCode();
-		    return Boolean.Parse(await response.Content.ReadAsStringAsync());
-	    }
-	    catch (Exception ex)
-	    {
-		    return false;
-	    }
-
-    }
     /// <summary>
     /// Get notifications
     /// </summary>
@@ -212,22 +181,4 @@ public class UserAPI()
 		}
 	}
 
-
-    /// <summary>
-    /// Delete notification store
-    /// </summary>
-    public async Task DeleteNotification(int UserID)
-    {
-	    try
-	    {
-		    string url = $"User/Notification?Userid={Uri.EscapeDataString(UserID.ToString())}";
-		    HttpResponseMessage response = await _httpClient.DeleteAsync(url);
-		    response.EnsureSuccessStatusCode();
-		    await response.Content.ReadAsStringAsync();
-	    }
-	    catch (Exception ex)
-	    {
-		    Log.Error(ex, $"Error Deleting notification");
-	    }
-    }
 }

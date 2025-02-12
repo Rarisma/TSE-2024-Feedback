@@ -60,6 +60,10 @@ public class FeedbackController : Controller
 	{
 		try
 		{
+			//Deserialize
+			/*
+			Feedback? Feedback = JsonSerializer.Deserialize<Feedback>(FeedbackObject);
+			*/
 			Feedback? Feedback = FeedbackObject;
 			if (Feedback == null)
 			{
@@ -89,6 +93,19 @@ public class FeedbackController : Controller
 		catch (Exception ex) {
 				return "Encountered an error: " + ex.Message; }
 	}
+
+	/*TODO:
+	 Figure out what actually needs to be done for this
+	/// <summary>
+	/// Updates feedback object
+	/// </summary>
+	/// <param name="feedback"></param>
+	/// <returns></returns>
+	public void UpdateFeedback(FeedbackController feedback)
+	{
+
+	}*/
+
 	/// <summary>
 	/// Deletes a feedback from the database
 	/// </summary>
@@ -103,46 +120,12 @@ public class FeedbackController : Controller
 		ctx.Feedback.Remove(Feedback);
 	}
 
-
-
-    /// <summary>
-    /// Create Commments
- 	/// <param name="commentsObject"></param>
-    /// </summary>
-    [HttpPost("CreateComment")]
-    public string CreateComment(int FeedbackID, int UserID, [FromBody] string? text)
-    {
-        try
-        {
-	        FeedbackComments comment = new()
-	        {
-		        FeedbackID = FeedbackID,
-		        Body = text,
-		        CommenterID = UserID,
-	        };
-	        
-            //Add comment to database
-            using TrackerContext Ctx = new();
-            Ctx.FeedbackComments.Add(comment);
-            Ctx.SaveChanges();
-
-            return "Comment created successfully";
-        }
-        catch (Exception ex)
-        {
-            return "Encountered an error: " + ex.Message;
-        }
-    }
-
-
-
-
-    /// <summary>
-    /// Gets comments for a thread
-    /// </summary>
-    /// <param name="FeedbackID">Feedback ID</param>
-    /// <returns>Gets comments</returns>
-    [HttpGet("GetComments")]	
+	/// <summary>
+	/// Gets comments for a thread
+	/// </summary>
+	/// <param name="FeedbackID">Feedback ID</param>
+	/// <returns>Gets comments</returns>
+	[HttpGet("GetComments")]	
 	public string GetComments(int FeedbackID)
 	{
 		try

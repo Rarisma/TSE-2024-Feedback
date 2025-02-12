@@ -50,7 +50,7 @@ public class JAuth(NavigationManager NavigationManager)
 			UserData = tokenHandler.ValidateToken(token,
 				validationParameters, out SecurityToken validatedToken);
 
-			User = await new UserAPI().GetUserByUsername(user);
+			User = await new UserAPI("http://localhost:5189").GetUserByUsername(user);
 		}
 		catch (Exception ex)
 		{

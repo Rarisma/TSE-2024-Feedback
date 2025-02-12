@@ -1,15 +1,14 @@
 ﻿using System.Text;
 using System.Text.Json;
-using Application.Components;
 using FeedbackTrackerCommon.Definitions;
 using Serilog;
 using Serilog.Core;
 
 namespace Application.API;
 
-public class FeedbackAPI()
+public class FeedbackAPI(string baseEndpoint = "http://localhost:5189/")
 {
-	private readonly HttpClient _httpClient = new() { BaseAddress = new Uri(App.Endpoint) };
+	private readonly HttpClient _httpClient = new() { BaseAddress = new Uri(baseEndpoint) };
 
 	/// <summary>
 	/// Get all feedbacks for the user.
@@ -93,36 +92,10 @@ public class FeedbackAPI()
 		}
 	}
 
-
-    /// <summary>
-    /// Creates a comment
-	/// <param name="comments"></param>
-    /// </summary>
-    public async Task<string> CreateComment(int FeedbackID, int UserID, string? text)
-    {
-        try
-        {
-	        //Format for server
-            StringContent CommentText = new StringContent($"\"{text}\"", Encoding.UTF8, "application/json");
-            HttpResponseMessage response = await _httpClient.PostAsync(
-	            $"Feedback/CreateComment?FeedbackID={FeedbackID}&UserID={UserID}", CommentText);
-            
-            //Send
-            response.EnsureSuccessStatusCode();
-            return await response.Content.ReadAsStringAsync();
-        }
-        catch (Exception ex)
-        {
-            Log.Error(ex, "Exception creating comment");
-            return $"Encountered an error: {ex.Message}";
-        }
-    }
-
-
-    /// <summary>
-    /// Gets comments for a thread.
-    /// </summary>
-    public async Task<List<FeedbackComments>?> GetComments(int feedbackID)
+	/// <summary>
+	/// Gets comments for a thread.
+	/// </summary>
+	public async Task<List<FeedbackComments>?> GetComments(int feedbackID)
 	{
 		try
 		{
