@@ -116,10 +116,12 @@ public class JAuth(NavigationManager NavigationManager)
 		{
             Log.Error(ex, "Error redirecting to login");
         }
+	}
 
-
-	}	
-
+	public string GetToken()
+	{
+		return JWT;
+	}
 	public User GetUser()
 	{
 		return User;

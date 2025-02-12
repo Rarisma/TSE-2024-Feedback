@@ -3,8 +3,25 @@
 @using Application.API
 @inject NavigationManager NavigationManager
 @inject JAuth JAuth
+@using Blazored.LocalStorage
+@inject ILocalStorageService LocalStorage
+
 <!-- Authentication method, ran once button is clicked -->
 @code {
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var storedToken = await LocalStorage.GetItemAsStringAsync("User token: ");
+            if (!string.IsNullOrEmpty(storedToken))
+            {
+                JAuth.Authorise(storedToken, ""); // Restore session
+                StateHasChanged();
+                NavigationManager.NavigateTo("/");
+            }
+        }
+    }
     private async Task Submit()
     {
         UserAPI API = new();
@@ -25,6 +42,10 @@
         {
             string JWT = await API.Authenticate(Username, Password, Code);
             JAuth.Authorise(JWT, Username);
+            string token = JAuth.GetToken();
+            await LocalStorage.SetItemAsStringAsync("User token: ", token);
+            StateHasChanged();
+            
             NavigationManager.NavigateTo("/");
         }
     }
@@ -115,3 +136,4 @@
         NavigationManager.NavigateTo("/SignUp");
     }
 }
+

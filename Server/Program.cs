@@ -4,6 +4,9 @@ using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using Server;
 
+
+
+
 var builder = WebApplication.CreateBuilder(args);
 
 //Add API Controllers
