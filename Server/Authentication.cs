@@ -4,13 +4,20 @@ using System.Text;
 using FeedbackTrackerCommon.Definitions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using OtpNet;
 
 namespace Server;
 
 public class AuthService(IConfiguration configuration, TrackerContext context)
 {
-	// Authenticates a user and returns a JWT token if successful
-	public async Task<string?> AuthenticateUserAsync(string Username, string password)
+	/// <summary>
+	/// Handles authentiction 
+	/// </summary>
+	/// <param name="Username">Accounts username</param>
+	/// <param name="password">Accounts password</param>
+	/// <param name="TOTP">Account MFA code </param>
+	/// <returns></returns>
+	public async Task<string?> AuthenticateUserAsync(string Username, string password, string TOTP = "0")
 	{
 		User? user = await context.User.FirstOrDefaultAsync(u => u.Username == Username);
 		if (user == null) {return null;} 
@@ -19,6 +26,24 @@ public class AuthService(IConfiguration configuration, TrackerContext context)
 		bool isPasswordValid = BCrypt.Net.BCrypt.Verify(password, user.Password);
 		if (!isPasswordValid)
 			return null; // Invalid password
+
+		//Verify MFA Code
+		if (user.MFASecret != null)
+		{
+			var base32Bytes = Base32Encoding.ToBytes(user.MFASecret);
+			var totp = new Totp(base32Bytes, mode: OtpHashMode.Sha1);
+			string Verify = totp.ComputeTotp();
+
+			//Invalid TOTP code, unauthorised.
+			if (Verify != TOTP)
+			{
+				return null;
+			}
+		}
+		
+		//Update login time.
+		user.LastLogin = DateTime.Now;
+		context.User.Update(user);
 
 		// Generate JWT token
 		string token = GenerateJwtToken(user);
