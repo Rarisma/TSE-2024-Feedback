@@ -21,16 +21,14 @@ public class Program
 		builder.Services.AddRazorComponents()
 			.AddInteractiveServerComponents();
 			
-			builder.Services.AddSingleton<FeedbackAPI>(sp => 
-                new FeedbackAPI("http://localhost:5189"));
-			builder.Services.AddSingleton<UserAPI>(sp =>
-				new UserAPI("http://localhost:5189"));
-        builder.Services.AddSingleton<ModuleAPI>(sp =>
-				new ModuleAPI("http://localhost:5189"));
+		builder.Services.AddSingleton<FeedbackAPI>(sp => new FeedbackAPI());
+		builder.Services.AddSingleton<UserAPI>(sp => new UserAPI());
+        builder.Services.AddSingleton<ModuleAPI>(sp => new ModuleAPI());
         builder.Services.AddScoped<JAuth>();
 
-		builder.Services.AddSingleton<UserAPI>(sp =>
-		new UserAPI("http://localhost:5189"));
+
+		builder.Services.AddSingleton<EmailAPI>(sp =>
+			new EmailAPI("http://localhost:5189"));
 
 		//Configure Serilog
 		Log.Logger = new LoggerConfiguration()

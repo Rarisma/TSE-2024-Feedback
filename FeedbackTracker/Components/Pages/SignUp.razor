@@ -13,7 +13,7 @@
         if (Password == Password2)
         {
             //Send req to create user.
-            await new UserAPI("http://localhost:5189").CreateUser(Username.ToString(), Password.ToString());
+            await new UserAPI().CreateUser(Username.ToString(), Password.ToString(), Email.ToString());
             await JSRuntime.InvokeVoidAsync("alert", "user created");
             NavigationManager.NavigateTo("/");
         }
@@ -118,5 +118,10 @@
     private void LoginTab()
     {
         NavigationManager.NavigateTo("/LogIn");
+    }
+
+    private void ResetTab()
+    {
+        NavigationManager.NavigateTo("/ResetPassword");
     }
 }
