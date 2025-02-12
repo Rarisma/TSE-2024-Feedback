@@ -26,7 +26,7 @@
                 <p><strong>Completed:</strong> @feedback.Closed</p>
             </div>
         }
-        
+
         @if (allFeedback.Count == 0)
         {
             <p>&nbsp; &nbsp; </p>
@@ -63,9 +63,9 @@
         try
         {
 
-            List<FeedbackTrackerCommon.Definitions.Feedback> feedbackList = 
-                await FeedbackClientAccess.GetAssignedFeedbacks(JAuth.GetUser().UserID) ??
-                new List<FeedbackTrackerCommon.Definitions.Feedback>();
+            //List<FeedbackTrackerCommon.Definitions.Feedback> feedbackList = await FeedbackClientAccess.GetAssignedFeedbacks(JAuth.GetUser().UserID) ??new List<FeedbackTrackerCommon.Definitions.Feedback>();
+
+            List<FeedbackTrackerCommon.Definitions.Feedback> feedbackList = await FeedbackClientAccess.GetAssignedFeedbacks(6);
             if (feedbackList != null && feedbackList.Any())
             {
                 allFeedback = feedbackList.Select(fb => new FeedbackTrackerCommon.Definitions.Feedback()
@@ -74,14 +74,6 @@
                         FeedbackText = fb.FeedbackText,
                         Closed = fb.Closed
                     }).ToList();
-                if (JAuth.GetUser().IsTeacher)
-                {
-                    allFeedback = allFeedback.Where(f => f.AssignedUserID == JAuth.GetUser().UserID).ToList();
-                }
-                else
-                {
-                    allFeedback = allFeedback.Where(f => f.AssigneeID == JAuth.GetUser().UserID).ToList();
-                }
             }
             else
             {
