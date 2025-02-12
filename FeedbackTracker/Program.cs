@@ -1,7 +1,10 @@
+using Blazored.LocalStorage;
 using Application.API;
 using Application.Components;
 using Microsoft.AspNetCore.Components;
 using Serilog;
+
+
 
 namespace Application;
 
@@ -10,6 +13,10 @@ public class Program
 	public static void Main(string[] args)
 	{
 		var builder = WebApplication.CreateBuilder(args);
+
+
+		//Add Blazored Local Storage
+		builder.Services.AddBlazoredLocalStorage();
 
 		builder.Services.AddRazorComponents()
 			.AddInteractiveServerComponents();

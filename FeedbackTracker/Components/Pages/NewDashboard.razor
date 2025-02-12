@@ -7,6 +7,7 @@
 
 
 
+
 <PageTitle>Feedback Tracking Tool</PageTitle>
 
 <div>
@@ -16,31 +17,32 @@
 
     <div>
         <h3>Next Deadlines</h3>
-        
-            <div>
+
+        <div>
             @foreach (var feedback in allFeedback)
-                {
-                    <div style="border: 1px solid black; margin: 5px; padding: 10px;">
-                        <h4>@feedback.Title</h4>
-                        <p><strong>@feedback.FeedbackText</strong></p>
-                        <p><strong>Due in: </strong> @feedback.Deadline</p>
-                        <p><strong>Completed:</strong> @feedback.Closed</p>
-                    </div>
-                }
-            </div>
-        
+            {
+                <div style="border: 1px solid black; margin: 5px; padding: 10px;">
+                    <h4>@feedback.Title</h4>
+                    <p><strong>@feedback.FeedbackText</strong></p>
+                    <p><strong>Due in: </strong> @feedback.Deadline</p>
+                    <p><strong>Completed:</strong> @feedback.Closed</p>
+                </div>
+            }
+        </div>
+
     </div>
 </div>
+
 
 @code {
     protected override async Task OnInitializedAsync()
     {
         JAuth.EnforceAuth();
-        if(JAuth.IsAuthorised()){
+        if (JAuth.IsAuthorised()) {
             await LoadFeedback();
         }
-
     }
+
 
     private List<Feedback> allFeedback = new();
 
