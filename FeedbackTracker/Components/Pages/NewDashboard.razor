@@ -62,8 +62,9 @@
         try
         {
 
-            List<FeedbackTrackerCommon.Definitions.Feedback> feedbackList = await FeedbackClientAccess.GetAssignedFeedbacks(JAuth.GetUser().UserID) ?? new List<FeedbackTrackerCommon.Definitions.Feedback>();
-
+            List<FeedbackTrackerCommon.Definitions.Feedback> feedbackList = 
+                await FeedbackClientAccess.GetAssignedFeedbacks(JAuth.GetUser().UserID) ??
+                new List<FeedbackTrackerCommon.Definitions.Feedback>();
             if (feedbackList != null && feedbackList.Any())
             {
                 allFeedback = feedbackList.Select(fb => new FeedbackTrackerCommon.Definitions.Feedback()

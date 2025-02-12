@@ -108,8 +108,6 @@
                 <select id="sorting" @onchange="SortBySelected">
                     <option value="az">A-Z</option>
                     <option value="za">Z-A</option>
-                    <option value="deadline">Deadline</option>
-                    <option value="priority">Priority</option>
                 </select>
             </div>
         </div>
@@ -128,8 +126,6 @@
                         }
                     }
                     <p>@feedback.FeedbackText</p>
-                    <p><strong>Due For: @feedback.Deadline</strong></p>
-                    <p><strong>PRIORITY LEVEL: @feedback.Priority</strong></p>
                 </NavLink>
             }
         }
