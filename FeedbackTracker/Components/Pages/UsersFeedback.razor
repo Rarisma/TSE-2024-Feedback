@@ -7,6 +7,59 @@
 @rendermode InteractiveServer
 
 @{
+
+    <style>
+
+        .title-box {
+        background-color: #1f1f1f;
+        color: white;
+        width: 100%;
+        padding: 32px;
+        text-align: center;
+        }
+
+        .sort-container {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        }
+
+        .sort-box {
+        background-color: #1f1f1f;
+        border-style: solid;
+        border-color: #1f1f1f;
+        border-radius: 8px;
+        width: 300px;
+        padding: 16px;
+        margin: 16px;
+        text-align: center;
+        color: white;
+        }
+
+        .feedback-box {
+        position: center;
+        display: block;
+        background-color: #EBF0F5;
+        border-style: solid;
+        border-color: black;
+        border-radius: 8px;
+        width: 300px;
+        padding: 16px;
+        margin-top: 16px;
+        margin-bottom: 16px;
+        margin-left: 185px;
+        text-align: center;
+        color: black;
+        text-decoration: none;
+        }
+
+        .feedback-box:hover {
+        transform: translateY(-2px);
+        }
+    </style>
+
+    <title>TSE Feedback: Your Feedback</title>
+
     @if (JAuth.IsAuthorised())
     {
         <center>
@@ -55,8 +108,6 @@
                 <select id="sorting" @onchange="SortBySelected">
                     <option value="az">A-Z</option>
                     <option value="za">Z-A</option>
-                    <option value="deadline">Deadline</option>
-                    <option value="priority">Priority</option>
                 </select>
             </div>
         </div>
@@ -75,8 +126,6 @@
                         }
                     }
                     <p>@feedback.FeedbackText</p>
-                    <p><strong>Due For: @feedback.Deadline</strong></p>
-                    <p><strong>PRIORITY LEVEL: @feedback.Priority</strong></p>
                 </NavLink>
             }
         }
@@ -136,17 +185,10 @@
         {
             SpecificFeedbacks.Sort((current, next) => current.Title.CompareTo(next.Title));
         }
-
         else if (SelectedOption == "za") // reverse alphabetical
         {
             SpecificFeedbacks.Sort((current, next) => next.Title.CompareTo(current.Title));
         }
-
-        else if (SelectedOption == "deadline") // closest due dates first
-        {
-            SpecificFeedbacks.Sort((current, next) => current.Deadline.CompareTo(next.Deadline));
-        }
-
         else if (SelectedOption == "priority") // lowest priority first
         {
             SpecificFeedbacks.Sort((current, next) => current.Priority.CompareTo(next.Priority));

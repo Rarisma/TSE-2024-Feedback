@@ -17,9 +17,7 @@ public class TrackerContext(
 	public DbSet<Users_Modules> UsersModules { get; set; }
 	public DbSet<FeedbackComments> FeedbackComments { get; set; }
 	public DbSet<FolderLinks> FolderLinks { get; set; }
-
-	public DbSet<Extension> Extension { get; set; }
-
+	
     public DbSet<Notification> Notification { get; set; }
 	public DbSet<CodeStorage> CodeStorage { get; set; }
 

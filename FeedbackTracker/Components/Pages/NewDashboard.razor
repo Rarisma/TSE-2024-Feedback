@@ -1,4 +1,4 @@
-﻿@page "/"
+@page "/"
 @rendermode InteractiveServer
 @inject JAuth JAuth
 @using Application.API
@@ -14,23 +14,35 @@
     <center><h1>Feedback Tracking Tool</h1></center>
     <br><br />
     <center><h2>Dashboard</h2></center>
-
     <div>
-        <h3>Next Deadlines</h3>
+        <h3>Your feedback:</h3>
+        <h6>Feedback you are assigned to or have created.</h6>
 
-        <div>
-            @foreach (var feedback in allFeedback)
-            {
-                <div style="border: 1px solid black; margin: 5px; padding: 10px;">
-                    <h4>@feedback.Title</h4>
-                    <p><strong>@feedback.FeedbackText</strong></p>
-                    <p><strong>Due in: </strong> @feedback.Deadline</p>
-                    <p><strong>Completed:</strong> @feedback.Closed</p>
-                </div>
-            }
-        </div>
-
+        @foreach (var feedback in allFeedback)
+        {
+            <div style="border: 1px solid black; margin: 5px; padding: 10px;">
+                <h4>@feedback.Title</h4>
+                <p><strong>@feedback.FeedbackText</strong></p>
+                <p><strong>Completed:</strong> @feedback.Closed</p>
+            </div>
+        }
+        
+        @if (allFeedback.Count == 0)
+        {
+            <p>&nbsp; &nbsp; </p>
+            <center><h3>You have no feedback to read about...</h3></center>
+            <p>&nbsp; &nbsp; </p>
+            <p>&nbsp; &nbsp; </p>
+            <center><h4>Time to create some?</h4></center>
+        }
+        else
+        {
+            <center><h4>Why don't you create some feedback?</h4></center>
+        }
     </div>
+
+    <center><a href="/Feedback" class="btn btn-primary">Create new feedback</a></center>
+
 </div>
 
 
@@ -43,8 +55,7 @@
         }
     }
 
-
-    private List<Feedback> allFeedback = new();
+    private List<FeedbackTrackerCommon.Definitions.Feedback> allFeedback = new();
 
     // loads feedback from api
     private async Task LoadFeedback()
@@ -52,51 +63,34 @@
         try
         {
 
-            List<FeedbackTrackerCommon.Definitions.Feedback> feedbackList = await FeedbackClientAccess.GetAssignedFeedbacks(6);
-
+            List<FeedbackTrackerCommon.Definitions.Feedback> feedbackList = 
+                await FeedbackClientAccess.GetAssignedFeedbacks(JAuth.GetUser().UserID) ??
+                new List<FeedbackTrackerCommon.Definitions.Feedback>();
             if (feedbackList != null && feedbackList.Any())
             {
-                allFeedback = feedbackList.Select(fb => new Feedback
+                allFeedback = feedbackList.Select(fb => new FeedbackTrackerCommon.Definitions.Feedback()
                     {
                         Title = fb.Title,
                         FeedbackText = fb.FeedbackText,
-                        Deadline = fb.Deadline,
                         Closed = fb.Closed
                     }).ToList();
+                if (JAuth.GetUser().IsTeacher)
+                {
+                    allFeedback = allFeedback.Where(f => f.AssignedUserID == JAuth.GetUser().UserID).ToList();
+                }
+                else
+                {
+                    allFeedback = allFeedback.Where(f => f.AssigneeID == JAuth.GetUser().UserID).ToList();
+                }
             }
             else
             {
                 Console.WriteLine("No feedback found. Using test data.");
-                TestFeedback();
             }
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Error loading feedback: {ex.Message}");
-            TestFeedback();
         }
-    }
-
-    // creates test feedback
-    private void TestFeedback()
-    {
-        allFeedback = new List<Feedback>
-        {
-            new Feedback
-            {
-                Title = "Test 1",
-                FeedbackText = "Info about feedback",
-                Deadline = DateTime.Now.AddDays(4),
-                Closed = false
-            },
-        };
-    }
-
-    public class Feedback
-    {
-        public string Title { get; set; }
-        public string FeedbackText { get; set; }
-        public DateTime Deadline { get; set; }
-        public bool Closed { get; set; }
     }
 }

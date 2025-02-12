@@ -155,52 +155,8 @@ public class FeedbackAPI()
 		}
 	}
 
-	/// <summary>
-	/// Creates extension request for a feedback
-	/// </summary>
-	/// <param name="extension"></param>
-	/// <returns></returns>
-	public async Task<string> CreateExtension(Extension extension)
-	{
-		try
-		{
-			//Serialise
-			string jsonContent = JsonSerializer.Serialize(extension);
-			StringContent content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
-
-			//Send
-			HttpResponseMessage response = await _httpClient.PostAsync("Feedback/Extension", content);
-			response.EnsureSuccessStatusCode();
-			return await response.Content.ReadAsStringAsync();
-		}
-		catch (Exception ex)
-		{
-			Log.Error(ex, "Exception creating extension");
-			return $"Encountered an error: {ex.Message}";
-		}
-	}
-
     /// <summary>
-    /// Gets extension request for a feedback
-    /// </summary>
-    public async Task<List<Extension>?> GetExtensions(int feedbackID)
-    {
-        try
-        {
-            HttpResponseMessage response = await _httpClient.GetAsync($"Feedback/EXtension?FeedbackID={feedbackID}");
-            response.EnsureSuccessStatusCode();
-            string jsonString = await response.Content.ReadAsStringAsync();
-            return JsonSerializer.Deserialize<List<Extension>>(jsonString);
-        }
-        catch (Exception ex)
-        {
-	        Log.Error(ex, $"Exception getting extension for feedback {feedbackID}");
-			return null;
-        }
-    }
-
-    /// <summary>
-    /// Gets extension request for a feedback
+    /// Updates request for a feedback
     /// </summary>
     public async Task UpdateFeedback(Feedback feedback)
     {
@@ -219,26 +175,16 @@ public class FeedbackAPI()
 	        Log.Error(ex, $"Exception updating feedback {feedback.FeedbackID}");
         }
     }
-
+    
     /// <summary>
-    /// Gets extension request for a feedback
+    /// Sets the state for the feedback
     /// </summary>
-    public async Task UpdateExtension(Extension extension)
+    /// <param name="FeedbackID">ID of feedback</param>
+    /// <param name="State">True to close, false to open.</param>
+    public async void SetState(int FeedbackID, bool State)
     {
-        try
-        {
-            //Serialise
-            string jsonContent = JsonSerializer.Serialize(extension);
-            StringContent content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
-            //Send
-            HttpResponseMessage response = await _httpClient.PutAsync("Feedback/Extension", content);
-            response.EnsureSuccessStatusCode();
-            await response.Content.ReadAsStringAsync();
-        }
-        catch (Exception ex)
-        {
-	        Log.Error(ex, $"Exception updating extension {extension.ExtensionId}");
-        }
+	    HttpResponseMessage response = await _httpClient.GetAsync("Feedback/SetStatus?" +
+	                                                              $"ID={FeedbackID}&IsOpen={State}");
+	    response.EnsureSuccessStatusCode();
     }
-
 }

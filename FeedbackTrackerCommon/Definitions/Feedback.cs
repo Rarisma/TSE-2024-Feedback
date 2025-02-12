@@ -61,7 +61,9 @@ public class Feedback
     [Column("PRIORITY_VALUE")]
     public int Priority { get; set; }
 
-
+    [Column("Label")]
+    public FeedbackLabel? Label { get; set; }
+    
     public User AssignedUser { get; set; }
 
     public User Assignee { get; set; }

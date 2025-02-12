@@ -50,7 +50,6 @@ public class JAuth(NavigationManager NavigationManager)
 			UserData = tokenHandler.ValidateToken(token,
 				validationParameters, out SecurityToken validatedToken);
 
-			JWT = token;
 			User = await new UserAPI().GetUserByUsername(user);
 		}
 		catch (Exception ex)
@@ -117,8 +116,6 @@ public class JAuth(NavigationManager NavigationManager)
 		{
             Log.Error(ex, "Error redirecting to login");
         }
-
-
 	}
 
 	public string GetToken()

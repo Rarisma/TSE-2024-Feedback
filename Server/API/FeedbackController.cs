@@ -89,6 +89,8 @@ public class FeedbackController : Controller
 		catch (Exception ex) {
 				return "Encountered an error: " + ex.Message; }
 	}
+	
+
 	/// <summary>
 	/// Deletes a feedback from the database
 	/// </summary>
@@ -161,60 +163,6 @@ public class FeedbackController : Controller
 	}
 
 
-	/// <summary>
-	/// create extension
-	/// </summary>
-	/// <param name="ExtensionObject"></param>
-	/// <returns></returns>
-	[HttpPost("Extension")]
-	public IActionResult ExtensionPost([FromBody] Extension? ExtensionObject)
-	{
-        try
-        {
-            Extension? extension = ExtensionObject;
-            if (extension == null)
-            {
-	            return StatusCode(400);
-            }
-
-            //Add user to database
-            using TrackerContext Ctx = new();
-            Ctx.Extension.Add(extension);
-            Ctx.SaveChanges();
-
-
-            return StatusCode(200);
-		}
-        catch (Exception ex)
-        {
-			Log.Error(ex, "Failed to post extension correctly.");
-	        return StatusCode(500);
-        }
-    }
-
-    /// <summary>
-    /// Gets extension for feedback
-    /// </summary>
-    /// <param name="FeedbackID">Feedback ID</param>
-    /// <returns>Gets comments</returns>
-    [HttpGet("Extension")]
-    public string ExtensionsGet(int FeedbackID)
-    {
-        try
-        {
-            using TrackerContext ctx = new();
-			//Find all comments for the feedback
-			List<Extension> extensions = ctx.Extension
-                .Where(extension => extension.FeedbackId == FeedbackID).ToList();
-
-            return JsonSerializer.Serialize(extensions);
-        }
-        catch (Exception e)
-        {
-            return "Encountered an error: " + e.Message;
-        }
-    }
-
     /// <summary>
     /// update Feedback
     /// </summary>
@@ -249,37 +197,23 @@ public class FeedbackController : Controller
 	        return StatusCode(500);
         }
 	}
-
+    
     /// <summary>
-    /// update extension
+    /// Sets the completion state of a feedback 
     /// </summary>
-    /// <param name="extension">extension</param>
-    /// <returns>Gets comments</returns>
-    [HttpPut("Extension")]
-    public IActionResult ExtensionPut([FromBody] Extension extension)
+    /// <param name="IsOpen"></param>
+    /// <returns></returns>
+    [HttpGet("SetStatus")]	
+    public IActionResult SetStatus(int ID, bool IsOpen)
     {
-        try
-        {
-			//Get feedback
-            using TrackerContext ctx = new();
-            var ext = ctx.Extension.SingleOrDefault(ex => ex.ExtensionId == extension.ExtensionId);
-
-            if (ext != null)
-            {
-                // set feedback to new values
-                ctx.Entry(ext).CurrentValues.SetValues(extension);
-                //save, return success code.
-                ctx.SaveChanges();
-                return StatusCode(200);
-			}
-
-			//Extension invalid/not found, return 400
-			return StatusCode(400);
-        }
-		catch (Exception ex)
-        {
-			Log.Error(ex, "Failed to put extension correctly");
-	        return StatusCode(500);
-        }
-	}
+	    // Find feedback
+	    using TrackerContext ctx = new();
+	    Feedback? fb = ctx.Feedback.SingleOrDefault(fb => fb.FeedbackID == ID);
+	    
+	    //update it
+	    fb.Closed = IsOpen;
+	    ctx.Feedback.Update(fb);
+	    ctx.SaveChanges();
+	    return StatusCode(200);
+    }
 }

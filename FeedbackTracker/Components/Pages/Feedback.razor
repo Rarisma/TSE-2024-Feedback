@@ -1,5 +1,7 @@
 @page "/feedback"
+@using System.Data.SqlTypes
 @using Application.API
+@using FeedbackTrackerCommon.Definitions
 @rendermode InteractiveServer
 @inject FeedbackAPI FeedbackCLient
 @inject JAuth Auth
@@ -13,7 +15,7 @@
 {
     <PageTitle>Feedback Page</PageTitle>
     <div class="create-feedback">
-        <h3>Creating as user: @assignee.Username - Feedback form</h3>
+        <h3>Create Feedback</h3>
         <!-- Feedback form -->
         <div class="card-body">
             <!--Name-->
@@ -48,33 +50,41 @@
 
             <!--Assign-->
             <div class="mb-3">
-                <label for="assign" class="label-text">User To Assign Feedback:</label>
+                <label for="assign" class="label-text">Teacher To Assign Feedback:</label>
                 <select id="assign" @bind=assignedUserID class="form-select">
                     @if (users.Count > 0)
                     {
                         for (int i = 0; i < users.Count; i++)
                         {
-                            <option value="@users[i].UserID">@users[i].Username</option>
+                            if (users[i].IsTeacher)
+                            {
+                                <option value="@users[i].UserID">@users[i].Username</option>
+                            }
                         }
-                    }
-                    else
-                    {
-                        <option value="">No users</option>
+                        <option value="0">No Teacher</option>
+
                     }
                 </select>
             </div>
+                
+                <!--Label-->
+                <div class="mb-3">
+                    <label for="Label">Label:</label>
+                    <select id="Label" @bind="Label" class="form-select">
+                        <!-- add each module to select options-->
+                        <option value="0">@FeedbackLabel.Positive</option>
+                        <option value="1">@FeedbackLabel.Improvement</option>
+                        <option value="2">@FeedbackLabel.Question</option>
+                        <option value="3">@FeedbackLabel.Error</option>
 
-            <!--Deadline-->
-            <div class="mb-3">
-                <label for="deadline" class="label-text">Deadline:</label>
-                <input id="deadline" type="date" @bind="deadline" min="@DateTime.Now" class="form-control" />
+                    </select>
+                </div>
             </div>
 
             <div class="mb-3 text-center">
-                <button class="btn btn-primary" @onclick="Sendfeedback">Submit Feedback</button>
+                <button class="btn btn-primary" @onclick="Sendfeedback"  style="min-width: 200px;">Submit Feedback</button>
             </div>
         </div>
-    </div>
 }
 
 //For users that aren't logged in
@@ -101,6 +111,8 @@ else
         NavigationManager.NavigateTo("/LogIn");
     }
 
+    private int Label;
+    
     // name
     private string title = string.Empty;
     // text
@@ -109,11 +121,8 @@ else
     // moduleID
     private int moduleID;
     // get modules
-    private List<FeedbackTrackerCommon.Definitions.Modules> modules = new List<FeedbackTrackerCommon.Definitions.Modules> { new FeedbackTrackerCommon.Definitions.Modules { ModuleID = 0, Module = "no module" }};
-
-    // deadline
-    private DateTime deadline = DateTime.Now;
-
+    private List<FeedbackTrackerCommon.Definitions.Modules> modules = new List<FeedbackTrackerCommon.Definitions.Modules>();
+    
     // assigne
     // author of feedback (get current user)
     private FeedbackTrackerCommon.Definitions.User assignee = new FeedbackTrackerCommon.Definitions.User { };
@@ -123,24 +132,15 @@ else
     // get possible users to asign to
     private List<FeedbackTrackerCommon.Definitions.User> users = new List<FeedbackTrackerCommon.Definitions.User> { new FeedbackTrackerCommon.Definitions.User { UserID=0,Username="No users"} };
 
-    // get logged in user
-    private async Task getUser()
-    {
-        FeedbackTrackerCommon.Definitions.User? user = await UserCLient.GetUserByID(6);
-        // return logged user
-        assignee = user;
-    }
 
     // get users that can be assigned feedback
     private async void getAssignableUsers()
     {
-        //#TODO get assignable users (within selected module?)
-
-        // Get users
-
-        List<FeedbackTrackerCommon.Definitions.User?>? modusers = await ModuleClient.GetUsersInModule(moduleID);
-
-        if(modusers != null){
+        // Get module teachers.
+        List<FeedbackTrackerCommon.Definitions.User?>? modusers = (await ModuleClient.GetUsersInModule(moduleID))
+           .ToList();
+        
+        if(modusers != null && modusers.Count>0){
             users = modusers;
             assignedUserID = modusers[0].UserID;
         }
@@ -156,7 +156,6 @@ else
         // Get users
 
         moduleID = int.Parse(e.Value?.ToString());
-
         getAssignableUsers();
 
 
@@ -202,8 +201,7 @@ else
         fb.FeedbackText = text; // text of feedback
         fb.Closed = false; // Feedback starts open (close would be completed)
         fb.Title = title; // Name of feedback
-        fb.Priority = 5; //#TODO calaculate inital priority based on deadline date
-        fb.Deadline = deadline; // date feedback is due / response needed by
+        fb.Priority = 5;
 
         // fb.AssignedUSer;
 
@@ -221,16 +219,20 @@ else
         string apiFeedback = await new FeedbackAPI().CreateFeedback(fb);
 
         //Console.WriteLine(apiFeedback); // log
+        NavigationManager.NavigateTo("/");
 
     }
 
-    public Feedback(){
-
+    // get logged in user
+    private async Task getUser()
+    {
+        FeedbackTrackerCommon.Definitions.User? user = await UserCLient.GetUserByID(Auth.GetUser().UserID);
+        // return logged user
+        assignee = user;
     }
-
+    
     protected override async Task OnInitializedAsync()
     {
-
         if (Auth.IsAuthorised())
         {
             await getUser();
