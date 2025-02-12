@@ -8,8 +8,6 @@
 
 <!-- Authentication method, ran once button is clicked -->
 @code {
-    public string Username { get; set; }
-    public string Password { get; set; }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -43,9 +41,11 @@
         else
         {
             string JWT = await API.Authenticate(Username, Password, Code);
+            JAuth.Authorise(JWT, Username);
+            string token = JAuth.GetToken();
             await LocalStorage.SetItemAsStringAsync("User token: ", token);
             StateHasChanged();
-            JAuth.Authorise(JWT, Username);
+            
             NavigationManager.NavigateTo("/");
         }
     }
