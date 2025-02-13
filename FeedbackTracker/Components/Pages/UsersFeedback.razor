@@ -7,7 +7,6 @@
 @rendermode InteractiveServer
 
 @{
-
     <style>
 
         .title-box {
@@ -58,26 +57,10 @@
         }
     </style>
 
-    <title>TSE Feedback: Your Feedback</title>
+    <title>Your Feedback</title>
 
     @if (JAuth.IsAuthorised())
     {
-        <center>
-            <h1>Your Feedback</h1></center>
-        @if (SelectedFeedbacks != null && SelectedFeedbacks.Any())
-        {
-            foreach (var feedback in SelectedFeedbacks)
-            {
-                <p><strong>Title:</strong> @feedback.Title</p>
-                <p><strong>Description:</strong> @feedback.FeedbackText</p>
-                <NavLink class="btn btn-primary" href="@($"/viewfeedback/{feedback.FeedbackID}")">View</NavLink>
-            }
-        }
-        else
-        {
-            <center>
-                <p>No feedback to view!</p></center>
-        }
         <div class="title-box">
             <center>
                 <h1><strong>Your Feedback</strong></h1>
