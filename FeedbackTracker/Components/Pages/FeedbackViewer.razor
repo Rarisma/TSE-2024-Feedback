@@ -6,43 +6,20 @@
 @inject UserAPI UserClientAccess
 
 @{
-	<PageTitle>Feedback Viewer</PageTitle>
-	<h1>Feedback Viewer</h1>
-	<h3>Select Feedback To View</h3>
-	<div style="margin: 20px 0">
-		<button @onclick='() => currentTab = "total"'>All Feedback</button>
-		<button @onclick='() => currentTab = "completed"'>Completed</button>
-		<button @onclick='() => currentTab = "todo"'>Not Completed</button>
-	</div>
-
-
-	<h3>Select User</h3>
-	//<select @bind="users">
-	<select @bind="selectedUserId">
-		@foreach (var user in users)
-		{
-			<option value="@user.UserID">@user.Username</option>
-		}
-	</select>
-
-	<p>You selected: @selectedUserId</p>
-
-
-	<p>Current Tab: @currentTab</p>
-	@if (currentTab == "total")
-	{
-		<h4>All Feedback</h4>
+	//Show title.
+	<PageTitle>Feedback</PageTitle>
+	
 		@if (SelectedFeedback != null)
 		{
-
 			@if (!isEditing)
 			{
-			// display feedback {title,deadline,description,create extension request button}
+				// display feedback {title,deadline,description,create extension request button}
 				<div class="flex-row">
 					<div class="flex-column">
-						<p class="card-text"><strong>Title:</strong> @SelectedFeedback.Title</p>
+						<h1 class="card-text"><strong><u>@SelectedFeedback.Title</u></strong></h1>
+						<p class="card-text"><strong>Created By:</strong> @users.First(u => u.UserID == SelectedFeedback.AssigneeID).Username</p>
 						<p class="card-text"><strong>Description:</strong> @SelectedFeedback.FeedbackText</p>
-						<p class="card-text"><strong>Label:</strong> @SelectedFeedback.Label.ToString()</p>
+						<!-- <p class="card-text"><strong>Label:</strong> @SelectedFeedback.Label.ToString()</p> -->
 					</div>
 					<div>
 						@if (SelectedFeedback.Closed)
@@ -51,19 +28,21 @@
 						}
 						else
 						{
-							<button class="btn btn-primary" @onclick="EnableEditing">Edit </button>
+							if (@JAuth.User.UserID == SelectedFeedback.AssigneeID)
+							{
+								<button class="btn btn-primary" @onclick="EnableEditing">Edit </button>
+							}
 						}
-						<button class="btn btn-primary" @onclick="showComments">Comments </button>
 
 						@if (JAuth.User.IsTeacher)
 						{
 							@if (SelectedFeedback.Closed)
 							{
-								<button class="btn btn-primary" @onclick="MarkAsIncomplete">Mark as incomplete </button>
+								<button class="btn btn-primary" @onclick="ToggleCompletion">Mark as incomplete </button>
 							}
 							else
 							{								
-								<button class="btn btn-primary" @onclick="MarkAsComplete">Mark as Complete </button>
+								<button class="btn btn-primary" @onclick="ToggleCompletion">Mark as Complete </button>
 							}
 						}
 					</div>
@@ -87,15 +66,22 @@
 
 			@try
 			{
-				if (SelectedComments != null && showcomments)
+				if (SelectedComments != null)
 				{
-					foreach (var comment in SelectedComments)
+					//If theres no comments, show a message
+					if (SelectedComments.Count == 0)
 					{
-						<p>Comment ID: @comment.CommenterID</p>
-						<p>Content: @comment.Body</p>
+						<p>No comments yet!</p>
 					}
-
-
+					else
+					{
+						// Show comments.
+						foreach (var comment in SelectedComments)
+						{
+							<p>Commented by: @users.First(u => u.UserID == comment.CommenterID).Username</p>
+							<p>Content: @comment.Body</p>
+						}
+					}
 
 					<!-- Comment input -->
 					@if (!SelectedFeedback.Closed)
@@ -110,17 +96,9 @@
 					}
 					else 
 					{
-						<p><strong>Cannot create any new comments if feedback is completed.</strong></p>
-
+						<p><strong>Cannot create any new comments, feedback is closed.</strong></p>
 					}
 				}
-				else if(showcomments)
-				{
-					<p>No comments yet!</p>
-				}
-
-
-
 			}
 			catch (Exception ex)
 			{
@@ -128,32 +106,20 @@
 			}
 
 		}
-		else
-		{
-			<p>No feedback found</p>
-		}
+		
 		<NavLink class="btn btn-primary" href="usersfeedback">Back</NavLink>
-	}
-
-
-
 }
 
 @code {
 	private string newCommentText = "";
-
-
-
-	private bool showcomments = false;
 	private string currentTab = "total";
 	private FeedbackTrackerCommon.Definitions.Feedback SelectedFeedback;
 
-	private List<User> users = new List<User>();
+	private List<User> users = new();
 	private int selectedUserId;
 
-	private User SelectedUser;
 	private List<FeedbackComments> SelectedComments;
-	Dictionary<int, string> UserComments = new Dictionary<int, string>();
+	Dictionary<int, string> UserComments = new();
 
 	[Parameter]
 	public string FeedbackID { get; set; }
@@ -163,12 +129,8 @@
 		SelectedFeedback = await FeedbackClientAccess.GetFeedbackByID(ID);
 
 		if (SelectedFeedback != null)
-
 		{
-
 			StateHasChanged();
-
-
 		} else { Console.WriteLine("Failed to load feedback."); }
 	}
 
@@ -188,11 +150,6 @@
 		editingDescription = SelectedFeedback.FeedbackText;
 	}
 
-	private void showComments()
-	{
-		showcomments = !showcomments;
-	}
-
 
 	private async Task LoadUsers()
 	{
@@ -201,11 +158,6 @@
 		if (AllUsers != null)
 		{
 			users = AllUsers;
-
-		}
-		else
-		{
-			Console.WriteLine("Failed to load users.");
 		}
 	}
 
@@ -269,14 +221,13 @@
 		
 	}
 
-    private void MarkAsIncomplete()
+	/// <summary>
+	/// Toggles the completion status for the feedback.
+	/// </summary>
+    private void ToggleCompletion()
     {
-	    new FeedbackAPI().SetState(int.Parse(FeedbackID), false);
+	    new FeedbackAPI().SetState(int.Parse(FeedbackID), !SelectedFeedback.Closed);
+	    SelectedFeedback.Closed = !SelectedFeedback.Closed;
     }
-
-    private void MarkAsComplete()
-    {
-	    new FeedbackAPI().SetState(int.Parse(FeedbackID), true);
-    }
-
+	
 }

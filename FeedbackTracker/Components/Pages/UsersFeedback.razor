@@ -69,12 +69,12 @@
 
         <div class="sort-container">
             <div class="sort-box">
-                <label for="teachername">Sort By Teacher:</label>
+                <label for="teachername">Show from:</label>
                 <select id="teachername" @onchange="SortByTeacher">
-                    <option value="all">Show All</option>
-                    @if (Teachers != null)
+                    <option value="all">Everyone</option>
+                    @if (Users != null)
                     {
-                        foreach (var teacher in Teachers)
+                        foreach (var teacher in Users)
                         {
                             <option value="@teacher.UserID">@teacher.Username</option>
                         }
@@ -101,7 +101,7 @@
             {
                 <NavLink class="feedback-box" href="@($"/viewfeedback/{feedback.FeedbackID}")">
                     <p>@feedback.Title</p>
-                    @foreach (var teacher in Teachers)
+                    @foreach (var teacher in Users)
                     {
                         if (teacher.UserID == feedback.AssigneeID)
                         {
@@ -138,9 +138,7 @@
     {
         NavigationManager.NavigateTo("/LogIn");
     }
-
-    private List<FeedbackTrackerCommon.Definitions.Feedback> SelectedFeedbacks;
-
+    
     /// <summary>
     /// These are lists that contain the data from the related
     /// datbase, e.g. Teachers contains data about the user
@@ -149,7 +147,7 @@
 
     private List<FeedbackTrackerCommon.Definitions.Feedback> SpecificFeedbacks = new();
 
-    private List<FeedbackTrackerCommon.Definitions.User> Teachers = new();
+    private List<FeedbackTrackerCommon.Definitions.User> Users = new();
 
     // the values that will be assigned for these are from when the user filters their feedback
     private string SelectedOption { get; set; } = "";
@@ -224,20 +222,20 @@
     }
 
     /// <summary>
-    /// Loads the data for teachers that have assigned feedback to the current user
+    /// Loads the data for people that have assigned feedback to the current user
     /// </summary>
-    private async Task LoadTeachers()
+    private async Task LoadAssignees()
     {
-        Teachers.Clear(); // empties teacher
+        Users.Clear(); // empties teacher
         foreach (var feedback in AllFeedbacks)
         {
             // checks to see if a teacher is already in the list, as otherwise the filter dropdown could be cluttered by the same teacher
-            if (!Teachers.Any(teach => teach.UserID == feedback.AssigneeID))
+            if (!Users.Any(teach => teach.UserID == feedback.AssigneeID))
             {
                 var user = await UserClientAccess.GetUserByID(feedback.AssigneeID); // gets a single user based on a provided ID
                 try
                 {
-                    Teachers.Add(user); // adds to list
+                    Users.Add(user); // adds to list
                 }
                 catch (Exception ex) // teachers fails to load
                 {
@@ -265,7 +263,7 @@
         if (JAuth.IsAuthorised())
         {
             await LoadAllFeedback(JAuth.User.UserID);
-            await LoadTeachers();
+            await LoadAssignees();
 
             // clear notifications
             await clearNotifications();
