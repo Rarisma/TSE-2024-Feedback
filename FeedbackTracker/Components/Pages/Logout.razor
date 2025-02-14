@@ -1,6 +1,8 @@
 ﻿@page "/Logout"
+@using Blazored.LocalStorage
 @inject JAuth Auth
 @inject NavigationManager navigation
+@inject ILocalStorageService LocalStorage
 @rendermode InteractiveServer
 
 <h3>Are you sure you want to logout?</h3>
@@ -8,8 +10,10 @@
 <NavLink href="/">No</NavLink>
 
 @code {
-	private void DeleteSession()
+	private async void DeleteSession()
 	{
+		await LocalStorage.SetItemAsStringAsync("UserTok", "");
+		await LocalStorage.SetItemAsStringAsync("Username", "");
 		Auth.Deauthorise();
 
 		navigation.NavigateTo("/");
