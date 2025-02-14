@@ -28,6 +28,7 @@ html, body {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease;
     animation: fadeAnimation 1.2s ease-in;
+    margin-bottom: 70px;
 }
 
     .sign-up-box:hover {
@@ -45,7 +46,7 @@ html, body {
 
 .btn-outline-primary:hover {
     background-color: #5563DE;
-    color: #4A4A4A;
+    color: #fff;
 }
 
 input.form-control {

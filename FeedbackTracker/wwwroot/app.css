@@ -2,6 +2,16 @@ html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
+.about-navbar {
+    position: fixed;
+    z-index: 10;
+}
+
+.info-section {
+    position: relative;
+    z-index: 5;
+}
+
 a, .btn-link {
     color: #006bb7;
 }
