@@ -4,27 +4,64 @@
 @using Application.API
 @using FeedbackTrackerCommon.Definitions
 @inject FeedbackAPI FeedbackClientAccess
+@inject UserAPI UserClient
 
+@code {
+    private string welcomeMessage { get; set; }
 
+    protected override void OnInitialized() {
+        base.OnInitialized();
+        userGreeting();
+    }
 
+    private void userGreeting() {
+        var currentTime = DateTime.Now.Hour; //get the current time
 
-<PageTitle>Feedback Tracking Tool</PageTitle>
+        if (currentTime < 12) {
+            welcomeMessage = "Good Morning";
+        }
+        else if (currentTime < 18)
+        {
+            welcomeMessage = "Good Afternoon";
+        }
+        else {
+            welcomeMessage = "Have a Good Evening";
+        }
+    }
+}
+
+<h3 class="intro-msg">@welcomeMessage, @assignee.Username (username)!</h3>
 
 <div>
-    <center><h1>Feedback Tracking Tool</h1></center>
     <br><br />
-    <center><h2>Dashboard</h2></center>
+    <h2>Dashboard</h2>
+
+    <!-- top dash icons -->
+    <div class="dash-container-top">
+        <div class="dashboard-box-topleft"><p2>Current modules</p2></div>
+        <div class="dashboard-box-topright"><p2>Notifications</p2></div>
+    </div>
+
+    <!-- bottom dashboard icons -->
+    <div class="dash-container-top">
+        <div class="dashboard-box-leftcard"><p2>Upcoming deadlines</p2></div>
+        <div class="bottom-strip"><p2>Most recent feedback date</p2></div>
+        <div class="create-tab"><p2>Create Feedback Button -> </p2></div>
+    </div>
+
+    <!-- View Feedback (anypoint in usersfeedback.razor? page structure should be discussed in a meeting) -->
     <div>
         <h3>Your feedback:</h3>
         <h6>Feedback you are assigned to or have created.</h6>
 
         @foreach (var feedback in allFeedback)
         {
-            <div style="border: 1px solid black; margin: 5px; padding: 10px;">
+            <div class="feedback-box">
                 <h4>@feedback.Title</h4>
                 <p><strong>@feedback.FeedbackText</strong></p>
                 <p><strong>Completed:</strong> @feedback.Closed</p>
             </div>
+
         }
 
         @if (allFeedback.Count == 0)
@@ -37,16 +74,25 @@
         }
         else
         {
-            <center><h4>Why don't you create some feedback?</h4></center>
+            <div class="bottom-prompt">
+                <center><h4>Why don't you add some more feedback?</h4></center>
+                <center style="margin-bottom: 5px;"><a href="/Feedback" class="btn btn-primary">Create new feedback</a></center>
+            </div>
         }
     </div>
-
-    <center><a href="/Feedback" class="btn btn-primary">Create new feedback</a></center>
-
 </div>
 
-
 @code {
+    private FeedbackTrackerCommon.Definitions.User assignee = new FeedbackTrackerCommon.Definitions.User { };
+    // get logged in user
+    private async Task getUser()
+    {
+
+        FeedbackTrackerCommon.Definitions.User? user = await UserClient.GetUserByID(JAuth.GetUser().UserID);
+        // return logged user
+        assignee = user;
+    }
+
     protected override async Task OnInitializedAsync()
     {
         JAuth.EnforceAuth();
