@@ -98,7 +98,7 @@
 }
 
 h3 {
-    position: absolute;
+    position: relative;
     top: 30px;
     left: 50%;
     transform: translateX(-50%);

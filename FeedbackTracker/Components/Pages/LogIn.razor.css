@@ -8,6 +8,10 @@ to {
     opacity: 1;
 }}
 
+.about-navbar {
+    z-index: 9999;
+}
+
 /* Page Structure */
 html, body {
     height: 100%;
@@ -76,7 +80,7 @@ html, body {
 
     .btn-outline-primary:hover {
         background-color: #5563DE;
-        color: #4A4A4A;
+        color: #fff;
     }
 
 input.form-control {
@@ -96,10 +100,6 @@ input.form-control {
     }
 
 .info-section {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
     text-align: center;
     padding: 20px;
     backdrop-filter: blur(15px);
@@ -108,6 +108,7 @@ input.form-control {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     margin-top: 50px;
     animation: fadeAnimation 1.2s ease-in;
+    margin-bottom: 80px;
 }
 
     .info-section:hover {
