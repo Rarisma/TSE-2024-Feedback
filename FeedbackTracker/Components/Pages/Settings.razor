@@ -3,42 +3,149 @@
 @inject JAuth JAuth
 @using Application.API
 @using FeedbackTrackerCommon.Definitions
+@inject NavigationManager NavigationManager
 
 @*
-
 The 2FA Code was making the browser crash. Commented it but it's still there. Commented the button and replaced with dummy button until the 2FA works
-
 *@
 
+<!-- Settings Page Layout-->
 <div class="settings">
     <h3>Settings</h3>
     <div class="settings-container">
         <!-- Left side: Categories -->
         <div class="categories">
             <ul>
-                <li>General</li>
-                <li>Privacy</li>
-                <li>Notifications</li>
-                <li>Account</li>
+                <li><button class="btn-categories @(SelectedCategory == SettingsCategory.General ? "active" : "")" @onclick="() => SelectCategory(SettingsCategory.General)"><img class="settings-icon" src="/Images/SettingsIcons/general.png" /> General</button></li>
+                <li><button class="btn-categories @(SelectedCategory == SettingsCategory.Privacy ? "active" : "")" @onclick="() => SelectCategory(SettingsCategory.Privacy)"><img class="settings-icon" src="/Images/SettingsIcons/shield.png" /> Privacy</button></li>
+                <li><button class="btn-categories @(SelectedCategory == SettingsCategory.Notifications ? "active" : "")" @onclick="() => SelectCategory(SettingsCategory.Notifications)"><img class="settings-icon" src="/Images/SettingsIcons/bell.png" /> Notifications</button></li>
+                <li><button class="btn-categories @(SelectedCategory == SettingsCategory.Account ? "active" : "")" @onclick="() => SelectCategory(SettingsCategory.Account)"><img class="settings-icon" src="/Images/SettingsIcons/user.png" /> Account</button></li>
             </ul>
         </div>
-
         <!-- Right Side: Options -->
         <div class="options">
-            <div class="option">
-                <button type="submit" class="sett btn-primary" style="width: 30%;" aria-label="2FA">2FA</button>
-                <!--<h4><button type="button" @onclick="Click2FA" disabled="@isDisabled">@MFAButtonText</button></h4>-->
-                <label for="first-option">Example Setting</label>
-                <select id="first-option">
-                    <option>Option 1</option>
-                    <option>Option 2</option>
-                </select>
-            </div>
+            @* GENERAL SETTINGS (maybe theme selector or dark mode?)*@
+            @if (SelectedCategory == SettingsCategory.General)
+            {
+                <div class="option">
+                    <h2 for="first-option">General Settings</h2>
+                    <select id="general-option">
+                        <option>Option 1</option>
+                        <option>Option 2</option>
+                    </select>
+                </div>
+            }
+            @* PRIVACY SETTINGS *@
+            else if (SelectedCategory == SettingsCategory.Privacy)
+            {
+                <div class="option">
+                    <h2 for="privacy-option">Privacy Settings</h2>
+                    <button type="submit" class="sett btn-primary" style="width: 30%; margin-top: 10px;" aria-label="2FA">2FA</button>
+                </div>
+            }
+            @* NOTIFICATION SETTINGS *@
+            else if (SelectedCategory == SettingsCategory.Notifications)
+            {
+                <div class="option">
+                    <h2 for="notifications-option">Notifications Options</h2>
+                    <select id="notifications-option">
+                        <option>Option 1</option>
+                        <option>Option 2</option>
+                    </select>
+                </div>
+            }
+            @* ACCOUNT SETTINGS *@ 
+            else if (SelectedCategory == SettingsCategory.Account)
+            {
+                if (JAuth.IsAuthorised()){
+                    <div class="option">
+                        <h2 for="account-option">Account Options</h2>
+                    </div>
+                    <form>
+                        <div class="mb-3">
+                            <label for="firstName" class="form-label">First Name</label>
+                            <input type="text" class="form-control" id="firstName" placeholder="Change First Name" @bind-value="FirstName">
+                        </div>
+                        <div class="mb-3">
+                            <label for="lastName" class="form-label">Last Name</label>
+                            <input type="text" class="form-control" id="lastName" placeholder="Change Last Name" @bind-value="LastName">
+                        </div>
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="username" placeholder="Change Username" @bind-value="Username">
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="password" placeholder="Change Password" @bind-value="Password">
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Confirm Password</label>
+                            <input type="password" class="form-control" id="password" placeholder="Confirm Password" @bind-value="Password">
+                        </div>
+                        <div class="d-flex justify-content-center w-100">
+                            <!-- Button below needs @onclick once a function can update account details-->
+                            <button type="button" class="btn btn-primary" style="width: 38%; margin-top: 10px;">Update Profile</button>
+                        </div>
+                    </form>
+                }
+                else
+                {
+                    <div style="display: flex; justify-content: center; margin-top: 120px;">
+                        <img src="/Images/LoginCone.png" alt="Please Log In" style="width: 80%; height: auto;">
+                    </div>
+                }
+            }
         </div>
     </div>
 </div>
 
+@code {
+    //getters and setters for the selected settings category
+    private SettingsCategory SelectedCategory { get; set; } = SettingsCategory.General;
+
+    private void SelectCategory(SettingsCategory category)
+    {
+        SelectedCategory = category;
+    }
+
+    private enum SettingsCategory
+    {
+        General,
+        Privacy,
+        Notifications,
+        Account
+    }
+    
+    // JAuth for specific account settings
+    public string FirstName { get; set; }
+    public string LastName { get; set; }
+    public string Username { get; set; }
+    public string Password { get; set; }
+    
+    private bool isAuthorized;
+
+    protected override async Task OnInitializedAsync()
+    {
+        isAuthorized = JAuth.IsAuthorised();
+        if (isAuthorized)
+        {
+            JAuth.EnforceAuth();
+        }
+        StateHasChanged();
+    }
+  
+    //Update the account settings (needs adding to a button)
+    private async Task UpdateProfile()
+    {
+        // make a function in the database so its possible to update details
+        // await new UserAPI("http://localhost:5189").
+    }
+  
+}
+
 @*
+NEEDS FIXING
+
 @code {
     public bool isDisabled = false;
     private string MFAButtonText = "Enable 2fa";
