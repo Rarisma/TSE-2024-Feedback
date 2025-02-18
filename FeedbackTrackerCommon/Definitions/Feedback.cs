@@ -51,7 +51,12 @@ public class Feedback
 
     [Column("Label")]
     public FeedbackLabel? Label { get; set; }
-    
+
+    [Column("Visibility")]
+    public FeedbackVisibility Visibility { get; set; }
+
+
+
     public User AssignedUser { get; set; }
 
     public User Assignee { get; set; }
