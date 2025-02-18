@@ -20,22 +20,44 @@ public class FeedbackController : Controller
 
 			//Find feedbacks for account
 			using TrackerContext Ctx = new();
-			List<Feedback> Feedback = Ctx.Feedback
-				.Where(f => f.AssignedUserID == UserID 
-				|| f.AssignedUserID  == UserID).ToList();
+            List<Feedback> Feedback = Ctx.Feedback
+                .Where(f => f.AssignedUserID == UserID
+                         || f.AssigneeID == UserID
+                         || f.Visibility == FeedbackVisibility.Public).ToList ();
 
-			//Serialise to JSON
-			return JsonSerializer.Serialize(Feedback);
+            //Serialise to JSON
+            return JsonSerializer.Serialize(Feedback);
 		}
 		catch (Exception ex) { return "Encountered an error: " + ex.Message; }
 	}
 
-	/// <summary>
-	/// Gets feedback by its ID
-	/// </summary>
-	/// <param name="FeedbackID">Feedback ID</param>
-	/// <returns>Feedback Object</returns>
-	[HttpGet("GetFeedbackByID")]	
+    /// <summary>
+    /// Get all public feedbacks
+    /// </summary>
+    /// <returns>List of Feedback Objects</returns>
+    [HttpGet("GetPublicFeedbacks")]
+    public string GetPublicFeedbacks()
+    {
+        try
+        {
+			// Find public feedbacks
+            using TrackerContext Ctx = new();
+            List<Feedback> publicFeedbacks = Ctx.Feedback
+                .Where(f => f.Visibility == FeedbackVisibility.Public).ToList();
+
+			// Serialise to JSON
+            return JsonSerializer.Serialize(publicFeedbacks);
+        }
+        catch (Exception ex) { return "Encountered an error: " + ex.Message; }
+    }
+
+
+    /// <summary>
+    /// Gets feedback by its ID
+    /// </summary>
+    /// <param name="FeedbackID">Feedback ID</param>
+    /// <returns>Feedback Object</returns>
+    [HttpGet("GetFeedbackByID")]	
 	public string GetFeedbackByID(int FeedbackID)
 	{
 		try
