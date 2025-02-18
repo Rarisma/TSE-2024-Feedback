@@ -111,7 +111,7 @@
                         <button type="submit" class="btn btn-primary w-100" aria-label="Log in">Log In</button>
 
                         <!-- Forgot password button needs linking to the form-->
-                        <a href="#" class="d-block text-center mt-3" aria-label="Forgot password">Forgot Password?</a>
+                        <a href="#" class="d-block text-center mt-3" aria-label="Forgot password" @onclick="ResetPassword">Forgot Password?</a>
                     </form>
                 </div>
             </div>
@@ -147,6 +147,11 @@
     private void SignupTab()
     {
         NavigationManager.NavigateTo("/SignUp");
+    }
+
+    private void ResetPassword()
+    {
+        NavigationManager.NavigateTo("/ResetPassword");
     }
 }
 

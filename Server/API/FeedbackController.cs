@@ -12,6 +12,8 @@ public class FeedbackController : Controller
 	/// </summary>
 	/// <param name="UserID">User</param>
 	/// <returns>List of Feedback Objects</returns>
+	/// 
+
 	[HttpGet("GetAssignedFeedbacks")]
 	public string GetAssignedFeedbacks(int UserID)
 	{
@@ -20,10 +22,18 @@ public class FeedbackController : Controller
 
 			//Find feedbacks for account
 			using TrackerContext Ctx = new();
+
+			List<Users_Modules> UsersModules = Ctx.UsersModules
+				.Where(f => f.UserID == UserID).ToList();
+
+			List<int> UserIDs = UsersModules.Select(um => um.ModuleID).ToList();
+
             List<Feedback> Feedback = Ctx.Feedback
                 .Where(f => f.AssignedUserID == UserID
                          || f.AssigneeID == UserID
-                         || f.Visibility == FeedbackVisibility.Public).ToList ();
+                         || f.Visibility == FeedbackVisibility.Public)
+                         | (f.AssignedUserID == 0 && UserIDs.Contains(UserID)).ToList ();
+
 
             //Serialise to JSON
             return JsonSerializer.Serialize(Feedback);

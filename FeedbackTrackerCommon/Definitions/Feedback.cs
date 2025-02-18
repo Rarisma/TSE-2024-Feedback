@@ -49,7 +49,6 @@ public class Feedback
     [Column("TITLE")]
     public string Title { get; set; }
 
-
     [Column("Label")]
     public FeedbackLabel? Label { get; set; }
 

@@ -12,6 +12,9 @@ public class Users_Modules
 	[Column("MODULE_ID")]
 	public int ModuleID { get; set; }
 
+    [ForeignKey("UserID")]
     public User User { get; set; }
-    public Modules Modules { get; set; }
+
+    [ForeignKey("ModuleID")]
+    public Modules Module { get; set; }
 }
