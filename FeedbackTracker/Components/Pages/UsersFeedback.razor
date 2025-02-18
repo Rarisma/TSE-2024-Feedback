@@ -8,7 +8,6 @@
 
 @{
     <style>
-
         .title-box {
         background-color: #1f1f1f;
         color: white;
@@ -63,20 +62,6 @@
     {
         <center>
             <h1>Your Feedback</h1></center>
-        @if (SelectedFeedbacks != null && SelectedFeedbacks.Any())
-        {
-            foreach (var feedback in SelectedFeedbacks)
-            {
-                <p><strong>Title:</strong> @feedback.Title</p>
-                <p><strong>Description:</strong> @feedback.FeedbackText</p>
-                <NavLink class="btn btn-primary" href="@($"/viewfeedback/{feedback.FeedbackID}")">View</NavLink>
-            }
-        }
-        else
-        {
-            <center>
-                <p></p></center>
-        }
 
         <div class="sort-container">
             <div class="sort-box">
@@ -112,18 +97,25 @@
             {
                 <NavLink class="feedback-box" href="@($"/viewfeedback/{feedback.FeedbackID}")">
                     <p>@feedback.Title</p>
-                    @foreach (var teacher in Users)
+                    @foreach (var assignee in Users)
                     {
-                        if (teacher.UserID == feedback.AssigneeID)
+                        if (assignee.UserID == feedback.AssigneeID)
                         {
-                            <p><strong>@teacher.Username</strong></p>
+                            <p><strong>@assignee.Username</strong></p>
                         }
                     }
                     <p>@feedback.FeedbackText</p>
+                    @if (JAuth.User.UserID == feedback.AssigneeID)
+                    {
+                    <p><strong>You assigned this!</strong></p>
+                    }
+                    else
+                    {
+                    <p><strong>THis was assigned to you!</strong></p>
+                    }
                 </NavLink>
             }
         }
-
         <title>TSE Feedback: Your Feedback</title>
     }
 
@@ -181,10 +173,6 @@
         {
             SpecificFeedbacks.Sort((current, next) => next.Title.CompareTo(current.Title));
         }
-        else if (SelectedOption == "priority") // lowest priority first
-        {
-            SpecificFeedbacks.Sort((current, next) => current.Priority.CompareTo(next.Priority));
-        }
     }
 
     /// <summary>
@@ -238,22 +226,23 @@
     private async Task LoadAssignees()
     {
         Users.Clear(); // empties teacher
-        foreach (var feedback in AllFeedbacks)
-        {
-            // checks to see if a teacher is already in the list, as otherwise the filter dropdown could be cluttered by the same teacher
-            if (!Users.Any(teach => teach.UserID == feedback.AssigneeID))
+        if (AllFeedbacks != null)
+            foreach (var feedback in AllFeedbacks)
             {
-                var user = await UserClientAccess.GetUserByID(feedback.AssigneeID); // gets a single user based on a provided ID
-                try
+                // checks to see if a teacher is already in the list, as otherwise the filter dropdown could be cluttered by the same teacher
+                if (!Users.Any(teach => teach.UserID == feedback.AssigneeID))
                 {
-                    Users.Add(user); // adds to list
-                }
-                catch (Exception ex) // teachers fails to load
-                {
-                    Console.WriteLine("Failed to load teacher.");
+                    var user = await UserClientAccess.GetUserByID(feedback.AssigneeID); // gets a single user based on a provided ID
+                    try
+                    {
+                        Users.Add(user); // adds to list
+                    }
+                    catch (Exception ex) // teachers fails to load
+                    {
+                        Console.WriteLine("Failed to load teacher.");
+                    }
                 }
             }
-        }
     }
 
     private async Task clearNotifications(){

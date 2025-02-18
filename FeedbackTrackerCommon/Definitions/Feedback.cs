@@ -49,18 +49,6 @@ public class Feedback
     [Column("TITLE")]
     public string Title { get; set; }
 
-    /// <summary>
-    /// Feedback deadline
-    /// </summary>
-    [Column("Deadline")]
-    public DateTime Deadline { get; set; }
-
-    /// <summary>
-    /// Priority Levels
-    /// </summary>
-    [Column("PRIORITY_VALUE")]
-    public int Priority { get; set; }
-
     [Column("Label")]
     public FeedbackLabel? Label { get; set; }
     
