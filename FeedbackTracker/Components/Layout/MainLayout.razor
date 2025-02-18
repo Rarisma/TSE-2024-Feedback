@@ -1,4 +1,25 @@
 ﻿@inherits LayoutComponentBase
+@inject JAuth auth
+@inject NavigationManager NavigationManager
+
+<!-- About -->
+<!-- condition -->
+@if (NavigationManager.Uri.Contains("LogIn") ||
+        NavigationManager.Uri.Contains("SignUp") ||
+        NavigationManager.Uri.Contains("contact") ||
+        NavigationManager.Uri.Contains("about") ||
+        NavigationManager.Uri.Contains("privacypolicy") ||
+        NavigationManager.Uri.Contains("termsofservice"))
+{
+    <!-- Page structure -->
+    <div class="about-navbar">
+        <nav class="d-flex justify-content-around align-items-center h-100">
+            <NavLink class="nav-link about-link" href="/about" style="color: #e0e0e0;">About</NavLink>
+            <NavLink class="nav-link about-link" href="/termsofservice" style="color: #e0e0e0;">Terms of Service</NavLink>
+            <NavLink class="nav-link about-link" href="/privacypolicy" style="color: #e0e0e0;">Privacy Policy</NavLink>
+        </nav>
+    </div>
+}
 
 <!-- Fonts -->
 <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
