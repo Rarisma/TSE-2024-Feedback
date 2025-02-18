@@ -11,6 +11,7 @@
 
 /* MAIN PAGE */
 .card-body {
+    margin-top: -25px;
     width: 100%;
 }
 
@@ -98,7 +99,7 @@
 }
 
 h3 {
-    position: absolute;
+    position: relative;
     top: 30px;
     left: 50%;
     transform: translateX(-50%);

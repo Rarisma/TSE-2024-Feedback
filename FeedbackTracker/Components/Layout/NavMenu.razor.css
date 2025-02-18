@@ -26,6 +26,24 @@
     font-size: 1.1rem;
 }
 
+.btn-primary {
+    background-color: #007BFF;
+    border-color: #007BFF;
+    color: #fff;
+}
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+        border-color: #0056b3;
+    }
+
+.fixed-bottom {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
 .bi {
     display: inline-block;
     position: relative;
@@ -96,20 +114,6 @@
     bottom: 0;
     left: 0;
     right: 0;
-}
-
-.about-navbar {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    width: 100%;
-    background-color: rgba(43, 43, 43, 1);
-    height: 40px;
-    padding: 10px 20px;
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
 }
 
 @media (min-width: 641px) {
