@@ -103,11 +103,9 @@
     protected override async Task OnAfterRenderAsync(bool firstrender)
     {
         //Console.WriteLine("playsound: " + playsound);
-        if(firstrender){
             if(playsound){
             await JS.InvokeVoidAsync("PlaySoundEffect", "sounds/notification.wav");
             }
-        }
 
     }
 
