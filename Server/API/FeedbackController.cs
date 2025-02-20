@@ -31,8 +31,8 @@ public class FeedbackController : Controller
             List<Feedback> Feedback = Ctx.Feedback
                 .Where(f => f.AssignedUserID == UserID
                          || f.AssigneeID == UserID
-                         || f.Visibility == FeedbackVisibility.Public)
-                         | (f.AssignedUserID == 0 && UserIDs.Contains(UserID)).ToList ();
+                         || f.Visibility == FeedbackVisibility.Public
+                         || f.AssignedUserID == 0 && UserIDs.Contains(UserID)).ToList ();
 
 
             //Serialise to JSON
