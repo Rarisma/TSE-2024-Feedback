@@ -1,7 +1,7 @@
 ﻿@inject JAuth auth
 @inject NavigationManager NavigationManager
 @inject API.UserAPI UserCLient
-
+@inject IJSRuntime JS
 <input type="checkbox" title="Navigation menu" class="navbar-toggler" />
 <div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
     <div class="navbar-toggler-wrapper">
@@ -13,7 +13,7 @@
                         <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
                     </NavLink>
                 </div>
-                @if (auth.IsAuthorised())
+                @if (!auth.IsAuthorised())
                 {
                     <div class="nav-item px-3">
                         <NavLink class="nav-link" href="feedback">
@@ -22,7 +22,15 @@
                     </div>
                     <div class="nav-item px-3">
                         <NavLink class="nav-link" href="usersfeedback">
-                            <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Your Feedback @if (New_Feedback) {<span> 🔔 </span>;}else{<span></span>}
+                            <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Your Feedback @if (New_Feedback)
+                            {
+                                <span class="notification"> 🔔 </span>
+                                playsound = true;
+                            }
+                            else
+                            {
+                                <span></span>;
+                            }
                         </NavLink>
                     </div>
 
@@ -56,6 +64,7 @@
 </div>
 
 @code{
+    bool playsound = false;
     bool New_Feedback = false;
     FeedbackTrackerCommon.Definitions.User? user;
     protected override async Task OnInitializedAsync()
@@ -83,6 +92,19 @@
 
         }
     }
+    protected override async Task OnAfterRenderAsync(bool firstrender)
+    {
+        if(firstrender){
+            //Console.WriteLine("playsound: " + playsound);
+            if(playsound){
+
+            await JS.InvokeVoidAsync("PlaySoundEffect", "sounds/notification.wav");
+
+            }
+
+    }
+    }
+
 }
 
 
