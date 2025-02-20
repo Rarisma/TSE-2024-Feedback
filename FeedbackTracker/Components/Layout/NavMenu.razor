@@ -13,7 +13,7 @@
                         <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
                     </NavLink>
                 </div>
-                @if (!auth.IsAuthorised())
+                @if (auth.IsAuthorised())
                 {
                     <div class="nav-item px-3">
                         <NavLink class="nav-link" href="feedback">
