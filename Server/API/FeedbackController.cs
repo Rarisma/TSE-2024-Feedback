@@ -19,7 +19,6 @@ public class FeedbackController : Controller
 	{
 		try
 		{
-
 			//Find feedbacks for account
 			using TrackerContext Ctx = new();
 
@@ -100,6 +99,7 @@ public class FeedbackController : Controller
 			
 			//Add user to database, and save.
 			using TrackerContext Ctx = new();
+			Feedback.CreatedDate = DateTime.Now;
             var fb = Ctx.Feedback.Add(Feedback);
             Ctx.SaveChanges();
 
@@ -244,6 +244,7 @@ public class FeedbackController : Controller
 	    
 	    //update it
 	    fb.Closed = IsOpen;
+	    fb.ClosedDate = DateTime.Now;
 	    ctx.Feedback.Update(fb);
 	    ctx.SaveChanges();
 	    return StatusCode(200);

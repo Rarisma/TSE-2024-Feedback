@@ -55,7 +55,11 @@ public class Feedback
     [Column("Visibility")]
     public FeedbackVisibility Visibility { get; set; }
 
-
+    [Column("CreatedDate")]
+    public DateTime? CreatedDate { get; set; }
+    
+    [Column("ClosedDate")]
+    public DateTime? ClosedDate { get; set; }
 
     public User AssignedUser { get; set; }
 
