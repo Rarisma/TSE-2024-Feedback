@@ -17,7 +17,7 @@ public class Feedback
     /// </summary>
     /// 
     [Column("ASSIGNED_USER")]
-    public int AssignedUserID { get; set; }
+    public int? AssignedUserID { get; set; }
 
     /// <summary>
     /// Person giving the feedback
@@ -55,7 +55,11 @@ public class Feedback
     [Column("Visibility")]
     public FeedbackVisibility Visibility { get; set; }
 
-
+    [Column("CreatedDate")]
+    public DateTime? CreatedDate { get; set; }
+    
+    [Column("ClosedDate")]
+    public DateTime? ClosedDate { get; set; }
 
     public User AssignedUser { get; set; }
 
