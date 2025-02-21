@@ -7,9 +7,7 @@
 @rendermode InteractiveServer
 
 @{
-
     <style>
-
         .title-box {
         background-color: #1f1f1f;
         color: white;
@@ -58,35 +56,21 @@
         }
     </style>
 
-    <title>TSE Feedback: Your Feedback</title>
+    <title>Your Feedback</title>
 
     @if (JAuth.IsAuthorised())
     {
         <center>
             <h1>Your Feedback</h1></center>
-        @if (SelectedFeedbacks != null && SelectedFeedbacks.Any())
-        {
-            foreach (var feedback in SelectedFeedbacks)
-            {
-                <p><strong>Title:</strong> @feedback.Title</p>
-                <p><strong>Description:</strong> @feedback.FeedbackText</p>
-                <NavLink class="btn btn-primary" href="@($"/viewfeedback/{feedback.FeedbackID}")">View</NavLink>
-            }
-        }
-        else
-        {
-            <center>
-                <p></p></center>
-        }
 
         <div class="sort-container">
             <div class="sort-box">
-                <label for="teachername">Sort By Teacher:</label>
+                <label for="teachername">Show from:</label>
                 <select id="teachername" @onchange="SortByTeacher">
-                    <option value="all">Show All</option>
-                    @if (Teachers != null)
+                    <option value="all">Everyone</option>
+                    @if (Users != null)
                     {
-                        foreach (var teacher in Teachers)
+                        foreach (var teacher in Users)
                         {
                             <option value="@teacher.UserID">@teacher.Username</option>
                         }
@@ -103,6 +87,8 @@
                 <select id="sorting" @onchange="SortBySelected">
                     <option value="az">A-Z</option>
                     <option value="za">Z-A</option>
+                    <option value="public">Public Feedback</option>
+                    <option value="private">Private Feedback</option>
                 </select>
             </div>
         </div>
@@ -113,18 +99,25 @@
             {
                 <NavLink class="feedback-box" href="@($"/viewfeedback/{feedback.FeedbackID}")">
                     <p>@feedback.Title</p>
-                    @foreach (var teacher in Teachers)
+                    @foreach (var assignee in Users)
                     {
-                        if (teacher.UserID == feedback.AssigneeID)
+                        if (assignee.UserID == feedback.AssigneeID)
                         {
-                            <p><strong>@teacher.Username</strong></p>
+                            <p><strong>@assignee.Username</strong></p>
                         }
                     }
                     <p>@feedback.FeedbackText</p>
+                    @if (JAuth.User.UserID == feedback.AssigneeID)
+                    {
+                    <p><strong>You assigned this!</strong></p>
+                    }
+                    else
+                    {
+                    <p><strong>This was assigned to you!</strong></p>
+                    }
                 </NavLink>
             }
         }
-
         <title>TSE Feedback: Your Feedback</title>
     }
 
@@ -150,9 +143,7 @@
     {
         NavigationManager.NavigateTo("/LogIn");
     }
-
-    private List<FeedbackTrackerCommon.Definitions.Feedback> SelectedFeedbacks;
-
+    
     /// <summary>
     /// These are lists that contain the data from the related
     /// datbase, e.g. Teachers contains data about the user
@@ -161,7 +152,7 @@
 
     private List<FeedbackTrackerCommon.Definitions.Feedback> SpecificFeedbacks = new();
 
-    private List<FeedbackTrackerCommon.Definitions.User> Teachers = new();
+    private List<FeedbackTrackerCommon.Definitions.User> Users = new();
 
     // the values that will be assigned for these are from when the user filters their feedback
     private string SelectedOption { get; set; } = "";
@@ -184,9 +175,13 @@
         {
             SpecificFeedbacks.Sort((current, next) => next.Title.CompareTo(current.Title));
         }
-        else if (SelectedOption == "priority") // lowest priority first
+        else if (SelectedOption == "public") // public
         {
-            SpecificFeedbacks.Sort((current, next) => current.Priority.CompareTo(next.Priority));
+            SpecificFeedbacks = AllFeedbacks.Where(feedback => feedback.Visibility.ToString() == "Public").ToList();
+        }
+        else if (SelectedOption == "private") // private 
+        {
+            SpecificFeedbacks = AllFeedbacks.Where(feedback => feedback.Visibility.ToString() == "Private").ToList();
         }
     }
 
@@ -236,27 +231,28 @@
     }
 
     /// <summary>
-    /// Loads the data for teachers that have assigned feedback to the current user
+    /// Loads the data for people that have assigned feedback to the current user
     /// </summary>
-    private async Task LoadTeachers()
+    private async Task LoadAssignees()
     {
-        Teachers.Clear(); // empties teacher
-        foreach (var feedback in AllFeedbacks)
-        {
-            // checks to see if a teacher is already in the list, as otherwise the filter dropdown could be cluttered by the same teacher
-            if (!Teachers.Any(teach => teach.UserID == feedback.AssigneeID))
+        Users.Clear(); // empties teacher
+        if (AllFeedbacks != null)
+            foreach (var feedback in AllFeedbacks)
             {
-                var user = await UserClientAccess.GetUserByID(feedback.AssigneeID); // gets a single user based on a provided ID
-                try
+                // checks to see if a teacher is already in the list, as otherwise the filter dropdown could be cluttered by the same teacher
+                if (!Users.Any(teach => teach.UserID == feedback.AssigneeID))
                 {
-                    Teachers.Add(user); // adds to list
-                }
-                catch (Exception ex) // teachers fails to load
-                {
-                    Console.WriteLine("Failed to load teacher.");
+                    var user = await UserClientAccess.GetUserByID(feedback.AssigneeID); // gets a single user based on a provided ID
+                    try
+                    {
+                        Users.Add(user); // adds to list
+                    }
+                    catch (Exception ex) // teachers fails to load
+                    {
+                        Console.WriteLine("Failed to load teacher.");
+                    }
                 }
             }
-        }
     }
 
     private async Task clearNotifications(){
@@ -277,7 +273,7 @@
         if (JAuth.IsAuthorised())
         {
             await LoadAllFeedback(JAuth.User.UserID);
-            await LoadTeachers();
+            await LoadAssignees();
 
             // clear notifications
             await clearNotifications();

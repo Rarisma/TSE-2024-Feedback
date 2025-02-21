@@ -1,8 +1,10 @@
 using System.Text;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using Server;
+using Server.API;
 
 
 
@@ -68,6 +70,13 @@ builder.Services.AddSingleton<EmailSending>();
 // Build the app
 var app = builder.Build();
 
+// Delete old users on startup of server
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<TrackerContext>();
+    DeleteOldUsers(context);
+}
+
 
 // Enable Swagger in Development
 if (app.Environment.IsDevelopment())
@@ -90,3 +99,40 @@ app.MapControllers();
 
 // Run the application
 app.Run();
+
+/// <summary>
+/// Deletes old users
+/// </summary>
+[HttpDelete("DeleteOldUsers")]
+static void DeleteOldUsers(TrackerContext context)
+{
+    try
+    {
+        // Stores the date 1 year ago
+        using TrackerContext ctx = new();
+        DateTime oneYearAgo = DateTime.Now.AddYears(-1);
+
+
+        // compares last login with one year ago
+        var OldUsers = ctx.User
+                .Where(user => user.LastLogin < oneYearAgo).ToList();
+
+        // gets old user ids 
+        var oldUserIds = OldUsers.Select(u => u.UserID).ToList();
+
+        // checks if they have any feedbacks
+        var userFeedbacks = ctx.Feedback
+            .Where(f => oldUserIds.Contains(f.AssigneeID) || oldUserIds.Contains(f.AssignedUserID)).ToList();
+
+
+        // Removes user feedbacks and old users
+        ctx.Feedback.RemoveRange(userFeedbacks);
+        ctx.User.RemoveRange(OldUsers);
+        ctx.SaveChanges();
+
+    }
+    catch (Exception ex)
+    {
+        Log.Error("Failed to delete old users");
+    }
+}

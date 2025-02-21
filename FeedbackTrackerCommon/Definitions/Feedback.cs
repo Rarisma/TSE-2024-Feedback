@@ -17,7 +17,7 @@ public class Feedback
     /// </summary>
     /// 
     [Column("ASSIGNED_USER")]
-    public int AssignedUserID { get; set; }
+    public int? AssignedUserID { get; set; }
 
     /// <summary>
     /// Person giving the feedback
@@ -49,21 +49,18 @@ public class Feedback
     [Column("TITLE")]
     public string Title { get; set; }
 
-    /// <summary>
-    /// Feedback deadline
-    /// </summary>
-    [Column("Deadline")]
-    public DateTime Deadline { get; set; }
-
-    /// <summary>
-    /// Priority Levels
-    /// </summary>
-    [Column("PRIORITY_VALUE")]
-    public int Priority { get; set; }
-
     [Column("Label")]
     public FeedbackLabel? Label { get; set; }
+
+    [Column("Visibility")]
+    public FeedbackVisibility Visibility { get; set; }
+
+    [Column("CreatedDate")]
+    public DateTime? CreatedDate { get; set; }
     
+    [Column("ClosedDate")]
+    public DateTime? ClosedDate { get; set; }
+
     public User AssignedUser { get; set; }
 
     public User Assignee { get; set; }

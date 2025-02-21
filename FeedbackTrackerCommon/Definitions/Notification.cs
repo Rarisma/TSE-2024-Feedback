@@ -21,7 +21,7 @@ namespace FeedbackTrackerCommon.Definitions;
         /// User
         /// </sumary>
         [Column("USER_ID")]
-        public int UserID { get; set; }
+        public int? UserID { get; set; }
 
         ///<summary>
         /// Feedback

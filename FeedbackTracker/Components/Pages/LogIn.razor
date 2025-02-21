@@ -4,6 +4,7 @@
 @inject NavigationManager NavigationManager
 @inject JAuth JAuth
 @using Blazored.LocalStorage
+@using Serilog
 @inject ILocalStorageService LocalStorage
 
 <!-- Authentication method, ran once button is clicked -->
@@ -13,10 +14,11 @@
     {
         if (firstRender)
         {
-            var storedToken = await LocalStorage.GetItemAsStringAsync("User token: ");
-            if (!string.IsNullOrEmpty(storedToken))
+            var storedToken = await LocalStorage.GetItemAsStringAsync("UserTok");
+            var storedUsername = await LocalStorage.GetItemAsStringAsync("Username");
+            if (!string.IsNullOrEmpty(storedToken) && !string.IsNullOrEmpty(storedUsername))
             {
-                JAuth.Authorise(storedToken, ""); // Restore session
+                JAuth.Authorise(storedToken, storedUsername); // Restore session
                 StateHasChanged();
                 NavigationManager.NavigateTo("/");
             }
@@ -24,29 +26,44 @@
     }
     private async Task Submit()
     {
-        UserAPI API = new();
-
-        var attempted_user = await API.GetUserByUsername(Username);
-        if (attempted_user == null)
+        try
         {
-            return;
-        }
+            UserAPI API = new();
+            var attempted_user = await API.GetUserByUsername(Username);
+            if (attempted_user == null)
+            {
+                return;
+            }
         
-        int id = attempted_user.UserID;
+            //Check if user has 2FA, if so abort login and show 2fa box.
+            int id = attempted_user.UserID;
+            if (await API.getMFAStatus(id) && Hide2FA)
+            {
+                Hide2FA = false;
+            }
+            else
+            {
+                string JWT = await API.Authenticate(Username, Password, Code);
+                JAuth.Authorise(JWT, Username);
+                if (JAuth.IsAuthorised())
+                {
+                 
+                    //User ticked stay logged in, persist to local storage.
+                    if (StayLoggedIn)
+                    {
+                        await LocalStorage.SetItemAsStringAsync("UserTok", JWT);
+                        await LocalStorage.SetItemAsStringAsync("Username", Username);
+                    }
 
-        if (await API.getMFAStatus(id) && Hide2FA)
-        {
-            Hide2FA = false;
+                    //Login Successful, go to dash.
+                    StateHasChanged();
+                    NavigationManager.NavigateTo("/");
+                }
+            }
         }
-        else
+        catch (Exception ex)
         {
-            string JWT = await API.Authenticate(Username, Password, Code);
-            JAuth.Authorise(JWT, Username);
-            string token = JAuth.GetToken();
-            await LocalStorage.SetItemAsStringAsync("User token: ", token);
-            StateHasChanged();
-            
-            NavigationManager.NavigateTo("/");
+            Log.Error(ex, "Login failed");
         }
     }
 
@@ -54,6 +71,8 @@
     public string Password { get; set; } = "";
     private bool Hide2FA { get; set; } = true;
     public string Code { get; set; } = "0";
+    public bool StayLoggedIn { get; set; }
+
 }
 @rendermode InteractiveServer
 <title>TSE Feedback: Log In </title>
@@ -85,14 +104,14 @@
 
                         <!-- Remember me button, needs additional code-->
                         <div class="d-flex align-items-center mb-3">
-                            <input type="checkbox" class="form-check-input me-2" id="rememberMe" aria-label="Remember me">
+                            <input type="checkbox" class="form-check-input me-2" @bind="StayLoggedIn" id="rememberMe" aria-label="Remember me">
                             <label for="rememberMe" class="form-check-label">Remember My Details</label>
                         </div>
 
                         <button type="submit" class="btn btn-primary w-100" aria-label="Log in">Log In</button>
 
                         <!-- Forgot password button needs linking to the form-->
-                        <a href="#" class="d-block text-center mt-3" aria-label="Forgot password">Forgot Password?</a>
+                        <a href="#" class="d-block text-center mt-3" aria-label="Forgot password" @onclick="ResetPassword">Forgot Password?</a>
                     </form>
                 </div>
             </div>
@@ -128,6 +147,11 @@
     private void SignupTab()
     {
         NavigationManager.NavigateTo("/SignUp");
+    }
+
+    private void ResetPassword()
+    {
+        NavigationManager.NavigateTo("/ResetPassword");
     }
 }
 
