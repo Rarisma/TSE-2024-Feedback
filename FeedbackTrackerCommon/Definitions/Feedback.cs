@@ -17,7 +17,7 @@ public class Feedback
     /// </summary>
     /// 
     [Column("ASSIGNED_USER")]
-    public int? AssignedUserID { get; set; }
+    public int AssignedUserID { get; set; }
 
     /// <summary>
     /// Person giving the feedback

@@ -72,15 +72,16 @@
     protected override async Task OnInitializedAsync()
     {
         NavigationManager.LocationChanged += async (sender, args) =>
-        {
-            NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);
-            await InvokeAsync(StateHasChanged);
-        };
+                {
+                    
+                    //NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);
+                    await InvokeAsync(StateHasChanged);
+                };
 
 
         // if logged in
         if (auth.IsAuthorised())
-        {
+        {        
             user = auth.GetUser();
             // check if user has new feedback
 
