@@ -107,8 +107,9 @@
 
 .create-tab {
     background-color: rgba(255, 0, 0, 0.20);
-    height: 120px;
-    width: 25%
+    height: 200px;
+    width: 25%;
+    padding: 40px;
 }
 
 h2 {

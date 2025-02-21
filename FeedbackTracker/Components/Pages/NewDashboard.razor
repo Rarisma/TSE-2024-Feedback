@@ -30,7 +30,7 @@
     }
 }
 
-<h3 class="intro-msg">@welcomeMessage, @assignee.Username (username)!</h3>
+<h3 class="intro-msg">@welcomeMessage, @assignee.Username</h3>
 
 <div>
     <br><br />
@@ -46,14 +46,19 @@
     <div class="dash-container-top">
         <div class="dashboard-box-leftcard"><p2>Upcoming deadlines</p2></div>
         <div class="bottom-strip"><p2>Most recent feedback date</p2></div>
-        <div class="create-tab"><p2>Create Feedback Button -> </p2></div>
+        <div class="create-tab">
+            <p2>
+                <center><p2>Why don't you add some more feedback?</p2></center>
+                <center><a href="/Feedback" class="btn btn-primary">Create new feedback</a></center>
+            </p2>
+        </div>
     </div>
 
     <!-- View Feedback (anypoint in usersfeedback.razor? page structure should be discussed in a meeting) -->
     <div>
         <h3>Your feedback:</h3>
         <h6>Feedback you are assigned to or have created.</h6>
-
+        @if(allFeedback!=null){
         @foreach (var feedback in allFeedback)
         {
             <div class="feedback-box">
@@ -63,7 +68,7 @@
             </div>
 
         }
-
+        }
         @if (allFeedback.Count == 0)
         {
             <p>&nbsp; &nbsp; </p>
@@ -87,16 +92,23 @@
     // get logged in user
     private async Task getUser()
     {
+        if(JAuth.GetUser()!=null){
+            assignee = JAuth.GetUser();
+        }
 
-        FeedbackTrackerCommon.Definitions.User? user = await UserClient.GetUserByID(JAuth.GetUser().UserID);
-        // return logged user
-        assignee = user;
     }
 
     protected override async Task OnInitializedAsync()
     {
         JAuth.EnforceAuth();
-        if (JAuth.IsAuthorised()) {
+
+        if (JAuth.IsAuthorised()) {        
+            try{
+            await getUser();
+            }
+            catch{
+
+            }
             await LoadFeedback();
         }
     }
@@ -105,13 +117,13 @@
 
     // loads feedback from api
     private async Task LoadFeedback()
-    {
+    { 
         try
         {
 
             //List<FeedbackTrackerCommon.Definitions.Feedback> feedbackList = await FeedbackClientAccess.GetAssignedFeedbacks(JAuth.GetUser().UserID) ??new List<FeedbackTrackerCommon.Definitions.Feedback>();
 
-            List<FeedbackTrackerCommon.Definitions.Feedback> feedbackList = await FeedbackClientAccess.GetAssignedFeedbacks(6);
+            List<FeedbackTrackerCommon.Definitions.Feedback> feedbackList = await FeedbackClientAccess.GetAssignedFeedbacks(assignee.UserID);
             if (feedbackList != null && feedbackList.Any())
             {
                 allFeedback = feedbackList.Select(fb => new FeedbackTrackerCommon.Definitions.Feedback()
