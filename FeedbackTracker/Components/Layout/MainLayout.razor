@@ -1,15 +1,16 @@
 ﻿@inherits LayoutComponentBase
 @inject JAuth auth
 @inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
 
 <!-- About -->
 <!-- condition -->
 @if (NavigationManager.Uri.Contains("LogIn") ||
-        NavigationManager.Uri.Contains("SignUp") ||
-        NavigationManager.Uri.Contains("contact") ||
-        NavigationManager.Uri.Contains("about") ||
-        NavigationManager.Uri.Contains("privacypolicy") ||
-        NavigationManager.Uri.Contains("termsofservice"))
+       NavigationManager.Uri.Contains("SignUp") ||
+       NavigationManager.Uri.Contains("contact") ||
+       NavigationManager.Uri.Contains("about") ||
+       NavigationManager.Uri.Contains("privacypolicy") ||
+       NavigationManager.Uri.Contains("termsofservice"))
 {
     <!-- Page structure -->
     <div class="about-navbar">
@@ -42,3 +43,23 @@
     <a href="" class="reload">Reload</a>
     <a class="dismiss">🗙</a>
 </div>
+
+@* COLOUR CHANGER *@
+
+@code {
+    private string CurrentTheme { get; set; } = "blue"; //hold current items
+
+    //run on first render
+    protected override async Task OnInitializedAsync()
+    {
+        NavigationManager.LocationChanged += HandleLocationChanged; //supposed to work when the url is changed
+    }
+
+    //event handler for url changes
+    private async void HandleLocationChanged(object sender, LocationChangedEventArgs e)
+    {
+        CurrentTheme = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "selectedTheme") ?? "blue"; //retrieve saved theme
+        await JSRuntime.InvokeVoidAsync("changeTheme", CurrentTheme);
+        await InvokeAsync(StateHasChanged);
+    }
+}

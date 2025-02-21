@@ -4,9 +4,11 @@
 @using Application.API
 @using FeedbackTrackerCommon.Definitions
 @inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
 
 @*
-The 2FA Code was making the browser crash. Commented it but it's still there. Commented the button and replaced with dummy button until the 2FA works
+The 2FA Code was making the browser crash. Commented it. 
+Commented the 2FA button and replaced with a dummy until it works
 *@
 
 <!-- Settings Page Layout-->
@@ -28,11 +30,13 @@ The 2FA Code was making the browser crash. Commented it but it's still there. Co
             @if (SelectedCategory == SettingsCategory.General)
             {
                 <div class="option">
-                    <h2 for="first-option">General Settings</h2>
-                    <select id="general-option">
-                        <option>Option 1</option>
-                        <option>Option 2</option>
+                    <h2>General Settings</h2>
+                    <select id="colour-changer" @bind="SelectedTheme" @bind:event="onchange">
+                        <option value="blue">Blue</option>
+                        <option value="red">Red</option>
+                        <option value="green">Green</option>
                     </select>
+                    <button @onclick="ApplyTheme">Apply</button>
                 </div>
             }
             @* PRIVACY SETTINGS *@
@@ -102,6 +106,7 @@ The 2FA Code was making the browser crash. Commented it but it's still there. Co
 @code {
     //getters and setters for the selected settings category
     private SettingsCategory SelectedCategory { get; set; } = SettingsCategory.General;
+    private string SelectedTheme { get; set; } = "blue";
 
     private void SelectCategory(SettingsCategory category)
     {
@@ -115,7 +120,25 @@ The 2FA Code was making the browser crash. Commented it but it's still there. Co
         Notifications,
         Account
     }
-    
+
+    // colour changer
+    private async Task ApplyTheme()
+    {
+        if (!string.IsNullOrEmpty(SelectedTheme))
+        {
+            await JSRuntime.InvokeVoidAsync("changeTheme", SelectedTheme.ToLower());
+            StateHasChanged();
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            SelectedTheme = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "selectedTheme") ?? "blue";
+        }
+    }
+
     // JAuth for specific account settings
     public string FirstName { get; set; }
     public string LastName { get; set; }
@@ -133,6 +156,7 @@ The 2FA Code was making the browser crash. Commented it but it's still there. Co
         }
         StateHasChanged();
     }
+
   
     //Update the account settings (needs adding to a button)
     private async Task UpdateProfile()
