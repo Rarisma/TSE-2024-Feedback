@@ -22,16 +22,17 @@ public class FeedbackController : Controller
 
 			//Find feedbacks for account
 			using TrackerContext Ctx = new();
-			List<Users_Modules> UsersModules = Ctx.UsersModules
-				.Where(f => f.UserID == UserID).ToList();
 
-			List<int> UserIDs = UsersModules.Select(um => um.ModuleID).ToList();
+			List<int> ModuleIDs = Ctx.UsersModules
+				.Where(um => um.UserID == UserID)
+				.Select(um => um.ModuleID).ToList();
 
 			List<Feedback> Feedback = Ctx.Feedback
-				.Where(f => f.AssignedUserID == UserID 
-				|| f.AssigneeID  == UserID
-				|| (f.AssignedUserID == 0 && UserIDs.Contains(UserID))
-				).ToList();
+				.AsEnumerable()
+				.Where(f => f.AssignedUserID == UserID
+					|| f.AssigneeID == UserID
+					|| (f.AssignedUserID == null && ModuleIDs.Contains(f.ModuleID)))
+				.ToList();
 
 
 			//Serialise to JSON
