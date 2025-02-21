@@ -26,7 +26,9 @@ public class FeedbackController : Controller
 			List<Users_Modules> UsersModules = Ctx.UsersModules
 				.Where(f => f.UserID == UserID).ToList();
 
-			List<int> UserIDs = UsersModules.Select(um => um.ModuleID).ToList();
+			List<int> ModuleIDs = Ctx.UsersModules
+				.Where(um => um.UserID == UserID)
+				.Select(um => um.ModuleID).ToList();
 
             List<Feedback> Feedback = Ctx.Feedback
                 .Where(f => f.AssignedUserID == UserID
@@ -127,6 +129,8 @@ public class FeedbackController : Controller
 	/// Deletes a feedback from the database
 	/// </summary>
 	/// <param name="FeedbackID"></param>
+			List<Users_Modules> UsersModules = Ctx.UsersModules
+				.Where(f => f.UserID == UserID).ToList();
 	[HttpGet("DeleteFeedback")]	
 	public void DeleteFeedback(int FeedbackID)
 	{
