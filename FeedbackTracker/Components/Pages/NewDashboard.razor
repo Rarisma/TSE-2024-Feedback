@@ -40,22 +40,40 @@
     <!-- top dash icons -->
     <div class="dash-container-top">
         <div class="dashboard-box-topleft">
-
+			<p2>
+				<center>
             <p2>Current modules:</p2>
             @if(modules!=null){
-                @foreach(var module in modules){
-                    <br />
-                    <p2>@module.Module</p2>
-                }
-            }
-                </div>
-                <div class="dashboard-box-topright"><p2>Notifications</p2></div>
-            </div>
+                        @foreach(var module in modules){
+                            <br />
+                            <p2>@module.Module</p2>
+                        }
+                    }</center></p2>
+        </div>
+        <div class="dashboard-box-topright"><p2>Recent Feedbacks</p2></div>
+    </div>
 
-            <!-- bottom dashboard icons -->
-            <div class="dash-container-top">
-                <div class="dashboard-box-leftcard"><p2>Upcoming deadlines</p2></div>
-                <div class="bottom-strip"><p2>Most recent feedback date</p2></div>
+    <!-- bottom dashboard icons -->
+    <div class="dash-container-top">
+        <div class="dashboard-box-leftcard">
+            <p2>
+                <center>
+                    <p2>New Feedbacks:</p2>
+                    @if (notifications != null)
+                    {
+                        @foreach (var notification in notifications)
+                        {
+                            <br />
+                            <div class="feedback-box">
+                            <p2>Time: @notification.Timestamp.ToLocalTime() </p2>
+                            <p2> Feedback: @notification.FeedbackID </p2>
+                            </div>
+                        }
+                    }
+                </center>
+            </p2>
+        </div>
+                <div class="bottom-strip"><p2>Notification</p2></div>
                 <div class="create-tab">
                     <p2>
                         <center><p2>Why don't you add some more feedback?</p2></center>
@@ -100,12 +118,14 @@
     @code {
         private FeedbackTrackerCommon.Definitions.User assignee = new FeedbackTrackerCommon.Definitions.User { };
         private List<FeedbackTrackerCommon.Definitions.Modules> modules = new List<FeedbackTrackerCommon.Definitions.Modules> { };
+    private List<FeedbackTrackerCommon.Definitions.Notification> notifications = new List<FeedbackTrackerCommon.Definitions.Notification> { };
         // get logged in user
         private async Task getUser()
         {
             if(JAuth.GetUser()!=null){
                 assignee = JAuth.GetUser();
-                getModules();
+                await getModules();
+                await getNotifications();
             }
 
         }
@@ -115,6 +135,15 @@
                 modules = await UserClient.GetModules(assignee.UserID);
                 StateHasChanged();
             }
+    }
+
+    private async Task getNotifications()
+    {
+        if (assignee != null)
+        {
+            notifications = await UserClient.GetNotification(assignee.UserID);
+            StateHasChanged();
+        }
     }
     protected override async Task OnInitializedAsync()
     {
