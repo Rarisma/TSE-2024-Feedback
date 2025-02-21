@@ -1,6 +1,8 @@
-﻿<!DOCTYPE html>
-<html lang="en">
+﻿@inherits LayoutComponentBase
+@inject IJSRuntime JSRuntime
 
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -15,18 +17,28 @@
 <body>
     <Routes />
     <script src="_framework/blazor.web.js"></script>
+
+    <script src="JS/colour_changer.js"></script>
+
     <audio id="effectplayer">
         <source id="effectplayerSource" src="" />
     </audio>
 
     <script src="scripts/sound.js"></script>
-</body>
 
+</body>
 </html>
 
 @code{
-
     public static string Endpoint = "http://localhost:5189";
 
-
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var savedTheme = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "selectedTheme") ?? "blue"; //retrieve the theme from localstorage, or default to blue
+            await JSRuntime.InvokeVoidAsync("changeTheme", savedTheme); //run changeTheme and apply the saved theme
+            StateHasChanged();
+        }
+    }
 }

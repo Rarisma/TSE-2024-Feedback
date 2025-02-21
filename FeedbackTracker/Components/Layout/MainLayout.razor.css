@@ -4,14 +4,25 @@
     flex-direction: column;
 }
 
+/* COLOURS */
+
 main {
     flex: 1;
-    /*background: linear-gradient(135deg,#79b54a, #f8f6e7, #f8f6e7, #fff, #fff, #f0f0f0, #f0f0f0, #d0e1f9, #a6c8f7, #f79d9d, #ffe4b5);*/
-    /*background: linear-gradient(135deg, #79b54a, #f8f6e7, #fff, #d0e1f9, #a6c8f7, #f79d9d, #ffe4b5);*/
-    /*background-size: 600% 600%;*/
-    /*animation: gradient 500s ease-in-out infinite;*/
     background: linear-gradient(to bottom right, #f0f0f0, #d0e1f9);
 }
+
+    main.blue {
+        background: linear-gradient(to bottom right, #f0f0f0, #d0e1f9);
+    }
+
+    main.red {
+        background: linear-gradient(to bottom right, #f0f0f0, #f1a7a7);
+    }
+
+    main.green {
+        background: linear-gradient(to bottom right, #f0f0f0, #a7f1a7);
+    }
+
 
 @keyframes gradient {
     0% {
