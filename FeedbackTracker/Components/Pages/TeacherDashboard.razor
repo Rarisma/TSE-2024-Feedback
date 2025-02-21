@@ -95,7 +95,16 @@
     // assigne
     // author of feedback (get current user)
     private User assignee;
-    
+
+
+    // get logged in user
+    private static User getUser()
+    {
+
+        // return logged user
+        return JAuth.User;
+    }
+
     private User? loggedUser;
 
 
@@ -103,14 +112,12 @@
     private async void SendModule()
     {
         // Create a new module object
-        FeedbackTrackerCommon.Definitions.Modules newModule = new FeedbackTrackerCommon.Definitions.Modules();
+        Modules newModule = new();
 
         newModule.ModuleID = moduleID;
         newModule.Module = moduleName;
-
-
-       // string response = await ModuleClient.CreateModule(newModule);
-
+        
+       string response = await ModuleClient.CreateModule(newModule);
     }
 
     private async Task LoadUsers()
@@ -120,7 +127,6 @@
         if (AllUsers != null)
         {
             users = AllUsers;
-
         }
         else
         {

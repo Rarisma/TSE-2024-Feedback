@@ -126,4 +126,5 @@ public class JAuth(NavigationManager NavigationManager)
 	public User GetUser() => User;
 
 	public string GetToken() => JWT;
+
 }
