@@ -1,7 +1,8 @@
 ﻿@inject JAuth auth
 @inject NavigationManager NavigationManager
 @inject API.UserAPI UserCLient
-
+@rendermode InteractiveServer
+@inject IJSRuntime JS
 <input type="checkbox" title="Navigation menu" class="navbar-toggler" />
 <div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
     <div class="navbar-toggler-wrapper">
@@ -22,7 +23,15 @@
                     </div>
                     <div class="nav-item px-3">
                         <NavLink class="nav-link" href="usersfeedback">
-                            <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Your Feedback @if (New_Feedback) {<span> 🔔 </span>;}else{<span></span>}
+                            <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Your Feedback @if (New_Feedback)
+                            {
+                                <span class="notification"> 🔔 </span>
+                                playsound = true;
+                            }
+                            else
+                            {
+                                <span></span>;
+                            }
                         </NavLink>
                     </div>
 
@@ -56,10 +65,18 @@
 </div>
 
 @code{
+    bool playsound = false;
     bool New_Feedback = false;
     FeedbackTrackerCommon.Definitions.User? user;
     protected override async Task OnInitializedAsync()
     {
+        NavigationManager.LocationChanged += async (sender, args) =>
+        {
+            NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);
+            await InvokeAsync(StateHasChanged);
+        };
+
+
         // if logged in
         if (auth.IsAuthorised())
         {
@@ -72,17 +89,26 @@
                 if (notifications.Count > 0){
                     New_Feedback = true;
 
-                    StateHasChanged();
+                    await InvokeAsync(StateHasChanged);
                 }else{
                     New_Feedback = false;
 
-                    StateHasChanged();
+                    await InvokeAsync(StateHasChanged);
                 }
             }
 
 
         }
     }
+    protected override async Task OnAfterRenderAsync(bool firstrender)
+    {
+        //Console.WriteLine("playsound: " + playsound);
+            if(playsound){
+            await JS.InvokeVoidAsync("PlaySoundEffect", "sounds/notification.wav");
+            }
+
+    }
+
 }
 
 
