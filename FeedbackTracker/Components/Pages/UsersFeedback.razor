@@ -87,6 +87,8 @@
                 <select id="sorting" @onchange="SortBySelected">
                     <option value="az">A-Z</option>
                     <option value="za">Z-A</option>
+                    <option value="public">Public Feedback</option>
+                    <option value="private">Private Feedback</option>
                 </select>
             </div>
         </div>
@@ -172,6 +174,14 @@
         else if (SelectedOption == "za") // reverse alphabetical
         {
             SpecificFeedbacks.Sort((current, next) => next.Title.CompareTo(current.Title));
+        }
+        else if (SelectedOption == "public") // public
+        {
+            SpecificFeedbacks = AllFeedbacks.Where(feedback => feedback.Visibility.ToString() == "Public").ToList();
+        }
+        else if (SelectedOption == "private") // private 
+        {
+            SpecificFeedbacks = AllFeedbacks.Where(feedback => feedback.Visibility.ToString() == "Private").ToList();
         }
     }
 

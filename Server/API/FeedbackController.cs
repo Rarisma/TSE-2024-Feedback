@@ -23,30 +23,53 @@ public class FeedbackController : Controller
 			//Find feedbacks for account
 			using TrackerContext Ctx = new();
 
+			List<Users_Modules> UsersModules = Ctx.UsersModules
+				.Where(f => f.UserID == UserID).ToList();
+
 			List<int> ModuleIDs = Ctx.UsersModules
 				.Where(um => um.UserID == UserID)
 				.Select(um => um.ModuleID).ToList();
 
-			List<Feedback> Feedback = Ctx.Feedback
-				.AsEnumerable()
-				.Where(f => f.AssignedUserID == UserID
-					|| f.AssigneeID == UserID
-					|| (f.AssignedUserID == null && ModuleIDs.Contains(f.ModuleID)))
-				.ToList();
+            List<Feedback> Feedback = Ctx.Feedback
+                .Where(f => f.AssignedUserID == UserID
+                         || f.AssigneeID == UserID
+                         || f.Visibility == FeedbackVisibility.Public
+                         || f.AssignedUserID == 0 && UserIDs.Contains(UserID)).ToList ();
 
 
-			//Serialise to JSON
-			return JsonSerializer.Serialize(Feedback);
+            //Serialise to JSON
+            return JsonSerializer.Serialize(Feedback);
 		}
 		catch (Exception ex) { return "Encountered an error: " + ex.Message; }
 	}
 
-	/// <summary>
-	/// Gets feedback by its ID
-	/// </summary>
-	/// <param name="FeedbackID">Feedback ID</param>
-	/// <returns>Feedback Object</returns>
-	[HttpGet("GetFeedbackByID")]	
+    /// <summary>
+    /// Get all public feedbacks
+    /// </summary>
+    /// <returns>List of Feedback Objects</returns>
+    [HttpGet("GetPublicFeedbacks")]
+    public string GetPublicFeedbacks()
+    {
+        try
+        {
+			// Find public feedbacks
+            using TrackerContext Ctx = new();
+            List<Feedback> publicFeedbacks = Ctx.Feedback
+                .Where(f => f.Visibility == FeedbackVisibility.Public).ToList();
+
+			// Serialise to JSON
+            return JsonSerializer.Serialize(publicFeedbacks);
+        }
+        catch (Exception ex) { return "Encountered an error: " + ex.Message; }
+    }
+
+
+    /// <summary>
+    /// Gets feedback by its ID
+    /// </summary>
+    /// <param name="FeedbackID">Feedback ID</param>
+    /// <returns>Feedback Object</returns>
+    [HttpGet("GetFeedbackByID")]	
 	public string GetFeedbackByID(int FeedbackID)
 	{
 		try
@@ -106,6 +129,8 @@ public class FeedbackController : Controller
 	/// Deletes a feedback from the database
 	/// </summary>
 	/// <param name="FeedbackID"></param>
+			List<Users_Modules> UsersModules = Ctx.UsersModules
+				.Where(f => f.UserID == UserID).ToList();
 	[HttpGet("DeleteFeedback")]	
 	public void DeleteFeedback(int FeedbackID)
 	{

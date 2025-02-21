@@ -79,9 +79,24 @@
 
                     </select>
                 </div>
+                <!--Visibility-->
+                <div class="mb-3">
+                    <label for="Visibility">Visibility:</label>
+                    <select id="Visibility" @bind="Visibility" class="form-select">
+                        <!-- Select Visibility Options -->
+                        <option value="0">@FeedbackVisibility.Public</option>
+                        <option value="1">@FeedbackVisibility.Private</option>
+
+                    </select>
+                </div>
+
+
+            <div class="mb-3 text-center">
+                <button class="btn btn-primary" @onclick="Sendfeedback"  style="min-width: 200px;">Submit Feedback</button>
             </div>
-            <button class="btn btn-primary" @onclick="Sendfeedback" style="min-width: 200px; margin: 0 auto; display: block;">Submit Feedback</button>
         </div>
+    </div>
+
 }
 
 //For users that aren't logged in
@@ -109,6 +124,9 @@ else
     }
 
     private int Label;
+
+    private int Visibility;
+
     
     // name
     private string title = string.Empty;
@@ -198,6 +216,7 @@ else
         fb.FeedbackText = text; // text of feedback
         fb.Closed = false; // Feedback starts open (close would be completed)
         fb.Title = title; // Name of feedback
+
         // fb.AssignedUSer;
 
         // fb.Assignee;
