@@ -66,7 +66,6 @@ h3 {
     }
 
         .categories li:hover {
-            background-color: #e0e0e0;
             border-radius: 4px;
         }
 
@@ -102,5 +101,54 @@ h3 {
             border-color: #007bff;
         }
 
+/* settings left panel */
 
+.categories ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.categories li {
+    margin-bottom: 10px;
+}
+
+    .categories li:last-child {
+        margin-bottom: 0;
+    }
+
+.settings-icon {
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+}
+
+.btn-categories {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    background-color: transparent;
+    color: #000000;
+    border: none;
+    padding: 30px;
+    width: 100%;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+    .btn-categories:hover {
+        background-color: transparent;
+        border-radius: 12px;
+        transform: translateY(-5px);
+        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn-categories.active {
+        outline: none;
+        box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15);
+        border-radius: 12px;
+        background-color: rgba(173, 216, 230, 0.3);
+        transform: translateY(-5px);
+    }
 

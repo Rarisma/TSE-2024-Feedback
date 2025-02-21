@@ -1,4 +1,4 @@
-@page "/"
+﻿@page "/"
 @rendermode InteractiveServer
 @inject JAuth JAuth
 @using Application.API
@@ -9,6 +9,7 @@
 
 @code {
     private string welcomeMessage { get; set; }
+    private string welcomeSymbol { get; set; }
 
     protected override void OnInitialized() {
         base.OnInitialized();
@@ -20,22 +21,29 @@
 
         if (currentTime < 12) {
             welcomeMessage = "Good Morning";
+            welcomeSymbol = "☀️";
         }
         else if (currentTime < 18)
         {
             welcomeMessage = "Good Afternoon";
+            welcomeSymbol = "☕";
         }
         else {
             welcomeMessage = "Have a Good Evening";
+            welcomeSymbol = "🌃";
         }
     }
 }
 
-<h3 class="intro-msg">@welcomeMessage, @assignee.Username</h3>
+
+<div class="intro-msg-container">
+    <h3 class="intro-msg">@welcomeMessage, @assignee.Username (username)! @welcomeSymbol</h3>
+</div>
+
 
 <div>
     <br><br />
-    <h2>Dashboard</h2>
+    <center><h2 style="margin-top: 60px;">Dashboard</h2></center>
 
     <!-- top dash icons -->
     <div class="dash-container-top">
@@ -82,9 +90,11 @@
                 </div>
             </div>
 
-            <!-- View Feedback (anypoint in usersfeedback.razor? page structure should be discussed in a meeting) -->
-            <div>
-                <h3>Your feedback:</h3>
+
+    <!-- View Feedback (anypoint in usersfeedback.razor? page structure should be discussed in a meeting) -->
+    <div>
+        <center><h2 style="margin-top: -20px; margin-bottom: 20px;">Your feedback</h2></center>
+
                 <h6>Feedback you are assigned to or have created.</h6>
                 @if(allFeedback!=null){
                     @foreach (var feedback in allFeedback)
@@ -114,6 +124,7 @@
             }
         </div>
     </div>
+
 
     @code {
         private FeedbackTrackerCommon.Definitions.User assignee = new FeedbackTrackerCommon.Definitions.User { };

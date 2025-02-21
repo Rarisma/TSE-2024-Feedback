@@ -7,10 +7,14 @@
 
 /* PAGE STYLING */
 
+.intro-msg-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: -85px;
+}
+
 .intro-msg {
-    position: absolute;
-    top: 45px;
-    left: 285px;
     margin: 0;
     font-size: 3.2rem;
     font-weight: 700;
@@ -28,6 +32,10 @@
     border: 1px solid rgba(255, 255, 255, 0.3);
     animation: fadeAnimation 1.2s ease-in;
     margin-bottom: 15px;
+}
+
+.feedback-box:hover {
+    transform: translateX(5px);
 }
 
 
@@ -124,13 +132,14 @@ h2 {
     margin-bottom: -2px;
 }
 
-h6 {
-    margin-bottom: 15px;
-    margin-left: 5px;
-}
-
-h3{
+h3 {
     margin-left: 4px;
+    font-family: 'Montserrat', Arial, sans-serif;
+    font-weight: 600;
+    color: #2E4053;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: -2px;
 }
 
 p2 {

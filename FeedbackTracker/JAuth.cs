@@ -15,10 +15,10 @@ namespace Application;
 /// </summary>
 public class JAuth(NavigationManager NavigationManager)
 {
-	public static User User;
-	private static ClaimsPrincipal? UserData;
-	private static string JWT;
-
+	public User User;
+	private ClaimsPrincipal? UserData;
+	private string JWT;
+	
 	/// <summary>
 	/// Authorises a user.
 	/// </summary>
@@ -108,17 +108,23 @@ public class JAuth(NavigationManager NavigationManager)
 		{
 			Log.Error(ex, "Error enforcing authentication");
 		}
+		
+		//Send to login since user unauthorised
 		try
 		{
-		NavigationManager.NavigateTo("/LogIn");
+			NavigationManager.NavigateTo("/LogIn");
 		}
 		catch (Exception ex)
 		{
             Log.Error(ex, "Error redirecting to login");
         }
 	}
-	public User GetUser()
-	{
-		return User;
-	}
+
+	/// <summary>
+	/// Helper function to get User object.
+	/// </summary>
+	public User GetUser() => User;
+
+	public string GetToken() => JWT;
+
 }
