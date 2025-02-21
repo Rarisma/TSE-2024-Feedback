@@ -6,6 +6,7 @@
 @inject FeedbackAPI FeedbackClientAccess
 @inject UserAPI UserClient
 
+
 @code {
     private string welcomeMessage { get; set; }
 
@@ -30,7 +31,7 @@
     }
 }
 
-<h3 class="intro-msg">@welcomeMessage, @assignee.Username (username)!</h3>
+<h3 class="intro-msg">@welcomeMessage, @assignee.Username</h3>
 
 <div>
     <br><br />
@@ -38,65 +39,123 @@
 
     <!-- top dash icons -->
     <div class="dash-container-top">
-        <div class="dashboard-box-topleft"><p2>Current modules</p2></div>
-        <div class="dashboard-box-topright"><p2>Notifications</p2></div>
+        <div class="dashboard-box-topleft">
+			<p2>
+				<center>
+            <p2>Current modules:</p2>
+            @if(modules!=null){
+                        @foreach(var module in modules){
+                            <br />
+                            <p2>@module.Module</p2>
+                        }
+                    }</center></p2>
+        </div>
+        <div class="dashboard-box-topright"><p2>Recent Feedbacks</p2></div>
     </div>
 
     <!-- bottom dashboard icons -->
     <div class="dash-container-top">
-        <div class="dashboard-box-leftcard"><p2>Upcoming deadlines</p2></div>
-        <div class="bottom-strip"><p2>Most recent feedback date</p2></div>
-        <div class="create-tab"><p2>Create Feedback Button -> </p2></div>
-    </div>
-
-    <!-- View Feedback (anypoint in usersfeedback.razor? page structure should be discussed in a meeting) -->
-    <div>
-        <h3>Your feedback:</h3>
-        <h6>Feedback you are assigned to or have created.</h6>
-
-        @foreach (var feedback in allFeedback)
-        {
-            <div class="feedback-box">
-                <h4>@feedback.Title</h4>
-                <p><strong>@feedback.FeedbackText</strong></p>
-                <p><strong>Completed:</strong> @feedback.Closed</p>
+        <div class="dashboard-box-leftcard">
+            <p2>
+                <center>
+                    <p2>New Feedbacks:</p2>
+                    @if (notifications != null)
+                    {
+                        @foreach (var notification in notifications)
+                        {
+                            <br />
+                            <div class="feedback-box">
+                            <p2>Time: @notification.Timestamp.ToLocalTime() </p2>
+                            <p2> Feedback: @notification.FeedbackID </p2>
+                            </div>
+                        }
+                    }
+                </center>
+            </p2>
+        </div>
+                <div class="bottom-strip"><p2>Notification</p2></div>
+                <div class="create-tab">
+                    <p2>
+                        <center><p2>Why don't you add some more feedback?</p2></center>
+                        <center><a href="/Feedback" class="btn btn-primary">Create new feedback</a></center>
+                    </p2>
+                </div>
             </div>
 
-        }
+            <!-- View Feedback (anypoint in usersfeedback.razor? page structure should be discussed in a meeting) -->
+            <div>
+                <h3>Your feedback:</h3>
+                <h6>Feedback you are assigned to or have created.</h6>
+                @if(allFeedback!=null){
+                    @foreach (var feedback in allFeedback)
+                    {
+                        <div class="feedback-box">
+                            <h4>@feedback.Title</h4>
+                            <p><strong>@feedback.FeedbackText</strong></p>
+                            <p><strong>Completed:</strong> @feedback.Closed</p>
+                        </div>
 
-        @if (allFeedback.Count == 0)
-        {
-            <p>&nbsp; &nbsp; </p>
-            <center><h3>You have no feedback to read about...</h3></center>
-            <p>&nbsp; &nbsp; </p>
-            <p>&nbsp; &nbsp; </p>
-            <center><h4>Time to create some?</h4></center>
-        }
-        else
-        {
-            <div class="bottom-prompt">
-                <center><h4>Why don't you add some more feedback?</h4></center>
-                <center style="margin-bottom: 5px;"><a href="/Feedback" class="btn btn-primary">Create new feedback</a></center>
-            </div>
-        }
+                    }
+                }
+            @if (allFeedback.Count == 0)
+            {
+                <p>&nbsp; &nbsp; </p>
+                <center><h3>You have no feedback to read about...</h3></center>
+                <p>&nbsp; &nbsp; </p>
+                <p>&nbsp; &nbsp; </p>
+                <center><h4>Time to create some?</h4></center>
+            }
+            else
+            {
+                <div class="bottom-prompt">
+                    <center><h4>Why don't you add some more feedback?</h4></center>
+                    <center style="margin-bottom: 5px;"><a href="/Feedback" class="btn btn-primary">Create new feedback</a></center>
+                </div>
+            }
+        </div>
     </div>
-</div>
 
-@code {
-    private FeedbackTrackerCommon.Definitions.User assignee = new FeedbackTrackerCommon.Definitions.User { };
-    // get logged in user
-    private async Task getUser()
-    {
+    @code {
+        private FeedbackTrackerCommon.Definitions.User assignee = new FeedbackTrackerCommon.Definitions.User { };
+        private List<FeedbackTrackerCommon.Definitions.Modules> modules = new List<FeedbackTrackerCommon.Definitions.Modules> { };
+    private List<FeedbackTrackerCommon.Definitions.Notification> notifications = new List<FeedbackTrackerCommon.Definitions.Notification> { };
+        // get logged in user
+        private async Task getUser()
+        {
+            if(JAuth.GetUser()!=null){
+                assignee = JAuth.GetUser();
+                await getModules();
+                await getNotifications();
+            }
 
-        FeedbackTrackerCommon.Definitions.User? user = await UserClient.GetUserByID(JAuth.GetUser().UserID);
-        // return logged user
-        assignee = user;
+        }
+
+        private async Task getModules(){
+            if(assignee!=null){
+                modules = await UserClient.GetModules(assignee.UserID);
+                StateHasChanged();
+            }
     }
 
+    private async Task getNotifications()
+    {
+        if (assignee != null)
+        {
+            notifications = await UserClient.GetNotification(assignee.UserID);
+            StateHasChanged();
+        }
+    }
     protected override async Task OnInitializedAsync()
     {
         JAuth.EnforceAuth();
-        if (JAuth.IsAuthorised()) {
+
+        if (JAuth.IsAuthorised()) {        
+            try{
+            await getUser();
+            }
+            catch{
+
+            }
             await LoadFeedback();
         }
     }
@@ -105,13 +164,13 @@
 
     // loads feedback from api
     private async Task LoadFeedback()
-    {
+    { 
         try
         {
 
             //List<FeedbackTrackerCommon.Definitions.Feedback> feedbackList = await FeedbackClientAccess.GetAssignedFeedbacks(JAuth.GetUser().UserID) ??new List<FeedbackTrackerCommon.Definitions.Feedback>();
 
-            List<FeedbackTrackerCommon.Definitions.Feedback> feedbackList = await FeedbackClientAccess.GetAssignedFeedbacks(6);
+            List<FeedbackTrackerCommon.Definitions.Feedback> feedbackList = await FeedbackClientAccess.GetAssignedFeedbacks(assignee.UserID);
             if (feedbackList != null && feedbackList.Any())
             {
                 allFeedback = feedbackList.Select(fb => new FeedbackTrackerCommon.Definitions.Feedback()

@@ -64,8 +64,9 @@
 
 .dashboard-box-topleft {
     background-color: rgba(255, 215, 0, 0.05);
-    height: 140px;
-    width: 38%
+    height: 200px;
+    width: 38%;
+    padding: 50px
 }
 .dashboard-box-topleft:hover, .dashboard-box-topright:hover, .dashboard-box-leftcard:hover, .bottom-strip:hover, .create-tab:hover {
     transform: translateY(-5px);
@@ -107,8 +108,9 @@
 
 .create-tab {
     background-color: rgba(255, 0, 0, 0.20);
-    height: 120px;
-    width: 25%
+    height: 200px;
+    width: 25%;
+    padding: 40px;
 }
 
 h2 {
