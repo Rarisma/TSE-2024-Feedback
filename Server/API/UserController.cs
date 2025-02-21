@@ -1,7 +1,10 @@
 ﻿using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Text.Json;
+using Blazored.LocalStorage.JsonConverters;
 using FeedbackTrackerCommon.Definitions;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using OtpNet;
 using Serilog;
@@ -300,6 +303,31 @@ public class UserController(AuthService authService) : Controller
 		catch (Exception ex)
 		{
 			Log.Error(ex, "Failed to update password");
+		}
+	}
+
+	/// <summary>
+	/// Gets an average resolve time for a teacher
+	/// </summary>
+	/// <param name="UserID"></param>
+	[HttpGet("GetAvgResolveTime")]
+	public float GetAverageResolveTime(int UserID)
+	{
+		using TrackerContext Ctx = new();
+		User account = Ctx.User.First(user => user.UserID == UserID);
+		if (account.IsTeacher)
+		{
+			//TODO: Check with fin if assign all in module is null
+			//TODO: Check with team or mark if avg time should include assign all.
+			var feedbacks = Ctx.Feedback.Where(f => (f.AssignedUserID == UserID ||
+			                                        f.AssignedUserID == null)& f.Closed) .ToList(); 
+			var total = TimeSpan.Zero;
+			feedbacks.ForEach(feedback => total += (feedback.ClosedDate - feedback.CreatedDate).Value);
+			return (float)total.TotalHours / feedbacks.Count;
+		}
+		else
+		{
+			return 0;
 		}
 	}
 }

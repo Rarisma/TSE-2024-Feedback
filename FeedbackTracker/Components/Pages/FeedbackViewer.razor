@@ -2,7 +2,7 @@
 @rendermode InteractiveServer
 @using Application.API
 @using FeedbackTrackerCommon.Definitions
-@inject FeedbackAPI FeedbackClientAccess
+@inject FeedbackAPI FeedbackClienFeedbacktAccess
 @inject UserAPI UserClientAccess
 
 @{
@@ -18,6 +18,13 @@
 					<div class="flex-column">
 						<h1 class="card-text"><strong><u>@SelectedFeedback.Title</u></strong></h1>
 						<p class="card-text"><strong>Created By:</strong> @users.First(u => u.UserID == SelectedFeedback.AssigneeID).Username</p>
+						<p class="card-text"><strong>Opened on:</strong> @SelectedFeedback.CreatedDate?.ToString("g")</p>
+						
+						@if (SelectedFeedback.Closed)
+						{
+							<p class="card-text"><strong>Closed on:</strong> @SelectedFeedback.ClosedDate?.ToString("g")</p>
+						}
+						
 						<p class="card-text"><strong>Description:</strong> @SelectedFeedback.FeedbackText</p>
 						<!-- <p class="card-text"><strong>Label:</strong> @SelectedFeedback.Label.ToString()</p> -->
 					</div>
