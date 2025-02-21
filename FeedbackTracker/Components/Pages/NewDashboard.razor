@@ -6,6 +6,7 @@
 @inject FeedbackAPI FeedbackClientAccess
 @inject UserAPI UserClient
 
+
 @code {
     private string welcomeMessage { get; set; }
 
@@ -38,66 +39,83 @@
 
     <!-- top dash icons -->
     <div class="dash-container-top">
-        <div class="dashboard-box-topleft"><p2>Current modules</p2></div>
-        <div class="dashboard-box-topright"><p2>Notifications</p2></div>
-    </div>
+        <div class="dashboard-box-topleft">
 
-    <!-- bottom dashboard icons -->
-    <div class="dash-container-top">
-        <div class="dashboard-box-leftcard"><p2>Upcoming deadlines</p2></div>
-        <div class="bottom-strip"><p2>Most recent feedback date</p2></div>
-        <div class="create-tab">
-            <p2>
-                <center><p2>Why don't you add some more feedback?</p2></center>
-                <center><a href="/Feedback" class="btn btn-primary">Create new feedback</a></center>
-            </p2>
+            <p2>Current modules:</p2>
+            @if(modules!=null){
+                @foreach(var module in modules){
+                    <br />
+                    <p2>@module.Module</p2>
+                }
+            }
+                </div>
+                <div class="dashboard-box-topright"><p2>Notifications</p2></div>
+            </div>
+
+            <!-- bottom dashboard icons -->
+            <div class="dash-container-top">
+                <div class="dashboard-box-leftcard"><p2>Upcoming deadlines</p2></div>
+                <div class="bottom-strip"><p2>Most recent feedback date</p2></div>
+                <div class="create-tab">
+                    <p2>
+                        <center><p2>Why don't you add some more feedback?</p2></center>
+                        <center><a href="/Feedback" class="btn btn-primary">Create new feedback</a></center>
+                    </p2>
+                </div>
+            </div>
+
+            <!-- View Feedback (anypoint in usersfeedback.razor? page structure should be discussed in a meeting) -->
+            <div>
+                <h3>Your feedback:</h3>
+                <h6>Feedback you are assigned to or have created.</h6>
+                @if(allFeedback!=null){
+                    @foreach (var feedback in allFeedback)
+                    {
+                        <div class="feedback-box">
+                            <h4>@feedback.Title</h4>
+                            <p><strong>@feedback.FeedbackText</strong></p>
+                            <p><strong>Completed:</strong> @feedback.Closed</p>
+                        </div>
+
+                    }
+                }
+            @if (allFeedback.Count == 0)
+            {
+                <p>&nbsp; &nbsp; </p>
+                <center><h3>You have no feedback to read about...</h3></center>
+                <p>&nbsp; &nbsp; </p>
+                <p>&nbsp; &nbsp; </p>
+                <center><h4>Time to create some?</h4></center>
+            }
+            else
+            {
+                <div class="bottom-prompt">
+                    <center><h4>Why don't you add some more feedback?</h4></center>
+                    <center style="margin-bottom: 5px;"><a href="/Feedback" class="btn btn-primary">Create new feedback</a></center>
+                </div>
+            }
         </div>
     </div>
 
-    <!-- View Feedback (anypoint in usersfeedback.razor? page structure should be discussed in a meeting) -->
-    <div>
-        <h3>Your feedback:</h3>
-        <h6>Feedback you are assigned to or have created.</h6>
-        @if(allFeedback!=null){
-        @foreach (var feedback in allFeedback)
+    @code {
+        private FeedbackTrackerCommon.Definitions.User assignee = new FeedbackTrackerCommon.Definitions.User { };
+        private List<FeedbackTrackerCommon.Definitions.Modules> modules = new List<FeedbackTrackerCommon.Definitions.Modules> { };
+        // get logged in user
+        private async Task getUser()
         {
-            <div class="feedback-box">
-                <h4>@feedback.Title</h4>
-                <p><strong>@feedback.FeedbackText</strong></p>
-                <p><strong>Completed:</strong> @feedback.Closed</p>
-            </div>
+            if(JAuth.GetUser()!=null){
+                assignee = JAuth.GetUser();
+                getModules();
+            }
 
         }
-        }
-        @if (allFeedback.Count == 0)
-        {
-            <p>&nbsp; &nbsp; </p>
-            <center><h3>You have no feedback to read about...</h3></center>
-            <p>&nbsp; &nbsp; </p>
-            <p>&nbsp; &nbsp; </p>
-            <center><h4>Time to create some?</h4></center>
-        }
-        else
-        {
-            <div class="bottom-prompt">
-                <center><h4>Why don't you add some more feedback?</h4></center>
-                <center style="margin-bottom: 5px;"><a href="/Feedback" class="btn btn-primary">Create new feedback</a></center>
-            </div>
-        }
-    </div>
-</div>
 
-@code {
-    private FeedbackTrackerCommon.Definitions.User assignee = new FeedbackTrackerCommon.Definitions.User { };
-    // get logged in user
-    private async Task getUser()
-    {
-        if(JAuth.GetUser()!=null){
-            assignee = JAuth.GetUser();
-        }
-
+        private async Task getModules(){
+            if(assignee!=null){
+                modules = await UserClient.GetModules(assignee.UserID);
+                StateHasChanged();
+            }
     }
-
     protected override async Task OnInitializedAsync()
     {
         JAuth.EnforceAuth();
