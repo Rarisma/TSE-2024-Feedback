@@ -2,16 +2,14 @@
 @using Application.API
 @rendermode InteractiveServer
 @inject ModuleAPI ModuleClient
-@inject JAuth JAuth
-@inject UserAPI UserCLient
 @inject FeedbackAPI FeedbackClientAccess
 @inject UserAPI UserClientAccess
 @using FeedbackTrackerCommon.Definitions
-
+@inject JAuth jauth
 
 <title>TSE Modules: Create Module</title>
 
-@if (JAuth.IsAuthorised())
+@if (jauth.IsAuthorised())
 {
     <div class="d-flex justify-content-center align-items-center" style="min-height: 90vh; flex-direction: column;">
         <h3 class="text-center mb-4" style="font-family: 'Lato', sans-serif; color: #4A4A4A;">
@@ -96,17 +94,9 @@
 
     // assigne
     // author of feedback (get current user)
-    private FeedbackTrackerCommon.Definitions.User assignee = getUser();
-
-    // get logged in user
-    private static FeedbackTrackerCommon.Definitions.User getUser()
-    {
-
-        // return logged user
-        return JAuth.User;
-    }
-
-    private FeedbackTrackerCommon.Definitions.User? loggedUser;
+    private User assignee;
+    
+    private User? loggedUser;
 
 
     // Module Creation
@@ -153,7 +143,8 @@
     }
 
     protected override async Task OnInitializedAsync()
-    {
+    {        
+        assignee = jauth.User;
         await LoadUsers();
     }
 }
