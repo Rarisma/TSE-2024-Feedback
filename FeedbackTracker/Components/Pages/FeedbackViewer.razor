@@ -223,9 +223,12 @@
 
 	protected override async Task OnInitializedAsync()
 	{
-		await LoadUsers();
-        await LoadFeedback(int.Parse(FeedbackID));
-        await LoadComments(int.Parse(FeedbackID));
+		if(JAuth.IsAuthorised()){
+			await LoadUsers();
+			await LoadFeedback(int.Parse(FeedbackID));
+			await LoadComments(int.Parse(FeedbackID));
+		}
+
 		
 	}
 
