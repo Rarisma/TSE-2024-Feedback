@@ -80,6 +80,8 @@
 
 @code {
 
+
+
     private int moduleID;
     private string moduleName;
 
@@ -108,8 +110,8 @@
 
         newModule.ModuleID = moduleID;
         newModule.Module = moduleName;
-        
-       string response = await ModuleClient.CreateModule(newModule);
+
+        string response = await ModuleClient.CreateModule(newModule);
     }
 
     private async Task LoadUsers()
@@ -141,8 +143,13 @@
     }
 
     protected override async Task OnInitializedAsync()
-    {        
+    {
+
+        JAuth.EnforceAuth();
+        if(JAuth.IsAuthorised()){
         assignee = JAuth.User;
         await LoadUsers();
+        }
+
     }
 }
