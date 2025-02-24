@@ -10,34 +10,32 @@ public class FeedbackController : Controller
 	/// <summary>
 	/// Get all feedbacks for the user
 	/// </summary>
-	/// <param name="UserID">User</param>
+	/// <param name="userID">User</param>
 	/// <returns>List of Feedback Objects</returns>
-	/// 
-
 	[HttpGet("GetAssignedFeedbacks")]
-	public string GetAssignedFeedbacks(int UserID)
+	public string GetAssignedFeedbacks(int userID)
 	{
 		try
 		{
 			//Find feedbacks for account
-			using TrackerContext Ctx = new();
+			using TrackerContext ctx = new();
 
-			List<Users_Modules> UsersModules = Ctx.UsersModules
-				.Where(f => f.UserID == UserID).ToList();
+			List<Users_Modules> usersModules = ctx.UsersModules
+				.Where(f => f.UserID == userID).ToList();
 
-			List<int> ModuleIDs = Ctx.UsersModules
-				.Where(um => um.UserID == UserID)
+			List<int> moduleIDs = ctx.UsersModules
+				.Where(um => um.UserID == userID)
 				.Select(um => um.ModuleID).ToList();
-            List<int> UserIDs = UsersModules.Select(um => um.ModuleID).ToList();
-            List<Feedback> Feedback = Ctx.Feedback
-                .Where(f => f.AssignedUserID == UserID
-                         || f.AssigneeID == UserID
+            List<int> userIDs = usersModules.Select(um => um.ModuleID).ToList();
+            List<Feedback> feedback = ctx.Feedback
+                .Where(f => f.AssignedUserID == userID
+                         || f.AssigneeID == userID
                          || f.Visibility == FeedbackVisibility.Public
-                         || f.AssignedUserID == 0 && UserIDs.Contains(UserID)).ToList ();
+                         || f.AssignedUserID == 0 && userIDs.Contains(userID)).ToList ();
 
 
             //Serialise to JSON
-            return JsonSerializer.Serialize(Feedback);
+            return JsonSerializer.Serialize(feedback);
 		}
 		catch (Exception ex) { return "Encountered an error: " + ex.Message; }
 	}

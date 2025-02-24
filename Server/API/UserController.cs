@@ -70,7 +70,7 @@ public class UserController(AuthService authService) : Controller
 				Password = BCrypt.Net.BCrypt.HashPassword(password),
 				IsStudent = true,
 				IsTeacher = false,
-				Email = email,
+				Email = email
 			};
 
 
@@ -99,7 +99,7 @@ public class UserController(AuthService authService) : Controller
 	}
 
 	[HttpGet("GetUsers")]
-	public Task<string> GetUsers()
+	public Task<string>? GetUsers()
 	{
 		try
 		{
@@ -133,16 +133,10 @@ public class UserController(AuthService authService) : Controller
             var modules = (from Users_Modules usermodule in ctx.UsersModules
                          join moduledata in ctx.Modules on usermodule.ModuleID equals moduledata.ModuleID
                          where usermodule.UserID == userid
-                         select new
-                         {
-                             ModuleID = moduledata.ModuleID,
-							 Module = moduledata.Module,
-
-                         }).ToList();
+                         select new { moduledata.ModuleID, moduledata.Module, }).ToList();
 
             //Serialise to JSON
-            string json = JsonSerializer.Serialize(modules);
-            return json;
+            return JsonSerializer.Serialize(modules);
         }
 		catch (Exception ex) { return "Encountered an error: " + ex.Message; }
 	}
@@ -160,7 +154,7 @@ public class UserController(AuthService authService) : Controller
 				return StatusCode(405);
 			}
 
-			//prevent totp from being added where it shouldnt be.
+			//prevent totp from being added where it shouldn't be.
 			if (account.Password != password)
 			{
 				Log.Warning("Invalid auth");
@@ -168,7 +162,7 @@ public class UserController(AuthService authService) : Controller
 			}
 			
 			Log.Information("adding mfa for accounts without mfa");
-			var secret = KeyGeneration.GenerateRandomKey(20);
+			byte[]? secret = KeyGeneration.GenerateRandomKey(20);
 			account.MFASecret = Base32Encoding.ToString(secret);
 			ctx.User.Update(account);
 			await ctx.SaveChangesAsync();
@@ -189,7 +183,7 @@ public class UserController(AuthService authService) : Controller
 			//Find account
 			using TrackerContext ctx = new();
 			User account = ctx.User.First(user => user.UserID == userId);
-			return !(string.IsNullOrEmpty(account.MFASecret));
+			return !string.IsNullOrEmpty(account.MFASecret);
 		}
 		catch (Exception ex)
 		{
@@ -198,10 +192,10 @@ public class UserController(AuthService authService) : Controller
 		}
 	}
 	
-	    /// <summary>
+	/// <summary>
     /// Creates a new user object.
     /// </summary>
-    /// <param Userid="user id">Account user id</param>
+    /// <param name="userid">Account user id</param>
     /// <returns></returns>
     [HttpGet("Notification")]
     public string NotificationGet(int userid)
@@ -210,20 +204,18 @@ public class UserController(AuthService authService) : Controller
         {
             //Find account
             using TrackerContext ctx = new();
-            var notifications = (from Notification notificaiton in ctx.Notification
-                                 where notificaiton.UserID == userid
+            var notifications = (from Notification notification in ctx.Notification
+                                 where notification.UserID == userid
                            select new
                            {
-                               NotificationID = notificaiton.NotificationID,
-                               UserID = notificaiton.UserID,
-                               FeedbackID = notificaiton.FeedbackID,
-                               Timestamp = notificaiton.Timestamp,
-
+	                           notification.NotificationID,
+                               notification.UserID,
+                               notification.FeedbackID,
+                               notification.Timestamp
                            }).ToList();
 
             //Serialise to JSON
-            string json = JsonSerializer.Serialize(notifications);
-            return json;
+            return JsonSerializer.Serialize(notifications);
         }
         catch (Exception ex) { return "Encountered an error: " + ex.Message; }
     }
@@ -231,7 +223,7 @@ public class UserController(AuthService authService) : Controller
     /// <summary>
     /// Creates a new user object.
     /// </summary>
-    /// <param Userid="userid">Account user id</param>
+    /// <param name="userid">Account user id</param>
     /// <param name="feedbackId"></param>
     /// <returns></returns>
     [HttpPost("Notification")]
@@ -264,7 +256,7 @@ public class UserController(AuthService authService) : Controller
     /// <summary>
     /// Creates a new user object.
     /// </summary>
-    /// <param Userid="user id">Account user id</param>
+    /// <param name="userid">account id</param>
     /// <returns></returns>
     [HttpDelete("Notification")]
     public async void NotificationDelete(int userid)
@@ -273,7 +265,8 @@ public class UserController(AuthService authService) : Controller
         {
 			//Add user to database
             await using TrackerContext ctx = new();
-            ctx.Notification.RemoveRange(ctx.Notification.Where(notification => notification.UserID == userid));
+            ctx.Notification.RemoveRange(ctx.Notification
+	            .Where(notification => notification.UserID == userid));
             await ctx.SaveChangesAsync();
 
         }
@@ -288,7 +281,7 @@ public class UserController(AuthService authService) : Controller
 	{
 		try
 		{
-			using TrackerContext ctx = new();
+			await using TrackerContext ctx = new();
 			User account = ctx.User.First(user => user.Email == email);
 			account.Password = BCrypt.Net.BCrypt.HashPassword(password);
 			ctx.User.Update(account);
@@ -316,12 +309,10 @@ public class UserController(AuthService authService) : Controller
 			var feedbacks = ctx.Feedback.Where(f => (f.AssignedUserID == userId ||
 			                                        f.AssignedUserID == null)& f.Closed) .ToList(); 
 			var total = TimeSpan.Zero;
-			feedbacks.ForEach(feedback => total += (feedback.ClosedDate - feedback.CreatedDate).Value);
+			feedbacks.ForEach(feedback => total += (feedback.ClosedDate - feedback.CreatedDate)!.Value);
 			return (float)total.TotalHours / feedbacks.Count;
 		}
-		else
-		{
-			return 0;
-		}
+
+		return 0;
 	}
 }

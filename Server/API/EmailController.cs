@@ -55,7 +55,7 @@ namespace Server.API
 				return StatusCode(400, "Email Address Missing");
 			}
 
-			await emailSending.SendEmailAsync(ReceivingAddress, EmailBody, EmailSubject);
+			await EmailSending.SendEmailAsync(ReceivingAddress, EmailBody, EmailSubject);
 			return StatusCode(200);
 		}
         [HttpGet("AddCodeToDB")]

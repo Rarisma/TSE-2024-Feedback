@@ -3,10 +3,10 @@
 @inject JAuth JAuth
 
 @code {
-    public string FirstName { get; set; }
-    public string LastName { get; set; }
-    public string Username { get; set; }
-    public string Password { get; set; }
+    private string? FirstName { get; set; }
+    private string? LastName { get; set; }
+    private string? Username { get; set; }
+    private string? Password { get; set; }
 
     private bool isAuthorized;
 
@@ -22,6 +22,7 @@
 
     private async Task UpdateProfile()
     {
+        //TODO:THIS
         // make a function in the database so its possible to update details
         // await new UserAPI("http://localhost:5189").
     }

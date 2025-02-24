@@ -93,18 +93,21 @@ public class FeedbackAPI
 	}
 
 
-    /// <summary>
-    /// Creates a comment
-	/// <param name="comments"></param>
-    /// </summary>
-    public async Task<string> CreateComment(int FeedbackID, int UserID, string? text)
+	/// <summary>
+	/// Creates a comment for a user
+	/// </summary>
+	/// <param name="feedbackID">ID of feedback comment is for</param>
+	/// <param name="userID">UserID of Commenter</param>
+	/// <param name="text">Comment body</param>
+	/// <returns></returns>
+    public async Task<string> CreateComment(int feedbackID, int userID, string? text)
     {
         try
         {
 	        //Format for server
-            StringContent CommentText = new StringContent($"\"{text}\"", Encoding.UTF8, "application/json");
+            StringContent commentText = new StringContent($"\"{text}\"", Encoding.UTF8, "application/json");
             HttpResponseMessage response = await _httpClient.PostAsync(
-	            $"Feedback/CreateComment?FeedbackID={FeedbackID}&UserID={UserID}", CommentText);
+	            $"Feedback/CreateComment?FeedbackID={feedbackID}&UserID={userID}", commentText);
             
             //Send
             response.EnsureSuccessStatusCode();

@@ -7,14 +7,14 @@ public class Users_Modules
 {
 	[Key]
 	[Column("USER_ID")]
-	public int UserID { get; set; }
+	public int UserID { get; init; }
 
 	[Column("MODULE_ID")]
-	public int ModuleID { get; set; }
+	public int ModuleID { get; init; }
 
     [ForeignKey("UserID")]
-    public User User { get; set; }
+    public User User { get; init; }
 
     [ForeignKey("ModuleID")]
-    public Modules Module { get; set; }
+    public Modules Module { get; init; }
 }

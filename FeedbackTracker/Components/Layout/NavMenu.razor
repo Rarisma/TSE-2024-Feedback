@@ -72,10 +72,11 @@
     User? user;
     protected override async Task OnInitializedAsync()
     {
-        NavigationManager.LocationChanged += async (sender, args) =>
+        NavigationManager.LocationChanged += async (sender, _) =>
                 {
-                    
-                 //NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);        
+                    if (sender == null) throw new ArgumentNullException(nameof(sender));
+
+                    //NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);        
                  // if logged in
                 if (auth.IsAuthorised())
                 {        

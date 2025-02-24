@@ -35,19 +35,19 @@ public class ModuleAPI
     /// <summary>
     /// Gets a module by ID
     /// </summary>
-    /// <param name="ID">Module ID</param>
-    public async Task<Modules?> GetModuleByID(int ID)
+    /// <param name="id">Module ID</param>
+    public async Task<Modules?> GetModuleByID(int id)
     {
         try
         {
-            HttpResponseMessage response = await _httpClient.GetAsync($"Module/GetModuleByID?ID={ID}");
+            HttpResponseMessage response = await _httpClient.GetAsync($"Module/GetModuleByID?ID={id}");
             response.EnsureSuccessStatusCode();
             string jsonString = await response.Content.ReadAsStringAsync();
             return JsonSerializer.Deserialize<Modules>(jsonString);
         }
         catch (Exception ex)
         {
-			Log.Error(ex, $"Error getting module {ID}");
+			Log.Error(ex, $"Error getting module {id}");
             return null;
         }
     }
@@ -85,6 +85,7 @@ public class ModuleAPI
         }
         catch (Exception ex)
         {
+            Log.Error(ex, "Failed to get users in module ");
             return null;
         }
     }

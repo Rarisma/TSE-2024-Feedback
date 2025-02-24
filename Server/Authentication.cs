@@ -11,15 +11,15 @@ namespace Server;
 public class AuthService(IConfiguration configuration, TrackerContext context)
 {
 	/// <summary>
-	/// Handles authentiction 
+	/// Handles authentication 
 	/// </summary>
-	/// <param name="Username">Accounts username</param>
+	/// <param name="username">Accounts username</param>
 	/// <param name="password">Accounts password</param>
 	/// <param name="TOTP">Account MFA code </param>
 	/// <returns></returns>
-	public async Task<string?> AuthenticateUserAsync(string Username, string password, string TOTP = "0")
+	public async Task<string?> AuthenticateUserAsync(string username, string password, string TOTP = "0")
 	{
-		User? user = await context.User.FirstOrDefaultAsync(u => u.Username == Username);
+		User? user = await context.User.FirstOrDefaultAsync(u => u.Username == username);
 		if (user == null) {return null;} 
 
 		// Verify password
@@ -30,12 +30,12 @@ public class AuthService(IConfiguration configuration, TrackerContext context)
 		//Verify MFA Code
 		if (user.MFASecret != null)
 		{
-			var base32Bytes = Base32Encoding.ToBytes(user.MFASecret);
+			byte[]? base32Bytes = Base32Encoding.ToBytes(user.MFASecret);
 			var totp = new Totp(base32Bytes, mode: OtpHashMode.Sha1);
-			string Verify = totp.ComputeTotp();
+			string verify = totp.ComputeTotp();
 
 			//Invalid TOTP code, unauthorised.
-			if (Verify != TOTP)
+			if (verify != TOTP)
 			{
 				return null;
 			}
@@ -72,9 +72,9 @@ public class AuthService(IConfiguration configuration, TrackerContext context)
 		// Define claims
 		Claim[] claims =
 		[
-			new Claim(JwtRegisteredClaimNames.Sub, user.Username),
-			new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-			new Claim(ClaimTypes.NameIdentifier, user.UserID.ToString())
+			new(JwtRegisteredClaimNames.Sub, user.Username),
+			new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+			new(ClaimTypes.NameIdentifier, user.UserID.ToString())
 		];
 
 		// Create the token

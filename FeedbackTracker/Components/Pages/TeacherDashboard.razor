@@ -91,16 +91,10 @@
     private List<Modules> modules = new();
 
     private User SelectedUser;
-
-
-
+    
     // assigne
     // author of feedback (get current user)
     private User? assignee;
-
-
-    private User? loggedUser;
-
 
     // Module Creation
     private async void SendModule()
@@ -128,19 +122,7 @@
         }
     }
 
-    private async Task LoadUser()
-    {
-        var user = await UserClientAccess.GetUserByID(3);
-
-        if (user != null)
-        {
-            loggedUser = user;
-        }
-        else
-        {
-            Console.WriteLine("Failed to load user.");
-        }
-    }
+   
 
     protected override async Task OnInitializedAsync()
     {
