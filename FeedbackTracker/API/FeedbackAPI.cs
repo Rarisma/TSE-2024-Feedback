@@ -3,7 +3,6 @@ using System.Text.Json;
 using Application.Components;
 using FeedbackTrackerCommon.Definitions;
 using Serilog;
-using Serilog.Core;
 
 namespace Application.API;
 

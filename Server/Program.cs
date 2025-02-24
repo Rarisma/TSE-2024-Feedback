@@ -4,9 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using Server;
-using Server.API;
-
-
 
 
 var builder = WebApplication.CreateBuilder(args);

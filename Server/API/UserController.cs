@@ -1,10 +1,5 @@
-﻿using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
-using System.Text.Json;
-using Blazored.LocalStorage.JsonConverters;
+﻿using System.Text.Json;
 using FeedbackTrackerCommon.Definitions;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using OtpNet;
 using Serilog;
