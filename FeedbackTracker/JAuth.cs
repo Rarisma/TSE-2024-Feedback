@@ -2,7 +2,7 @@
 using System.Security.Claims;
 using System.Text;
 using Application.API;
-using FeedbackTrackerCommon.Definitions;
+using Core.Definitions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
@@ -15,9 +15,9 @@ namespace Application;
 /// </summary>
 public class JAuth(NavigationManager NavigationManager)
 {
-	public User User;
+	public User? User;
 	private ClaimsPrincipal? UserData;
-	private string JWT;
+	private string? JWT;
 	
 	/// <summary>
 	/// Authorises a user.
@@ -123,8 +123,8 @@ public class JAuth(NavigationManager NavigationManager)
 	/// <summary>
 	/// Helper function to get User object.
 	/// </summary>
-	public User GetUser() => User;
+	public User? GetUser() => User;
 
-	public string GetToken() => JWT;
+	public string? GetToken() => JWT;
 
 }

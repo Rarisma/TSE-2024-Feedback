@@ -1,8 +1,8 @@
 @page "/feedback"
 @using Application.API
-@using FeedbackTrackerCommon.Definitions
+@using Core.Definitions
+@using Serilog
 @rendermode InteractiveServer
-@inject FeedbackAPI FeedbackCLient
 @inject JAuth Auth
 @inject ModuleAPI ModuleClient
 @inject UserAPI UserCLient
@@ -135,23 +135,23 @@ else
     // moduleID
     private int moduleID;
     // get modules
-    private List<FeedbackTrackerCommon.Definitions.Modules> modules = new List<FeedbackTrackerCommon.Definitions.Modules>();
+    private List<Modules> modules = new List<Modules>();
     
     // assigne
     // author of feedback (get current user)
-    private FeedbackTrackerCommon.Definitions.User assignee = new FeedbackTrackerCommon.Definitions.User { };
+    private User assignee = new User { };
 
     // assigned user
     private int assignedUserID;
     // get possible users to asign to
-    private List<FeedbackTrackerCommon.Definitions.User> users = new List<FeedbackTrackerCommon.Definitions.User> { new FeedbackTrackerCommon.Definitions.User { UserID=0,Username="No users"} };
+    private List<User> users = new List<User> { new User { UserID=0,Username="No users"} };
 
 
     // get users that can be assigned feedback
     private async void getAssignableUsers()
     {
         // Get module teachers.
-        List<FeedbackTrackerCommon.Definitions.User?>? modusers = (await ModuleClient.GetUsersInModule(moduleID))
+        List<User?>? modusers = (await ModuleClient.GetUsersInModule(moduleID))
            .ToList();
         
         if(modusers != null && modusers.Count>0){
@@ -163,16 +163,15 @@ else
 
     }
 
-    // get users that can be assigned feedback
-    private async void moduleSelected(ChangeEventArgs e)
+
+    /// <summary>
+    /// Updates module (UI)
+    /// </summary>
+    /// <param name="e"></param>
+    private void moduleSelected(ChangeEventArgs e)
     {
-
-        // Get users
-
         moduleID = int.Parse(e.Value?.ToString());
         getAssignableUsers();
-
-
     }
 
     // getModules (get modules user in / can access)
@@ -181,7 +180,7 @@ else
 
         //#TODO get modules user is in
 
-        List<FeedbackTrackerCommon.Definitions.Modules?>? newmodules = await UserCLient.GetModules(assignee.UserID);
+        List<Modules?>? newmodules = await UserCLient.GetModules(assignee.UserID);
 
         if(newmodules != null){
             try
@@ -189,7 +188,10 @@ else
                 modules = newmodules;
                 moduleID = modules.First().ModuleID;
             }
-            catch{}
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Error getting modules");
+            }
         }
 
         getAssignableUsers();
@@ -202,36 +204,23 @@ else
     private async void Sendfeedback()
     {
 
-        FeedbackTrackerCommon.Definitions.Feedback fb = new FeedbackTrackerCommon.Definitions.Feedback();
+        //Create feedback object
+        Core.Definitions.Feedback fb = new Core.Definitions.Feedback
+        {
+            // fb.FeedbackID; Feedback ID auto increment on insert
+            AssignedUserID = assignedUserID, // ID of user the feedback is assigned to.
+            AssigneeID = assignee.UserID, // ID of user thats logged in 
+            ModuleID = moduleID, // ID of associated module
+            FeedbackText = text, // text of feedback
+            Closed = false, // Feedback starts open (close would be completed)
+            Title = title // Name of feedback
+        };
 
-        /*
-        assign feedback
-        */
-
-        // fb.FeedbackID; Feedback ID auto increment on insert
-        fb.AssignedUserID = assignedUserID; // ID of user the feedback is assigned to.
-        fb.AssigneeID = assignee.UserID; // ID of user thats logged in 
-        fb.ModuleID = moduleID; // ID of associated module
-        fb.FeedbackText = text; // text of feedback
-        fb.Closed = false; // Feedback starts open (close would be completed)
-        fb.Title = title; // Name of feedback
-
-        // fb.AssignedUSer;
-
-        // fb.Assignee;
-
-        // fb.Module;
-
-
-
-
-
-        //Console.WriteLine(fb.Title); // log
-
-        // call api createfeedback
-        string apiFeedback = await new FeedbackAPI().CreateFeedback(fb);
-
-        //Console.WriteLine(apiFeedback); // log
+        // Send to API
+        Log.Information("Feedback Created: {fb}", fb.Title);
+        await new FeedbackAPI().CreateFeedback(fb);
+        Log.Information("Posted to server");
+        
         NavigationManager.NavigateTo("/");
 
     }
@@ -239,7 +228,7 @@ else
     // get logged in user
     private async Task getUser()
     {
-        FeedbackTrackerCommon.Definitions.User? user = await UserCLient.GetUserByID(Auth.GetUser().UserID);
+        User? user = await UserCLient.GetUserByID(Auth.GetUser().UserID);
         // return logged user
         assignee = user;
     }

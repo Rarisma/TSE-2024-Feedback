@@ -1,5 +1,5 @@
 ﻿using System.Text.Json;
-using FeedbackTrackerCommon.Definitions;
+using Core.Definitions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Server.API;
@@ -52,7 +52,7 @@ public class ModuleController : Controller
             Modules module = Ctx.Modules.First(module => module.ModuleID == ID);
 
 			//Serialise to JSON
-			return JsonSerializer.Serialize(module); ;
+			return JsonSerializer.Serialize(module);
         }
         catch (Exception ex) { return "Encountered an error: " + ex.Message; }
     }
@@ -72,7 +72,7 @@ public class ModuleController : Controller
             Modules module = Ctx.Modules.First(module => module.Module == Name);
 
             //Serialise to JSON
-            return JsonSerializer.Serialize(module); ;
+            return JsonSerializer.Serialize(module);
         }
         catch (Exception ex) { return "Encountered an error: " + ex.Message; }
     }

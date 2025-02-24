@@ -2,6 +2,7 @@
 @inject FeedbackAPI FeedbackClientAccess
 @inject UserAPI UserClientAccess
 @using Application.API
+@using Core.Definitions
 @inject JAuth JAuth
 @inject NavigationManager NavigationManager
 @rendermode InteractiveServer
@@ -148,11 +149,11 @@
     /// These are lists that contain the data from the related
     /// datbase, e.g. Teachers contains data about the user
     /// </summary>
-    private List<FeedbackTrackerCommon.Definitions.Feedback> AllFeedbacks = new();
+    private List<Core.Definitions.Feedback> AllFeedbacks = new();
 
-    private List<FeedbackTrackerCommon.Definitions.Feedback> SpecificFeedbacks = new();
+    private List<Core.Definitions.Feedback> SpecificFeedbacks = new();
 
-    private List<FeedbackTrackerCommon.Definitions.User> Users = new();
+    private List<User> Users = new();
 
     // the values that will be assigned for these are from when the user filters their feedback
     private string SelectedOption { get; set; } = "";
@@ -194,7 +195,7 @@
         SelectedTeacherID = e.Value.ToString();
         if (SelectedTeacherID == "all") // if the user wishes to see all of their feedbacks
         {
-            SpecificFeedbacks = new List<FeedbackTrackerCommon.Definitions.Feedback>(AllFeedbacks);
+            SpecificFeedbacks = new List<Core.Definitions.Feedback>(AllFeedbacks);
         }
         else
         {
@@ -221,7 +222,7 @@
             var feedbacks = await FeedbackClientAccess.GetAssignedFeedbacks(ID); // communicates with API
                                                                                  // different assignments to make sure All and Specific don't point to the same object in memory
             AllFeedbacks = feedbacks;
-            SpecificFeedbacks = new List<FeedbackTrackerCommon.Definitions.Feedback>(feedbacks);
+            SpecificFeedbacks = new List<Core.Definitions.Feedback>(feedbacks);
 
         }
         catch (Exception ex) // feedbacks fails to load
@@ -256,7 +257,7 @@
     }
 
     private async Task clearNotifications(){
-        List<FeedbackTrackerCommon.Definitions.Notification?>? notifications = await UserClientAccess.GetNotification(JAuth.GetUser().UserID);
+        List<Notification?>? notifications = await UserClientAccess.GetNotification(JAuth.GetUser().UserID);
 
         if (notifications.Count > 0)
         {

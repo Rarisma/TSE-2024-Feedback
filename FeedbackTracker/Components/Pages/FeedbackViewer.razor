@@ -1,7 +1,7 @@
 @page "/viewfeedback/{FeedbackID}"
 @rendermode InteractiveServer
 @using Application.API
-@using FeedbackTrackerCommon.Definitions
+@using Core.Definitions
 @inject FeedbackAPI FeedbackClientAccess
 @inject UserAPI UserClientAccess
 @inject JAuth JAuth
@@ -120,11 +120,9 @@
 
 @code {
 	private string newCommentText = "";
-	private string currentTab = "total";
-	private FeedbackTrackerCommon.Definitions.Feedback SelectedFeedback;
+	private Core.Definitions.Feedback SelectedFeedback;
 
 	private List<User> users = new();
-	private int selectedUserId;
 
 	private List<FeedbackComments> SelectedComments;
 	Dictionary<int, string> UserComments = new();
@@ -144,7 +142,7 @@
 
 	//Editing
 
-	private bool isEditing = false;
+	private bool isEditing;
 	private string editingTitle;
 	private string editingDescription;
 
@@ -183,7 +181,7 @@
 	{
 		if (SelectedFeedback != null)
 		{
-			FeedbackTrackerCommon.Definitions.Feedback editFeedback = SelectedFeedback;
+			Core.Definitions.Feedback editFeedback = SelectedFeedback;
 			editFeedback.Title = editingTitle;
 			editFeedback.FeedbackText = editingDescription;
 			await FeedbackClientAccess.UpdateFeedback(editFeedback);

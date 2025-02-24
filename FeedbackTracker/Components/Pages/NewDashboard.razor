@@ -2,6 +2,7 @@
 @rendermode InteractiveServer
 @inject JAuth JAuth
 @using Application.API
+@using Core.Definitions
 @inject FeedbackAPI FeedbackClientAccess
 @inject UserAPI UserClient
 
@@ -126,9 +127,9 @@
 
 
     @code {
-        private FeedbackTrackerCommon.Definitions.User assignee = new FeedbackTrackerCommon.Definitions.User { };
-        private List<FeedbackTrackerCommon.Definitions.Modules> modules = new List<FeedbackTrackerCommon.Definitions.Modules> { };
-    private List<FeedbackTrackerCommon.Definitions.Notification> notifications = new List<FeedbackTrackerCommon.Definitions.Notification> { };
+        private User? assignee = new User { };
+        private List<Modules> modules = new List<Modules> { };
+    private List<Notification> notifications = new List<Notification> { };
         // get logged in user
         private async Task getUser()
         {
@@ -170,7 +171,7 @@
         }
     }
 
-    private List<FeedbackTrackerCommon.Definitions.Feedback> allFeedback = new();
+    private List<Core.Definitions.Feedback> allFeedback = new();
 
     // loads feedback from api
     private async Task LoadFeedback()
@@ -180,10 +181,11 @@
 
             //List<FeedbackTrackerCommon.Definitions.Feedback> feedbackList = await FeedbackClientAccess.GetAssignedFeedbacks(JAuth.GetUser().UserID) ??new List<FeedbackTrackerCommon.Definitions.Feedback>();
 
-            List<FeedbackTrackerCommon.Definitions.Feedback> feedbackList = await FeedbackClientAccess.GetAssignedFeedbacks(assignee.UserID);
+            List<Core.Definitions.Feedback>? feedbackList = 
+                await FeedbackClientAccess.GetAssignedFeedbacks(assignee.UserID);
             if (feedbackList != null && feedbackList.Any())
             {
-                allFeedback = feedbackList.Select(fb => new FeedbackTrackerCommon.Definitions.Feedback()
+                allFeedback = feedbackList.Select(fb => new Core.Definitions.Feedback()
                     {
                         Title = fb.Title,
                         FeedbackText = fb.FeedbackText,

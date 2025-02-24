@@ -1,7 +1,6 @@
 ﻿@page "/settings"
 @rendermode InteractiveServer
 @inject JAuth JAuth
-@inject NavigationManager NavigationManager
 @inject IJSRuntime JSRuntime
 
 @*
@@ -154,15 +153,6 @@ Commented the 2FA button and replaced with a dummy until it works
         }
         StateHasChanged();
     }
-
-  
-    //Update the account settings (needs adding to a button)
-    private async Task UpdateProfile()
-    {
-        // make a function in the database so its possible to update details
-        // await new UserAPI("http://localhost:5189").
-    }
-  
 }
 
 @*

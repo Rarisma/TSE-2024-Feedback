@@ -1,5 +1,5 @@
 ﻿using System.Text.Json;
-using FeedbackTrackerCommon.Definitions;
+using Core.Definitions;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
 
@@ -142,19 +142,21 @@ public class FeedbackController : Controller
 
 
     /// <summary>
-    /// Create Commments
- 	/// <param name="commentsObject"></param>
+    /// Creates a comment
+ 	/// <param name="feedbackID">ID of feedback comment is for</param>
+ 	/// <param name="userID">User ID of commenter</param>
+ 	/// <param name="text">Comment content</param>
     /// </summary>
     [HttpPost("CreateComment")]
-    public string CreateComment(int FeedbackID, int UserID, [FromBody] string? text)
+    public string CreateComment(int feedbackID, int userID, [FromBody] string? text)
     {
         try
         {
 	        FeedbackComments comment = new()
 	        {
-		        FeedbackID = FeedbackID,
+		        FeedbackID = feedbackID,
 		        Body = text,
-		        CommenterID = UserID,
+		        CommenterID = userID,
 	        };
 	        
             //Add comment to database
@@ -231,23 +233,29 @@ public class FeedbackController : Controller
 	        return StatusCode(500);
         }
 	}
-    
+
     /// <summary>
     /// Sets the completion state of a feedback 
     /// </summary>
-    /// <param name="IsOpen"></param>
+    /// <param name="id">ID of feedback state is updating</param>
+    /// <param name="isOpen">Should feedback be reopened/closed?</param>
     /// <returns></returns>
     [HttpGet("SetStatus")]	
-    public IActionResult SetStatus(int ID, bool IsOpen)
+    public IActionResult SetStatus(int id, bool isOpen)
     {
 	    // Find feedback
 	    using TrackerContext ctx = new();
-	    Feedback? fb = ctx.Feedback.SingleOrDefault(fb => fb.FeedbackID == ID);
+	    Feedback? fb = ctx.Feedback.SingleOrDefault(fb => fb.FeedbackID == id);
 	    
 	    //update it
-	    fb.Closed = IsOpen;
-	    fb.ClosedDate = DateTime.Now;
-	    ctx.Feedback.Update(fb);
+	    if (fb != null)
+	    {
+		    fb.Closed = isOpen;
+		    //Updates title for closed feedback
+		    fb.ClosedDate = DateTime.Now;
+		    ctx.Feedback.Update(fb);
+	    }
+
 	    ctx.SaveChanges();
 	    return StatusCode(200);
     }

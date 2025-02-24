@@ -1,5 +1,4 @@
 ﻿@page "/LogIn"
-@inject IJSRuntime JSRuntime
 @using Application.API
 @inject NavigationManager NavigationManager
 @inject JAuth JAuth
@@ -37,7 +36,7 @@
         
             //Check if user has 2FA, if so abort login and show 2fa box.
             int id = attempted_user.UserID;
-            if (await API.getMFAStatus(id) && Hide2FA)
+            if (await API.GetMFAStatus(id) && Hide2FA)
             {
                 Hide2FA = false;
             }

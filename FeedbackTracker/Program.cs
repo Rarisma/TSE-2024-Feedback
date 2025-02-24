@@ -58,12 +58,6 @@ public class Program
 		app.MapRazorComponents<App>()
 			.AddInteractiveServerRenderMode();
 
-		//JAuth init stuff
-		using (var scope = app.Services.CreateScope())
-		{
-			var navigationManager = scope.ServiceProvider.GetRequiredService<NavigationManager>();
-		}
-
 		app.Run();
 	}
 }

@@ -1,4 +1,4 @@
-﻿namespace FeedbackTrackerCommon.Definitions;
+﻿namespace Core.Definitions;
 
 public enum FeedbackVisibility
 {

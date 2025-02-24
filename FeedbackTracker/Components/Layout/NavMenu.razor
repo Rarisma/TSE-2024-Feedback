@@ -1,4 +1,5 @@
-﻿@inject JAuth auth
+﻿@using Core.Definitions
+@inject JAuth auth
 @inject NavigationManager NavigationManager
 @inject API.UserAPI UserCLient
 @rendermode InteractiveServer
@@ -30,7 +31,7 @@
                             }
                             else
                             {
-                                <span></span>;
+                                <span></span>
                             }
                         </NavLink>
                     </div>
@@ -68,7 +69,7 @@
 @code{
     bool playsound = false;
     bool New_Feedback = false;
-    FeedbackTrackerCommon.Definitions.User? user;
+    User? user;
     protected override async Task OnInitializedAsync()
     {
         NavigationManager.LocationChanged += async (sender, args) =>
@@ -82,7 +83,7 @@
                     // check if user has new feedback
 
                     if (user != null){
-                        List<FeedbackTrackerCommon.Definitions.Notification?>? notifications = await UserCLient.GetNotification(user.UserID);
+                        List<Notification?>? notifications = await UserCLient.GetNotification(user.UserID);
 
                         if (notifications.Count > 0){
                             New_Feedback = true;

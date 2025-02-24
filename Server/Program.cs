@@ -71,7 +71,7 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<TrackerContext>();
-    DeleteOldUsers(context);
+    DeleteOldUsers();
 }
 
 
@@ -97,11 +97,10 @@ app.MapControllers();
 // Run the application
 app.Run();
 
-/// <summary>
-/// Deletes old users
-/// </summary>
+
+
 [HttpDelete("DeleteOldUsers")]
-static void DeleteOldUsers(TrackerContext context)
+static void DeleteOldUsers()
 {
     try
     {
@@ -130,6 +129,6 @@ static void DeleteOldUsers(TrackerContext context)
     }
     catch (Exception ex)
     {
-        Log.Error("Failed to delete old users");
+        Log.Error(ex, "Failed to delete old users");
     }
 }

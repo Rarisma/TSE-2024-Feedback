@@ -1,12 +1,12 @@
 using System.Text;
 using System.Text.Json;
 using Application.Components;
-using FeedbackTrackerCommon.Definitions;
+using Core.Definitions;
 using Serilog;
 
 namespace Application.API;
 
-public class ModuleAPI()
+public class ModuleAPI
 {
     private readonly HttpClient _httpClient = new() { BaseAddress = new Uri(App.Endpoint) };
 

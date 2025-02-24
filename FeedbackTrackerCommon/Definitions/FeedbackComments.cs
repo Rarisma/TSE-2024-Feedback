@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace FeedbackTrackerCommon.Definitions;
+namespace Core.Definitions;
 
 public class FeedbackComments
 {

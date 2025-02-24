@@ -1,10 +1,10 @@
 ﻿@page "/TeacherDashboard"
 @using Application.API
+@using Core.Definitions
 @rendermode InteractiveServer
 @inject ModuleAPI ModuleClient
 @inject FeedbackAPI FeedbackClientAccess
 @inject UserAPI UserClientAccess
-@using FeedbackTrackerCommon.Definitions
 @inject JAuth JAuth
 
 <title>TSE Modules: Create Module</title>
@@ -85,10 +85,10 @@
     private int moduleID;
     private string moduleName;
 
-    private List<User> users = new List<User>();
+    private List<User> users = new();
     private int selectedUserId;
     private string selectedModuleId;
-    private List<Modules> modules = new List<Modules>();
+    private List<Modules> modules = new();
 
     private User SelectedUser;
 
@@ -96,7 +96,7 @@
 
     // assigne
     // author of feedback (get current user)
-    private User assignee;
+    private User? assignee;
 
 
     private User? loggedUser;
@@ -111,7 +111,7 @@
         newModule.ModuleID = moduleID;
         newModule.Module = moduleName;
 
-        string response = await ModuleClient.CreateModule(newModule);
+        await ModuleClient.CreateModule(newModule);
     }
 
     private async Task LoadUsers()
