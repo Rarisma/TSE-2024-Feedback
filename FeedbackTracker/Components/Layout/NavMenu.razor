@@ -77,28 +77,28 @@
                     if (sender == null) throw new ArgumentNullException(nameof(sender));
 
                     //NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);        
-                 // if logged in
-                if (auth.IsAuthorised())
-                {        
-                    user = auth.GetUser();
-                    // check if user has new feedback
+                     // if logged in
+                    if (auth.IsAuthorised())
+                    {        
+                        user = auth.GetUser();
+                        // check if user has new feedback
 
-                    if (user != null){
-                        List<Notification?>? notifications = await UserCLient.GetNotification(user.UserID);
+                        if (user != null){
+                            List<Notification?>? notifications = await UserCLient.GetNotification(user.UserID);
 
-                        if (notifications.Count > 0){
-                            New_Feedback = true;
+                            if (notifications.Count > 0){
+                                New_Feedback = true;
 
-                            await InvokeAsync(StateHasChanged);
-                        }else{
-                            New_Feedback = false;
+                                await InvokeAsync(StateHasChanged);
+                            }else{
+                                New_Feedback = false;
 
-                            await InvokeAsync(StateHasChanged);
+                                await InvokeAsync(StateHasChanged);
+                            }
                         }
+
+
                     }
-
-
-                }
                     await InvokeAsync(StateHasChanged);
                 };
 

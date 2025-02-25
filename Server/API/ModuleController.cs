@@ -60,16 +60,16 @@ public class ModuleController : Controller
 	/// <summary>
 	/// Get Module by Name
 	/// </summary>
-	/// <param name="Name">Module ID</param>
+	/// <param name="name">Module ID</param>
 	/// <return>Module Object</return>
 	[HttpGet("GetModuleByName")]
-    public string GetModuleByName(string Name)
+    public string GetModuleByName(string name)
     {
         try
         {
             //Find account
-            using TrackerContext Ctx = new();
-            Modules module = Ctx.Modules.First(module => module.Module == Name);
+            using TrackerContext ctx = new();
+            Modules module = ctx.Modules.First(module => module.Module == name);
 
             //Serialise to JSON
             return JsonSerializer.Serialize(module);
@@ -80,18 +80,18 @@ public class ModuleController : Controller
     /// <summary>
     /// Get Module by ID
     /// </summary>
-    /// <param id="ID">Module ID</param>
+    /// <param name="moduleID">Module ID Number</param>
     /// <return>Module Object</return>
     [HttpGet("GetUsersInModule")]
-    public string GetUsersInModule(int ModuleID)
+    public string GetUsersInModule(int moduleID)
     {
         try
         {
             //Find account
-            using TrackerContext Ctx = new();
-            var users = (from Users_Modules usermodule in Ctx.UsersModules
-                         join userdata in Ctx.User on usermodule.UserID equals userdata.UserID
-                         where usermodule.ModuleID == ModuleID
+            using TrackerContext ctx = new();
+            var users = (from Users_Modules usermodule in ctx.UsersModules
+                         join userdata in ctx.User on usermodule.UserID equals userdata.UserID
+                         where usermodule.ModuleID == moduleID
                          select new {
                              UserID = userdata.UserID,
                              Username = userdata.Username,

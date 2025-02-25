@@ -36,8 +36,11 @@
     {
         if (firstRender)
         {
-            var savedTheme = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "selectedTheme") ?? "blue"; //retrieve the theme from localstorage, or default to blue
-            await JSRuntime.InvokeVoidAsync("changeTheme", savedTheme); //run changeTheme and apply the saved theme
+            //retrieve the theme from localstorage, or default to blue
+            string savedTheme = await JSRuntime.InvokeAsync<string?>("localStorage.getItem", "selectedTheme") ?? "blue"; 
+            
+            //run changeTheme and apply the saved theme
+            await JSRuntime.InvokeVoidAsync("changeTheme", savedTheme); 
             StateHasChanged();
         }
     }

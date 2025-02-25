@@ -3,7 +3,7 @@ using Serilog;
 
 namespace Application.API;
 
-public class EmailAPI ()
+public class EmailAPI
 {
 	private readonly HttpClient _httpClient = new() { BaseAddress = new Uri(App.Endpoint) };
 

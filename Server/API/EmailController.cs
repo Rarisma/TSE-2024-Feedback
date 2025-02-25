@@ -18,48 +18,48 @@ namespace Server.API
 		[HttpPost("SendEmail")]
 		public async Task<IActionResult> SendEmail([FromBody] string ReceivingAddress)
 		{
-			using TrackerContext Ctx = new();
-			User? Account = Ctx.User.FirstOrDefault(User => User.Email == ReceivingAddress);
-			if (Account == null)
+			await using TrackerContext ctx = new();
+			User? account = ctx.User.FirstOrDefault(user => user.Email == ReceivingAddress);
+			if (account == null)
 			{
 				return StatusCode(400, "Failed to store code");
 			}
-			string EscapeEmail = Uri.EscapeDataString(ReceivingAddress);
+			string escapeEmail = Uri.EscapeDataString(ReceivingAddress);
 			Random random = new Random();
-			string Code = string.Empty;
+			string code = string.Empty;
 			for (int i = 0; i < 6; i++)
 			{
 				string num = random.Next(0, 10).ToString();
-				Code += num;
+				code += num;
 			}
 
-			bool CodeStored = await AddCodeToDB(Code, ReceivingAddress);
-			if (CodeStored == false)
+			bool codeStored = await AddCodeToDb(code, ReceivingAddress);
+			if (codeStored == false)
 			{
 				return StatusCode(400, "Failed to store code");
 			}
-			string EmailBody = $@"
-			<html>
-			<body>
-				<h1>Password Reset</h1>
-				<p>Hi, you recently requested to change your password. Please click the link below to reset it:</p>
-				<p>Please ensure you enter this code: <strong>{Code}</strong></p> 
-            <p><a href=""https://localhost:7128/VerifyPasswordChange/email={EscapeEmail}"" target=""_blank"">Reset Password</a></p>
-			</body>
-			</html>";
-
-			string EmailSubject = "Password Reset";
-
+			string emailBody = $"""
+			                    
+			                        <html>
+			                        <body>
+			                            <h1>Password Reset</h1>
+			                            <p>Hi, you recently requested to change your password. Please click the link below to reset it:</p>
+			                            <p>Please ensure you enter this code: <strong>{code}</strong></p> 
+			                        <p><a href="https://localhost:7128/VerifyPasswordChange/email={escapeEmail}" target="_blank">Reset Password</a></p>
+			                        </body>
+			                        </html>
+			                    """;
+			
 			if (string.IsNullOrEmpty(ReceivingAddress))
 			{
 				return StatusCode(400, "Email Address Missing");
 			}
 
-			await EmailSending.SendEmailAsync(ReceivingAddress, EmailBody, EmailSubject);
+			await EmailSending.SendEmailAsync(ReceivingAddress, emailBody, "Password Reset");
 			return StatusCode(200);
 		}
         [HttpGet("AddCodeToDB")]
-        public async Task<bool> AddCodeToDB(string Code, string Email)
+        public async Task<bool> AddCodeToDb(string Code, string Email)
 		{
 			try
 			{

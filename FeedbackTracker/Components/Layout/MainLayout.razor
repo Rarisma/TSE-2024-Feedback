@@ -57,7 +57,8 @@
     //event handler for url changes
     private async void HandleLocationChanged(object sender, LocationChangedEventArgs e)
     {
-        CurrentTheme = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "selectedTheme") ?? "blue"; //retrieve saved theme
+        //retrieve saved theme
+        CurrentTheme = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "selectedTheme") ?? "blue"; 
         await JSRuntime.InvokeVoidAsync("changeTheme", CurrentTheme);
         await InvokeAsync(StateHasChanged);
     }

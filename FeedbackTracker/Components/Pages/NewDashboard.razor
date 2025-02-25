@@ -3,6 +3,7 @@
 @inject JAuth JAuth
 @using Application.API
 @using Core.Definitions
+@using Serilog
 @inject FeedbackAPI FeedbackClientAccess
 @inject UserAPI UserClient
 
@@ -161,11 +162,13 @@
         JAuth.EnforceAuth();
 
         if (JAuth.IsAuthorised()) {        
-            try{
-            await getUser();
+            try
+            {
+                await getUser();
             }
-            catch{
-
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Failed to get user details");
             }
             await LoadFeedback();
         }

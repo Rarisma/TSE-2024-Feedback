@@ -4,12 +4,14 @@ using Application.Components;
 using Microsoft.AspNetCore.Components;
 using Serilog;
 
-
-
 namespace Application;
 
 public class Program
 {
+	public static string? JWTSecretKey;
+	public static string? JWTIssuer;
+	public static string? JWTAudience;
+	
 	public static void Main(string[] args)
 	{
 		var builder = WebApplication.CreateBuilder(args);
@@ -38,7 +40,10 @@ public class Program
 		//Enable Serilog.
 		builder.Host.UseSerilog();
 
-
+		JWTSecretKey = builder.Configuration["JwtSettings:SecretKey"];
+		JWTAudience = builder.Configuration["JwtSettings:Issuer"];
+		JWTIssuer = builder.Configuration["JwtSettings:Audience"];
+		
 		var app = builder.Build();
 
 		// Configure the HTTP request pipeline.
