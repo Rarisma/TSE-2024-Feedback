@@ -3,6 +3,7 @@
 @inject UserAPI UserClientAccess
 @using Application.API
 @using Core.Definitions
+@using Serilog
 @inject JAuth JAuth
 @inject NavigationManager NavigationManager
 @rendermode InteractiveServer
@@ -100,11 +101,16 @@
             {
                 <NavLink class="feedback-box" href="@($"/viewfeedback/{feedback.FeedbackID}")">
                     <p>@feedback.Title</p>
-                    @foreach (var assignee in Users)
+                    @if (Users != null)
                     {
-                        if (assignee.UserID == feedback.AssigneeID)
+                        foreach (var assignee in Users)
                         {
-                            <p><strong>@assignee.Username</strong></p>
+                            if (assignee.UserID == feedback.AssigneeID)
+                            {
+                                <p>
+                                    <strong>@assignee.Username</strong>
+                                </p>
+                            }
                         }
                     }
                     <p>@feedback.FeedbackText</p>
@@ -227,7 +233,7 @@
         }
         catch (Exception ex) // feedbacks fails to load
         {
-            Console.WriteLine("Failed to load feedback.");
+            Log.Error(ex, "Failed to load feedbacks.");
         }
     }
 
@@ -241,16 +247,19 @@
             foreach (var feedback in AllFeedbacks)
             {
                 // checks to see if a teacher is already in the list, as otherwise the filter dropdown could be cluttered by the same teacher
-                if (!Users.Any(teach => teach.UserID == feedback.AssigneeID))
+                if (Users.All(teach => teach.UserID != feedback.AssigneeID))
                 {
                     var user = await UserClientAccess.GetUserByID(feedback.AssigneeID); // gets a single user based on a provided ID
                     try
                     {
-                        Users.Add(user); // adds to list
+                        if (user != null) 
+                        {
+                            Users.Add(user); // adds to list
+                        }
                     }
                     catch (Exception ex) // teachers fails to load
                     {
-                        Console.WriteLine("Failed to load teacher.");
+                        Log.Error(ex,"Failed to load teacher.");
                     }
                 }
             }

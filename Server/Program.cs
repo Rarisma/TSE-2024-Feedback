@@ -123,7 +123,7 @@ internal static class Program
 
 			// checks if they have any feedbacks
 			var userFeedbacks = ctx.Feedback
-				.Where(f => oldUserIds.Contains(f.AssigneeID) || oldUserIds.Contains(f.AssignedUserID)).ToList();
+				.Where(f =>  oldUserIds.Contains(f.AssigneeID) || oldUserIds.Contains((int)f.AssignedUserID!)).ToList();
 			
 			// Removes user feedbacks and old users
 			ctx.Feedback.RemoveRange(userFeedbacks);

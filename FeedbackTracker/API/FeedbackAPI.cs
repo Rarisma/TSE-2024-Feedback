@@ -153,6 +153,7 @@ public class FeedbackAPI
 		}
 		catch (Exception ex)
 		{
+			Log.Error(ex, "Exception getting users");
 			return null;
 		}
 	}

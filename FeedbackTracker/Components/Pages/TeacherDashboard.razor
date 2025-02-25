@@ -24,11 +24,11 @@
                             <h5 class="mb-0">Create Module</h5>
                         </div>
                         <div class="card-body">
-                            <p class="text-center">Logged in as: <strong>@assignee.Username</strong></p>
+                            <p class="text-center">Logged in as: <strong>@_assignee.Username</strong></p>
                             <form>
                                 <div class="mb-3">
                                     <label for="moduleName" class="form-label">Module Name</label>
-                                    <input id="moduleName" type="text" class="form-control" @bind="moduleName" placeholder="Enter module name">
+                                    <input id="moduleName" type="text" class="form-control" @bind="_moduleName" placeholder="Enter module name">
                                 </div>
                                 <div class="d-grid">
                                     <button class="btn btn-success" @onclick="SendModule">Create Module</button>
@@ -46,8 +46,8 @@
                             <form>
                                 <div class="mb-3">
                                     <label for="userSelect" class="form-label">Select User</label>
-                                    <select id="userSelect" class="form-control" @bind="selectedUserId">
-                                        @foreach (var user in users)
+                                    <select id="userSelect" class="form-control" @bind="_selectedUserId">
+                                        @foreach (var user in _users)
                                         {
                                             <option value="@user.UserID">@user.Username</option>
                                         }
@@ -56,8 +56,8 @@
 
                                 <div class="mb-3">
                                     <label for="moduleSelect" class="form-label">Select Module</label>
-                                    <select id="moduleSelect" class="form-control" @bind="selectedModuleId">
-                                        @foreach (var module in modules)
+                                    <select id="moduleSelect" class="form-control" @bind="_selectedModuleId">
+                                        @foreach (var module in _modules)
                                         {
                                             <option value="@module.ModuleID">@module.Module</option>
                                         }
@@ -78,22 +78,16 @@
 }
 
 @code {
+    private string _moduleName;
 
-
-
-    private int moduleID;
-    private string moduleName;
-
-    private List<User> users = new();
-    private int selectedUserId;
-    private string selectedModuleId;
-    private List<Modules> modules = new();
-
-    private User SelectedUser;
+    private List<User> _users = new();
+    private int _selectedUserId;
+    private string _selectedModuleId;
+    private List<Modules> _modules = new();
     
     // assigne
     // author of feedback (get current user)
-    private User? assignee;
+    private User? _assignee;
 
     // Module Creation
     private async void SendModule()
@@ -101,8 +95,7 @@
         // Create a new module object
         Modules newModule = new();
 
-        newModule.ModuleID = moduleID;
-        newModule.Module = moduleName;
+        newModule.Module = _moduleName;
 
         await ModuleClient.CreateModule(newModule);
     }
@@ -113,7 +106,7 @@
 
         if (AllUsers != null)
         {
-            users = AllUsers;
+            _users = AllUsers;
         }
         else
         {
@@ -128,7 +121,7 @@
 
         JAuth.EnforceAuth();
         if(JAuth.IsAuthorised()){
-        assignee = JAuth.User;
+        _assignee = JAuth.User;
         await LoadUsers();
         }
 

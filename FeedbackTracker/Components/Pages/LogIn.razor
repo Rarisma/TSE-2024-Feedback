@@ -17,7 +17,7 @@
             var storedUsername = await LocalStorage.GetItemAsStringAsync("Username");
             if (!string.IsNullOrEmpty(storedToken) && !string.IsNullOrEmpty(storedUsername))
             {
-                JAuth.Authorise(storedToken, storedUsername); // Restore session
+                await JAuth.Authorise(storedToken, storedUsername); // Restore session
                 StateHasChanged();
                 NavigationManager.NavigateTo("/");
             }
@@ -43,7 +43,7 @@
             else
             {
                 string JWT = await API.Authenticate(Username, Password, Code);
-                JAuth.Authorise(JWT, Username);
+                await JAuth.Authorise(JWT, Username);
                 if (JAuth.IsAuthorised())
                 {
                  

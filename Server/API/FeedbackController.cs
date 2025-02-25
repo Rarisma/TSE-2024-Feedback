@@ -153,14 +153,14 @@ public class FeedbackController : Controller
 	        FeedbackComments comment = new()
 	        {
 		        FeedbackID = feedbackID,
-		        Body = text,
+		        Body = text ?? "",
 		        CommenterID = userID,
 	        };
 	        
             //Add comment to database
-            using TrackerContext Ctx = new();
-            Ctx.FeedbackComments.Add(comment);
-            Ctx.SaveChanges();
+            using TrackerContext ctx = new();
+            ctx.FeedbackComments.Add(comment);
+            ctx.SaveChanges();
 
             return "Comment created successfully";
         }

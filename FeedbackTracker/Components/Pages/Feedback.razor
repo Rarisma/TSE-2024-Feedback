@@ -162,15 +162,14 @@ else
         StateHasChanged();
 
     }
-
-
+    
     /// <summary>
     /// Updates module (UI)
     /// </summary>
     /// <param name="e"></param>
     private void moduleSelected(ChangeEventArgs e)
     {
-        moduleID = int.Parse(e.Value?.ToString());
+        moduleID = int.Parse(e.Value?.ToString()!);
         getAssignableUsers();
     }
 
@@ -228,9 +227,12 @@ else
     // get logged in user
     private async Task getUser()
     {
-        User? user = await UserCLient.GetUserByID(Auth.GetUser().UserID);
-        // return logged user
-        assignee = user;
+        if (Auth != null)
+        {
+            User? user = await UserCLient.GetUserByID(Auth.GetUser().UserID);
+            // return logged user
+            assignee = user;
+        }
     }
     
     protected override async Task OnInitializedAsync()

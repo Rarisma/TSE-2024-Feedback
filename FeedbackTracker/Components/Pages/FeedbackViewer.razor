@@ -2,6 +2,7 @@
 @rendermode InteractiveServer
 @using Application.API
 @using Core.Definitions
+@using Serilog
 @inject FeedbackAPI FeedbackClientAccess
 @inject UserAPI UserClientAccess
 @inject JAuth JAuth
@@ -36,13 +37,13 @@
 						}
 						else
 						{
-							if (@JAuth.User.UserID == SelectedFeedback.AssigneeID)
+							if (@JAuth.User!.UserID == SelectedFeedback.AssigneeID)
 							{
 								<button class="btn btn-primary" @onclick="EnableEditing">Edit </button>
 							}
 						}
 
-						@if (JAuth.User.IsTeacher)
+						@if (JAuth.User!.IsTeacher)
 						{
 							@if (SelectedFeedback.Closed)
 							{
@@ -110,7 +111,7 @@
 			}
 			catch (Exception ex)
 			{
-				Console.WriteLine("error view");
+				Log.Error(ex, "Failed to load feedback viewer");
 			}
 
 		}
@@ -125,7 +126,6 @@
 	private List<User> users = new();
 
 	private List<FeedbackComments> SelectedComments;
-	Dictionary<int, string> UserComments = new();
 
 	[Parameter]
 	public string FeedbackID { get; set; }
@@ -198,15 +198,6 @@
         {
             Console.WriteLine("No comments found.");
         }
-        else
-        {
-            UserComments.Clear();
-            foreach (var comment in SelectedComments)
-            {
-                var user = await UserClientAccess.GetUserByID(comment.CommenterID);
-                UserComments[comment.CommentID] = user.Username;
-            }
-        }
     }
 
 	/// <summary>
@@ -215,19 +206,18 @@
 	private async void SubmitComment()
 	{
 		//Send comment then reset text.
-		await FeedbackClientAccess.CreateComment(SelectedFeedback.FeedbackID,JAuth.User.UserID,newCommentText);
+		await FeedbackClientAccess.CreateComment(SelectedFeedback.FeedbackID,JAuth.User!.UserID,newCommentText);
 		newCommentText = "";
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
-		if(JAuth.IsAuthorised()){
+		if (JAuth.IsAuthorised())
+		{
 			await LoadUsers();
 			await LoadFeedback(int.Parse(FeedbackID));
 			await LoadComments(int.Parse(FeedbackID));
 		}
-
-		
 	}
 
 	/// <summary>
