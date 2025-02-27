@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FeedbackTrackerCommon.Definitions;
 
-public class Feedback
+public clasms Feedback
 {
     /// <summary>
     /// ID of feedback in database.
