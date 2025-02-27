@@ -72,12 +72,10 @@
     bool playsound = false;
     bool New_Feedback = false;
     User? user;
-    protected override async Task OnInitializedAsync()
+    protected override Task OnInitializedAsync()
     {
-        NavigationManager.LocationChanged += async (sender, _) =>
+        NavigationManager.LocationChanged += async (_, _) =>
                 {
-                    if (sender == null) throw new ArgumentNullException(nameof(sender));
-
                     //NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);        
                      // if logged in
                     if (Auth.IsAuthorised())
@@ -103,9 +101,7 @@
                     }
                     await InvokeAsync(StateHasChanged);
                 };
-
-
-
+        return Task.CompletedTask;
     }
     protected override async Task OnAfterRenderAsync(bool firstrender)
     {

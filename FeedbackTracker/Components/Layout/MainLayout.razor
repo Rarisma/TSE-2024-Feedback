@@ -49,10 +49,11 @@
     private string CurrentTheme { get; set; } = "blue"; //hold current items
 
     //run on first render
-    protected override async Task OnInitializedAsync()
+    protected override Task OnInitializedAsync()
     {
         //supposed to work when the url is changed
-        NavigationManager.LocationChanged += HandleLocationChanged; 
+        NavigationManager.LocationChanged += HandleLocationChanged;
+        return Task.CompletedTask;
     }
 
     //event handler for url changes

@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using Core.Definitions;
 using Microsoft.AspNetCore.Mvc;
+using Serilog;
 
 namespace Server.API;
 [ApiController]
@@ -13,19 +14,19 @@ public class ModuleController : Controller
     /// </summary>
     /// <returns></returns>
     [HttpPost("CreateModule")]
-    public string CreateModule([FromBody] Modules ModuleObject)
+    public string CreateModule([FromBody] Modules moduleObject)
     {
         try
         {
-            Modules? Module = ModuleObject;
-            if (Module == null)
+            Modules? module = moduleObject;
+            if (module == null)
             {
                 return "Invalid module object";
             }
 
-            using TrackerContext Ctx = new();
-            Ctx.Modules.Add(Module);
-            Ctx.SaveChanges();
+            using TrackerContext ctx = new();
+            ctx.Modules.Add(module);
+            ctx.SaveChanges();
 
             return "Module created successfully";
         }
@@ -40,16 +41,16 @@ public class ModuleController : Controller
     /// <summary>
     /// Get Module by ID
     /// </summary>
-    /// <param name="ID">Module ID</param>
+    /// <param name="id">Module ID</param>
     /// <return>Module Object</return>
     [HttpGet("GetModuleByID")]
-    public string GetModuleByID(int ID)
+    public string GetModuleByID(int id)
     {
         try
         {
             //Find account
-            using TrackerContext Ctx = new();
-            Modules module = Ctx.Modules.First(module => module.ModuleID == ID);
+            using TrackerContext ctx = new();
+            Modules module = ctx.Modules.First(module => module.ModuleID == id);
 
 			//Serialise to JSON
 			return JsonSerializer.Serialize(module);
@@ -93,12 +94,11 @@ public class ModuleController : Controller
                          join userdata in ctx.User on usermodule.UserID equals userdata.UserID
                          where usermodule.ModuleID == moduleID
                          select new {
-                             UserID = userdata.UserID,
-                             Username = userdata.Username,
-                             Password = userdata.Password,
-                             IsStudent = userdata.IsStudent,
-                             IsTeacher = userdata.IsTeacher
-                         
+                             userdata.UserID,
+                             userdata.Username,
+                             userdata.Password,
+                             userdata.IsStudent,
+                             userdata.IsTeacher
                          }).ToList();
 
             //Serialise to JSON
@@ -106,5 +106,24 @@ public class ModuleController : Controller
             return json;
         }
         catch (Exception ex) { return "Encountered an error: " + ex.Message; }
+    }
+
+    /// <summary>
+    /// Gets all modules
+    /// </summary>
+    /// <returns>Every Module.</returns>
+    public async Task<List<Modules>> GetAllModules()
+    {
+        try
+        {
+            //Just get all modules.
+            await using TrackerContext ctx = new();
+            return ctx.Modules.ToList();
+        }
+        catch (Exception e)
+        {
+            Log.Error(e, "Failed to get all modules");
+            throw;
+        }
     }
 }

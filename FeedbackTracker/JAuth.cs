@@ -2,7 +2,6 @@
 using System.Security.Claims;
 using System.Text;
 using Application.API;
-using Application.Components;
 using Core.Definitions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.IdentityModel.Tokens;
@@ -48,7 +47,7 @@ public class JAuth(NavigationManager navigationManager)
 			{
 				// Validate the token
 				_userData = tokenHandler.ValidateToken(token,
-					validationParameters, out SecurityToken validatedToken);
+					validationParameters, out SecurityToken _);
 
 				User = await new UserAPI().GetUserByUsername(user);
 			}

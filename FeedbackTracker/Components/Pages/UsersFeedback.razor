@@ -62,8 +62,9 @@
 
     @if (JAuth.IsAuthorised())
     {
-        <center>
-            <h1>Your Feedback</h1></center>
+        <div style="text-align: center;" >
+            <h1>Your Feedback</h1>
+        </div>
 
         <div class="sort-container">
             <div class="sort-box">
@@ -127,7 +128,6 @@
         }
         <title>TSE Feedback: Your Feedback</title>
     }
-
     else //For users that aren't logged in
     {
         <style>
@@ -162,7 +162,7 @@
     private List<User> Users = new();
 
     // the values that will be assigned for these are from when the user filters their feedback
-    private string SelectedOption { get; set; } = "";
+    private string? SelectedOption { get; set; } = "";
 
     private string SelectedTeacherID { get; set; } = "";
 
@@ -172,15 +172,20 @@
     /// </summary>
     private void SortBySelected(ChangeEventArgs e)
     {
-        SelectedOption = e.Value?.ToString();
+        if (e != null)
+        {
+            SelectedOption = e.Value?.ToString();
+        }
 
         if (SelectedOption == "az") // alphabetical
         {
-            SpecificFeedbacks.Sort((current, next) => current.Title.CompareTo(next.Title));
+            SpecificFeedbacks.Sort((current, next) => String.Compare(current.Title, 
+                next.Title, StringComparison.Ordinal));
         }
         else if (SelectedOption == "za") // reverse alphabetical
         {
-            SpecificFeedbacks.Sort((current, next) => next.Title.CompareTo(current.Title));
+            SpecificFeedbacks.Sort((current, next) => String.Compare(next.Title, 
+                current.Title, StringComparison.Ordinal));
         }
         else if (SelectedOption == "public") // public
         {
@@ -209,7 +214,7 @@
             foreach (var feedback in AllFeedbacks) // loops through original list to add all related feedbacks
             {
                 // checks if the teacher assigned the feedback by seeing if they have the same ID as the assignee ID
-                if (int.Parse(SelectedTeacherID) == feedback.AssigneeID)
+                if (SelectedTeacherID != null && int.Parse(SelectedTeacherID) == feedback.AssigneeID)
                 {
                     SpecificFeedbacks.Add(feedback);
                 }
@@ -226,10 +231,12 @@
         try
         {
             var feedbacks = await FeedbackClientAccess.GetAssignedFeedbacks(ID); // communicates with API
-                                                                                 // different assignments to make sure All and Specific don't point to the same object in memory
-            AllFeedbacks = feedbacks;
-            SpecificFeedbacks = new List<Core.Definitions.Feedback>(feedbacks);
-
+             // different assignments to make sure All and Specific don't point to the same object in memory
+             if (feedbacks != null)
+             {
+                 AllFeedbacks = feedbacks;
+                 SpecificFeedbacks = new List<Core.Definitions.Feedback>(feedbacks);
+             }
         }
         catch (Exception ex) // feedbacks fails to load
         {
@@ -273,7 +280,6 @@
             await UserClientAccess.DeleteNotification(JAuth.GetUser().UserID);
 
         }
-        return;
     }
     /// <summary>
     /// Loads the feedback data and teacher data as soon as the page is loaded

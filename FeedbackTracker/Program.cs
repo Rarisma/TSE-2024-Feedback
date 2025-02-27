@@ -1,7 +1,6 @@
 using Blazored.LocalStorage;
 using Application.API;
 using Application.Components;
-using Microsoft.AspNetCore.Components;
 using Serilog;
 
 namespace Application;

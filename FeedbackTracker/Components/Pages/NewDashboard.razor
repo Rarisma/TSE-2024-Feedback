@@ -9,55 +9,56 @@
 
 
 @code {
-    private string welcomeMessage { get; set; }
-    private string welcomeSymbol { get; set; }
+    private string? WelcomeMessage { get; set; }
+    private string? WelcomeSymbol { get; set; }
 
     protected override void OnInitialized() {
         base.OnInitialized();
-        userGreeting();
+        UserGreeting();
     }
 
-    private void userGreeting() {
+    private void UserGreeting() {
         var currentTime = DateTime.Now.Hour; //get the current time
 
         if (currentTime < 12) {
-            welcomeMessage = "Good Morning";
-            welcomeSymbol = "☀️";
+            WelcomeMessage = "Good Morning";
+            WelcomeSymbol = "☀️";
         }
         else if (currentTime < 18)
         {
-            welcomeMessage = "Good Afternoon";
-            welcomeSymbol = "☕";
+            WelcomeMessage = "Good Afternoon";
+            WelcomeSymbol = "☕";
         }
         else {
-            welcomeMessage = "Have a Good Evening";
-            welcomeSymbol = "🌃";
+            WelcomeMessage = "Have a Good Evening";
+            WelcomeSymbol = "🌃";
         }
     }
 }
 
 
 <div class="intro-msg-container">
-    <h3 class="intro-msg">@welcomeMessage, @assignee.Username  @welcomeSymbol</h3>
+    <h3 class="intro-msg">@WelcomeMessage, @_assignee.Username  @WelcomeSymbol</h3>
 </div>
 
 
 <div>
     <br><br />
-    <center><h2 style="margin-top: 60px;">Dashboard</h2></center>
+    <div style="text-align: center;" ><h2 style="margin-top: 60px;">Dashboard</h2></div>
 
     <!-- top dash icons -->
     <div class="dash-container-top">
         <div class="dashboard-box-topleft">
 			<p2>
-				<center>
-            <p2>Current modules:</p2>
-            @if(modules!=null){
-                        @foreach(var module in modules){
-                            <br />
+                <div style="text-align: center;" >
+                    <p2>Current modules:</p2>
+                    @if(_modules!=null){
+                        @foreach(var module in _modules){
+                            <br/>
                             <p2>@module.Module</p2>
                         }
-                    }</center></p2>
+                    }</div>
+            </p2>
         </div>
         <div class="dashboard-box-topright"><p2>Recent Feedbacks</p2></div>
     </div>
@@ -66,27 +67,27 @@
     <div class="dash-container-top">
         <div class="dashboard-box-leftcard">
             <p2>
-                <center>
+                <div style="text-align: center;" >
                     <p2>New Feedbacks:</p2>
-                    @if (notifications != null)
+                    @if (_notifications != null)
                     {
-                        @foreach (var notification in notifications)
+                        @foreach (var notification in _notifications)
                         {
-                            <br />
+                            <br/>
                             <div class="feedback-box">
-                            <p2>Time: @notification.Timestamp.ToLocalTime() </p2>
-                            <p2> Feedback: @notification.FeedbackID </p2>
+                                <p2>Time: @notification.Timestamp.ToLocalTime() </p2>
+                                <p2> Feedback: @notification.FeedbackID </p2>
                             </div>
                         }
                     }
-                </center>
+                </div>
             </p2>
         </div>
                 <div class="bottom-strip"><p2>Notification</p2></div>
                 <div class="create-tab">
                     <p2>
-                        <center><p2>Why don't you add some more feedback?</p2></center>
-                        <center><a href="/Feedback" class="btn btn-primary">Create new feedback</a></center>
+                        <div style="text-align: center;" ><p2>Why don't you add some more feedback?</p2></div>
+                        <div style="text-align: center;" ><a href="/Feedback" class="btn btn-primary">Create new feedback</a></div>
                     </p2>
                 </div>
             </div>
@@ -94,11 +95,11 @@
 
     <!-- View Feedback (anypoint in usersfeedback.razor? page structure should be discussed in a meeting) -->
     <div>
-        <center><h2 style="margin-top: -20px; margin-bottom: 20px;">Your feedback</h2></center>
+        <div style="text-align: center;" ><h2 style="margin-top: -20px; margin-bottom: 20px;">Your feedback</h2></div>
 
-                <h6>Feedback you are assigned to or have created.</h6>
-                @if(allFeedback!=null){
-                    @foreach (var feedback in allFeedback)
+        <h6>Feedback you are assigned to or have created.</h6>
+                @if(_allFeedback!=null){
+                    @foreach (var feedback in _allFeedback)
                     {
                         <div class="feedback-box">
                             <h4>@feedback.Title</h4>
@@ -108,19 +109,19 @@
 
                     }
                 }
-            @if (allFeedback.Count == 0)
+            @if (_allFeedback.Count == 0)
             {
                 <p>&nbsp; &nbsp; </p>
-                <center><h3>You have no feedback to read about...</h3></center>
+                <div style="text-align: center;" ><h3>You have no feedback to read about...</h3></div>
                 <p>&nbsp; &nbsp; </p>
                 <p>&nbsp; &nbsp; </p>
-                <center><h4>Time to create some?</h4></center>
+                <div style="text-align: center;" ><h4>Time to create some?</h4></div>
             }
             else
             {
                 <div class="bottom-prompt">
-                    <center><h4>Why don't you add some more feedback?</h4></center>
-                    <center style="margin-bottom: 5px;"><a href="/Feedback" class="btn btn-primary">Create new feedback</a></center>
+                    <div style="text-align: center;" ><h4>Why don't you add some more feedback?</h4></div>
+                    <div style="text-align: center; margin-bottom: 5px;" ><a href="/Feedback" class="btn btn-primary">Create new feedback</a></div>
                 </div>
             }
         </div>
@@ -128,32 +129,32 @@
 
 
     @code {
-        private User? assignee = new User { };
-        private List<Modules> modules = new List<Modules> { };
-    private List<Notification> notifications = new List<Notification> { };
-        // get logged in user
-        private async Task getUser()
+        private User? _assignee = new();
+        private List<Modules?>? _modules = new();
+        private List<Notification?>? _notifications = new();
+        
+        // get logged-in user
+        private async Task GetUser()
         {
             if(JAuth.GetUser()!=null){
-                assignee = JAuth.GetUser();
-                await getModules();
-                await getNotifications();
+                _assignee = JAuth.GetUser();
+                await GetModules();
+                await GetNotifications();
             }
-
         }
 
-        private async Task getModules(){
-            if(assignee!=null){
-                modules = await UserClient.GetModules(assignee.UserID);
+        private async Task GetModules(){
+            if(_assignee!=null){
+                _modules = await UserClient.GetModules(_assignee.UserID);
                 StateHasChanged();
             }
     }
 
-    private async Task getNotifications()
+    private async Task GetNotifications()
     {
-        if (assignee != null)
+        if (_assignee != null)
         {
-            notifications = await UserClient.GetNotification(assignee.UserID);
+            _notifications = await UserClient.GetNotification(_assignee.UserID);
             StateHasChanged();
         }
     }
@@ -164,7 +165,7 @@
         if (JAuth.IsAuthorised()) {        
             try
             {
-                await getUser();
+                await GetUser();
             }
             catch (Exception ex)
             {
@@ -174,7 +175,7 @@
         }
     }
 
-    private List<Core.Definitions.Feedback> allFeedback = new();
+    private List<Core.Definitions.Feedback> _allFeedback = new();
 
     // loads feedback from api
     private async Task LoadFeedback()
@@ -182,27 +183,32 @@
         try
         {
 
-            //List<FeedbackTrackerCommon.Definitions.Feedback> feedbackList = await FeedbackClientAccess.GetAssignedFeedbacks(JAuth.GetUser().UserID) ??new List<FeedbackTrackerCommon.Definitions.Feedback>();
+            //List<FeedbackTrackerCommon.Definitions.Feedback> feedbackList =
+            //await FeedbackClientAccess.GetAssignedFeedbacks(JAuth.GetUser().UserID) ??
+            //new List<FeedbackTrackerCommon.Definitions.Feedback>();
 
-            List<Core.Definitions.Feedback>? feedbackList = 
-                await FeedbackClientAccess.GetAssignedFeedbacks(assignee.UserID);
-            if (feedbackList != null && feedbackList.Any())
+            if (_assignee != null)
             {
-                allFeedback = feedbackList.Select(fb => new Core.Definitions.Feedback()
+                List<Core.Definitions.Feedback>? feedbackList = 
+                    await FeedbackClientAccess.GetAssignedFeedbacks(_assignee.UserID);
+                if (feedbackList != null && feedbackList.Any())
+                {
+                    _allFeedback = feedbackList.Select(fb => new Core.Definitions.Feedback()
                     {
                         Title = fb.Title,
                         FeedbackText = fb.FeedbackText,
                         Closed = fb.Closed
                     }).ToList();
-            }
-            else
-            {
-                Console.WriteLine("No feedback found. Using test data.");
+                }
+                else
+                {
+                    Log.Warning("No feedback found for user {UserID}", _assignee.UserID);
+                }
             }
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error loading feedback: {ex.Message}");
+            Log.Error(ex, "Error loading feedback.");
         }
     }
 }

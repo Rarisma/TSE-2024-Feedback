@@ -9,12 +9,6 @@ namespace Server.API
 	public class EmailController : Controller
 	{
 
-		private readonly EmailSending emailSending;
-		public EmailController(EmailSending emailSendingConstructor)
-		{
-			emailSending = emailSendingConstructor;
-		}
-
 		[HttpPost("SendEmail")]
 		public async Task<IActionResult> SendEmail([FromBody] string ReceivingAddress)
 		{
@@ -59,19 +53,19 @@ namespace Server.API
 			return StatusCode(200);
 		}
         [HttpGet("AddCodeToDB")]
-        public async Task<bool> AddCodeToDb(string Code, string Email)
+        public async Task<bool> AddCodeToDb(string code, string email)
 		{
 			try
 			{
-				using TrackerContext Ctx = new();
-				User Account = Ctx.User.First(User => User.Email == Email);
-				CodeStorage Details = new()
+				await using TrackerContext ctx = new();
+				User account = ctx.User.First(user => user.Email == email);
+				CodeStorage details = new()
 				{
-					UserID = Account.UserID,
-					CheckCode = Code,
+					UserID = account.UserID,
+					CheckCode = code,
 				};
-				Ctx.CodeStorage.Add(Details);
-				await Ctx.SaveChangesAsync();
+				ctx.CodeStorage.Add(details);
+				await ctx.SaveChangesAsync();
 				return true;
 			}
 			catch (Exception ex)

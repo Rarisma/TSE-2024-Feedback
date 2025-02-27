@@ -10,7 +10,7 @@
 
     private bool isAuthorized;
 
-    protected override async Task OnInitializedAsync()
+    protected override Task OnInitializedAsync()
     {
         isAuthorized = JAuth.IsAuthorised();
 
@@ -18,10 +18,13 @@
         {
             JAuth.EnforceAuth();
         }
+
+        return Task.CompletedTask;
     }
 
-    private async Task UpdateProfile()
+    private Task UpdateProfile()
     {
+        return Task.CompletedTask;
         //TODO:THIS
         // make a function in the database so its possible to update details
         // await new UserAPI("http://localhost:5189").

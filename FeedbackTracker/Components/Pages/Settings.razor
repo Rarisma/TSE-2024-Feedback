@@ -144,7 +144,7 @@ Commented the 2FA button and replaced with a dummy until it works
     
     private bool isAuthorized;
 
-    protected override async Task OnInitializedAsync()
+    protected override Task OnInitializedAsync()
     {
         isAuthorized = JAuth.IsAuthorised();
         if (isAuthorized)
@@ -152,6 +152,7 @@ Commented the 2FA button and replaced with a dummy until it works
             JAuth.EnforceAuth();
         }
         StateHasChanged();
+        return Task.CompletedTask;
     }
 }
 

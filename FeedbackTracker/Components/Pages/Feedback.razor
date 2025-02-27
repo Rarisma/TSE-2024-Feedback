@@ -5,7 +5,7 @@
 @rendermode InteractiveServer
 @inject JAuth Auth
 @inject ModuleAPI ModuleClient
-@inject UserAPI UserCLient
+@inject UserAPI UserClient
 @inject NavigationManager NavigationManager
 
 <title>TSE Feedback: Create Feedback </title>
@@ -20,24 +20,24 @@
             <!--Name-->
             <div class="mb-3">
                 <label for="title" class="first-label">Name:</label>
-                <input id="title" type="text" @bind="title" placeholder="Enter Feedback Here..." class="form-control" />
+                <input id="title" type="text" @bind="_title" placeholder="Enter Feedback Here..." class="form-control" />
             </div>
 
             <!--Text-->
             <div class="mb-3">
                 <label for="text" class="label-text">Feedback Information:</label>
-                <textarea id="text" type="text" @bind="text" placeholder="Enter Information About Feedback Here..." class="form-control" style="height: 100px; resize: none;" maxlength="8000"></textarea>
+                <textarea id="text" type="text" @bind="_text" placeholder="Enter Information About Feedback Here..." class="form-control" style="height: 100px; resize: none;" maxlength="8000"></textarea>
             </div>
 
             <!--Module-->
             <div class="mb-3">
                 <label for="module" class="label-text">Feedback Module:</label>
-                <select id="module" @onchange="moduleSelected" class="form-select">
-                    @if (modules.Count > 0)
+                <select id="module" @onchange="ModuleSelected" class="form-select">
+                    @if (_modules.Count > 0)
                     {
-                        for (int i = 0; i < modules.Count; i++)
+                        for (int i = 0; i < _modules.Count; i++)
                         {
-                            <option value="@modules[i].ModuleID">@modules[i].Module</option>
+                            <option value="@_modules[i].ModuleID">@_modules[i].Module</option>
                         }
                     }
                     else
@@ -50,14 +50,14 @@
             <!--Assign-->
             <div class="mb-3">
                 <label for="assign" class="label-text">Teacher To Assign Feedback:</label>
-                <select id="assign" @bind=assignedUserID class="form-select">
-                    @if (users.Count > 0)
+                <select id="assign" @bind=_assignedUserID class="form-select">
+                    @if (_users.Count > 0)
                     {
-                        for (int i = 0; i < users.Count; i++)
+                        for (int i = 0; i < _users.Count; i++)
                         {
-                            if (users[i].IsTeacher)
+                            if (_users[i].IsTeacher)
                             {
-                                <option value="@users[i].UserID">@users[i].Username</option>
+                                <option value="@_users[i].UserID">@_users[i].Username</option>
                             }
                         }
                         <option value="">No Teacher</option>
@@ -69,7 +69,7 @@
                 <!--Label-->
                 <div class="mb-3">
                     <label for="Label">Label:</label>
-                    <select id="Label" @bind="Label" class="form-select">
+                    <select id="Label" @bind="_label" class="form-select">
                         <!-- add each module to select options-->
                         <option value="0">@FeedbackLabel.Positive</option>
                         <option value="1">@FeedbackLabel.Improvement</option>
@@ -81,7 +81,7 @@
                 <!--Visibility-->
                 <div class="mb-3">
                     <label for="Visibility">Visibility:</label>
-                    <select id="Visibility" @bind="Visibility" class="form-select">
+                    <select id="Visibility" @bind="_visibility" class="form-select">
                         <!-- Select Visibility Options -->
                         <option value="0">@FeedbackVisibility.Public</option>
                         <option value="1">@FeedbackVisibility.Private</option>
@@ -91,7 +91,7 @@
 
 
             <div class="mb-3 text-center">
-                <button class="btn btn-primary" @onclick="Sendfeedback"  style="min-width: 200px;">Submit Feedback</button>
+                <button class="btn btn-primary" @onclick="SendFeedback"  style="min-width: 200px;">Submit Feedback</button>
             </div>
         </div>
     </div>
@@ -122,70 +122,69 @@ else
         NavigationManager.NavigateTo("/LogIn");
     }
 
-    private int Label;
+    private int _label;
 
-    private int Visibility;
+    private int _visibility;
 
     
     // name
-    private string title = string.Empty;
+    private string _title = string.Empty;
     // text
-    private string text = string.Empty;
+    private string _text = string.Empty;
 
     // moduleID
-    private int moduleID;
+    private int _moduleID;
     // get modules
-    private List<Modules> modules = new List<Modules>();
+    private List<Modules> _modules = new();
     
-    // assigne
+    // assign
     // author of feedback (get current user)
-    private User assignee = new User { };
+    private User _assignee = new();
 
     // assigned user
-    private int assignedUserID;
-    // get possible users to asign to
-    private List<User> users = new List<User> { new User { UserID=0,Username="No users"} };
+    private int _assignedUserID;
+    // get possible users to assign to
+    private List<User> _users = new(){ new() { UserID=0, Username="No users"} };
 
 
     // get users that can be assigned feedback
-    private async void getAssignableUsers()
+    private async Task GetAssignableUsers()
     {
         // Get module teachers.
-        List<User?>? modusers = (await ModuleClient.GetUsersInModule(moduleID))
-           .ToList();
+        List<User?> modUsers = (await ModuleClient.GetUsersInModule(_moduleID))!.ToList();
         
-        if(modusers != null && modusers.Count>0){
-            users = modusers;
-            assignedUserID = modusers[0].UserID;
+        if(modUsers is { Count: > 0 }) 
+        {
+            _users = modUsers;
+            _assignedUserID = modUsers[0].UserID;
         }
 
         StateHasChanged();
-
     }
     
     /// <summary>
     /// Updates module (UI)
     /// </summary>
     /// <param name="e"></param>
-    private void moduleSelected(ChangeEventArgs e)
+    private async void ModuleSelected(ChangeEventArgs e)
     {
-        moduleID = int.Parse(e.Value?.ToString()!);
-        getAssignableUsers();
+        _moduleID = int.Parse(e.Value?.ToString()!);
+        await GetAssignableUsers();
     }
 
     // getModules (get modules user in / can access)
 
     private async Task GetModules() {
 
-        //#TODO get modules user is in
+        //TODO get modules user is in
 
-        List<Modules?>? newmodules = await UserCLient.GetModules(assignee.UserID);
+        List<Modules?>? newModules = await UserClient.GetModules(_assignee.UserID);
 
-        if(newmodules != null){
+        if(newModules != null){
             try
             {
-                modules = newmodules;
-                moduleID = modules.First().ModuleID;
+                _modules = newModules;
+                _moduleID = _modules.First().ModuleID;
             }
             catch (Exception ex)
             {
@@ -193,26 +192,26 @@ else
             }
         }
 
-        getAssignableUsers();
+        await GetAssignableUsers();
         // refresh ui with new data
         StateHasChanged();
     }
 
 
     // sendFeedback function
-    private async void Sendfeedback()
+    private async void SendFeedback()
     {
 
         //Create feedback object
-        Core.Definitions.Feedback fb = new Core.Definitions.Feedback
+        Core.Definitions.Feedback fb = new(_assignedUserID, _assignee.UserID, _moduleID, _text, false, _title)
         {
             // fb.FeedbackID; Feedback ID auto increment on insert
-            AssignedUserID = assignedUserID, // ID of user the feedback is assigned to.
-            AssigneeID = assignee.UserID, // ID of user thats logged in 
-            ModuleID = moduleID, // ID of associated module
-            FeedbackText = text, // text of feedback
+            AssignedUserID = _assignedUserID, // ID of user the feedback is assigned to.
+            AssigneeID = _assignee.UserID, // ID of user that's logged in 
+            ModuleID = _moduleID, // ID of associated module
+            FeedbackText = _text, // text of feedback
             Closed = false, // Feedback starts open (close would be completed)
-            Title = title // Name of feedback
+            Title = _title // Name of feedback
         };
 
         // Send to API
@@ -224,22 +223,26 @@ else
 
     }
 
-    // get logged in user
-    private async Task getUser()
+    // get logged-in user
+    private async Task GetUser()
     {
         if (Auth != null)
         {
-            User? user = await UserCLient.GetUserByID(Auth.GetUser().UserID);
+            User? user = await UserClient.GetUserByID(Auth.GetUser()!.UserID);
             // return logged user
-            assignee = user;
+            if (user != null)
+            {
+                _assignee = user;
+            }
         }
+        
     }
     
     protected override async Task OnInitializedAsync()
     {
         if (Auth.IsAuthorised())
         {
-            await getUser();
+            await GetUser();
             await GetModules();
         }
     }

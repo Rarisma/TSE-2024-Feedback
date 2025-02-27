@@ -114,15 +114,14 @@
         }
     }
 
-   
-
     protected override async Task OnInitializedAsync()
     {
-
         JAuth.EnforceAuth();
-        if(JAuth.IsAuthorised()){
-        _assignee = JAuth.User;
-        await LoadUsers();
+        if(JAuth.IsAuthorised())
+        {
+            _assignee = JAuth.User;
+            await LoadUsers();
+            _modules = await ModuleClient.GetAllModules();
         }
 
     }

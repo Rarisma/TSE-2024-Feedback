@@ -4,7 +4,6 @@
 @using Core.Definitions
 @using Serilog
 @inject FeedbackAPI FeedbackClientAccess
-@inject UserAPI UserClientAccess
 @inject JAuth JAuth
 
 @{
@@ -121,14 +120,14 @@
 
 @code {
 	private string newCommentText = "";
-	private Core.Definitions.Feedback SelectedFeedback;
+	private Core.Definitions.Feedback? SelectedFeedback;
 
 	private List<User> users = new();
 
-	private List<FeedbackComments> SelectedComments;
+	private List<FeedbackComments>? SelectedComments;
 
 	[Parameter]
-	public string FeedbackID { get; set; }
+	public string? FeedbackID { get; set; }
 
 	private async Task LoadFeedback(int ID)
 	{
@@ -181,7 +180,7 @@
 	{
 		if (SelectedFeedback != null)
 		{
-			Core.Definitions.Feedback editFeedback = SelectedFeedback;
+			Core.Definitions.Feedback? editFeedback = SelectedFeedback;
 			editFeedback.Title = editingTitle;
 			editFeedback.FeedbackText = editingDescription;
 			await FeedbackClientAccess.UpdateFeedback(editFeedback);
@@ -206,7 +205,7 @@
 	private async void SubmitComment()
 	{
 		//Send comment then reset text.
-		await FeedbackClientAccess.CreateComment(SelectedFeedback.FeedbackID,JAuth.User!.UserID,newCommentText);
+		await FeedbackClientAccess.CreateComment(SelectedFeedback!.FeedbackID,JAuth.User!.UserID,newCommentText);
 		newCommentText = "";
 	}
 
@@ -214,9 +213,12 @@
 	{
 		if (JAuth.IsAuthorised())
 		{
-			await LoadUsers();
-			await LoadFeedback(int.Parse(FeedbackID));
-			await LoadComments(int.Parse(FeedbackID));
+			if (FeedbackID != null)
+			{
+				await LoadUsers();
+				await LoadFeedback(int.Parse(FeedbackID));
+				await LoadComments(int.Parse(FeedbackID));
+			}
 		}
 	}
 
@@ -224,9 +226,12 @@
 	/// Toggles the completion status for the feedback.
 	/// </summary>
     private void ToggleCompletion()
-    {
-	    new FeedbackAPI().SetState(int.Parse(FeedbackID), !SelectedFeedback.Closed);
-	    SelectedFeedback.Closed = !SelectedFeedback.Closed;
-    }
+	{
+		if (FeedbackID != null && SelectedFeedback != null)
+		{
+			SelectedFeedback.Closed = !SelectedFeedback.Closed;
+			new FeedbackAPI().SetState(int.Parse(FeedbackID), SelectedFeedback.Closed);
+		}
+	}
 	
 }

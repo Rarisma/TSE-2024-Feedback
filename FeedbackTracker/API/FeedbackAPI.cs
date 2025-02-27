@@ -161,7 +161,7 @@ public class FeedbackAPI
     /// <summary>
     /// Updates request for a feedback
     /// </summary>
-    public async Task UpdateFeedback(Feedback feedback)
+    public async Task UpdateFeedback(Feedback? feedback)
     {
         try
         {
@@ -175,7 +175,7 @@ public class FeedbackAPI
         }
         catch (Exception ex)
         {
-	        Log.Error(ex, $"Exception updating feedback {feedback.FeedbackID}");
+	        Log.Error(ex, $"Exception updating feedback");
         }
     }
     

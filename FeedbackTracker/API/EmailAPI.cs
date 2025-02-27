@@ -7,7 +7,7 @@ public class EmailAPI
 {
 	private readonly HttpClient _httpClient = new() { BaseAddress = new Uri(App.Endpoint) };
 
-	public async Task<bool> SendEmail(string receivingAddress)
+	public async Task<bool> SendEmail(string? receivingAddress)
 	{
 		try
 		{

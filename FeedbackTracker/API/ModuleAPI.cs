@@ -64,8 +64,7 @@ public class ModuleAPI
             string jsonString = await response.Content.ReadAsStringAsync();
             return JsonSerializer.Deserialize<Modules>(jsonString);
         }
-        catch (Exception ex)
-        {
+        catch (Exception ex) {
 	        Log.Error(ex, $"Error getting module name {name}");
 			return null;
         }
@@ -90,4 +89,24 @@ public class ModuleAPI
         }
     }
 
+    /// <summary>
+    /// Gets all modules that are available.
+    /// </summary>
+    /// <returns>List of modules.</returns>
+    public async Task<List<Modules>> GetAllModules()
+    {
+        try
+        {
+            HttpResponseMessage response = await _httpClient.GetAsync("Module/GetAllModules");
+            response.EnsureSuccessStatusCode();
+            string jsonString = await response.Content.ReadAsStringAsync();
+            return JsonSerializer.Deserialize<List<Modules>>(jsonString) ?? new();
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Failed to get all modules");
+            return new();
+        }
+    }
+    
 }

@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Text.Json;
 using Core.Definitions;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
@@ -23,9 +24,10 @@ public class FeedbackController : Controller
 			List<Users_Modules> usersModules = ctx.UsersModules
 				.Where(f => f.UserID == userID).ToList();
 
-			List<int> moduleIDs = ctx.UsersModules
-				.Where(um => um.UserID == userID)
-				.Select(um => um.ModuleID).ToList();
+			//todo: remove this if not needed in future.
+			//List<int> moduleIDs = ctx.UsersModules
+			//	.Where(um => um.UserID == userID)
+			//	.Select(um => um.ModuleID).ToList();
             List<int> userIDs = usersModules.Select(um => um.ModuleID).ToList();
             List<Feedback> feedback = ctx.Feedback
                 .Where(f => f.AssignedUserID == userID
@@ -50,8 +52,8 @@ public class FeedbackController : Controller
         try
         {
 			// Find public feedbacks
-            using TrackerContext Ctx = new();
-            List<Feedback> publicFeedbacks = Ctx.Feedback
+            using TrackerContext ctx = new();
+            List<Feedback> publicFeedbacks = ctx.Feedback
                 .Where(f => f.Visibility == FeedbackVisibility.Public).ToList();
 
 			// Serialise to JSON
@@ -64,19 +66,19 @@ public class FeedbackController : Controller
     /// <summary>
     /// Gets feedback by its ID
     /// </summary>
-    /// <param name="FeedbackID">Feedback ID</param>
+    /// <param name="feedbackID">Feedback ID</param>
     /// <returns>Feedback Object</returns>
     [HttpGet("GetFeedbackByID")]	
-	public string GetFeedbackByID(int FeedbackID)
+	public string GetFeedbackByID(int feedbackID)
 	{
 		try
 		{
 			//Find feedback
-			using TrackerContext Ctx = new();
-			Feedback Feedback = Ctx.Feedback.First(f => f.FeedbackID == FeedbackID);
+			using TrackerContext ctx = new();
+			Feedback feedback = ctx.Feedback.First(f => f.FeedbackID == feedbackID);
 
 			//Serialise to JSON
-			return JsonSerializer.Serialize(Feedback);
+			return JsonSerializer.Serialize(feedback);
 		}
 		catch (Exception ex) { return "Encountered an error: " + ex.Message; }
 	}
@@ -84,24 +86,24 @@ public class FeedbackController : Controller
 	/// <summary>
 	/// Creates new feedback entry in database
 	/// </summary>
-	/// <param name="FeedbackObject">Feedback object in json format</param>
+	/// <param name="feedbackObject">Feedback object in json format</param>
 	/// <returns></returns>
 	[HttpPost("CreateFeedback")]
-	public string CreateFeedback([FromBody]Feedback FeedbackObject)
+	public string CreateFeedback([FromBody]Feedback? feedbackObject)
 	{
 		try
 		{
-			Feedback? Feedback = FeedbackObject;
-			if (Feedback == null)
+			Feedback? feedback = feedbackObject;
+			if (feedback == null)
 			{
 				return "Invalid feedback object";
 			}
 			
 			//Add user to database, and save.
-			using TrackerContext Ctx = new();
-			Feedback.CreatedDate = DateTime.Now;
-            var fb = Ctx.Feedback.Add(Feedback);
-            Ctx.SaveChanges();
+			using TrackerContext ctx = new();
+			feedback.CreatedDate = DateTime.Now;
+            var fb = ctx.Feedback.Add(feedback);
+            ctx.SaveChanges();
 
 			// notify
 
@@ -113,8 +115,8 @@ public class FeedbackController : Controller
 				Timestamp = DateTime.Now,
 			};
 
-			Ctx.Notification.Add(notification);
-			Ctx.SaveChanges();
+			ctx.Notification.Add(notification);
+			ctx.SaveChanges();
 
 			return "Feedback created successfully";
 		}
@@ -126,15 +128,15 @@ public class FeedbackController : Controller
 	/// <summary>
 	/// Deletes a feedback from the database
 	/// </summary>
-	/// <param name="FeedbackID"></param>
+	/// <param name="feedbackID"></param>
 	[HttpGet("DeleteFeedback")]	
-	public void DeleteFeedback(int FeedbackID)
+	public void DeleteFeedback(int feedbackID)
 	{
 		using TrackerContext ctx = new();
 
 		//Delete feedback
-		var Feedback = ctx.Feedback.First(f => f.FeedbackID == FeedbackID);
-		ctx.Feedback.Remove(Feedback);
+		var feedback = ctx.Feedback.First(f => f.FeedbackID == feedbackID);
+		ctx.Feedback.Remove(feedback);
 	}
 
 
@@ -150,19 +152,17 @@ public class FeedbackController : Controller
     {
         try
         {
-	        FeedbackComments comment = new()
+	        if (text != null)
 	        {
-		        FeedbackID = feedbackID,
-		        Body = text ?? "",
-		        CommenterID = userID,
-	        };
+		        FeedbackComments comment = new(text, userID, feedbackID);
 	        
-            //Add comment to database
-            using TrackerContext ctx = new();
-            ctx.FeedbackComments.Add(comment);
-            ctx.SaveChanges();
+		        //Add comment to database
+		        using TrackerContext ctx = new();
+		        ctx.FeedbackComments.Add(comment);
+		        ctx.SaveChanges();
+	        }
 
-            return "Comment created successfully";
+	        return "Comment created successfully";
         }
         catch (Exception ex)
         {
@@ -176,17 +176,17 @@ public class FeedbackController : Controller
     /// <summary>
     /// Gets comments for a thread
     /// </summary>
-    /// <param name="FeedbackID">Feedback ID</param>
+    /// <param name="feedbackID">Feedback ID</param>
     /// <returns>Gets comments</returns>
     [HttpGet("GetComments")]	
-	public string GetComments(int FeedbackID)
+	public string GetComments(int feedbackID)
 	{
 		try
 		{
 			using TrackerContext ctx = new();
 			//Find all comments for the feedback
 			List<FeedbackComments> comments = ctx.FeedbackComments
-				.Where(comment => comment.FeedbackID == FeedbackID).ToList();
+				.Where(comment => comment.FeedbackID == feedbackID).ToList();
 				
 			return JsonSerializer.Serialize(comments);
 		}
@@ -200,24 +200,24 @@ public class FeedbackController : Controller
     /// <summary>
     /// update Feedback
     /// </summary>
-    /// <param name="Feedback">Feedback</param>
+    /// <param name="feedback">Feedback</param>
     /// <returns>Gets comments</returns>
     [HttpPut("Feedback")]
-    public IActionResult FeedbackPut([FromBody]Feedback? Feedback)
+    public IActionResult FeedbackPut([FromBody]Feedback? feedback)
     {
         try
         {
 			//Check for null/invalid object.
-			if (Feedback == null) { return StatusCode(400); }
+			if (feedback == null) { return StatusCode(400); }
 
 			//get feedback
 			using TrackerContext ctx = new();
-			Feedback? fb = ctx.Feedback.SingleOrDefault(fb => fb.FeedbackID == Feedback.FeedbackID);
+			Feedback? fb = ctx.Feedback.SingleOrDefault(fb => fb.FeedbackID == feedback.FeedbackID);
 			
 			if (fb != null)
 			{
 				// set feedback to new values
-                ctx.Entry(fb).CurrentValues.SetValues(Feedback);
+                ctx.Entry(fb).CurrentValues.SetValues(feedback);
 				//save, return success
 				ctx.SaveChanges();
 				return StatusCode(200);
