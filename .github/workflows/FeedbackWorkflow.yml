@@ -1,1 +1,33 @@
+name: Test FeedbackTracker
 
+on:
+  pull_request:
+    branches:
+      - main
+      - dev
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        project: [FeedbackTracker, FeedbackTrackerCommon, Server]
+
+    steps:
+      - name: Check Code
+        uses: actions/checkout@v4
+
+      - name: .Net
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '9.0.x'
+
+      - name: Download NuGet Packages
+        run: dotnet restore ${{ matrix.project }}/
+
+      - name: Build
+        run: dotnet build ${{ matrix.project }}/ --no-restore
+
+      - name: Test
+        run: dotnet test ${{ matrix.project }}/ --configuration Release --no-build --verbosity normal
+      
