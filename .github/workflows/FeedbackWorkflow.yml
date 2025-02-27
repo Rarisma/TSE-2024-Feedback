@@ -32,8 +32,8 @@ jobs:
         run: dotnet restore FeedbackTracker/FeedbackTracker.sln
 
       - name: Build
-        run: dotnet build ${{ matrix.project }}/ --no-restore
+        run: dotnet build FeedbackTracker/FeedbackTracker.sln --no-restore
 
       - name: Test
-        run: dotnet test ${{ matrix.project }}/ --no-build --verbosity normal
+        run: dotnet test FeedbackTracker/FeedbackTracker.sln --no-build --verbosity normal
       
