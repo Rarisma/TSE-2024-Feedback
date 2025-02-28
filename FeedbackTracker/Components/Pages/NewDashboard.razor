@@ -1,5 +1,5 @@
 ﻿@page "/"
-@rendermode InteractiveServer
+@rendermode InteractiveServer  
 @inject JAuth JAuth
 @using Application.API
 @using FeedbackTrackerCommon.Definitions
@@ -11,10 +11,6 @@
     private string welcomeMessage { get; set; }
     private string welcomeSymbol { get; set; }
 
-    protected override void OnInitialized() {
-        base.OnInitialized();
-        userGreeting();
-    }
 
     private void userGreeting() {
         var currentTime = DateTime.Now.Hour; //get the current time
@@ -58,7 +54,37 @@
                         }
                     }</center></p2>
         </div>
-        <div class="dashboard-box-topright"><p2>Recent Feedbacks</p2></div>
+        <div class="dashboard-box-topright" style="overflow:auto">
+            <p2>
+                <center>
+                    <p2>Recent feedbacks:</p2>
+                    @if (allFeedback != null)
+                    {
+                        <p2> open activity: </p2>
+                        @foreach (var feedback in allFeedback.Where(f => f.CreatedDate > DateTime.Now.Date.AddDays(-7) && !f.Closed))
+                        {
+                            <div class="feedback-box">
+                                <h4>@feedback.Title</h4>
+                                <p><strong>@feedback.FeedbackText</strong></p>
+                                <p><strong>Open:</strong> @feedback.CreatedDate</p>
+                            </div>
+
+                        }
+
+                        <p2> closed activity: </p2>
+                        @foreach (var feedback in allFeedback.Where(f => f.CreatedDate > DateTime.Now.Date.AddDays(-7) && f.Closed))
+                        {
+                            <div class="feedback-box">
+                                <h4>@feedback.Title</h4>
+                                <p><strong>@feedback.FeedbackText</strong></p>
+                                <p><strong>Closed At:</strong> @feedback.ClosedDate</p>
+                            </div>
+
+                        }
+                    }
+                </center>
+            </p2>
+        </div>
     </div>
 
     <!-- bottom dashboard icons -->
@@ -66,86 +92,106 @@
         <div class="dashboard-box-leftcard">
             <p2>
                 <center>
-                    <p2>New Feedbacks:</p2>
+                    <p2>data / statitics</p2>
+                    @if(assignee.IsTeacher){
+                        <p2>average comnpletion rate: @completionRate</p2>
+                    }
+                </center>
+            </p2>
+        </div>
+        <div class="bottom-strip" style="overflow:auto">
+            <p2>
+                <center>
+                    <p2>Notifications:</p2>
                     @if (notifications != null)
                     {
                         @foreach (var notification in notifications)
                         {
                             <br />
                             <div class="feedback-box">
-                            <p2>Time: @notification.Timestamp.ToLocalTime() </p2>
-                            <p2> Feedback: @notification.FeedbackID </p2>
+                                <p2>Time: @notification.Timestamp.ToLocalTime() </p2>
+                                <p2> Feedback: @notification.FeedbackID </p2>
                             </div>
                         }
                     }
                 </center>
             </p2>
         </div>
-                <div class="bottom-strip"><p2>Notification</p2></div>
-                <div class="create-tab">
-                    <p2>
-                        <center><p2>Why don't you add some more feedback?</p2></center>
-                        <center><a href="/Feedback" class="btn btn-primary">Create new feedback</a></center>
-                    </p2>
-                </div>
-            </div>
+        <div class="create-tab">
+            <p2>
+                <center><p2>Why don't you add some more feedback?</p2></center>
+                <center><a href="/Feedback" class="btn btn-primary">Create new feedback</a></center>
+            </p2>
+        </div>
+    </div>
 
 
     <!-- View Feedback (anypoint in usersfeedback.razor? page structure should be discussed in a meeting) -->
     <div>
         <center><h2 style="margin-top: -20px; margin-bottom: 20px;">Your feedback</h2></center>
 
-                <h6>Feedback you are assigned to or have created.</h6>
-                @if(allFeedback!=null){
-                    @foreach (var feedback in allFeedback)
-                    {
-                        <div class="feedback-box">
-                            <h4>@feedback.Title</h4>
-                            <p><strong>@feedback.FeedbackText</strong></p>
-                            <p><strong>Completed:</strong> @feedback.Closed</p>
-                        </div>
-
-                    }
-                }
-            @if (allFeedback.Count == 0)
+        <h6>Feedback you are assigned to or have created.</h6>
+        @if(allFeedback!=null){
+            @foreach (var feedback in allFeedback)
             {
-                <p>&nbsp; &nbsp; </p>
-                <center><h3>You have no feedback to read about...</h3></center>
-                <p>&nbsp; &nbsp; </p>
-                <p>&nbsp; &nbsp; </p>
-                <center><h4>Time to create some?</h4></center>
-            }
-            else
-            {
-                <div class="bottom-prompt">
-                    <center><h4>Why don't you add some more feedback?</h4></center>
-                    <center style="margin-bottom: 5px;"><a href="/Feedback" class="btn btn-primary">Create new feedback</a></center>
+                <div class="feedback-box">
+                    <h4>@feedback.Title</h4>
+                    <p><strong>@feedback.FeedbackText</strong></p>
+                    <p><strong>Completed:</strong> @feedback.Closed</p>
                 </div>
+
             }
-        </div>
-    </div>
-
-
-    @code {
-        private FeedbackTrackerCommon.Definitions.User assignee = new FeedbackTrackerCommon.Definitions.User { };
-        private List<FeedbackTrackerCommon.Definitions.Modules> modules = new List<FeedbackTrackerCommon.Definitions.Modules> { };
-    private List<FeedbackTrackerCommon.Definitions.Notification> notifications = new List<FeedbackTrackerCommon.Definitions.Notification> { };
-        // get logged in user
-        private async Task getUser()
+        }
+        @if (allFeedback.Count == 0)
         {
-            if(JAuth.GetUser()!=null){
-                assignee = JAuth.GetUser();
-                await getModules();
-                await getNotifications();
-            }
+            <p>&nbsp; &nbsp; </p>
+            <center><h3>You have no feedback to read about...</h3></center>
+            <p>&nbsp; &nbsp; </p>
+            <p>&nbsp; &nbsp; </p>
+            <center><h4>Time to create some?</h4></center>
+        }
+        else
+        {
+            <div class="bottom-prompt">
+                <center><h4>Why don't you add some more feedback?</h4></center>
+                <center style="margin-bottom: 5px;"><a href="/Feedback" class="btn btn-primary">Create new feedback</a></center>
+            </div>
+        }
+    </div>
+</div>
 
+
+@code {
+    private string? completionRate = "not found";
+    private FeedbackTrackerCommon.Definitions.User assignee = new FeedbackTrackerCommon.Definitions.User { };
+    private List<FeedbackTrackerCommon.Definitions.Modules> modules = new List<FeedbackTrackerCommon.Definitions.Modules> { };
+    private List<FeedbackTrackerCommon.Definitions.Notification> notifications = new List<FeedbackTrackerCommon.Definitions.Notification> { };
+    // get logged in user
+    private async Task getUser()
+    {
+        if(JAuth.GetUser()!=null){
+            assignee = JAuth.GetUser();
+            await LoadFeedback();
+            await getModules();
+            if(assignee.IsTeacher){
+                await getAverageResolveTime(assignee.UserID);
+            }
+            await getNotifications();
         }
 
-        private async Task getModules(){
-            if(assignee!=null){
-                modules = await UserClient.GetModules(assignee.UserID);
-                StateHasChanged();
-            }
+        await InvokeAsync(StateHasChanged);
+
+    }
+
+    private async Task getModules(){
+        if(assignee!=null){
+            modules = await UserClient.GetModules(assignee.UserID);
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
+    private async Task getAverageResolveTime(int usrID){
+        completionRate = await UserClient.getAverageResolveTime(usrID);
     }
 
     private async Task getNotifications()
@@ -153,24 +199,43 @@
         if (assignee != null)
         {
             notifications = await UserClient.GetNotification(assignee.UserID);
-            StateHasChanged();
+            await InvokeAsync(StateHasChanged);
         }
     }
     protected override async Task OnInitializedAsync()
-    {
+    {        
+        base.OnInitialized();
         JAuth.EnforceAuth();
 
-        if (JAuth.IsAuthorised()) {        
+        userGreeting();
+        if (JAuth.IsAuthorised()) {    
+            int retryCount = 0;
+            while (JAuth.GetUser() == null && retryCount < 5)
+            {
+                await Task.Delay(500); // Wait half a second before retrying
+                retryCount++;
+            }
             try{
-            await getUser();
+                await getUser();   
             }
             catch{
 
             }
-            await LoadFeedback();
+
         }
+        StateHasChanged();
+        await InvokeAsync(StateHasChanged);
     }
 
+    protected override async Task OnAfterRenderAsync(bool firstrender)
+    {
+        if (firstrender)
+        {
+            await OnInitializedAsync();
+            StateHasChanged();
+            await InvokeAsync(StateHasChanged);
+        }
+    }
     private List<FeedbackTrackerCommon.Definitions.Feedback> allFeedback = new();
 
     // loads feedback from api
@@ -184,12 +249,7 @@
             List<FeedbackTrackerCommon.Definitions.Feedback> feedbackList = await FeedbackClientAccess.GetAssignedFeedbacks(assignee.UserID);
             if (feedbackList != null && feedbackList.Any())
             {
-                allFeedback = feedbackList.Select(fb => new FeedbackTrackerCommon.Definitions.Feedback()
-                    {
-                        Title = fb.Title,
-                        FeedbackText = fb.FeedbackText,
-                        Closed = fb.Closed
-                    }).ToList();
+                allFeedback = feedbackList;
             }
             else
             {
