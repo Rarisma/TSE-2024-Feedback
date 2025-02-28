@@ -20,7 +20,10 @@
             {
                 JAuth.Authorise(storedToken, storedUsername); // Restore session
                 StateHasChanged();
-                NavigationManager.NavigateTo("/");
+                if (JAuth.IsAuthorised())
+                {
+                    NavigationManager.NavigateTo("/");
+                }
             }
         }
     }
