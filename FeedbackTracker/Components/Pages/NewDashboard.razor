@@ -222,15 +222,7 @@
         await InvokeAsync(StateHasChanged);
     }
 
-    protected override async Task OnAfterRenderAsync(bool firstrender)
-    {
-        if (firstrender)
-        {
-            await OnInitializedAsync();
-            StateHasChanged();
-            await InvokeAsync(StateHasChanged);
-        }
-    }
+
     private List<FeedbackTrackerCommon.Definitions.Feedback> allFeedback = new();
 
     // loads feedback from api
