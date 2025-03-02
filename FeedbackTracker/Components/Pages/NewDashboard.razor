@@ -209,12 +209,7 @@
 
         userGreeting();
         if (JAuth.IsAuthorised()) {    
-            int retryCount = 0;
-            while (JAuth.GetUser() == null && retryCount < 5)
-            {
-                await Task.Delay(500); // Wait half a second before retrying
-                retryCount++;
-            }
+                await Task.Delay(50); // Wait half a second before retrying
             try{
                 await getUser();   
             }
