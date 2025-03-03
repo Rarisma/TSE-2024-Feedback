@@ -3,81 +3,67 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Core.Definitions;
 
-public class Feedback(
-    int feedbackID,
-    int? assignedUserID,
-    int assigneeID,
-    int moduleID,
-    string feedbackText,
-    bool closed,
-    string title,
-    FeedbackLabel? label,
-    FeedbackVisibility visibility,
-    DateTime? createdDate,
-    DateTime? closedDate,
-    User assignedUser,
-    User assignee,
-    Modules module)
+public class Feedback
 {
+    
     /// <summary>
     /// ID of feedback in database.
     /// </summary>
     [Key]
     [Column("Feedback_ID")]
-    public int FeedbackID { get; set; } = feedbackID;
+    public int FeedbackID { get; set; }
 
     /// <summary>
-    /// Person recieiving feedback
+    /// Person receiving feedback
     /// </summary>
-    /// 
     [Column("ASSIGNED_USER")]
-    public int? AssignedUserID { get; set; } = assignedUserID;
+    public int? AssignedUserID { get; set; }
 
     /// <summary>
     /// Person giving the feedback
     /// </summary>
     [Column("ASSIGNEE")]
-    public int AssigneeID { get; set; } = assigneeID;
+    public int AssigneeID { get; set; } 
 
     /// <summary>
     /// Associated Module
     /// </summary>
     [Column("MODULE_ID")]
-    public int ModuleID { get; set; } = moduleID;
+    public int ModuleID { get; set; }
 
     /// <summary>
     /// Body of feedback
     /// </summary>
     [Column("FEEDBACK_TEXT")]
-    public string FeedbackText { get; set; } = feedbackText;
+    public string FeedbackText { get; set; }
 
     /// <summary>
     /// Is the feedback open or closed
     /// </summary>
     [Column("COMPLETE")]
-    public bool Closed { get; set; } = closed;
+    public bool Closed { get; set; }
 
     /// <summary>
     /// Feedback title
     /// </summary>
     [Column("TITLE")]
-    public string Title { get; set; } = title;
+    public string Title { get; set; }
 
     [Column("Label")]
-    public FeedbackLabel? Label { get; set; } = label;
+    public FeedbackLabel? Label { get; set; }
 
     [Column("Visibility")]
-    public FeedbackVisibility Visibility { get; set; } = visibility;
+    public FeedbackVisibility Visibility { get; set; }
 
     [Column("CreatedDate")]
-    public DateTime? CreatedDate { get; set; } = createdDate;
+    public DateTime? CreatedDate { get; set; }
 
     [Column("ClosedDate")]
-    public DateTime? ClosedDate { get; set; } = closedDate;
+    public DateTime? ClosedDate { get; set; }
 
-    public User AssignedUser { get; set; } = assignedUser;
+    public User AssignedUser { get; set; }
 
-    public User Assignee { get; set; } = assignee;
+    public User Assignee { get; set; }
 
-    public Modules Module { get; set; } = module;
+    public Modules Module { get; set; }
 }

@@ -98,13 +98,12 @@ public class UserController(AuthService authService) : Controller
 		return await authService.AuthenticateUserAsync(username, password, code);
 	}
 
-	[HttpGet("GetUsers")]
-	public Task<string>? GetUsers()
+	[HttpGet("GetAllUsers")]
+	public Task<string>? GetAllUsers()
 	{
 		try
 		{
 			//Find accounts
-
 			using TrackerContext ctx = new();
 			List<User> accounts = ctx.User.ToList();
 			var result = accounts.ToList();
@@ -140,6 +139,7 @@ public class UserController(AuthService authService) : Controller
         }
 		catch (Exception ex) { return "Encountered an error: " + ex.Message; }
 	}
+	
 	[HttpGet("CreateTOTPKey")]
 	public async Task<StatusCodeResult> CreateTotpKey(string userId, string password)
 	{
@@ -175,7 +175,7 @@ public class UserController(AuthService authService) : Controller
 		}
 	}
 	
-	[HttpGet("Has2FA")]
+	[HttpGet("GetMfaStatus")]
 	public bool GetMfaStatus(int userId)
 	{
 		try
@@ -187,7 +187,7 @@ public class UserController(AuthService authService) : Controller
 		}
 		catch (Exception ex)
 		{
-			Log.Error(ex, "Unexpected error when getting MFA status for account: " + userId);
+			Log.Error(ex, $"Unexpected error when getting MFA status for account: {userId}" );
 			return false;
 		}
 	}
@@ -256,17 +256,17 @@ public class UserController(AuthService authService) : Controller
     /// <summary>
     /// Creates a new user object.
     /// </summary>
-    /// <param name="userid">account id</param>
+    /// <param name="userID">account id</param>
     /// <returns></returns>
     [HttpDelete("Notification")]
-    public async void NotificationDelete(int userid)
+    public async void NotificationDelete(int userID)
     {
         try
         {
 			//Add user to database
             await using TrackerContext ctx = new();
             ctx.Notification.RemoveRange(ctx.Notification
-	            .Where(notification => notification.UserID == userid));
+	            .Where(notification => notification.UserID == userID));
             await ctx.SaveChangesAsync();
 
         }

@@ -3,19 +3,19 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Core.Definitions;
 
-public class FeedbackFolders(int folderID, string userID, string feedbackID, User user, Feedback feedback)
+public class FeedbackFolders
 {
 	[Key]
 	[Column("FOLDER_ID")]
-	public int FolderID { get; set; } = folderID;
+	public int FolderID { get; set; }
 
 	[Column("USER_ID")]
-	public string UserID { get; set; } = userID;
+	public string UserID { get; set; }
 
 	[Column("FEEDBACK_ID")]
-	public string FeedbackID { get; set; } = feedbackID;
+	public string FeedbackID { get; set; }
 
-	public User User { get; set; } = user;
+	public User User { get; set; }
 
-	public Feedback Feedback { get; set; } = feedback;
+	public Feedback Feedback { get; set; }
 }

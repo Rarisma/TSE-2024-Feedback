@@ -61,8 +61,7 @@ public class FeedbackController : Controller
         }
         catch (Exception ex) { return "Encountered an error: " + ex.Message; }
     }
-
-
+    
     /// <summary>
     /// Gets feedback by its ID
     /// </summary>
@@ -124,7 +123,6 @@ public class FeedbackController : Controller
 				return "Encountered an error: " + ex.Message; }
 	}
 	
-
 	/// <summary>
 	/// Deletes a feedback from the database
 	/// </summary>
@@ -138,9 +136,7 @@ public class FeedbackController : Controller
 		var feedback = ctx.Feedback.First(f => f.FeedbackID == feedbackID);
 		ctx.Feedback.Remove(feedback);
 	}
-
-
-
+	
     /// <summary>
     /// Creates a comment
  	/// <param name="feedbackID">ID of feedback comment is for</param>
@@ -154,7 +150,10 @@ public class FeedbackController : Controller
         {
 	        if (text != null)
 	        {
-		        FeedbackComments comment = new(text, userID, feedbackID);
+		        FeedbackComments comment = new();
+		        comment.Body = text;
+		        comment.CommenterID =  userID;
+		        comment.FeedbackID = feedbackID;
 	        
 		        //Add comment to database
 		        using TrackerContext ctx = new();
@@ -169,10 +168,7 @@ public class FeedbackController : Controller
             return "Encountered an error: " + ex.Message;
         }
     }
-
-
-
-
+    
     /// <summary>
     /// Gets comments for a thread
     /// </summary>
@@ -195,7 +191,6 @@ public class FeedbackController : Controller
 			return "Encountered an error: " + e.Message;
 		}
 	}
-
 
     /// <summary>
     /// update Feedback

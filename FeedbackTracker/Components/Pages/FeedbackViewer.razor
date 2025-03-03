@@ -4,6 +4,7 @@
 @using Core.Definitions
 @using Serilog
 @inject FeedbackAPI FeedbackClientAccess
+@inject UserAPI UserAPI
 @inject JAuth JAuth
 
 @{
@@ -158,7 +159,7 @@
 
 	private async Task LoadUsers()
 	{
-		var AllUsers = await FeedbackClientAccess.GetAllUsersAsync();
+		var AllUsers = await UserAPI.GetAllUsers();
 
 		if (AllUsers != null)
 		{
@@ -230,7 +231,7 @@
 		if (FeedbackID != null && SelectedFeedback != null)
 		{
 			SelectedFeedback.Closed = !SelectedFeedback.Closed;
-			new FeedbackAPI().SetState(int.Parse(FeedbackID), SelectedFeedback.Closed);
+			new FeedbackAPI().SetStatus(int.Parse(FeedbackID), SelectedFeedback.Closed);
 		}
 	}
 	

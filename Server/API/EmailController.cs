@@ -10,16 +10,16 @@ namespace Server.API
 	{
 
 		[HttpPost("SendEmail")]
-		public async Task<IActionResult> SendEmail([FromBody] string ReceivingAddress)
+		public async Task<IActionResult> SendEmail([FromBody] string? receivingAddress)
 		{
 			await using TrackerContext ctx = new();
-			User? account = ctx.User.FirstOrDefault(user => user.Email == ReceivingAddress);
+			User? account = ctx.User.FirstOrDefault(user => user.Email == receivingAddress);
 			if (account == null)
 			{
 				return StatusCode(400, "Failed to store code");
 			}
-			string escapeEmail = Uri.EscapeDataString(ReceivingAddress);
-			Random random = new Random();
+			string escapeEmail = Uri.EscapeDataString(receivingAddress);
+			Random random = new();
 			string code = string.Empty;
 			for (int i = 0; i < 6; i++)
 			{
@@ -27,7 +27,7 @@ namespace Server.API
 				code += num;
 			}
 
-			bool codeStored = await AddCodeToDb(code, ReceivingAddress);
+			bool codeStored = await AddCodeToDb(code, receivingAddress);
 			if (codeStored == false)
 			{
 				return StatusCode(400, "Failed to store code");
@@ -44,12 +44,12 @@ namespace Server.API
 			                        </html>
 			                    """;
 			
-			if (string.IsNullOrEmpty(ReceivingAddress))
+			if (string.IsNullOrEmpty(receivingAddress))
 			{
 				return StatusCode(400, "Email Address Missing");
 			}
 
-			await EmailSending.SendEmailAsync(ReceivingAddress, emailBody, "Password Reset");
+			await EmailSending.SendEmailAsync(receivingAddress, emailBody, "Password Reset");
 			return StatusCode(200);
 		}
         [HttpGet("AddCodeToDB")]
@@ -75,18 +75,19 @@ namespace Server.API
 			}
 		}
 		[HttpDelete("CheckAndDeleteCode")]
-		public async Task<IActionResult> CheckAndDeleteCode(string InputtedCode)
+		public async Task<IActionResult> CheckAndDeleteCode(string inputtedCode)
 		{
-			using TrackerContext Ctx = new();
-			CodeStorage? Storage = Ctx.CodeStorage.FirstOrDefault(CodeStorage => CodeStorage.CheckCode == InputtedCode);
-			if (Storage == null)
+			await using TrackerContext ctx = new();
+			CodeStorage? storage = ctx.CodeStorage.FirstOrDefault(codeStorage =>
+				codeStorage.CheckCode == inputtedCode);
+			if (storage == null)
 			{
 				return StatusCode(400, "Inputted Code Doesn't Match");
 			}
 			else
 			{
-				Ctx.CodeStorage.Remove(Storage);
-				await Ctx.SaveChangesAsync();
+				ctx.CodeStorage.Remove(storage);
+				await ctx.SaveChangesAsync();
 				return StatusCode(200,"CODE DELETED");
 			}
 		}

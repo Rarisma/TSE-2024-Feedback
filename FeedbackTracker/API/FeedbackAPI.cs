@@ -13,12 +13,13 @@ public class FeedbackAPI
 	/// <summary>
 	/// Get all feedbacks for the user.
 	/// </summary>
-	public async Task<List<Feedback>?> GetAssignedFeedbacks(int? userID)
+	public async Task<List<Feedback>?> GetAssignedFeedbacks(int userID)
 	{
 		try
 		{
 			//Hit Endpoint
-			HttpResponseMessage response = await _httpClient.GetAsync($"Feedback/GetAssignedFeedbacks?UserID={userID}");
+			HttpResponseMessage response = await _httpClient.GetAsync(
+				$"Feedback/GetAssignedFeedbacks?userID={userID}");
 			response.EnsureSuccessStatusCode();
 
 			//Deserialize
@@ -39,7 +40,7 @@ public class FeedbackAPI
 	{
 		try
 		{
-			HttpResponseMessage response = await _httpClient.GetAsync($"Feedback/GetFeedbackByID?FeedbackID={feedbackID}");
+			HttpResponseMessage response = await _httpClient.GetAsync($"Feedback/GetFeedbackByID?feedbackID={feedbackID}");
 			response.EnsureSuccessStatusCode();
 			string jsonString = await response.Content.ReadAsStringAsync();
 			return JsonSerializer.Deserialize<Feedback>(jsonString);
@@ -60,7 +61,7 @@ public class FeedbackAPI
 		{
 			//Serialise
 			string jsonContent = JsonSerializer.Serialize(feedback);
-			StringContent content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+			StringContent content = new(jsonContent, Encoding.UTF8, "application/json");
 
 			//Send
 			HttpResponseMessage response = await _httpClient.PostAsync("Feedback/CreateFeedback", content);
@@ -81,7 +82,8 @@ public class FeedbackAPI
 	{
 		try
 		{
-			HttpResponseMessage response = await _httpClient.DeleteAsync($"Feedback/DeleteFeedback?FeedbackID={feedbackID}");
+			HttpResponseMessage response = await _httpClient.DeleteAsync(
+				$"Feedback/DeleteFeedback?feedbackID={feedbackID}");
 			response.EnsureSuccessStatusCode();
 			return await response.Content.ReadAsStringAsync();
 		}
@@ -105,9 +107,10 @@ public class FeedbackAPI
         try
         {
 	        //Format for server
-            StringContent commentText = new StringContent($"\"{text}\"", Encoding.UTF8, "application/json");
+            StringContent commentText = new($"\"{text}\"", Encoding.UTF8, "application/json");
             HttpResponseMessage response = await _httpClient.PostAsync(
-	            $"Feedback/CreateComment?FeedbackID={feedbackID}&UserID={userID}", commentText);
+	            $"Feedback/CreateComment?feedbackID={feedbackID}" +
+	            $"&userID={userID}", commentText);
             
             //Send
             response.EnsureSuccessStatusCode();
@@ -119,8 +122,7 @@ public class FeedbackAPI
             return $"Encountered an error: {ex.Message}";
         }
     }
-
-
+	
     /// <summary>
     /// Gets comments for a thread.
     /// </summary>
@@ -128,7 +130,8 @@ public class FeedbackAPI
 	{
 		try
 		{
-			HttpResponseMessage response = await _httpClient.GetAsync($"Feedback/GetComments?FeedbackID={feedbackID}");
+			HttpResponseMessage response = await _httpClient.GetAsync(
+				$"Feedback/GetComments?feedbackID={feedbackID}");
 			response.EnsureSuccessStatusCode();
 			string jsonString = await response.Content.ReadAsStringAsync();
 			return JsonSerializer.Deserialize<List<FeedbackComments>>(jsonString);
@@ -136,24 +139,6 @@ public class FeedbackAPI
 		catch (Exception ex)
 		{
 			Log.Error(ex, $"Exception getting comments for feedback id={feedbackID}");
-			return null;
-		}
-	}
-
-
-	public async Task<List<User>?> GetAllUsersAsync()
-	{
-		try
-		{
-			HttpResponseMessage response = await _httpClient.GetAsync("User/GetUsers");
-			response.EnsureSuccessStatusCode();
-			string jsonString = await response.Content.ReadAsStringAsync();
-			var users = JsonSerializer.Deserialize<List<User>?>(jsonString);
-			return await Task.FromResult(users);
-		}
-		catch (Exception ex)
-		{
-			Log.Error(ex, "Exception getting users");
 			return null;
 		}
 	}
@@ -167,9 +152,11 @@ public class FeedbackAPI
         {
             //Serialise
             string jsonContent = JsonSerializer.Serialize(feedback);
-            StringContent content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+            StringContent content = new(jsonContent, Encoding.UTF8, "application/json");
+            
             //Send
-            HttpResponseMessage response = await _httpClient.PutAsync("Feedback/Feedback", content);
+            HttpResponseMessage response = await _httpClient.PutAsync("Feedback/Feedback",
+	            content);
             response.EnsureSuccessStatusCode();
 			await response.Content.ReadAsStringAsync();
         }
@@ -184,10 +171,10 @@ public class FeedbackAPI
     /// </summary>
     /// <param name="FeedbackID">ID of feedback</param>
     /// <param name="State">True to close, false to open.</param>
-    public async void SetState(int FeedbackID, bool State)
+    public async void SetStatus(int FeedbackID, bool State)
     {
 	    HttpResponseMessage response = await _httpClient.GetAsync("Feedback/SetStatus?" +
-	                                                              $"ID={FeedbackID}&IsOpen={State}");
+	                                                              $"id={FeedbackID}&isOpen={State}");
 	    response.EnsureSuccessStatusCode();
     }
 }

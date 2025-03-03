@@ -193,12 +193,8 @@
                     await FeedbackClientAccess.GetAssignedFeedbacks(_assignee.UserID);
                 if (feedbackList != null && feedbackList.Any())
                 {
-                    _allFeedback = feedbackList.Select(fb => new Core.Definitions.Feedback()
-                    {
-                        Title = fb.Title,
-                        FeedbackText = fb.FeedbackText,
-                        Closed = fb.Closed
-                    }).ToList();
+
+                    _allFeedback = feedbackList;
                 }
                 else
                 {

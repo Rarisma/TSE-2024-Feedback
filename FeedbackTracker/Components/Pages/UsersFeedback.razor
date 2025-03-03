@@ -277,7 +277,7 @@
 
         if (notifications.Count > 0)
         {
-            await UserClientAccess.DeleteNotification(JAuth.GetUser().UserID);
+            await UserClientAccess.NotificationDelete(JAuth.GetUser().UserID);
 
         }
     }

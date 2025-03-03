@@ -19,7 +19,8 @@ public class UserAPI
 	{
 		try
 		{
-			HttpResponseMessage response = await _httpClient.GetAsync($"User/GetUserByID?ID={id}");
+			HttpResponseMessage response = await _httpClient.GetAsync(
+				$"User/GetUserByID?id={id}");
 			response.EnsureSuccessStatusCode();
 			string jsonString = await response.Content.ReadAsStringAsync();
 			return JsonSerializer.Deserialize<User>(jsonString);
@@ -38,7 +39,8 @@ public class UserAPI
 	{
 		try
 		{
-			var response = await _httpClient.GetAsync($"User/GetUserByUsername?Username={Uri.EscapeDataString(username)}");
+			var response = await _httpClient.GetAsync(
+				$"User/GetUserByUsername?username={Uri.EscapeDataString(username)}");
 			response.EnsureSuccessStatusCode();
 			string jsonString = await response.Content.ReadAsStringAsync();
 			return JsonSerializer.Deserialize<User>(jsonString);
@@ -57,9 +59,9 @@ public class UserAPI
 	{
 		try
 		{
-			string url = $"User/CreateUser?Username={Uri.EscapeDataString(username)}" +
-						 $"&Password={Uri.EscapeDataString(password)}" +
-						 $"&Email={Uri.EscapeDataString(email)}";
+			string url = $"User/CreateUser?username={Uri.EscapeDataString(username)}" +
+						 $"&password={Uri.EscapeDataString(password)}" +
+						 $"&email={Uri.EscapeDataString(email)}";
 			HttpResponseMessage response = await _httpClient.PostAsync(url, null);
 			response.EnsureSuccessStatusCode();
 			await response.Content.ReadAsStringAsync();
@@ -76,15 +78,15 @@ public class UserAPI
 	/// <param name="username">Username</param>
 	/// <param name="password">Password</param>
 	/// <param name="code">MFA Code (Optional)</param>
-	/// <returns>JWT if authentication is successful, otherwise, "".</returns>
+    /// <returns>Boolean indicating success.</returns>
 	public async Task<string> Authenticate(string username, string password, string code)
 	{
 		try
 		{
 			// Send login request.
 			HttpResponseMessage response = await _httpClient.GetAsync(
-				$"User/Authenticate?Username={Uri.EscapeDataString(username)}" +
-				$"&Password={Uri.EscapeDataString(password)}&Code={code}");
+				$"User/Authenticate?username={Uri.EscapeDataString(username)}" +
+				$"&password={Uri.EscapeDataString(password)}&code={code}");
 
 			response.EnsureSuccessStatusCode();
 			// Read the JWT token from the response
@@ -97,39 +99,18 @@ public class UserAPI
 			return string.Empty;
 		}
 	}
-
-    /// <summary>
-    /// return users modules
-    /// </summary>
-    public async Task<List<Modules?>?> GetModules(int user)
-    {
-        try
-        {
-            var response = await _httpClient.GetAsync(
-	            $"User/GetModules?Userid={Uri.EscapeDataString(user.ToString())}");
-            response.EnsureSuccessStatusCode();
-            string jsonString = await response.Content.ReadAsStringAsync();
-            return JsonSerializer.Deserialize<List<Modules?>?>(jsonString);
-        }
-        catch (Exception ex)
-        {
-	        Log.Error(ex, "Failed to get modules");
-            return null;
-        }
-
-    }
     
     /// <summary>
     /// Enables 2FA for account
     /// </summary>
     /// <param name="userID">Account ID to enable 2FA for</param>
     /// <param name="password">Password for verification</param>
-    /// <returns></returns>
-    public async Task<bool> Enable2FA(string userID, string password)
+    /// <returns>Boolean indicating success.</returns>
+    public async Task<bool> CreateTotpKey(string userID, string password)
     {
 	    try
 	    {
-		    var endpoint = $"User/CreateTOTPKey?UserID={Uri.EscapeDataString(userID)}&Password={Uri.EscapeDataString(password)}";
+		    var endpoint = $"User/CreateTOTPKey?userId={Uri.EscapeDataString(userID)}&password={Uri.EscapeDataString(password)}";
 		    var response = await _httpClient.GetAsync(endpoint);
 		    response.EnsureSuccessStatusCode();
 		    return true;
@@ -145,7 +126,7 @@ public class UserAPI
     {
 	    try 
 	    {
-		    var endpoint = $"User/GetMfaStatus?UserID={userID}";
+		    var endpoint = $"User/GetMfaStatus?userId={userID}";
 		    var response = await _httpClient.GetAsync(endpoint);
 		    response.EnsureSuccessStatusCode();
 		    return bool.Parse(await response.Content.ReadAsStringAsync());
@@ -164,7 +145,8 @@ public class UserAPI
     {
         try
         {
-            HttpResponseMessage response = await _httpClient.GetAsync($"User/Notification?Userid={Uri.EscapeDataString(user.ToString())}");
+            HttpResponseMessage response = await _httpClient.GetAsync(
+	            $"User/Notification?userid={Uri.EscapeDataString(user.ToString())}");
             response.EnsureSuccessStatusCode();
             string jsonString = await response.Content.ReadAsStringAsync();
             return JsonSerializer.Deserialize<List<Notification?>?>(jsonString);
@@ -179,12 +161,12 @@ public class UserAPI
 	/// <summary>
 	/// Add new notification
 	/// </summary>
-	public async Task NewNotification(int userID, int feedbackID)
+	public async Task NotificationPost(int userID, int feedbackID)
 	{
 		try
 		{
-			string url = $"User/Notification?Userid={Uri.EscapeDataString(userID.ToString())}" +
-						 $"&FeedbackID={Uri.EscapeDataString(feedbackID.ToString())}";
+			string url = $"User/Notification?userid={Uri.EscapeDataString(userID.ToString())}" +
+						 $"&feedbackId={Uri.EscapeDataString(feedbackID.ToString())}";
 			HttpResponseMessage response = await _httpClient.PostAsync(url, null);
 			response.EnsureSuccessStatusCode();
 			await response.Content.ReadAsStringAsync();
@@ -195,14 +177,14 @@ public class UserAPI
 		}
 	}
 
-            /// <summary>
-            /// Delete notification store
-            /// </summary>
-    public async Task DeleteNotification(int userID)
+    /// <summary>
+    /// Delete notification store
+    /// </summary>
+    public async Task NotificationDelete(int userID)
     {
         try
         {
-            string url = $"User/Notification?Userid={Uri.EscapeDataString(userID.ToString())}";
+            string url = $"User/Notification?userID={Uri.EscapeDataString(userID.ToString())}";
             using var response = await _httpClient.DeleteAsync(url);
             response.EnsureSuccessStatusCode();
             await response.Content.ReadAsStringAsync();
@@ -222,8 +204,8 @@ public class UserAPI
 	{
 		try
 		{
-			string url = $"User/UpdatePassword?Email={Uri.EscapeDataString(email)}" +
-			 $"&Password={Uri.EscapeDataString(password)}";
+			string url = $"User/UpdatePassword?email={Uri.EscapeDataString(email)}" +
+			 $"&password={Uri.EscapeDataString(password)}";
 			HttpResponseMessage response = await _httpClient.PutAsync(url, null);
 			response.EnsureSuccessStatusCode();
 			await response.Content.ReadAsStringAsync();
@@ -234,4 +216,40 @@ public class UserAPI
 			Log.Error(ex, $"Error updating password");
 		}
 	}
+	
+	public async Task<List<User>?> GetAllUsers()
+	{
+		try
+		{
+			HttpResponseMessage response = await _httpClient.GetAsync("User/GetAllUsers");
+			response.EnsureSuccessStatusCode();
+			string jsonString = await response.Content.ReadAsStringAsync();
+			var users = JsonSerializer.Deserialize<List<User>?>(jsonString);
+			return await Task.FromResult(users);
+		}
+		catch (Exception ex)
+		{
+			Log.Error(ex, "Exception getting users");
+			return null;
+		}
+	}
+	/// <summary>
+	/// return users modules
+	/// </summary>
+	public async Task<List<Modules?>?> GetModules(int user)
+	{
+		try
+		{
+			var response = await _httpClient.GetAsync(
+				$"User/GetModules?userid={Uri.EscapeDataString(user.ToString())}");
+			response.EnsureSuccessStatusCode();
+			string jsonString = await response.Content.ReadAsStringAsync();
+			return JsonSerializer.Deserialize<List<Modules?>?>(jsonString);
+		}
+		catch (Exception ex)
+		{
+			Log.Error(ex, "Failed to get modules");
+			return null;
+		}
+	}	
 }

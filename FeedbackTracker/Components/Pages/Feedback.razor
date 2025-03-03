@@ -201,19 +201,19 @@ else
     // sendFeedback function
     private async void SendFeedback()
     {
-
         //Create feedback object
-        Core.Definitions.Feedback fb = new(_assignedUserID, _assignee.UserID, _moduleID, _text, false, _title)
+        Core.Definitions.Feedback fb = new Core.Definitions.Feedback
         {
-            // fb.FeedbackID; Feedback ID auto increment on insert
-            AssignedUserID = _assignedUserID, // ID of user the feedback is assigned to.
-            AssigneeID = _assignee.UserID, // ID of user that's logged in 
-            ModuleID = _moduleID, // ID of associated module
-            FeedbackText = _text, // text of feedback
-            Closed = false, // Feedback starts open (close would be completed)
-            Title = _title // Name of feedback
+            AssignedUserID = _assignedUserID,
+            AssigneeID = _assignee.UserID,
+            ModuleID = _moduleID,
+            FeedbackText = _text,
+            Closed = false,
+            Title = _title,
+            Label = (FeedbackLabel?)_label,
+            Visibility = (FeedbackVisibility)_visibility,
+            CreatedDate = DateTime.Now
         };
-
         // Send to API
         Log.Information("Feedback Created: {fb}", fb.Title);
         await new FeedbackAPI().CreateFeedback(fb);

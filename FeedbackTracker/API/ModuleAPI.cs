@@ -40,7 +40,7 @@ public class ModuleAPI
     {
         try
         {
-            HttpResponseMessage response = await _httpClient.GetAsync($"Module/GetModuleByID?ID={id}");
+            HttpResponseMessage response = await _httpClient.GetAsync($"Module/GetModuleByID?id={id}");
             response.EnsureSuccessStatusCode();
             string jsonString = await response.Content.ReadAsStringAsync();
             return JsonSerializer.Deserialize<Modules>(jsonString);
@@ -59,7 +59,8 @@ public class ModuleAPI
     {
         try
         {
-            HttpResponseMessage response = await _httpClient.GetAsync($"Module/GetModuleByName?Name={Uri.EscapeDataString(name)}");
+            HttpResponseMessage response = await _httpClient.GetAsync(
+                $"Module/GetModuleByName?name={Uri.EscapeDataString(name)}");
             response.EnsureSuccessStatusCode();
             string jsonString = await response.Content.ReadAsStringAsync();
             return JsonSerializer.Deserialize<Modules>(jsonString);
@@ -77,7 +78,8 @@ public class ModuleAPI
     {
         try
         {
-            HttpResponseMessage response = await _httpClient.GetAsync($"Module/GetUsersInModule?ModuleID={Uri.EscapeDataString(moduleID.ToString())}");
+            HttpResponseMessage response = await _httpClient.GetAsync(
+                $"Module/GetUsersInModule?moduleID={Uri.EscapeDataString(moduleID.ToString())}");
             response.EnsureSuccessStatusCode();
             string jsonString = await response.Content.ReadAsStringAsync();
             return JsonSerializer.Deserialize<List<User?>>(jsonString);
@@ -108,5 +110,4 @@ public class ModuleAPI
             return new();
         }
     }
-    
 }

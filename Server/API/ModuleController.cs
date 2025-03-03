@@ -35,9 +35,7 @@ public class ModuleController : Controller
             return "Encountered an error: " + ex.Message;
         }
     }
-
-
-
+    
     /// <summary>
     /// Get Module by ID
     /// </summary>
@@ -112,6 +110,7 @@ public class ModuleController : Controller
     /// Gets all modules
     /// </summary>
     /// <returns>Every Module.</returns>
+    [HttpGet("GetAllModules")]
     public async Task<List<Modules>> GetAllModules()
     {
         try
