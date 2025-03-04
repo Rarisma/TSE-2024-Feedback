@@ -5,15 +5,15 @@ namespace FeedbackTrackerCommon.Definitions;
     public class School
 {
     [Key]
-    [Column("ID")]
+    [Column("Id")]
     public int Id { get; set; }
 
-    [Column("SCHOOL_NAME")]
+    [Column("SchoolName")]
     public string SchoolName { get; set; }
 
-    [Column("EDUCATION_LEVEL")]
+    [Column("Education_Level")]
     public string EducationLevel { get; set; }
 
-    [Column("CITY")]
+    [Column("City")]
     public string City { get; set; }
 }
