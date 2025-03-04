@@ -89,14 +89,14 @@
                     }
                     //NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);        
                     // if logged in
-                    if (auth.IsAuthorised())
+                    if (Auth.IsAuthorised())
                     {
                         await Task.Delay(50); // ensure delay to allow for user to be correctly loaded
-                        user = auth.GetUser();
+                        user = Auth.GetUser();
                         // check if user has new feedback
 
                         if (user != null){
-                            List<FeedbackTrackerCommon.Definitions.Notification?>? notifications = await UserCLient.GetNotification(user.UserID);
+                            List<Core.Definitions.Notification?>? notifications = await UserClient.GetNotification(user.UserID);
 
                             if (notifications.Count > 0){
 

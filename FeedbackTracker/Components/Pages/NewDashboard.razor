@@ -249,9 +249,9 @@
         }
     }
     private string? completionRate = "not found";
-    private FeedbackTrackerCommon.Definitions.User assignee = new FeedbackTrackerCommon.Definitions.User { };
-    private List<FeedbackTrackerCommon.Definitions.Modules> modules = new List<FeedbackTrackerCommon.Definitions.Modules> { };
-    private List<FeedbackTrackerCommon.Definitions.Notification> notifications = new List<FeedbackTrackerCommon.Definitions.Notification> { };
+    private User assignee = new() { };
+    private List<Modules> modules = new() { };
+    private List<Notification> notifications = new() { };
     private int openCount = 0;
     private async Task countOpenFeedback()
     {
@@ -299,17 +299,17 @@
         completionRate = await UserClient.getAverageResolveTime(usrID);
     }
 
-    private List<FeedbackTrackerCommon.Definitions.Feedback> notfiFB = new();
+    private List<Core.Definitions.Feedback> notfiFB = new();
     private async Task getNotifications()
 
     {
-        if (_assignee != null)
+        if (assignee != null)
         {
 
             notifications = await UserClient.GetNotification(assignee.UserID);
             foreach (var notification in notifications)
             {
-                FeedbackTrackerCommon.Definitions.Feedback tempFB = await FeedbackClientAccess.GetFeedbackByID(notification.FeedbackID);
+                Core.Definitions.Feedback tempFB = await FeedbackClientAccess.GetFeedbackByID(notification.FeedbackID);
                 notfiFB.Add(tempFB);
             }
             await InvokeAsync(StateHasChanged);
@@ -343,7 +343,7 @@
 
 
 
-    private List<FeedbackTrackerCommon.Definitions.Feedback> allFeedback = new();
+    private List<Core.Definitions.Feedback> allFeedback = new();
 
 
     // loads feedback from api
@@ -352,11 +352,9 @@
         try
         {
 
-            //List<FeedbackTrackerCommon.Definitions.Feedback> feedbackList =
-            //await FeedbackClientAccess.GetAssignedFeedbacks(JAuth.GetUser().UserID) ??
-            //new List<FeedbackTrackerCommon.Definitions.Feedback>();
+            List<Core.Definitions.Feedback> feedbackList = await FeedbackClientAccess.GetAssignedFeedbacks(JAuth.GetUser().UserID) ?? new List<Core.Definitions.Feedback>();
 
-            if (_assignee != null)
+            if (assignee != null)
             {
 
                 allFeedback = feedbackList;
