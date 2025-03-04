@@ -1,0 +1,39 @@
+name: Test FeedbackTracker
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+      - Actions
+  pull_request:
+    branches:
+      - main
+      - dev
+      - Actions
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        project: [FeedbackTracker, FeedbackTrackerCommon, Server]
+
+    steps:
+      - name: Check Code
+        uses: actions/checkout@v4
+
+      - name: .Net
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '9.0.x'
+
+      - name: Restore Dependencies
+        run: dotnet restore FeedbackTracker/FeedbackTracker.sln
+
+      - name: Build
+        run: dotnet build FeedbackTracker/FeedbackTracker.sln --no-restore
+
+      - name: Test
+        run: dotnet test FeedbackTracker/FeedbackTracker.sln --no-build --verbosity normal
+      
