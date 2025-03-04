@@ -62,7 +62,7 @@ public class UserController(AuthService authService) : Controller
 	/// <param name="Password">Account password (in plaintext)</param>
 	/// <returns></returns>
 	[HttpPost("CreateUser")]
-	public async void CreateUser(string Username, string Password, string Email)
+	public async void CreateUser(string Username, string Password, string Email, string School)
 	{
 		try
 		{
@@ -75,6 +75,7 @@ public class UserController(AuthService authService) : Controller
 				IsStudent = true,
 				IsTeacher = false,
 				Email = Email,
+				School = School,
 			};
 
 

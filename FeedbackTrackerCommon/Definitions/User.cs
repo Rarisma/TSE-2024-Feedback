@@ -44,4 +44,7 @@ public class User
 
 	[Column("TOTP")]
 	public string? MFASecret { get; set; }
+
+    [Column("School")]
+    public string School { get; set; }
 }

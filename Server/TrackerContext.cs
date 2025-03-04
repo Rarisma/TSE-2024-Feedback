@@ -20,6 +20,7 @@ public class TrackerContext(
 	
     public DbSet<Notification> Notification { get; set; }
 	public DbSet<CodeStorage> CodeStorage { get; set; }
+	public DbSet<School> School { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 	{
