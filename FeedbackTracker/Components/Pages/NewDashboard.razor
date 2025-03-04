@@ -1,10 +1,213 @@
 ﻿@page "/"
-@rendermode InteractiveServer  
+@rendermode InteractiveServer
 @inject JAuth JAuth
 @using Application.API
 @using FeedbackTrackerCommon.Definitions
 @inject FeedbackAPI FeedbackClientAccess
 @inject UserAPI UserClient
+
+<div class="dashboard-header text-center">
+    <div class="container">
+        <div class="greeting">
+            <i class="fas fa-moon"></i> @welcomeMessage, @assignee.Username  @welcomeSymbol
+        </div>
+        <div class="dashboard-title">DASHBOARD</div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        <!-- Feedback Column -->
+        <div class="col-lg-8">
+            <!-- Feedback Card 1 -->
+            <div class="card feedback-card">
+                <div class="card-body flex-row feedback-card">
+                    <div class="card-header">
+                        ~~ Past 7 days activity ~~
+                    </div>
+                    @if (allFeedback != null)
+                    {
+
+                        <div class="card-header">
+                            <i class="bi bi-chat-square-text me-2"></i> Opening feedback activity
+                        </div>
+                        <div class="card-body feedback-card-item">
+                            @foreach (var feedback in allFeedback.Where(f => f.CreatedDate > DateTime.Now.Date.AddDays(-7) && !f.Closed))
+                            {
+                                <div class="feedback-item">
+                                    <h4 class="feedback-card-item-title">@feedback.Title</h4>
+                                    <div class="d-flex justify-content-between">
+                                        <div class="feedback-card-item-text">
+                                            <p>@feedback.FeedbackText</p>
+                                        </div>
+                                        <div class="flex-column justify-content-between">
+                                            <div class="feedback-date">
+                                                <p><strong>Opened:</strong> @feedback.CreatedDate <i class="bi bi-calendar me-1"></i></p>
+                                            </div>
+
+                                            <center style="margin-bottom: 5px;"><a h href="@($"/viewfeedback/{feedback.FeedbackID}")" class="btn btn-primary">View <i class="bi bi-arrow-bar-up"></i></a></center>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            }
+                        </div>
+
+                        <div class="card-header">
+                            <i class="bi bi-chat-square-text me-2"></i> Closing feedback activity
+                        </div>
+                        <div class="card-body feedback-card-item">
+                            @foreach (var feedback in allFeedback.Where(f => f.CreatedDate > DateTime.Now.Date.AddDays(-7) && f.Closed))
+                            {
+                                <div class="feedback-item">
+                                    <h4 class="feedback-card-item-title">@feedback.Title</h4>
+                                    <div class="d-flex justify-content-between">
+                                        <div class="feedback-card-item-text">
+                                            <p>@feedback.FeedbackText</p>
+                                        </div>
+                                        <div class="flex-column justify-content-between">
+                                            <div class="feedback-date">
+                                                <p><strong>Closed At:</strong> @feedback.ClosedDate <i class="bi bi-calendar me-1"></i></p>
+                                            </div>
+                                            <center style="margin-bottom: 5px;"><a h href="@($"/viewfeedback/{feedback.FeedbackID}")" class="btn btn-primary">View <i class="bi bi-arrow-bar-up"></i></a></center>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Action Card -->
+            <div class="card action-card">
+                <div class="card-body text-center d-flex flex-column justify-content-center">
+                    <h4 class="mb-4">Why don't you add some more feedback?</h4>
+                    <center style="margin-bottom: 5px;"><a href="/Feedback" class="btn btn-create btn-primary">Create new feedback <i class="bi bi-plus-lg me-2"></i></a></center>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Modules Card -->
+        <div class="col-lg-4 justify-content-around">
+            <div class="card modules-card">
+                <div class="card-header d-flex align-items-center">
+                    <div class="icon-container">
+                        <i class="bi bi-book"></i>
+                    </div>
+                    <span>Current Modules</span>
+                </div>
+                <div class="card-body">
+                    @if (modules != null)
+                    {
+                        @foreach (var module in modules)
+                        {
+                            <div class="module-item">
+                                <p2>@module.Module</p2>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="module-item">
+                            <p2>no modules</p2>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Stats Card -->
+            <div class="card stats-card">
+                <div class="card-header d-flex align-items-center">
+                    <div class="icon-container">
+                        <i class="bi bi-graph-up"></i>
+                    </div>
+                    <span>Statistics</span>
+                </div>
+                <div class="card-body text-center">
+
+                    @if (assignee.IsTeacher)
+                    {
+                        <div class="flex-column">
+                            <div class="border-bottom">
+                                <p2 class="completion-rate">Average feedback close time: @completionRate days</p2>
+                            </div>
+                            <div class="border-bottom">
+                                <p2 class="completion-rate"> Current open feedbacks: @openCount</p2>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Notifications Card -->
+            <div class="card notification-card">
+                <div class="card-header">
+                    <i class="bi bi-bell me-2"></i>Notifications
+                </div>
+                <div class="card-body">
+                    @if (notifications != null && notifications.Count > 0)
+                    {
+                        @foreach (var notification in notifications)
+                        {
+                            <div class="notification-item">
+                                @foreach (var fb in notfiFB.Where(f => f.FeedbackID == notification.FeedbackID))
+                                {
+                                    <div>@fb.Title</div>
+                                }
+                                <div><i class="bi bi-clock me-1"></i> Time: @notification.Timestamp.ToLocalTime()</div>
+
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="notification-item">
+                            <div>No notifications!</div>
+                        </div>
+                    }
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="row">
+    <center><h2 style="margin-top: -20px; margin-bottom: 20px;">Your feedback</h2></center>
+
+    <h6>Feedback you are assigned to or have created.</h6>
+    @if (allFeedback != null)
+    {
+        @foreach (var feedback in allFeedback)
+        {
+            <div class="feedback-box">
+                <h4>@feedback.Title</h4>
+                <p><strong>@feedback.FeedbackText</strong></p>
+                <p><strong>Completed:</strong> @feedback.Closed</p>
+            </div>
+
+        }
+    }
+    @if (allFeedback.Count == 0)
+    {
+        <p>&nbsp; &nbsp; </p>
+        <center><h3>You have no feedback to read about...</h3></center>
+        <p>&nbsp; &nbsp; </p>
+        <p>&nbsp; &nbsp; </p>
+        <center><h4>Time to create some?</h4></center>
+    }
+    else
+    {
+        <div class="bottom-prompt">
+            <center><h4>Why don't you add some more feedback?</h4></center>
+            <center style="margin-bottom: 5px;"><a href="/Feedback" class="btn btn-primary">Create new feedback</a></center>
+        </div>
+    }
+</div>
 
 
 @code {
@@ -12,10 +215,12 @@
     private string welcomeSymbol { get; set; }
 
 
-    private void userGreeting() {
+    private void userGreeting()
+    {
         var currentTime = DateTime.Now.Hour; //get the current time
 
-        if (currentTime < 12) {
+        if (currentTime < 12)
+        {
             welcomeMessage = "Good Morning";
             welcomeSymbol = "☀️";
         }
@@ -24,196 +229,90 @@
             welcomeMessage = "Good Afternoon";
             welcomeSymbol = "☕";
         }
-        else {
+        else
+        {
             welcomeMessage = "Have a Good Evening";
             welcomeSymbol = "🌃";
         }
     }
-}
-
-
-<div class="intro-msg-container">
-    <h3 class="intro-msg">@welcomeMessage, @assignee.Username  @welcomeSymbol</h3>
-</div>
-
-
-<div>
-    <br><br />
-    <center><h2 style="margin-top: 60px;">Dashboard</h2></center>
-
-    <!-- top dash icons -->
-    <div class="dash-container-top">
-        <div class="dashboard-box-topleft">
-			<p2>
-				<center>
-            <p2>Current modules:</p2>
-            @if(modules!=null){
-                        @foreach(var module in modules){
-                            <br />
-                            <p2>@module.Module</p2>
-                        }
-                    }</center></p2>
-        </div>
-        <div class="dashboard-box-topright" style="overflow:auto">
-            <p2>
-                <center>
-                    <p2>Recent feedbacks:</p2>
-                    @if (allFeedback != null)
-                    {
-                        <p2> open activity: </p2>
-                        @foreach (var feedback in allFeedback.Where(f => f.CreatedDate > DateTime.Now.Date.AddDays(-7) && !f.Closed))
-                        {
-                            <div class="feedback-box">
-                                <h4>@feedback.Title</h4>
-                                <p><strong>@feedback.FeedbackText</strong></p>
-                                <p><strong>Open:</strong> @feedback.CreatedDate</p>
-                            </div>
-
-                        }
-
-                        <p2> closed activity: </p2>
-                        @foreach (var feedback in allFeedback.Where(f => f.CreatedDate > DateTime.Now.Date.AddDays(-7) && f.Closed))
-                        {
-                            <div class="feedback-box">
-                                <h4>@feedback.Title</h4>
-                                <p><strong>@feedback.FeedbackText</strong></p>
-                                <p><strong>Closed At:</strong> @feedback.ClosedDate</p>
-                            </div>
-
-                        }
-                    }
-                </center>
-            </p2>
-        </div>
-    </div>
-
-    <!-- bottom dashboard icons -->
-    <div class="dash-container-top">
-        <div class="dashboard-box-leftcard">
-            <p2>
-                <center>
-                    <p2>data / statitics</p2>
-                    @if(assignee.IsTeacher){
-                        <p2>average comnpletion rate: @completionRate</p2>
-                    }
-                </center>
-            </p2>
-        </div>
-        <div class="bottom-strip" style="overflow:auto">
-            <p2>
-                <center>
-                    <p2>Notifications:</p2>
-                    @if (notifications != null)
-                    {
-                        @foreach (var notification in notifications)
-                        {
-                            <br />
-                            <div class="feedback-box">
-                                <p2>Time: @notification.Timestamp.ToLocalTime() </p2>
-                                <p2> Feedback: @notification.FeedbackID </p2>
-                            </div>
-                        }
-                    }
-                </center>
-            </p2>
-        </div>
-        <div class="create-tab">
-            <p2>
-                <center><p2>Why don't you add some more feedback?</p2></center>
-                <center><a href="/Feedback" class="btn btn-primary">Create new feedback</a></center>
-            </p2>
-        </div>
-    </div>
-
-
-    <!-- View Feedback (anypoint in usersfeedback.razor? page structure should be discussed in a meeting) -->
-    <div>
-        <center><h2 style="margin-top: -20px; margin-bottom: 20px;">Your feedback</h2></center>
-
-        <h6>Feedback you are assigned to or have created.</h6>
-        @if(allFeedback!=null){
-            @foreach (var feedback in allFeedback)
-            {
-                <div class="feedback-box">
-                    <h4>@feedback.Title</h4>
-                    <p><strong>@feedback.FeedbackText</strong></p>
-                    <p><strong>Completed:</strong> @feedback.Closed</p>
-                </div>
-
-            }
-        }
-        @if (allFeedback.Count == 0)
-        {
-            <p>&nbsp; &nbsp; </p>
-            <center><h3>You have no feedback to read about...</h3></center>
-            <p>&nbsp; &nbsp; </p>
-            <p>&nbsp; &nbsp; </p>
-            <center><h4>Time to create some?</h4></center>
-        }
-        else
-        {
-            <div class="bottom-prompt">
-                <center><h4>Why don't you add some more feedback?</h4></center>
-                <center style="margin-bottom: 5px;"><a href="/Feedback" class="btn btn-primary">Create new feedback</a></center>
-            </div>
-        }
-    </div>
-</div>
-
-
-@code {
     private string? completionRate = "not found";
     private FeedbackTrackerCommon.Definitions.User assignee = new FeedbackTrackerCommon.Definitions.User { };
     private List<FeedbackTrackerCommon.Definitions.Modules> modules = new List<FeedbackTrackerCommon.Definitions.Modules> { };
     private List<FeedbackTrackerCommon.Definitions.Notification> notifications = new List<FeedbackTrackerCommon.Definitions.Notification> { };
+    private int openCount = 0;
+    private async Task countOpenFeedback()
+    {
+        if (allFeedback != null)
+        {
+            foreach (var fb in allFeedback.Where(f => !f.Closed))
+            {
+                openCount += 1;
+            }
+        }
+    }
     // get logged in user
     private async Task getUser()
     {
-        if(JAuth.GetUser()!=null){
+        if (JAuth.GetUser() != null)
+        {
             assignee = JAuth.GetUser();
             await LoadFeedback();
             await getModules();
-            if(assignee.IsTeacher){
+            if (assignee.IsTeacher)
+            {
                 await getAverageResolveTime(assignee.UserID);
             }
             await getNotifications();
+            await countOpenFeedback();
         }
 
         await InvokeAsync(StateHasChanged);
 
     }
 
-    private async Task getModules(){
-        if(assignee!=null){
+    private async Task getModules()
+    {
+        if (assignee != null)
+        {
             modules = await UserClient.GetModules(assignee.UserID);
             await InvokeAsync(StateHasChanged);
         }
     }
 
-    private async Task getAverageResolveTime(int usrID){
+    private async Task getAverageResolveTime(int usrID)
+    {
         completionRate = await UserClient.getAverageResolveTime(usrID);
     }
 
+    private List<FeedbackTrackerCommon.Definitions.Feedback> notfiFB = new();
     private async Task getNotifications()
     {
         if (assignee != null)
         {
             notifications = await UserClient.GetNotification(assignee.UserID);
+            foreach (var notification in notifications)
+            {
+                FeedbackTrackerCommon.Definitions.Feedback tempFB = await FeedbackClientAccess.GetFeedbackByID(notification.FeedbackID);
+                notfiFB.Add(tempFB);
+            }
             await InvokeAsync(StateHasChanged);
         }
     }
     protected override async Task OnInitializedAsync()
-    {        
+    {
         base.OnInitialized();
         JAuth.EnforceAuth();
 
         userGreeting();
-        if (JAuth.IsAuthorised()) {    
-                await Task.Delay(50); // Wait half a second before retrying
-            try{
-                await getUser();   
+        if (JAuth.IsAuthorised())
+        {
+            await Task.Delay(50); // Wait half a second before retrying
+            try
+            {
+                await getUser();
             }
-            catch{
+            catch
+            {
 
             }
 
@@ -227,7 +326,7 @@
 
     // loads feedback from api
     private async Task LoadFeedback()
-    { 
+    {
         try
         {
 

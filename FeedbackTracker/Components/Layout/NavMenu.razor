@@ -30,6 +30,7 @@
                             }
                             else
                             {
+                                playsound = false;
                                 <span></span>;
                             }
                         </NavLink>
@@ -73,7 +74,11 @@
     {
         NavigationManager.LocationChanged += async (sender, args) =>
                 {
-
+                    if (NavigationManager.Uri == "/usersfeedback" && playsound == true)
+                    {
+                        playsound = false;
+                        NavigationManager.NavigateTo(NavigationManager.Uri);
+                    }
                     //NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);        
                     // if logged in
                     if (auth.IsAuthorised())

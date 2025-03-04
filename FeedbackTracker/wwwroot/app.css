@@ -1,8 +1,16 @@
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    --primary-color: #4e73df;
+    --secondary-color: #1cc88a;
+    --info-color: #36b9cc;
+    --warning-color: #f6c23e;
+    --danger-color: #e74a3b;
+    --light-color: #f8f9fc;
+    --dark-color: #5a5c69;
 }
 
 .about-navbar {
+    
     position: fixed;
     z-index: 10;
 }
@@ -88,3 +96,4 @@ h1:focus {
     display: flex;
     justify-content: center;
 }
+
