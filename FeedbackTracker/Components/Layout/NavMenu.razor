@@ -33,7 +33,12 @@
                             }
                             else
                             {
+
                                 <span></span>
+
+                                playsound = false;
+                                <span></span>;
+
                             }
                         </NavLink>
                     </div>
@@ -76,17 +81,25 @@
     {
         NavigationManager.LocationChanged += async (_, _) =>
                 {
+
+                    if (NavigationManager.Uri == "/usersfeedback" && playsound == true)
+                    {
+                        playsound = false;
+                        NavigationManager.NavigateTo(NavigationManager.Uri);
+                    }
                     //NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);        
-                     // if logged in
-                    if (Auth.IsAuthorised())
-                    {        
-                        user = Auth.GetUser();
+                    // if logged in
+                    if (auth.IsAuthorised())
+                    {
+                        await Task.Delay(50); // ensure delay to allow for user to be correctly loaded
+                        user = auth.GetUser();
                         // check if user has new feedback
 
                         if (user != null){
-                            List<Notification?>? notifications = await UserClient.GetNotification(user.UserID);
+                            List<FeedbackTrackerCommon.Definitions.Notification?>? notifications = await UserCLient.GetNotification(user.UserID);
 
-                            if (notifications != null && notifications.Count > 0){
+                            if (notifications.Count > 0){
+
                                 New_Feedback = true;
 
                                 await InvokeAsync(StateHasChanged);
@@ -95,6 +108,10 @@
 
                                 await InvokeAsync(StateHasChanged);
                             }
+
+                        }else{
+                            NavigationManager.NavigateTo(NavigationManager.Uri);
+
                         }
 
 

@@ -216,6 +216,7 @@ public class UserAPI
 			Log.Error(ex, $"Error updating password");
 		}
 	}
+
 	
 	public async Task<List<User>?> GetAllUsers()
 	{
@@ -252,4 +253,25 @@ public class UserAPI
 			return null;
 		}
 	}	
+
+
+
+    public async Task<string> getAverageResolveTime(int UserID)
+    {
+        try
+        {
+            string url = $"User/GetAvgResolveTime?Userid={Uri.EscapeDataString(UserID.ToString())}";
+            HttpResponseMessage response = await _httpClient.GetAsync(url);
+            response.EnsureSuccessStatusCode();
+            string resp = await response.Content.ReadAsStringAsync();
+			return resp;
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, $"Error getiing resolve time");
+			return null;
+        }
+    }
+
+
 }
