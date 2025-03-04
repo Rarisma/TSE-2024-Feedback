@@ -220,4 +220,21 @@ public class UserAPI()
 	}
 
 
+    public async Task<string> getAverageResolveTime(int UserID)
+    {
+        try
+        {
+            string url = $"User/GetAvgResolveTime?Userid={Uri.EscapeDataString(UserID.ToString())}";
+            HttpResponseMessage response = await _httpClient.GetAsync(url);
+            response.EnsureSuccessStatusCode();
+            string resp = await response.Content.ReadAsStringAsync();
+			return resp;
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, $"Error getiing resolve time");
+			return null;
+        }
+    }
+
 }

@@ -272,11 +272,14 @@
     {
         if (JAuth.IsAuthorised())
         {
-            await LoadAllFeedback(JAuth.User.UserID);
-            await LoadAssignees();
+            if(JAuth.GetUser()!=null){
+                await LoadAllFeedback(JAuth.User.UserID);
+                await LoadAssignees();
 
-            // clear notifications
-            await clearNotifications();
+                // clear notifications
+                await clearNotifications();
+            }
+
         }
     }
 

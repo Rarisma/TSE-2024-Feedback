@@ -30,6 +30,7 @@
                             }
                             else
                             {
+                                playsound = false;
                                 <span></span>;
                             }
                         </NavLink>
@@ -73,27 +74,34 @@
     {
         NavigationManager.LocationChanged += async (sender, args) =>
                 {
-                    
-                 //NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);        
-                 // if logged in
-                if (auth.IsAuthorised())
-                {        
-                    user = auth.GetUser();
-                    // check if user has new feedback
-
-                    if (user != null){
-                        List<FeedbackTrackerCommon.Definitions.Notification?>? notifications = await UserCLient.GetNotification(user.UserID);
-
-                        if (notifications.Count > 0){
-                            New_Feedback = true;
-
-                            await InvokeAsync(StateHasChanged);
-                        }else{
-                            New_Feedback = false;
-
-                            await InvokeAsync(StateHasChanged);
-                        }
+                    if (NavigationManager.Uri == "/usersfeedback" && playsound == true)
+                    {
+                        playsound = false;
+                        NavigationManager.NavigateTo(NavigationManager.Uri);
                     }
+                    //NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);        
+                    // if logged in
+                    if (auth.IsAuthorised())
+                    {
+                        await Task.Delay(50); // ensure delay to allow for user to be correctly loaded
+                        user = auth.GetUser();
+                        // check if user has new feedback
+
+                        if (user != null){
+                            List<FeedbackTrackerCommon.Definitions.Notification?>? notifications = await UserCLient.GetNotification(user.UserID);
+
+                            if (notifications.Count > 0){
+                                New_Feedback = true;
+
+                                await InvokeAsync(StateHasChanged);
+                            }else{
+                                New_Feedback = false;
+
+                                await InvokeAsync(StateHasChanged);
+                            }
+                        }else{
+                            NavigationManager.NavigateTo(NavigationManager.Uri);
+                        }
 
 
                 }
