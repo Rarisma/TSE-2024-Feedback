@@ -2,7 +2,7 @@
 using System.Security.Claims;
 using System.Text;
 using Application.API;
-using FeedbackTrackerCommon.Definitions;
+using Core.Definitions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
@@ -13,60 +13,60 @@ namespace Application;
 /// authentication methods, because if you can't get the .NET version of it
 /// to work, you might as well be on your own.
 /// </summary>
-public class JAuth(NavigationManager NavigationManager)
+public class JAuth(NavigationManager navigationManager)
 {
-	public User User;
-	private ClaimsPrincipal? UserData;
-	private string JWT;
-	
+	public User? User;
+	private ClaimsPrincipal? _userData;
+	private string? JWT;
+
 	/// <summary>
 	/// Authorises a user.
 	/// </summary>
-	/// <param name="token"></param>
-	public async void Authorise(string token, string user)
+	/// <param name="token">Account token</param>
+	/// <param name="user">Username</param>
+	public async Task Authorise(string token, string user)
 	{
-		string secretKey = "oLiaKsJ93IrvBF0nrIYTdhdR8X+o7tZfHq9ITBVpUew=";
-		string issuer = "www.hallon.rarisma.net:5002";
-		string audience = "www.hallon.rarisma.net:5003";
-
-		//Configure validation parameter
-		TokenValidationParameters validationParameters = new()
+		//Configure validation params
+		if (Program.JWTSecretKey != null)
 		{
-			ValidateIssuerSigningKey = true,
-			IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey)),
-			ValidateIssuer = true,
-			ValidIssuer = issuer,
-			ValidateAudience = true,
-			ValidAudience = audience,
-			ValidateLifetime = true,
-			ClockSkew = TimeSpan.FromMinutes(5)
-		};
+			TokenValidationParameters validationParameters = new()
+			{
+				ValidateIssuerSigningKey = true,
+				IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Program.JWTSecretKey)),
+				ValidateIssuer = true,
+				ValidIssuer = Program.JWTIssuer,
+				ValidateAudience = true,
+				ValidAudience = Program.JWTAudience,
+				ValidateLifetime = true,
+				ClockSkew = TimeSpan.FromMinutes(5)
+			};
 
-		JwtSecurityTokenHandler tokenHandler = new();
+			JwtSecurityTokenHandler tokenHandler = new();
 
-		try
-		{
-			// Validate the token
-			UserData = tokenHandler.ValidateToken(token,
-				validationParameters, out SecurityToken validatedToken);
+			try
+			{
+				// Validate the token
+				_userData = tokenHandler.ValidateToken(token,
+					validationParameters, out SecurityToken _);
 
-			User = await new UserAPI().GetUserByUsername(user);
-		}
-		catch (Exception ex)
-		{
-			Console.WriteLine($"An error occurred during token validation: {ex.Message}");
+				User = await new UserAPI().GetUserByUsername(user);
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine($"An error occurred during token validation: {ex.Message}");
+			}
 		}
 	}
 
 	public bool IsAuthorised()
 	{
 		//Check UserData.Identity is set.
-		if (UserData?.Identity == null)
+		if (_userData?.Identity == null)
 		{
 			return false;
 		}
 
-		return UserData.Identity.IsAuthenticated;
+		return _userData.Identity.IsAuthenticated;
 	}
 
 	/// <summary>
@@ -76,7 +76,7 @@ public class JAuth(NavigationManager NavigationManager)
 	{
 		User = new();
 		JWT = "";
-		UserData = null;
+		_userData = null;
 	}
 
 	/// <summary>
@@ -99,7 +99,7 @@ public class JAuth(NavigationManager NavigationManager)
 			if (!IsAuthorised())
 			{
 				Log.Information("User unauthorised.");
-				NavigationManager.NavigateTo("/LogIn");
+				navigationManager.NavigateTo("/LogIn");
 			}
 			Log.Information("User authorised.");
 			return;
@@ -109,10 +109,10 @@ public class JAuth(NavigationManager NavigationManager)
 			Log.Error(ex, "Error enforcing authentication");
 		}
 		
-		//Send to login since user unauthorised
+		//Send to log in since user unauthorised
 		try
 		{
-			NavigationManager.NavigateTo("/LogIn");
+			navigationManager.NavigateTo("/LogIn");
 		}
 		catch (Exception ex)
 		{
@@ -123,8 +123,12 @@ public class JAuth(NavigationManager NavigationManager)
 	/// <summary>
 	/// Helper function to get User object.
 	/// </summary>
-	public User GetUser() => User;
+	public User? GetUser() => User;
 
-	public string GetToken() => JWT;
+	/// <summary>
+	/// Gets the users JWT.
+	/// </summary>
+	/// <returns>JWT of current user if any.</returns>
+	public string? GetToken() => JWT;
 
 }

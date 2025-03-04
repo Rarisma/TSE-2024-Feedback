@@ -1,9 +1,6 @@
 ﻿@page "/settings"
 @rendermode InteractiveServer
 @inject JAuth JAuth
-@using Application.API
-@using FeedbackTrackerCommon.Definitions
-@inject NavigationManager NavigationManager
 @inject IJSRuntime JSRuntime
 
 @*
@@ -135,19 +132,19 @@ Commented the 2FA button and replaced with a dummy until it works
     {
         if (firstRender)
         {
-            SelectedTheme = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "selectedTheme") ?? "blue";
+            SelectedTheme = await JSRuntime.InvokeAsync<string?>("localStorage.getItem", "selectedTheme") ?? "blue";
         }
     }
 
     // JAuth for specific account settings
-    public string FirstName { get; set; }
-    public string LastName { get; set; }
-    public string Username { get; set; }
-    public string Password { get; set; }
+    private string? FirstName { get; set; }
+    private string? LastName { get; set; }
+    private string? Username { get; set; }
+    private string? Password { get; set; }
     
     private bool isAuthorized;
 
-    protected override async Task OnInitializedAsync()
+    protected override Task OnInitializedAsync()
     {
         isAuthorized = JAuth.IsAuthorised();
         if (isAuthorized)
@@ -155,16 +152,8 @@ Commented the 2FA button and replaced with a dummy until it works
             JAuth.EnforceAuth();
         }
         StateHasChanged();
+        return Task.CompletedTask;
     }
-
-  
-    //Update the account settings (needs adding to a button)
-    private async Task UpdateProfile()
-    {
-        // make a function in the database so its possible to update details
-        // await new UserAPI("http://localhost:5189").
-    }
-  
 }
 
 @*

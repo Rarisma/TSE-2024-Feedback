@@ -1,12 +1,12 @@
 using System.Text;
 using System.Text.Json;
 using Application.Components;
-using FeedbackTrackerCommon.Definitions;
+using Core.Definitions;
 using Serilog;
 
 namespace Application.API;
 
-public class ModuleAPI()
+public class ModuleAPI
 {
     private readonly HttpClient _httpClient = new() { BaseAddress = new Uri(App.Endpoint) };
 
@@ -35,19 +35,19 @@ public class ModuleAPI()
     /// <summary>
     /// Gets a module by ID
     /// </summary>
-    /// <param name="ID">Module ID</param>
-    public async Task<Modules?> GetModuleByID(int ID)
+    /// <param name="id">Module ID</param>
+    public async Task<Modules?> GetModuleByID(int id)
     {
         try
         {
-            HttpResponseMessage response = await _httpClient.GetAsync($"Module/GetModuleByID?ID={ID}");
+            HttpResponseMessage response = await _httpClient.GetAsync($"Module/GetModuleByID?id={id}");
             response.EnsureSuccessStatusCode();
             string jsonString = await response.Content.ReadAsStringAsync();
             return JsonSerializer.Deserialize<Modules>(jsonString);
         }
         catch (Exception ex)
         {
-			Log.Error(ex, $"Error getting module {ID}");
+			Log.Error(ex, $"Error getting module {id}");
             return null;
         }
     }
@@ -59,13 +59,13 @@ public class ModuleAPI()
     {
         try
         {
-            HttpResponseMessage response = await _httpClient.GetAsync($"Module/GetModuleByName?Name={Uri.EscapeDataString(name)}");
+            HttpResponseMessage response = await _httpClient.GetAsync(
+                $"Module/GetModuleByName?name={Uri.EscapeDataString(name)}");
             response.EnsureSuccessStatusCode();
             string jsonString = await response.Content.ReadAsStringAsync();
             return JsonSerializer.Deserialize<Modules>(jsonString);
         }
-        catch (Exception ex)
-        {
+        catch (Exception ex) {
 	        Log.Error(ex, $"Error getting module name {name}");
 			return null;
         }
@@ -78,15 +78,36 @@ public class ModuleAPI()
     {
         try
         {
-            HttpResponseMessage response = await _httpClient.GetAsync($"Module/GetUsersInModule?ModuleID={Uri.EscapeDataString(moduleID.ToString())}");
+            HttpResponseMessage response = await _httpClient.GetAsync(
+                $"Module/GetUsersInModule?moduleID={Uri.EscapeDataString(moduleID.ToString())}");
             response.EnsureSuccessStatusCode();
             string jsonString = await response.Content.ReadAsStringAsync();
             return JsonSerializer.Deserialize<List<User?>>(jsonString);
         }
         catch (Exception ex)
         {
+            Log.Error(ex, "Failed to get users in module ");
             return null;
         }
     }
 
+    /// <summary>
+    /// Gets all modules that are available.
+    /// </summary>
+    /// <returns>List of modules.</returns>
+    public async Task<List<Modules>> GetAllModules()
+    {
+        try
+        {
+            HttpResponseMessage response = await _httpClient.GetAsync("Module/GetAllModules");
+            response.EnsureSuccessStatusCode();
+            string jsonString = await response.Content.ReadAsStringAsync();
+            return JsonSerializer.Deserialize<List<Modules>>(jsonString) ?? new();
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Failed to get all modules");
+            return new();
+        }
+    }
 }

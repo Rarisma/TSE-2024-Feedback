@@ -2,7 +2,8 @@
 @rendermode InteractiveServer
 @inject JAuth JAuth
 @using Application.API
-@using FeedbackTrackerCommon.Definitions
+@using Core.Definitions
+@using Serilog
 @inject FeedbackAPI FeedbackClientAccess
 @inject UserAPI UserClient
 
@@ -14,6 +15,7 @@
         <div class="dashboard-title">DASHBOARD</div>
     </div>
 </div>
+
 
 <div class="container">
     <div class="row">
@@ -50,8 +52,10 @@
                                     </div>
                                 </div>
 
+
                             }
                         </div>
+
 
                         <div class="card-header">
                             <i class="bi bi-chat-square-text me-2"></i> Closing feedback activity
@@ -74,11 +78,13 @@
                                     </div>
                                 </div>
 
+
                             }
                         </div>
                     }
                 </div>
             </div>
+
 
             <!-- Action Card -->
             <div class="card action-card">
@@ -87,7 +93,9 @@
                     <center style="margin-bottom: 5px;"><a href="/Feedback" class="btn btn-create btn-primary">Create new feedback <i class="bi bi-plus-lg me-2"></i></a></center>
                 </div>
             </div>
+
         </div>
+
 
 
         <!-- Modules Card -->
@@ -115,6 +123,7 @@
                             <p2>no modules</p2>
                         </div>
                     }
+
                 </div>
             </div>
 
@@ -128,7 +137,9 @@
                 </div>
                 <div class="card-body text-center">
 
+
                     @if (assignee.IsTeacher)
+
                     {
                         <div class="flex-column">
                             <div class="border-bottom">
@@ -162,6 +173,7 @@
                             </div>
                         }
                     }
+
                     else
                     {
                         <div class="notification-item">
@@ -215,6 +227,7 @@
     private string welcomeSymbol { get; set; }
 
 
+
     private void userGreeting()
     {
         var currentTime = DateTime.Now.Hour; //get the current time
@@ -236,9 +249,9 @@
         }
     }
     private string? completionRate = "not found";
-    private FeedbackTrackerCommon.Definitions.User assignee = new FeedbackTrackerCommon.Definitions.User { };
-    private List<FeedbackTrackerCommon.Definitions.Modules> modules = new List<FeedbackTrackerCommon.Definitions.Modules> { };
-    private List<FeedbackTrackerCommon.Definitions.Notification> notifications = new List<FeedbackTrackerCommon.Definitions.Notification> { };
+    private User assignee = new() { };
+    private List<Modules> modules = new() { };
+    private List<Notification> notifications = new() { };
     private int openCount = 0;
     private async Task countOpenFeedback()
     {
@@ -276,32 +289,38 @@
         {
             modules = await UserClient.GetModules(assignee.UserID);
             await InvokeAsync(StateHasChanged);
+
         }
     }
+
 
     private async Task getAverageResolveTime(int usrID)
     {
         completionRate = await UserClient.getAverageResolveTime(usrID);
     }
 
-    private List<FeedbackTrackerCommon.Definitions.Feedback> notfiFB = new();
+    private List<Core.Definitions.Feedback> notfiFB = new();
     private async Task getNotifications()
+
     {
         if (assignee != null)
         {
+
             notifications = await UserClient.GetNotification(assignee.UserID);
             foreach (var notification in notifications)
             {
-                FeedbackTrackerCommon.Definitions.Feedback tempFB = await FeedbackClientAccess.GetFeedbackByID(notification.FeedbackID);
+                Core.Definitions.Feedback tempFB = await FeedbackClientAccess.GetFeedbackByID(notification.FeedbackID);
                 notfiFB.Add(tempFB);
             }
             await InvokeAsync(StateHasChanged);
+
         }
     }
     protected override async Task OnInitializedAsync()
     {
         base.OnInitialized();
         JAuth.EnforceAuth();
+
 
         userGreeting();
         if (JAuth.IsAuthorised())
@@ -314,6 +333,7 @@
             catch
             {
 
+
             }
 
         }
@@ -322,7 +342,9 @@
     }
 
 
-    private List<FeedbackTrackerCommon.Definitions.Feedback> allFeedback = new();
+
+    private List<Core.Definitions.Feedback> allFeedback = new();
+
 
     // loads feedback from api
     private async Task LoadFeedback()
@@ -330,21 +352,22 @@
         try
         {
 
-            //List<FeedbackTrackerCommon.Definitions.Feedback> feedbackList = await FeedbackClientAccess.GetAssignedFeedbacks(JAuth.GetUser().UserID) ??new List<FeedbackTrackerCommon.Definitions.Feedback>();
+            List<Core.Definitions.Feedback> feedbackList = await FeedbackClientAccess.GetAssignedFeedbacks(JAuth.GetUser().UserID) ?? new List<Core.Definitions.Feedback>();
 
-            List<FeedbackTrackerCommon.Definitions.Feedback> feedbackList = await FeedbackClientAccess.GetAssignedFeedbacks(assignee.UserID);
-            if (feedbackList != null && feedbackList.Any())
+            if (assignee != null)
             {
+
                 allFeedback = feedbackList;
             }
             else
             {
                 Console.WriteLine("No feedback found. Using test data.");
+
             }
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error loading feedback: {ex.Message}");
+            Log.Error(ex, "Error loading feedback.");
         }
     }
 }
