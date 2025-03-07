@@ -145,10 +145,69 @@ h3 {
     }
 
     .btn-categories.active {
-        outline: none;
-        box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 0 10px 4px rgba(0, 0, 0, 0.3);
         border-radius: 12px;
-        background-color: rgba(173, 216, 230, 0.3);
+        border: none;
+        backdrop-filter: blur(15px);
         transform: translateY(-5px);
     }
 
+
+
+
+/* label */
+.label-text {
+    font-family: 'Inter', 'Roboto', sans-serif;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    margin-top: 20px;
+    color: #333;
+}
+
+/* general settings styles */
+
+.theme-selector-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 18px;
+}
+
+.custom-select {
+    appearance: none;
+    background-color: #f8f9fa;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    padding: 8px 30px 8px 12px;
+    font-size: 16px;
+    cursor: pointer;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    background-size: 16px;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+    .custom-select:focus {
+        border-color: #80bdff;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+
+.theme-apply-btn {
+    background-color: #0d6efd;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 16px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+    .theme-apply-btn:hover {
+        background-color: #0b5ed7;
+    }
+
+    .theme-apply-btn:focus {
+        box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+    }
