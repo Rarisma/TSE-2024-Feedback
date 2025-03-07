@@ -6,7 +6,7 @@
 @using Serilog
 @inject FeedbackAPI FeedbackClientAccess
 @inject UserAPI UserClient
-
+@inject IJSRuntime JSRuntime
 <div class="dashboard-header text-center">
     <div class="container">
         <div class="greeting">
@@ -341,6 +341,25 @@
         await InvokeAsync(StateHasChanged);
     }
 
+    private string SelectedTheme { get; set; } = "blue";
+    // colour changer
+    private async Task ApplyTheme()
+    {
+	    if (!string.IsNullOrEmpty(SelectedTheme))
+	    {
+		    await JSRuntime.InvokeVoidAsync("changeTheme", SelectedTheme.ToLower());
+		    StateHasChanged();
+	    }
+    }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+	    if (firstRender)
+	    {
+		    SelectedTheme = await JSRuntime.InvokeAsync<string?>("localStorage.getItem", "selectedTheme") ?? "blue";
+
+		    await ApplyTheme();
+	    }
+    }
 
 
     private List<Core.Definitions.Feedback> allFeedback = new();

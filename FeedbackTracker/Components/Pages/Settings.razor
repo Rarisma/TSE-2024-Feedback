@@ -133,6 +133,7 @@ Commented the 2FA button and replaced with a dummy until it works
         if (firstRender)
         {
             SelectedTheme = await JSRuntime.InvokeAsync<string?>("localStorage.getItem", "selectedTheme") ?? "blue";
+            await ApplyTheme();
         }
     }
 
