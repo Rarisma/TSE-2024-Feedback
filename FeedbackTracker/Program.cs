@@ -2,6 +2,7 @@ using Blazored.LocalStorage;
 using Application.API;
 using Application.Components;
 using Serilog;
+using Radzen;
 
 namespace Application;
 
@@ -26,9 +27,8 @@ public class Program
 		builder.Services.AddSingleton<UserAPI>(_ => new UserAPI());
         builder.Services.AddSingleton<ModuleAPI>(_ => new ModuleAPI());
         builder.Services.AddScoped<JAuth>();
-
-
-		builder.Services.AddSingleton<EmailAPI>(_ => new EmailAPI());
+        builder.Services.AddRadzenComponents();
+        builder.Services.AddSingleton<EmailAPI>(_ => new EmailAPI());
 
 		//Configure Serilog
 		Log.Logger = new LoggerConfiguration()
