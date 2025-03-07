@@ -194,7 +194,7 @@
     <h6>Feedback you are assigned to or have created.</h6>
     @if (allFeedback != null)
     {
-	    <div class="card-header">
+	    <div class="card-header" style="color:var(--dark-color)">
 		    Authored feedbacks
 	    </div>
         @foreach (var feedback in allFeedback.Where(fb => fb.AssigneeID == assignee.UserID))
@@ -207,7 +207,7 @@
 
         }
 
-	    <div class="card-header">
+        <div class="card-header" style="color:var(--dark-color)">
 		    Assigned feedbacks
 	    </div>
         @foreach (var feedback in allFeedback.Where(fb => fb.AssignedUserID == assignee.UserID))
