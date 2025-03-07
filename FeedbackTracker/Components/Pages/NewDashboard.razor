@@ -31,10 +31,10 @@
                     {
 
                         <div class="card-header">
-                            <i class="bi bi-chat-square-text me-2"></i> Opening feedback activity
+                            <i class="bi bi-chat-square-text me-2"></i> Authored Feedbacks
                         </div>
                         <div class="card-body feedback-card-item">
-                            @foreach (var feedback in allFeedback.Where(f => f.CreatedDate > DateTime.Now.Date.AddDays(-7) && !f.Closed))
+                            @foreach (var feedback in allFeedback.Where(f => f.CreatedDate > DateTime.Now.Date.AddDays(-7) && !f.Closed && f.AssigneeID == assignee.UserID))
                             {
                                 <div class="feedback-item">
                                     <h4 class="feedback-card-item-title">@feedback.Title</h4>
@@ -58,10 +58,10 @@
 
 
                         <div class="card-header">
-                            <i class="bi bi-chat-square-text me-2"></i> Closing feedback activity
+                            <i class="bi bi-chat-square-text me-2"></i> Completed Feedback
                         </div>
                         <div class="card-body feedback-card-item">
-                            @foreach (var feedback in allFeedback.Where(f => f.CreatedDate > DateTime.Now.Date.AddDays(-7) && f.Closed))
+                            @foreach (var feedback in allFeedback.Where(f => f.CreatedDate > DateTime.Now.Date.AddDays(-7) && f.Closed && f.AssignedUserID == assignee.UserID))
                             {
                                 <div class="feedback-item">
                                     <h4 class="feedback-card-item-title">@feedback.Title</h4>
@@ -194,7 +194,10 @@
     <h6>Feedback you are assigned to or have created.</h6>
     @if (allFeedback != null)
     {
-        @foreach (var feedback in allFeedback)
+	    <div class="card-header">
+		    Authored feedbacks
+	    </div>
+        @foreach (var feedback in allFeedback.Where(fb => fb.AssigneeID == assignee.UserID))
         {
             <div class="feedback-box">
                 <h4>@feedback.Title</h4>
@@ -203,6 +206,19 @@
             </div>
 
         }
+
+	    <div class="card-header">
+		    Assigned feedbacks
+	    </div>
+        @foreach (var feedback in allFeedback.Where(fb => fb.AssignedUserID == assignee.UserID))
+	    {
+		    <div class="feedback-box">
+			    <h4>@feedback.Title</h4>
+			    <p><strong>@feedback.FeedbackText</strong></p>
+			    <p><strong>Completed:</strong> @feedback.Closed</p>
+		    </div>
+
+	    }
     }
     @if (allFeedback.Count == 0)
     {
