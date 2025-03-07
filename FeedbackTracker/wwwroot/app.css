@@ -1,12 +1,54 @@
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     --primary-color: #4e73df;
-    --secondary-color: #1cc88a;
+    --secondary-color: #4e73df;
+    --tertiary-color: #EBF0F5;
     --info-color: #36b9cc;
     --warning-color: #f6c23e;
     --danger-color: #e74a3b;
     --light-color: #f8f9fc;
+    --light-text: white;
+    --dark-text: dark;
     --dark-color: #5a5c69;
+}
+
+.blue {
+    --primary-color: #4e73df;
+    --secondary-color: #92b4f2;
+    --tertiary-color: whitesmoke;
+    --info-color: #36b9cc;
+    --warning-color: #f6c23e;
+    --danger-color: #e74a3b;
+    --light-color: #f8f9fc;
+    --light-text: white;
+    --dark-text: black;
+    --dark-color: #EBF0F5;
+}
+
+.red {
+    --primary-color: #ff66b3;
+    --secondary-color: #ff1a8d;
+    --tertiary-color: whitesmoke;
+    --info-color: #36b9cc;
+    --warning-color: #f6c23e;
+    --danger-color: #e74a3b;
+    --light-color: #f8f9fc;
+    --light-text: white;
+    --dark-text: black;
+    --dark-color: #EBF0F5;
+}
+
+.green {
+    --primary-color: #a8ee90;
+    --secondary-color: #7ab665;
+    --tertiary-color: whitesmoke;
+    --info-color: yellow;
+    --warning-color: orange;
+    --danger-color: red;
+    --light-color: #d2f8d2;
+    --light-text: white;
+    --dark-text: black;
+    --dark-color: #50C878;
 }
 
 .about-navbar {
