@@ -6,7 +6,7 @@
 @using Serilog
 @inject FeedbackAPI FeedbackClientAccess
 @inject UserAPI UserClient
-
+@inject IJSRuntime JSRuntime
 <div class="dashboard-header text-center">
     <div class="container">
         <div class="greeting">
@@ -24,17 +24,17 @@
             <!-- Feedback Card 1 -->
             <div class="card feedback-card">
                 <div class="card-body flex-row feedback-card">
-                    <div class="card-header">
+                    <div class="card-header fb-header">
                         ~~ Past 7 days activity ~~
                     </div>
                     @if (allFeedback != null)
                     {
 
                         <div class="card-header">
-                            <i class="bi bi-chat-square-text me-2"></i> Opening feedback activity
+                            <i class="bi bi-chat-square-text me-2"></i> Authored Feedbacks
                         </div>
                         <div class="card-body feedback-card-item">
-                            @foreach (var feedback in allFeedback.Where(f => f.CreatedDate > DateTime.Now.Date.AddDays(-7) && !f.Closed))
+                            @foreach (var feedback in allFeedback.Where(f => f.CreatedDate > DateTime.Now.Date.AddDays(-7) && !f.Closed && f.AssigneeID == assignee.UserID))
                             {
                                 <div class="feedback-item">
                                     <h4 class="feedback-card-item-title">@feedback.Title</h4>
@@ -47,7 +47,7 @@
                                                 <p><strong>Opened:</strong> @feedback.CreatedDate <i class="bi bi-calendar me-1"></i></p>
                                             </div>
 
-                                            <center style="margin-bottom: 5px;"><a h href="@($"/viewfeedback/{feedback.FeedbackID}")" class="btn btn-primary">View <i class="bi bi-arrow-bar-up"></i></a></center>
+                                            <center style="margin-bottom: 5px;"><a h href="@($"/viewfeedback/{feedback.FeedbackID}")" class="btn btn-create btn-primary">View <i class="bi bi-arrow-bar-up"></i></a></center>
                                         </div>
                                     </div>
                                 </div>
@@ -58,10 +58,10 @@
 
 
                         <div class="card-header">
-                            <i class="bi bi-chat-square-text me-2"></i> Closing feedback activity
+                            <i class="bi bi-chat-square-text me-2"></i> Completed Feedback
                         </div>
                         <div class="card-body feedback-card-item">
-                            @foreach (var feedback in allFeedback.Where(f => f.CreatedDate > DateTime.Now.Date.AddDays(-7) && f.Closed))
+                            @foreach (var feedback in allFeedback.Where(f => f.CreatedDate > DateTime.Now.Date.AddDays(-7) && f.Closed && f.AssignedUserID == assignee.UserID))
                             {
                                 <div class="feedback-item">
                                     <h4 class="feedback-card-item-title">@feedback.Title</h4>
@@ -73,7 +73,7 @@
                                             <div class="feedback-date">
                                                 <p><strong>Closed At:</strong> @feedback.ClosedDate <i class="bi bi-calendar me-1"></i></p>
                                             </div>
-                                            <center style="margin-bottom: 5px;"><a h href="@($"/viewfeedback/{feedback.FeedbackID}")" class="btn btn-primary">View <i class="bi bi-arrow-bar-up"></i></a></center>
+                                            <center style="margin-bottom: 5px;"><a h href="@($"/viewfeedback/{feedback.FeedbackID}")" class="btn btn-create btn-primary">View <i class="bi bi-arrow-bar-up"></i></a></center>
                                         </div>
                                     </div>
                                 </div>
@@ -89,7 +89,7 @@
             <!-- Action Card -->
             <div class="card action-card">
                 <div class="card-body text-center d-flex flex-column justify-content-center">
-                    <h4 class="mb-4">Why don't you add some more feedback?</h4>
+                    <h4 class="mb-4" style="color:var(--dark-text)">Why don't you add some more feedback?</h4>
                     <center style="margin-bottom: 5px;"><a href="/Feedback" class="btn btn-create btn-primary">Create new feedback <i class="bi bi-plus-lg me-2"></i></a></center>
                 </div>
             </div>
@@ -113,14 +113,14 @@
                         @foreach (var module in modules)
                         {
                             <div class="module-item">
-                                <p2>@module.Module</p2>
+                                <p2 class="module-text">@module.Module</p2>
                             </div>
                         }
                     }
                     else
                     {
                         <div class="module-item">
-                            <p2>no modules</p2>
+                            <p2 class="module-text">no modules</p2>
                         </div>
                     }
 
@@ -194,7 +194,10 @@
     <h6>Feedback you are assigned to or have created.</h6>
     @if (allFeedback != null)
     {
-        @foreach (var feedback in allFeedback)
+	    <div class="card-header" style="color:var(--dark-color)">
+		    Authored feedbacks
+	    </div>
+        @foreach (var feedback in allFeedback.Where(fb => fb.AssigneeID == assignee.UserID))
         {
             <div class="feedback-box">
                 <h4>@feedback.Title</h4>
@@ -203,6 +206,19 @@
             </div>
 
         }
+
+        <div class="card-header" style="color:var(--dark-color)">
+		    Assigned feedbacks
+	    </div>
+        @foreach (var feedback in allFeedback.Where(fb => fb.AssignedUserID == assignee.UserID))
+	    {
+		    <div class="feedback-box">
+			    <h4>@feedback.Title</h4>
+			    <p><strong>@feedback.FeedbackText</strong></p>
+			    <p><strong>Completed:</strong> @feedback.Closed</p>
+		    </div>
+
+	    }
     }
     @if (allFeedback.Count == 0)
     {
@@ -341,6 +357,25 @@
         await InvokeAsync(StateHasChanged);
     }
 
+    private string SelectedTheme { get; set; } = "blue";
+    // colour changer
+    private async Task ApplyTheme()
+    {
+	    if (!string.IsNullOrEmpty(SelectedTheme))
+	    {
+		    await JSRuntime.InvokeVoidAsync("changeTheme", SelectedTheme.ToLower());
+		    StateHasChanged();
+	    }
+    }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+	    if (firstRender)
+	    {
+		    SelectedTheme = await JSRuntime.InvokeAsync<string?>("localStorage.getItem", "selectedTheme") ?? "blue";
+
+		    await ApplyTheme();
+	    }
+    }
 
 
     private List<Core.Definitions.Feedback> allFeedback = new();

@@ -40,8 +40,8 @@ body {
 }
 
 .dashboard-header {
-    background: linear-gradient(135deg, var(--primary-color) 0%, #224abe 100%);
-    color: white;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    color:var(--light-text);
     padding: 2rem 0;
     margin-bottom: 2rem;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -58,10 +58,13 @@ body {
     font-size: 1.5rem;
     margin-top: 0.5rem;
     opacity: 0.9;
+    color: var(--light-text);
 }
 
 .card {
     border-radius: 0.5rem;
+    background-color: var(--light-color);
+    color: var(--light-text);
     border: none;
     box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
     margin-bottom: 1.5rem;
@@ -74,7 +77,7 @@ body {
     }
 
 .card-header {
-    background-color: white;
+    background-color: var(--secondary-color);
     border-bottom: 1px solid #e3e6f0;
     font-weight: 700;
     padding: 1rem 1.25rem;
@@ -82,6 +85,8 @@ body {
     border-top-left-radius: 0.5rem !important;
     border-top-right-radius: 0.5rem !important;
 }
+
+
 
 .modules-card {
     border-left: 0.25rem solid var(--primary-color);
@@ -92,17 +97,20 @@ body {
 }
 
 .feedback-card {
+
     border-left: 0.25rem solid var(--warning-color);
     max-height: 32rem;
     overflow: auto;
 }
 
 .feedback-card-item {
+    padding:2rem;
     overflow: auto;
     max-height: 9rem;
 }
 
 .feedback-card-item-title {
+
     text-align: center;
     border-bottom: 1px solid #e3e6f0;
     border-top-left-radius: 0.5rem !important;
@@ -110,6 +118,7 @@ body {
 }
 
 .feedback-card-item-text {
+
     text-align: center;
     overflow: auto;
     max-height: 10rem;
@@ -135,29 +144,39 @@ body {
     }
 
 .completion-rate {
-    color: var(--info-color);
+    color: var(--dark-text);
+}
+
+.module-text {
+    color: var(--dark-text);
 }
 
 .feedback-item {
+    color: var(--dark-text);
     padding: 1rem;
     border-radius: 0.35rem;
-    background-color: #f8f9fc;
+    background-color: var(--tertiary-color);
     margin-bottom: 1rem;
 }
 
+.fb-header {
+    background-color: var(--light-color);
+    color: var(--dark-text);
+}
 .feedback-date {
     font-size: 0.8rem;
-    color: #858796;
 }
 
 .notification-item {
+    background-color: var(--tertiary-color);
+    color: var(--dark-text);
     padding: 0.75rem;
     border-radius: 0.35rem;
-    background-color: #f8f9fc;
     margin-bottom: 0.5rem;
 }
 
 .btn-create {
+    background-color: var(--secondary-color);
     padding: 0.5rem 1.5rem;
     font-weight: 600;
     transition: all 0.2s;
@@ -175,7 +194,7 @@ body {
     height: 3rem;
     border-radius: 50%;
     background-color: rgba(78, 115, 223, 0.1);
-    color: var(--primary-color);
+    color: var(--dark-color);
     text-align: center;
     line-height: 3rem;
     margin-right: 1rem;
