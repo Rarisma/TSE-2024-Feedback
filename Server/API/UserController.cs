@@ -66,8 +66,8 @@ public class UserController(AuthService authService) : Controller
 			//NOTE: bCrypt is very secure. (Salting is handled automatically)
 			User account = new()
 			{
-				Username = username,
-				Password = BCrypt.Net.BCrypt.HashPassword(password),
+				Username = Username,
+				Password = BCrypt.Net.BCrypt.HashPassword(Password),
 				IsStudent = true,
 				IsTeacher = false,
 				Email = Email,

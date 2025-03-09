@@ -1,4 +1,4 @@
-﻿using FeedbackTrackerCommon.Definitions;
+﻿using Core.Definitions;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
 using System.Text.Json;

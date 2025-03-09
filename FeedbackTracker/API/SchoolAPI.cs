@@ -2,7 +2,7 @@
 using System.Text.Json;
 using Application.Components;
 using Application.Components.Pages;
-using FeedbackTrackerCommon.Definitions;
+using Core.Definitions;
 using Serilog;
 using static System.Net.Mime.MediaTypeNames;
 
