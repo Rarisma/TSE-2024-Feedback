@@ -1,5 +1,4 @@
 ﻿@inherits LayoutComponentBase
-@inject JAuth auth
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JSRuntime
 
@@ -50,15 +49,18 @@
     private string CurrentTheme { get; set; } = "blue"; //hold current items
 
     //run on first render
-    protected override async Task OnInitializedAsync()
+    protected override Task OnInitializedAsync()
     {
-        NavigationManager.LocationChanged += HandleLocationChanged; //supposed to work when the url is changed
+        //supposed to work when the url is changed
+        NavigationManager.LocationChanged += HandleLocationChanged;
+        return Task.CompletedTask;
     }
 
     //event handler for url changes
-    private async void HandleLocationChanged(object sender, LocationChangedEventArgs e)
+    private async void HandleLocationChanged(object? sender, LocationChangedEventArgs e)
     {
-        CurrentTheme = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "selectedTheme") ?? "blue"; //retrieve saved theme
+        //retrieve saved theme
+        CurrentTheme = await JSRuntime.InvokeAsync<string?>("localStorage.getItem", "selectedTheme") ?? "blue"; 
         await JSRuntime.InvokeVoidAsync("changeTheme", CurrentTheme);
         await InvokeAsync(StateHasChanged);
     }

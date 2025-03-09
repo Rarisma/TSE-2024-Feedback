@@ -1,4 +1,4 @@
-﻿using FeedbackTrackerCommon.Definitions;
+﻿using Core.Definitions;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
 
@@ -9,69 +9,63 @@ namespace Server.API
 	public class EmailController : Controller
 	{
 
-		private readonly EmailSending emailSending;
-		public EmailController(EmailSending emailSendingConstructor)
-		{
-			emailSending = emailSendingConstructor;
-		}
-
 		[HttpPost("SendEmail")]
-		public async Task<IActionResult> SendEmail([FromBody] string ReceivingAddress)
+		public async Task<IActionResult> SendEmail([FromBody] string? receivingAddress)
 		{
-			using TrackerContext Ctx = new();
-			User? Account = Ctx.User.FirstOrDefault(User => User.Email == ReceivingAddress);
-			if (Account == null)
+			await using TrackerContext ctx = new();
+			User? account = ctx.User.FirstOrDefault(user => user.Email == receivingAddress);
+			if (account == null)
 			{
 				return StatusCode(400, "Failed to store code");
 			}
-			string EscapeEmail = Uri.EscapeDataString(ReceivingAddress);
-			Random random = new Random();
-			string Code = string.Empty;
+			string escapeEmail = Uri.EscapeDataString(receivingAddress);
+			Random random = new();
+			string code = string.Empty;
 			for (int i = 0; i < 6; i++)
 			{
 				string num = random.Next(0, 10).ToString();
-				Code += num;
+				code += num;
 			}
 
-			bool CodeStored = await AddCodeToDB(Code, ReceivingAddress);
-			if (CodeStored == false)
+			bool codeStored = await AddCodeToDb(code, receivingAddress);
+			if (codeStored == false)
 			{
 				return StatusCode(400, "Failed to store code");
 			}
-			string EmailBody = $@"
-			<html>
-			<body>
-				<h1>Password Reset</h1>
-				<p>Hi, you recently requested to change your password. Please click the link below to reset it:</p>
-				<p>Please ensure you enter this code: <strong>{Code}</strong></p> 
-            <p><a href=""https://localhost:7128/VerifyPasswordChange/email={EscapeEmail}"" target=""_blank"">Reset Password</a></p>
-			</body>
-			</html>";
-
-			string EmailSubject = "Password Reset";
-
-			if (string.IsNullOrEmpty(ReceivingAddress))
+			string emailBody = $"""
+			                    
+			                        <html>
+			                        <body>
+			                            <h1>Password Reset</h1>
+			                            <p>Hi, you recently requested to change your password. Please click the link below to reset it:</p>
+			                            <p>Please ensure you enter this code: <strong>{code}</strong></p> 
+			                        <p><a href="https://localhost:7128/VerifyPasswordChange/email={escapeEmail}" target="_blank">Reset Password</a></p>
+			                        </body>
+			                        </html>
+			                    """;
+			
+			if (string.IsNullOrEmpty(receivingAddress))
 			{
 				return StatusCode(400, "Email Address Missing");
 			}
 
-			await emailSending.SendEmailAsync(ReceivingAddress, EmailBody, EmailSubject);
+			await EmailSending.SendEmailAsync(receivingAddress, emailBody, "Password Reset");
 			return StatusCode(200);
 		}
         [HttpGet("AddCodeToDB")]
-        public async Task<bool> AddCodeToDB(string Code, string Email)
+        public async Task<bool> AddCodeToDb(string code, string email)
 		{
 			try
 			{
-				using TrackerContext Ctx = new();
-				User Account = Ctx.User.First(User => User.Email == Email);
-				CodeStorage Details = new()
+				await using TrackerContext ctx = new();
+				User account = ctx.User.First(user => user.Email == email);
+				CodeStorage details = new()
 				{
-					UserID = Account.UserID,
-					CheckCode = Code,
+					UserID = account.UserID,
+					CheckCode = code,
 				};
-				Ctx.CodeStorage.Add(Details);
-				await Ctx.SaveChangesAsync();
+				ctx.CodeStorage.Add(details);
+				await ctx.SaveChangesAsync();
 				return true;
 			}
 			catch (Exception ex)
@@ -81,18 +75,19 @@ namespace Server.API
 			}
 		}
 		[HttpDelete("CheckAndDeleteCode")]
-		public async Task<IActionResult> CheckAndDeleteCode(string InputtedCode)
+		public async Task<IActionResult> CheckAndDeleteCode(string inputtedCode)
 		{
-			using TrackerContext Ctx = new();
-			CodeStorage? Storage = Ctx.CodeStorage.FirstOrDefault(CodeStorage => CodeStorage.CheckCode == InputtedCode);
-			if (Storage == null)
+			await using TrackerContext ctx = new();
+			CodeStorage? storage = ctx.CodeStorage.FirstOrDefault(codeStorage =>
+				codeStorage.CheckCode == inputtedCode);
+			if (storage == null)
 			{
 				return StatusCode(400, "Inputted Code Doesn't Match");
 			}
 			else
 			{
-				Ctx.CodeStorage.Remove(Storage);
-				await Ctx.SaveChangesAsync();
+				ctx.CodeStorage.Remove(storage);
+				await ctx.SaveChangesAsync();
 				return StatusCode(200,"CODE DELETED");
 			}
 		}

@@ -3,14 +3,14 @@
 @inject JAuth JAuth
 
 @code {
-    public string FirstName { get; set; }
-    public string LastName { get; set; }
-    public string Username { get; set; }
-    public string Password { get; set; }
+    private string? FirstName { get; set; }
+    private string? LastName { get; set; }
+    private string? Username { get; set; }
+    private string? Password { get; set; }
 
     private bool isAuthorized;
 
-    protected override async Task OnInitializedAsync()
+    protected override Task OnInitializedAsync()
     {
         isAuthorized = JAuth.IsAuthorised();
 
@@ -18,10 +18,14 @@
         {
             JAuth.EnforceAuth();
         }
+
+        return Task.CompletedTask;
     }
 
-    private async Task UpdateProfile()
+    private Task UpdateProfile()
     {
+        return Task.CompletedTask;
+        //TODO:THIS
         // make a function in the database so its possible to update details
         // await new UserAPI("http://localhost:5189").
     }

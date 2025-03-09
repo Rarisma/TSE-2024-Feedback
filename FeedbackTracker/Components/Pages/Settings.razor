@@ -1,10 +1,8 @@
 ﻿@page "/settings"
 @rendermode InteractiveServer
 @inject JAuth JAuth
-@using Application.API
-@using FeedbackTrackerCommon.Definitions
-@inject NavigationManager NavigationManager
 @inject IJSRuntime JSRuntime
+@inject NavigationManager NavigationManager
 
 @*
 The 2FA Code was making the browser crash. Commented it. 
@@ -31,12 +29,17 @@ Commented the 2FA button and replaced with a dummy until it works
             {
                 <div class="option">
                     <h2>General Settings</h2>
-                    <select id="colour-changer" @bind="SelectedTheme" @bind:event="onchange">
-                        <option value="blue">Blue</option>
-                        <option value="red">Red</option>
-                        <option value="green">Green</option>
-                    </select>
-                    <button @onclick="ApplyTheme">Apply</button>
+                    <label class="label-text">Theme:</label>
+                    <div class="theme-selector-wrapper">
+                        <select id="colour-changer" @bind="SelectedTheme" @bind:event="onchange" class="custom-select">
+                            <option value="blue">Blue</option>
+                            <option value="red">Red</option>
+                            <option value="green">Green</option>
+                            <option value="purple">Purple</option>
+                            <option value="orange">Orange</option>
+                        </select>
+                        <button @onclick="ApplyTheme" class="theme-apply-btn">Apply</button>
+                    </div>
                 </div>
             }
             @* PRIVACY SETTINGS *@
@@ -68,23 +71,23 @@ Commented the 2FA button and replaced with a dummy until it works
                     <form>
                         <div class="mb-3">
                             <label for="firstName" class="form-label">First Name</label>
-                            <input type="text" class="form-control" id="firstName" placeholder="Change First Name" @bind-value="FirstName">
+                            <input type="text" class="form-control" id="firstName" placeholder="Change First Name" @bind-value="FirstName" maxlength="25">
                         </div>
                         <div class="mb-3">
                             <label for="lastName" class="form-label">Last Name</label>
-                            <input type="text" class="form-control" id="lastName" placeholder="Change Last Name" @bind-value="LastName">
+                            <input type="text" class="form-control" id="lastName" placeholder="Change Last Name" @bind-value="LastName" maxlength="25">
                         </div>
                         <div class="mb-3">
                             <label for="username" class="form-label">Username</label>
-                            <input type="text" class="form-control" id="username" placeholder="Change Username" @bind-value="Username">
+                            <input type="text" class="form-control" id="username" placeholder="Change Username" @bind-value="Username" maxlength="25">
                         </div>
                         <div class="mb-3">
                             <label for="password" class="form-label">Password</label>
-                            <input type="password" class="form-control" id="password" placeholder="Change Password" @bind-value="Password">
+                            <input type="password" class="form-control" id="password" placeholder="Change Password" @bind-value="Password" maxlength="100">
                         </div>
                         <div class="mb-3">
                             <label for="password" class="form-label">Confirm Password</label>
-                            <input type="password" class="form-control" id="password" placeholder="Confirm Password" @bind-value="Password">
+                            <input type="password" class="form-control" id="password" placeholder="Confirm Password" @bind-value="Password" maxlength="100">
                         </div>
                         <div class="d-flex justify-content-center w-100">
                             <!-- Button below needs @onclick once a function can update account details-->
@@ -135,19 +138,20 @@ Commented the 2FA button and replaced with a dummy until it works
     {
         if (firstRender)
         {
-            SelectedTheme = await JSRuntime.InvokeAsync<string>("localStorage.getItem", "selectedTheme") ?? "blue";
+            SelectedTheme = await JSRuntime.InvokeAsync<string?>("localStorage.getItem", "selectedTheme") ?? "blue";
+            await ApplyTheme();
         }
     }
 
     // JAuth for specific account settings
-    public string FirstName { get; set; }
-    public string LastName { get; set; }
-    public string Username { get; set; }
-    public string Password { get; set; }
+    private string? FirstName { get; set; }
+    private string? LastName { get; set; }
+    private string? Username { get; set; }
+    private string? Password { get; set; }
     
     private bool isAuthorized;
 
-    protected override async Task OnInitializedAsync()
+    protected override Task OnInitializedAsync()
     {
         isAuthorized = JAuth.IsAuthorised();
         if (isAuthorized)
@@ -155,16 +159,8 @@ Commented the 2FA button and replaced with a dummy until it works
             JAuth.EnforceAuth();
         }
         StateHasChanged();
+        return Task.CompletedTask;
     }
-
-  
-    //Update the account settings (needs adding to a button)
-    private async Task UpdateProfile()
-    {
-        // make a function in the database so its possible to update details
-        // await new UserAPI("http://localhost:5189").
-    }
-  
 }
 
 @*

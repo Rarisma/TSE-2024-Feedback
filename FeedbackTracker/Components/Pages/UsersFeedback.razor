@@ -2,6 +2,8 @@
 @inject FeedbackAPI FeedbackClientAccess
 @inject UserAPI UserClientAccess
 @using Application.API
+@using Core.Definitions
+@using Serilog
 @inject JAuth JAuth
 @inject NavigationManager NavigationManager
 @rendermode InteractiveServer
@@ -60,8 +62,9 @@
 
     @if (JAuth.IsAuthorised())
     {
-        <center>
-            <h1>Your Feedback</h1></center>
+        <div style="text-align: center;" >
+            <h1>Your Feedback</h1>
+        </div>
 
         <div class="sort-container">
             <div class="sort-box">
@@ -99,11 +102,16 @@
             {
                 <NavLink class="feedback-box" href="@($"/viewfeedback/{feedback.FeedbackID}")">
                     <p>@feedback.Title</p>
-                    @foreach (var assignee in Users)
+                    @if (Users != null)
                     {
-                        if (assignee.UserID == feedback.AssigneeID)
+                        foreach (var assignee in Users)
                         {
-                            <p><strong>@assignee.Username</strong></p>
+                            if (assignee.UserID == feedback.AssigneeID)
+                            {
+                                <p>
+                                    <strong>@assignee.Username</strong>
+                                </p>
+                            }
                         }
                     }
                     <p>@feedback.FeedbackText</p>
@@ -120,7 +128,6 @@
         }
         <title>TSE Feedback: Your Feedback</title>
     }
-
     else //For users that aren't logged in
     {
         <style>
@@ -148,14 +155,14 @@
     /// These are lists that contain the data from the related
     /// datbase, e.g. Teachers contains data about the user
     /// </summary>
-    private List<FeedbackTrackerCommon.Definitions.Feedback> AllFeedbacks = new();
+    private List<Core.Definitions.Feedback> AllFeedbacks = new();
 
-    private List<FeedbackTrackerCommon.Definitions.Feedback> SpecificFeedbacks = new();
+    private List<Core.Definitions.Feedback> SpecificFeedbacks = new();
 
-    private List<FeedbackTrackerCommon.Definitions.User> Users = new();
+    private List<User> Users = new();
 
     // the values that will be assigned for these are from when the user filters their feedback
-    private string SelectedOption { get; set; } = "";
+    private string? SelectedOption { get; set; } = "";
 
     private string SelectedTeacherID { get; set; } = "";
 
@@ -165,15 +172,20 @@
     /// </summary>
     private void SortBySelected(ChangeEventArgs e)
     {
-        SelectedOption = e.Value?.ToString();
+        if (e != null)
+        {
+            SelectedOption = e.Value?.ToString();
+        }
 
         if (SelectedOption == "az") // alphabetical
         {
-            SpecificFeedbacks.Sort((current, next) => current.Title.CompareTo(next.Title));
+            SpecificFeedbacks.Sort((current, next) => String.Compare(current.Title, 
+                next.Title, StringComparison.Ordinal));
         }
         else if (SelectedOption == "za") // reverse alphabetical
         {
-            SpecificFeedbacks.Sort((current, next) => next.Title.CompareTo(current.Title));
+            SpecificFeedbacks.Sort((current, next) => String.Compare(next.Title, 
+                current.Title, StringComparison.Ordinal));
         }
         else if (SelectedOption == "public") // public
         {
@@ -194,7 +206,7 @@
         SelectedTeacherID = e.Value.ToString();
         if (SelectedTeacherID == "all") // if the user wishes to see all of their feedbacks
         {
-            SpecificFeedbacks = new List<FeedbackTrackerCommon.Definitions.Feedback>(AllFeedbacks);
+            SpecificFeedbacks = new List<Core.Definitions.Feedback>(AllFeedbacks);
         }
         else
         {
@@ -202,7 +214,7 @@
             foreach (var feedback in AllFeedbacks) // loops through original list to add all related feedbacks
             {
                 // checks if the teacher assigned the feedback by seeing if they have the same ID as the assignee ID
-                if (int.Parse(SelectedTeacherID) == feedback.AssigneeID)
+                if (SelectedTeacherID != null && int.Parse(SelectedTeacherID) == feedback.AssigneeID)
                 {
                     SpecificFeedbacks.Add(feedback);
                 }
@@ -219,14 +231,16 @@
         try
         {
             var feedbacks = await FeedbackClientAccess.GetAssignedFeedbacks(ID); // communicates with API
-                                                                                 // different assignments to make sure All and Specific don't point to the same object in memory
-            AllFeedbacks = feedbacks;
-            SpecificFeedbacks = new List<FeedbackTrackerCommon.Definitions.Feedback>(feedbacks);
-
+             // different assignments to make sure All and Specific don't point to the same object in memory
+             if (feedbacks != null)
+             {
+                 AllFeedbacks = feedbacks;
+                 SpecificFeedbacks = new List<Core.Definitions.Feedback>(feedbacks);
+             }
         }
         catch (Exception ex) // feedbacks fails to load
         {
-            Console.WriteLine("Failed to load feedback.");
+            Log.Error(ex, "Failed to load feedbacks.");
         }
     }
 
@@ -240,30 +254,32 @@
             foreach (var feedback in AllFeedbacks)
             {
                 // checks to see if a teacher is already in the list, as otherwise the filter dropdown could be cluttered by the same teacher
-                if (!Users.Any(teach => teach.UserID == feedback.AssigneeID))
+                if (Users.All(teach => teach.UserID != feedback.AssigneeID))
                 {
                     var user = await UserClientAccess.GetUserByID(feedback.AssigneeID); // gets a single user based on a provided ID
                     try
                     {
-                        Users.Add(user); // adds to list
+                        if (user != null) 
+                        {
+                            Users.Add(user); // adds to list
+                        }
                     }
                     catch (Exception ex) // teachers fails to load
                     {
-                        Console.WriteLine("Failed to load teacher.");
+                        Log.Error(ex,"Failed to load teacher.");
                     }
                 }
             }
     }
 
     private async Task clearNotifications(){
-        List<FeedbackTrackerCommon.Definitions.Notification?>? notifications = await UserClientAccess.GetNotification(JAuth.GetUser().UserID);
+        List<Notification?>? notifications = await UserClientAccess.GetNotification(JAuth.GetUser().UserID);
 
         if (notifications.Count > 0)
         {
-            await UserClientAccess.DeleteNotification(JAuth.GetUser().UserID);
+            await UserClientAccess.NotificationDelete(JAuth.GetUser().UserID);
 
         }
-        return;
     }
     /// <summary>
     /// Loads the feedback data and teacher data as soon as the page is loaded
@@ -272,11 +288,14 @@
     {
         if (JAuth.IsAuthorised())
         {
-            await LoadAllFeedback(JAuth.User.UserID);
-            await LoadAssignees();
+            if(JAuth.GetUser()!=null){
+                await LoadAllFeedback(JAuth.User.UserID);
+                await LoadAssignees();
 
-            // clear notifications
-            await clearNotifications();
+                // clear notifications
+                await clearNotifications();
+            }
+
         }
     }
 

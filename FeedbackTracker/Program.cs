@@ -1,15 +1,16 @@
 using Blazored.LocalStorage;
 using Application.API;
 using Application.Components;
-using Microsoft.AspNetCore.Components;
 using Serilog;
-
-
 
 namespace Application;
 
 public class Program
 {
+	public static string? JWTSecretKey;
+	public static string? JWTIssuer;
+	public static string? JWTAudience;
+	
 	public static void Main(string[] args)
 	{
 		var builder = WebApplication.CreateBuilder(args);
@@ -21,14 +22,13 @@ public class Program
 		builder.Services.AddRazorComponents()
 			.AddInteractiveServerComponents();
 			
-		builder.Services.AddSingleton<FeedbackAPI>(sp => new FeedbackAPI());
-		builder.Services.AddSingleton<UserAPI>(sp => new UserAPI());
-        builder.Services.AddSingleton<ModuleAPI>(sp => new ModuleAPI());
+		builder.Services.AddSingleton<FeedbackAPI>(_ => new FeedbackAPI());
+		builder.Services.AddSingleton<UserAPI>(_ => new UserAPI());
+        builder.Services.AddSingleton<ModuleAPI>(_ => new ModuleAPI());
         builder.Services.AddScoped<JAuth>();
 
 
-		builder.Services.AddSingleton<EmailAPI>(sp =>
-			new EmailAPI("http://localhost:5189"));
+		builder.Services.AddSingleton<EmailAPI>(_ => new EmailAPI());
 
 		//Configure Serilog
 		Log.Logger = new LoggerConfiguration()
@@ -39,7 +39,10 @@ public class Program
 		//Enable Serilog.
 		builder.Host.UseSerilog();
 
-
+		JWTSecretKey = builder.Configuration["JwtSettings:SecretKey"];
+		JWTAudience = builder.Configuration["JwtSettings:Issuer"];
+		JWTIssuer = builder.Configuration["JwtSettings:Audience"];
+		
 		var app = builder.Build();
 
 		// Configure the HTTP request pipeline.
@@ -57,12 +60,6 @@ public class Program
 
 		app.MapRazorComponents<App>()
 			.AddInteractiveServerRenderMode();
-
-		//JAuth init stuff
-		using (var scope = app.Services.CreateScope())
-		{
-			var navigationManager = scope.ServiceProvider.GetRequiredService<NavigationManager>();
-		}
 
 		app.Run();
 	}

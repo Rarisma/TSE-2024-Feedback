@@ -1,11 +1,11 @@
 ﻿@page "/LogIn"
-@inject IJSRuntime JSRuntime
 @using Application.API
 @inject NavigationManager NavigationManager
 @inject JAuth JAuth
 @using Blazored.LocalStorage
 @using Serilog
 @inject ILocalStorageService LocalStorage
+
 
 <!-- Authentication method, ran once button is clicked -->
 @code {
@@ -18,9 +18,14 @@
             var storedUsername = await LocalStorage.GetItemAsStringAsync("Username");
             if (!string.IsNullOrEmpty(storedToken) && !string.IsNullOrEmpty(storedUsername))
             {
-                JAuth.Authorise(storedToken, storedUsername); // Restore session
+                await JAuth.Authorise(storedToken, storedUsername); // Restore session
                 StateHasChanged();
-                NavigationManager.NavigateTo("/");
+
+                if(JAuth.IsAuthorised()){
+                    NavigationManager.NavigateTo("/");
+                }
+
+
             }
         }
     }
@@ -37,14 +42,14 @@
         
             //Check if user has 2FA, if so abort login and show 2fa box.
             int id = attempted_user.UserID;
-            if (await API.getMFAStatus(id) && Hide2FA)
+            if (await API.GetMFAStatus(id) && Hide2FA)
             {
                 Hide2FA = false;
             }
             else
             {
                 string JWT = await API.Authenticate(Username, Password, Code);
-                JAuth.Authorise(JWT, Username);
+                await JAuth.Authorise(JWT, Username);
                 if (JAuth.IsAuthorised())
                 {
                  
@@ -154,4 +159,3 @@
         NavigationManager.NavigateTo("/ResetPassword");
     }
 }
-

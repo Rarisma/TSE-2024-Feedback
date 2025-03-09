@@ -1,11 +1,11 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace FeedbackTrackerCommon.Definitions;
+namespace Core.Definitions;
 
 public class FeedbackComments
 {
-    /// <summary>
+	/// <summary>
     /// ID of feedback comment in database.
     /// </summary>
     [Key]
@@ -18,14 +18,14 @@ public class FeedbackComments
 	[Column("BODY")]
 	public string Body { get; set; }
 
-    /// <summary>
+	/// <summary>
     /// Account ID of commenter
     /// </summary>
 	[Column("USER_ID")]
 
 	public int CommenterID { get; set; }
 
-    /// <summary>
+	/// <summary>
     /// Feedback thread this comment belongs to
     /// </summary>
 	[Column("FEEDBACK_ID")]

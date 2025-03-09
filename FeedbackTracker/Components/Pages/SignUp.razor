@@ -8,15 +8,24 @@
 <title>TSE Feedback: Sign Up </title>
 
 @code {
-
     private async void Submit()
     {
         if (Password == Password2)
         {
-            //Send req to create user.
-            await new UserAPI().CreateUser(Username.ToString(), Password.ToString(), Email.ToString(), School.ToString());
-            await JSRuntime.InvokeVoidAsync("alert", "user created");
-            NavigationManager.NavigateTo("/");
+            if (Password.Length >= 8 && Password.Any(char.IsUpper) && Password.Any(c => !char.IsLetterOrDigit(c)))
+            {
+                //Send req to create user.
+                await new UserAPI().CreateUser(Username.ToString(), Password.ToString(), Email.ToString(), School.ToString());
+                await JSRuntime.InvokeVoidAsync("alert", "user created");
+                NavigationManager.NavigateTo("/");
+            }
+            else
+            {
+                //Clear if invalid
+                Password = "";
+                Password2 = "";
+                await JSRuntime.InvokeVoidAsync("alert", "Password must be at least 8 characters long, contain at least one uppercase letter, and one special character!");
+            }
         }
         else
         {
@@ -26,6 +35,7 @@
             await JSRuntime.InvokeVoidAsync("alert", "The entered passwords don't match.");
         }
     }
+
     /// <summary>
     /// Entered Username
     /// </summary>
@@ -76,27 +86,27 @@
                     <!-- Account creation textboxes/fields -->
                     <div class="mb-3">
                         <label for="firstName" class="form-label">First Name</label>
-                        <input type="text" class="form-control" id="firstName" placeholder="Enter first name" required>
+                        <input type="text" class="form-control" id="firstName" placeholder="Enter first name" maxlength="25" required>
                     </div>
                     <div class="mb-3">
                         <label for="lastName" class="form-label">Last Name</label>
-                        <input type="text" class="form-control" id="lastName" placeholder="Enter last name" required>
+                        <input type="text" class="form-control" id="lastName" placeholder="Enter last name" maxlength="25" required>
                     </div>
                     <div class="mb-3">
                         <label for="username" class="form-label">Username</label>
-                        <input type="text" class="form-control" id="username" placeholder="Enter Username" @bind-value="Username" required>
+                        <input type="text" class="form-control" id="username" placeholder="Enter Username" @bind-value="Username" maxlength="25" required>
                     </div>
                     <div class="mb-3">
                         <label for="email" class="form-label">Email</label>
-                        <input type="email" class="form-control" id="email" placeholder="Enter Email" @bind-value="Email" required>
+                        <input type="email" class="form-control" id="email" placeholder="Enter Email" @bind-value="Email" maxlength="100" required>
                     </div>
                     <div class="mb-3">
                         <label for="password" class="form-label">Password</label>
-                        <input type="password" class="form-control" id="password" placeholder="Create password" @bind-value="Password" required>
+                        <input type="password" class="form-control" id="password" placeholder="Create password" @bind-value="Password" maxlength="500" required>
                     </div>
                     <div class="mb-3">
                         <label for="confirmPassword" class="form-label">Confirm Password</label>
-                        <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm password" @bind-value="Password2" required>
+                        <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm password" @bind-value="Password2" maxlength="500" required>
                     </div>
                     <!-- Dropdown -->
                     <div class="mb-3">
@@ -145,6 +155,7 @@
         NavigationManager.NavigateTo("/LogIn");
     }
 
+
     private void ResetTab()
     {
         NavigationManager.NavigateTo("/ResetPassword");
@@ -153,4 +164,5 @@
     {
         NavigationManager.NavigateTo("/SchoolSignUp");
     }
+
 }

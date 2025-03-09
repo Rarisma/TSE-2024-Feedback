@@ -1,8 +1,11 @@
-﻿@inject JAuth auth
+﻿@using Core.Definitions
+@inject JAuth Auth
 @inject NavigationManager NavigationManager
-@inject API.UserAPI UserCLient
+@inject API.UserAPI UserClient
 @rendermode InteractiveServer
-@inject IJSRuntime JS
+@inject IJSRuntime Js
+
+
 <input type="checkbox" title="Navigation menu" class="navbar-toggler" />
 <div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
     <div class="navbar-toggler-wrapper">
@@ -14,7 +17,7 @@
                         <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
                     </NavLink>
                 </div>
-                @if (auth.IsAuthorised())
+                @if (Auth.IsAuthorised())
                 {
                     <div class="nav-item px-3">
                         <NavLink class="nav-link" href="feedback">
@@ -30,7 +33,12 @@
                             }
                             else
                             {
+
+                                <span></span>
+
+                                playsound = false;
                                 <span></span>;
+
                             }
                         </NavLink>
                     </div>
@@ -50,7 +58,7 @@
 
         <!-- Buttons for login/signup/account management -->
         <div class="login-buttons fixed-bottom px-3 pb-3">
-            @if (auth.IsAuthorised())
+            @if (Auth.IsAuthorised())
             {
                 <NavLink class="btn btn-primary mb-2 w-100" href="/settings">Settings</NavLink>
                 <NavLink class="btn btn-primary mb-2 w-100" href="/contact">Contact </NavLink>
@@ -68,46 +76,55 @@
 @code{
     bool playsound = false;
     bool New_Feedback = false;
-    FeedbackTrackerCommon.Definitions.User? user;
-    protected override async Task OnInitializedAsync()
+    User? user;
+    protected override Task OnInitializedAsync()
     {
-        NavigationManager.LocationChanged += async (sender, args) =>
+        NavigationManager.LocationChanged += async (_, _) =>
                 {
-                    
-                 //NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);        
-                 // if logged in
-                if (auth.IsAuthorised())
-                {        
-                    user = auth.GetUser();
-                    // check if user has new feedback
 
-                    if (user != null){
-                        List<FeedbackTrackerCommon.Definitions.Notification?>? notifications = await UserCLient.GetNotification(user.UserID);
-
-                        if (notifications.Count > 0){
-                            New_Feedback = true;
-
-                            await InvokeAsync(StateHasChanged);
-                        }else{
-                            New_Feedback = false;
-
-                            await InvokeAsync(StateHasChanged);
-                        }
+                    if (NavigationManager.Uri == "/usersfeedback" && playsound == true)
+                    {
+                        playsound = false;
+                        NavigationManager.NavigateTo(NavigationManager.Uri);
                     }
+                    //NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);        
+                    // if logged in
+                    if (Auth.IsAuthorised())
+                    {
+                        await Task.Delay(50); // ensure delay to allow for user to be correctly loaded
+                        user = Auth.GetUser();
+                        // check if user has new feedback
+
+                        if (user != null){
+                            List<Core.Definitions.Notification?>? notifications = await UserClient.GetNotification(user.UserID);
+
+                            if (notifications.Count > 0){
+
+                                New_Feedback = true;
+
+                                await InvokeAsync(StateHasChanged);
+                            }else{
+                                New_Feedback = false;
+
+                                await InvokeAsync(StateHasChanged);
+                            }
+
+                        }else{
+                            NavigationManager.NavigateTo(NavigationManager.Uri);
+
+                        }
 
 
-                }
+                    }
                     await InvokeAsync(StateHasChanged);
                 };
-
-
-
+        return Task.CompletedTask;
     }
     protected override async Task OnAfterRenderAsync(bool firstrender)
     {
         //Console.WriteLine("playsound: " + playsound);
             if(playsound){
-            await JS.InvokeVoidAsync("PlaySoundEffect", "sounds/notification.wav");
+            await Js.InvokeVoidAsync("PlaySoundEffect", "sounds/notification.wav");
             }
 
     }

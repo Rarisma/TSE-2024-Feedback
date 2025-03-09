@@ -1,10 +1,10 @@
 ﻿@page "/TeacherDashboard"
 @using Application.API
+@using Core.Definitions
 @rendermode InteractiveServer
 @inject ModuleAPI ModuleClient
 @inject FeedbackAPI FeedbackClientAccess
-@inject UserAPI UserClientAccess
-@using FeedbackTrackerCommon.Definitions
+@inject UserAPI UserAPI
 @inject JAuth JAuth
 
 <title>TSE Modules: Create Module</title>
@@ -25,11 +25,11 @@
                             <h5 class="mb-0">Create Module</h5>
                         </div>
                         <div class="card-body">
-                            <p class="text-center">Logged in as: <strong>@assignee.Username</strong></p>
+                            <p class="text-center">Logged in as: <strong>@_assignee.Username</strong></p>
                             <form>
                                 <div class="mb-3">
                                     <label for="moduleName" class="form-label">Module Name</label>
-                                    <input id="moduleName" type="text" class="form-control" @bind="moduleName" placeholder="Enter module name">
+                                    <input id="moduleName" type="text" class="form-control" @bind="_moduleName" placeholder="Enter module name">
                                 </div>
                                 <div class="d-grid">
                                     <button class="btn btn-success" @onclick="SendModule">Create Module</button>
@@ -47,8 +47,8 @@
                             <form>
                                 <div class="mb-3">
                                     <label for="userSelect" class="form-label">Select User</label>
-                                    <select id="userSelect" class="form-control" @bind="selectedUserId">
-                                        @foreach (var user in users)
+                                    <select id="userSelect" class="form-control" @bind="_selectedUserId">
+                                        @foreach (var user in _users)
                                         {
                                             <option value="@user.UserID">@user.Username</option>
                                         }
@@ -57,8 +57,8 @@
 
                                 <div class="mb-3">
                                     <label for="moduleSelect" class="form-label">Select Module</label>
-                                    <select id="moduleSelect" class="form-control" @bind="selectedModuleId">
-                                        @foreach (var module in modules)
+                                    <select id="moduleSelect" class="form-control" @bind="_selectedModuleId">
+                                        @foreach (var module in _modules)
                                         {
                                             <option value="@module.ModuleID">@module.Module</option>
                                         }
@@ -79,28 +79,16 @@
 }
 
 @code {
+    private string _moduleName;
 
-
-
-    private int moduleID;
-    private string moduleName;
-
-    private List<User> users = new List<User>();
-    private int selectedUserId;
-    private string selectedModuleId;
-    private List<Modules> modules = new List<Modules>();
-
-    private User SelectedUser;
-
-
-
+    private List<User> _users = new();
+    private int _selectedUserId;
+    private string _selectedModuleId;
+    private List<Modules> _modules = new();
+    
     // assigne
     // author of feedback (get current user)
-    private User assignee;
-
-
-    private User? loggedUser;
-
+    private User? _assignee;
 
     // Module Creation
     private async void SendModule()
@@ -108,19 +96,18 @@
         // Create a new module object
         Modules newModule = new();
 
-        newModule.ModuleID = moduleID;
-        newModule.Module = moduleName;
+        newModule.Module = _moduleName;
 
-        string response = await ModuleClient.CreateModule(newModule);
+        await ModuleClient.CreateModule(newModule);
     }
 
     private async Task LoadUsers()
     {
-        var AllUsers = await FeedbackClientAccess.GetAllUsersAsync();
+        var AllUsers = await UserAPI.GetAllUsers();
 
         if (AllUsers != null)
         {
-            users = AllUsers;
+            _users = AllUsers;
         }
         else
         {
@@ -128,27 +115,14 @@
         }
     }
 
-    private async Task LoadUser()
-    {
-        var user = await UserClientAccess.GetUserByID(3);
-
-        if (user != null)
-        {
-            loggedUser = user;
-        }
-        else
-        {
-            Console.WriteLine("Failed to load user.");
-        }
-    }
-
     protected override async Task OnInitializedAsync()
     {
-
         JAuth.EnforceAuth();
-        if(JAuth.IsAuthorised()){
-        assignee = JAuth.User;
-        await LoadUsers();
+        if(JAuth.IsAuthorised())
+        {
+            _assignee = JAuth.User;
+            await LoadUsers();
+            _modules = await ModuleClient.GetAllModules();
         }
 
     }
