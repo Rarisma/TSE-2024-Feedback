@@ -11,65 +11,66 @@
     <div class="navbar-toggler-wrapper">
         <input type="checkbox" title="Navigation menu" class="navbar-toggler" />
         <div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
-            <nav class="flex-column">
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                        <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
-                    </NavLink>
-                </div>
-                @if (Auth.IsAuthorised())
-                {
-                    <div class="nav-item px-3">
-                        <NavLink class="nav-link" href="feedback">
-                            <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Create Feedback
-                        </NavLink>
-                    </div>
-                    <div class="nav-item px-3">
-                        <NavLink class="nav-link" href="usersfeedback">
-                            <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Your Feedback @if (New_Feedback)
-                            {
-                                <span class="notification"> 🔔 </span>
-                                playsound = true;
-                            }
-                            else
-                            {
+	        <nav class="flex-column">
+		        <div class="nav-item px-3">
+			        <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+				        <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
+			        </NavLink>
+		        </div>
+		        @if (Auth.IsAuthorised())
+		        {
+			        <div class="nav-item px-3">
+				        <NavLink class="nav-link" href="feedback">
+					        <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Create Feedback
+				        </NavLink>
+			        </div>
+			        <div class="nav-item px-3">
+				        <NavLink class="nav-link" href="usersfeedback">
+					        <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Your Feedback @if (New_Feedback)
+					                                                                                          {
+						                                                                                          <span class="notification"> 🔔 </span>
+						                                                                                          playsound = true;
+					                                                                                          }
+					                                                                                          else
+					                                                                                          {
 
-                                <span></span>
+						                                                                                          <span></span>
 
-                                playsound = false;
-                                <span></span>;
+						                                                                                          playsound = false;
+						                                                                                          <span></span>;
 
-                            }
-                        </NavLink>
-                    </div>
+					                                                                                          }
+				        </NavLink>
+			        </div>
 
-                    <!-- Change to IsTeacher later -->
-                    @if (user != null && user.IsTeacher)
-                    {
-                        <div class="nav-item px-3">
-                            <NavLink class="nav-link" href="TeacherDashboard">
-                                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Teacher Dashboard
-                            </NavLink>
-                        </div>
-                    }
-                }
-            </nav>
+			        <!-- Change to IsTeacher later -->
+			        @if (user != null && user.IsTeacher)
+			        {
+				        <div class="nav-item px-3">
+					        <NavLink class="nav-link" href="TeacherDashboard">
+						        <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Teacher Dashboard
+					        </NavLink>
+				        </div>
+			        }
+		        }
+	        </nav>
+	        <!-- Buttons for login/signup/account management -->
+			<div class="login-buttons px-3 pb-3">
+				@if (Auth.IsAuthorised())
+				{
+					<NavLink class="btn btn-primary mb-2 w-100" href="/settings">Settings</NavLink>
+					<NavLink class="btn btn-primary mb-2 w-100" href="/contact">Contact </NavLink>
+					<NavLink class="btn btn-primary mb-2 w-100" href="/Logout">Log Out</NavLink>
+				}
+				else
+				{
+					<NavLink class="btn btn-primary mb-2 w-100" href="/settings">Settings</NavLink>
+					<NavLink class="btn btn-primary mb-2 w-100" href="/contact">Need Help?</NavLink>
+				}
+			</div>
         </div>
 
-        <!-- Buttons for login/signup/account management -->
-        <div class="login-buttons fixed-bottom px-3 pb-3">
-            @if (Auth.IsAuthorised())
-            {
-                <NavLink class="btn btn-primary mb-2 w-100" href="/settings">Settings</NavLink>
-                <NavLink class="btn btn-primary mb-2 w-100" href="/contact">Contact </NavLink>
-                <NavLink class="btn btn-primary mb-2 w-100" href="/Logout">Log Out</NavLink>
-            }
-            else
-            {
-                <NavLink class="btn btn-primary mb-2 w-100" href="/settings">Settings</NavLink>
-                <NavLink class="btn btn-primary mb-2 w-100" href="/contact">Need Help?</NavLink>
-            }
-        </div>
+        
     </div>
 </div>
 

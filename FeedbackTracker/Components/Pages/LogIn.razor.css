@@ -26,8 +26,8 @@ html, body {
     justify-content: center;
     align-items: center;
     grid-column: 2 / 3;
-    margin-left: 200px;
-    margin-top: 60px;
+    margin-left: 5vw;
+    margin-top: 4vh;
     animation: fadeAnimation 1.2s ease-in;
 }
 
@@ -35,30 +35,29 @@ html, body {
     font-family: 'Helvetica Neue', sans-serif;
     color: #333;
     text-align: center;
-    font-size: 2.5em;
+    font-size: 4vh;
     margin: 30px 0;
     letter-spacing: 1px;
 }
 
 .logo-icon {
-    width: 100px;
+    width: 10vw;
     height: auto;
-    margin-right: 30px;
+    margin-right: 2vw;
 }
 
 .uni-logo {
-    max-width: 110%;
-    margin-left: 250px;
+    width: 25vw;
+    margin-left: 5vw;
     height: auto;
-    margin-top: 80px;
+    margin-top: 8vh;
     animation: fadeAnimation 1.2s ease-in;
 }
 
 .login-box {
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(10px);
-    width: 100%;
-    max-width: 600px;
+    width:75vw;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease;
@@ -101,14 +100,14 @@ input.form-control {
 
 .info-section {
     text-align: center;
-    padding: 20px;
+    padding: 5vw;
     backdrop-filter: blur(15px);
-    border-radius: 12px;
+    border-radius: 1.2vh;
     box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-    margin-top: 50px;
+    margin-top: 5vh;
     animation: fadeAnimation 1.2s ease-in;
-    margin-bottom: 80px;
+    margin-bottom: 8vh;
 }
 
     .info-section:hover {
