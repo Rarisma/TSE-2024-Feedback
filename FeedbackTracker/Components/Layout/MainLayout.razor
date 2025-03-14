@@ -2,6 +2,8 @@
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JSRuntime
 
+<RadzenComponents @rendermode="InteractiveServer" />
+
 <!-- About -->
 <!-- condition -->
 @if (NavigationManager.Uri.Contains("LogIn") ||
