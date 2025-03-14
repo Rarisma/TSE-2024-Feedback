@@ -8,9 +8,9 @@
 The 2FA Code was making the browser crash. Commented it. 
 Commented the 2FA button and replaced with a dummy until it works
 *@
-
+<title>TSE Modules: </title>
 <!-- Settings Page Layout-->
-<div class="settings">
+<div class="settings container">
     <h3>Settings</h3>
     <div class="settings-container">
         <!-- Left side: Categories -->
@@ -23,7 +23,7 @@ Commented the 2FA button and replaced with a dummy until it works
             </ul>
         </div>
         <!-- Right Side: Options -->
-        <div class="options">
+        <div class="options overflow-auto">
             @* GENERAL SETTINGS (maybe theme selector or dark mode?)*@
             @if (SelectedCategory == SettingsCategory.General)
             {

@@ -10,8 +10,10 @@ html, body {
     --light-text: white;
     --dark-text: dark;
     --dark-color: #5a5c69;
+    height: 100%;
+    margin: 0;
+    overflow: auto;
 }
-
 .blue {
     --primary-color: #4e73df;
     --secondary-color: #92b4f2;
