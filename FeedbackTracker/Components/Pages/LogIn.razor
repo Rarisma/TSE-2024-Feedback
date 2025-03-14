@@ -9,7 +9,6 @@
 
 <!-- Authentication method, ran once button is clicked -->
 @code {
-
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
@@ -52,13 +51,8 @@
                 await JAuth.Authorise(JWT, Username);
                 if (JAuth.IsAuthorised())
                 {
-                 
-                    //User ticked stay logged in, persist to local storage.
-                    if (StayLoggedIn)
-                    {
-                        await LocalStorage.SetItemAsStringAsync("UserTok", JWT);
-                        await LocalStorage.SetItemAsStringAsync("Username", Username);
-                    }
+                    await LocalStorage.SetItemAsStringAsync("UserTok", JWT);
+                    await LocalStorage.SetItemAsStringAsync("Username", Username);
 
                     //Login Successful, go to dash.
                     StateHasChanged();
@@ -76,7 +70,6 @@
     public string Password { get; set; } = "";
     private bool Hide2FA { get; set; } = true;
     public string Code { get; set; } = "0";
-    public bool StayLoggedIn { get; set; }
 
 }
 @rendermode InteractiveServer
@@ -106,12 +99,6 @@
                     <form @onsubmit="Submit">
                         <input type="text" class="form-control mb-3" placeholder="Username" @bind-value="Username" aria-label="Enter username">
                         <input type="password" class="form-control mb-3" placeholder="Password" @bind-value="Password" aria-label="Enter password">
-
-                        <!-- Remember me button, needs additional code-->
-                        <div class="d-flex align-items-center mb-3">
-                            <input type="checkbox" class="form-check-input me-2" @bind="StayLoggedIn" id="rememberMe" aria-label="Remember me">
-                            <label for="rememberMe" class="form-check-label">Remember My Details</label>
-                        </div>
 
                         <button type="submit" class="btn btn-primary w-100" aria-label="Log in">Log In</button>
 

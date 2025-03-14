@@ -60,8 +60,6 @@
 
     <title>Your Feedback</title>
 
-    @if (JAuth.IsAuthorised())
-    {
         <div style="text-align: center;" >
             <h1>Your Feedback</h1>
         </div>
@@ -127,22 +125,7 @@
             }
         }
         <title>TSE Feedback: Your Feedback</title>
-    }
-    else //For users that aren't logged in
-    {
-        <style>
-            body {
-            overflow: hidden;
-            }
-        </style>
-        <div class="loggedout">
-            <div class="loggedout-msg">
-                <img src="/Images/LoginCone.png" alt="Login Required" class="cone-img">
-                <h2>Please log in to access the feedback form.</h2>
-                <button class="btn btn-loggedout" @onclick=HomeButton>Return Home</button>
-            </div>
-        </div>
-    }
+
 }
 
 @code {
@@ -286,6 +269,7 @@
     /// </summary>
     protected override async Task OnInitializedAsync()
     {
+        JAuth.EnforceAuth();
         if (JAuth.IsAuthorised())
         {
             if(JAuth.GetUser()!=null){

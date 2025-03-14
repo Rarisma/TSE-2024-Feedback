@@ -1,9 +1,41 @@
-﻿@page "/Unauthorised"
+﻿@inject ILocalStorageService LocalStorage
+@using Blazored.LocalStorage
+@inject JAuth JAuth
+@inject NavigationManager NavigationManager
 
-<h3>You must be logged in to view this page</h3>
-<div>
-	<NavLink class="btn btn-primary mb-2 w-100" href="/LogIn">Log In</NavLink>
-	<NavLink class="btn btn-primary w-100" href="/SignUp">Sign Up</NavLink>
+@page "/Unauthorised"
+
+<div class="loggedout">
+	<div class="loggedout-msg">
+		<img src="/Images/LoginCone.png" alt="Login Required" class="cone-img">
+		<h2>Please log in to continue.</h2>
+		<div>
+			<NavLink class="btn btn-primary mb-2 w-100" href="/LogIn">Log In</NavLink>
+			<NavLink class="btn btn-primary w-100" href="/SignUp">Sign Up</NavLink>
+		</div>
+	</div>
 </div>
 
+@code{
 
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (firstRender)
+		{
+			var storedToken = await LocalStorage.GetItemAsStringAsync("UserTok");
+			var storedUsername = await LocalStorage.GetItemAsStringAsync("Username");
+			if (!string.IsNullOrEmpty(storedToken) && !string.IsNullOrEmpty(storedUsername))
+			{
+				await JAuth.Authorise(storedToken, storedUsername); // Restore session
+				StateHasChanged();
+
+				if(JAuth.IsAuthorised()){
+					NavigationManager.NavigateTo("/");
+				}
+
+
+			}
+		}
+	}
+
+}
