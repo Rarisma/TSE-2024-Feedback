@@ -3,6 +3,7 @@
 @inject JAuth JAuth
 @inject IJSRuntime JSRuntime
 @inject NavigationManager NavigationManager
+@inject NotificationService NotificationService
 
 @*
 The 2FA Code was making the browser crash. Commented it. 
@@ -45,9 +46,10 @@ Commented the 2FA button and replaced with a dummy until it works
             @* PRIVACY SETTINGS *@
             else if (SelectedCategory == SettingsCategory.Privacy)
             {
+                @* 2FA Button *@
                 <div class="option">
                     <h2 for="privacy-option">Privacy Settings</h2>
-                    <button type="submit" class="sett btn-primary" style="width: 30%; margin-top: 10px;" aria-label="2FA">2FA</button>
+                    <RadzenButton Text="2FA" ButtonStyle="ButtonStyle.Primary" Style="width: 30%; margin-top: 10px;" Click="@ShowNotification" />
                 </div>
             }
             @* NOTIFICATION SETTINGS *@
@@ -110,6 +112,7 @@ Commented the 2FA button and replaced with a dummy until it works
     //getters and setters for the selected settings category
     private SettingsCategory SelectedCategory { get; set; } = SettingsCategory.General;
     private string SelectedTheme { get; set; } = "blue";
+    private string lastClickedState = "Disabled"; // for 2FA button
 
     private void SelectCategory(SettingsCategory category)
     {
@@ -160,6 +163,22 @@ Commented the 2FA button and replaced with a dummy until it works
         }
         StateHasChanged();
         return Task.CompletedTask;
+    }
+
+    //show notification
+    void ShowNotification()
+    {
+        lastClickedState = (lastClickedState == "Enabled") ? "Disabled" : "Enabled"; //needs to be bound to user data
+
+        NotificationService.Notify(new NotificationMessage
+            {
+                Severity = NotificationSeverity.Info,
+                Summary = $"2FA {lastClickedState}",
+                Detail = $"2FA Key: #",
+                Duration = 40000,
+                ShowProgress = true,
+                Style = "border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); border: none;"
+            });
     }
 }
 

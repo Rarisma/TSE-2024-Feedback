@@ -13,6 +13,8 @@
 .card-body {
     margin-top: -25px;
     width: 100%;
+    max-height: 75vh;
+    overflow-y: auto;
 }
 
 .first-label, .label-text {
@@ -23,7 +25,7 @@
 }
 
 .first-label {
-    margin-top: 80px;
+    margin-top: 40px;
     color: #333;
 }
 
@@ -100,7 +102,7 @@
 
 h3 {
     position: relative;
-    top: 30px;
+    margin-bottom: 10px;
     left: 50%;
     transform: translateX(-50%);
     margin: 0;
