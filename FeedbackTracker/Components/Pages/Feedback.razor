@@ -12,10 +12,10 @@
 <div class="container">
 @if (Auth.IsAuthorised())
 {   <PageTitle>Feedback Page</PageTitle>
-             <h3 class="card-header">Create Feedback</h3>
+             
             <!-- Feedback form -->
 		<div class="create-feedback">
-
+            <h3>Create Feedback</h3>
 
             <!--Name-->
             <div class="mb-3">
@@ -90,9 +90,9 @@
                 </div>
 
 
-			</div>
-			<div class="mb-3 text-center">
-				<button class="btn btn-primary" @onclick="SendFeedback">Submit Feedback</button>
+            <div class="mb-3 text-center">
+                <button class="btn btn-primary" @onclick="SendFeedback">Submit Feedback</button>
+            </div>
 			</div>
 
 
