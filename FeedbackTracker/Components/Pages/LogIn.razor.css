@@ -23,6 +23,7 @@ html, body {
 
 .login-section {
     display: flex;
+    flex-grow:0.5;
     justify-content: center;
     align-items: center;
     grid-column: 2 / 3;
@@ -57,7 +58,7 @@ html, body {
 .login-box {
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(10px);
-    width:75vw;
+    width:80vw;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease;

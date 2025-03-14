@@ -9,57 +9,9 @@
 @rendermode InteractiveServer
 
 @{
-    <style>
-        .title-box {
-        background-color: #1f1f1f;
-        color: white;
-        width: 100%;
-        padding: 32px;
-        text-align: center;
-        }
-
-        .sort-container {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        }
-
-        .sort-box {
-        background-color: #1f1f1f;
-        border-style: solid;
-        border-color: #1f1f1f;
-        border-radius: 8px;
-        width: 300px;
-        padding: 16px;
-        margin: 16px;
-        text-align: center;
-        color: white;
-        }
-
-        .feedback-box {
-        position: center;
-        display: block;
-        background-color: #EBF0F5;
-        border-style: solid;
-        border-color: black;
-        border-radius: 8px;
-        width: 300px;
-        padding: 16px;
-        margin-top: 16px;
-        margin-bottom: 16px;
-        margin-left: 185px;
-        text-align: center;
-        color: black;
-        text-decoration: none;
-        }
-
-        .feedback-box:hover {
-        transform: translateY(-2px);
-        }
-    </style>
 
     <title>Your Feedback</title>
-
+    <div class="container">
     @if (JAuth.IsAuthorised())
     {
         <div style="text-align: center;" >
@@ -95,37 +47,48 @@
                 </select>
             </div>
         </div>
-
+        <div class="feedback-container">
         @if (SpecificFeedbacks != null)
         {
             foreach (var feedback in SpecificFeedbacks)
             {
-                <NavLink class="feedback-box" href="@($"/viewfeedback/{feedback.FeedbackID}")">
-                    <p>@feedback.Title</p>
-                    @if (Users != null)
-                    {
-                        foreach (var assignee in Users)
-                        {
-                            if (assignee.UserID == feedback.AssigneeID)
-                            {
-                                <p>
-                                    <strong>@assignee.Username</strong>
-                                </p>
-                            }
-                        }
-                    }
-                    <p>@feedback.FeedbackText</p>
-                    @if (JAuth.User.UserID == feedback.AssigneeID)
-                    {
-                    <p><strong>You assigned this!</strong></p>
-                    }
-                    else
-                    {
-                    <p><strong>This was assigned to you!</strong></p>
-                    }
-                </NavLink>
+                        
+	                        <NavLink href="@($"/viewfeedback/{feedback.FeedbackID}")">
+		                        <div class="feedback-box">
+			                        <div class="flex">
+									<h4>@feedback.Title</h4>
+								</div>
+			                        @if (Users != null)
+			                        {
+				                        foreach (var assignee in Users)
+				                        {
+					                        if (assignee.UserID == feedback.AssigneeID)
+					                        {
+						                        <div class="flex">
+							                        <strong>@assignee.Username</strong>
+						                        </div>
+					                        }
+				                        }
+			                        }
+			                        <div class="flex">
+				                        <p>@feedback.FeedbackText</p>
+			                        </div>
+			                        @if (JAuth.User.UserID == feedback.AssigneeID)
+			                        {
+				                        <div class="flex">
+					                        <p><strong>You assigned this!</strong></p>
+                                            </div>
+			                        }
+			                        else
+                                {
+                                                                        <div class="flex">
+	                                                                        <p><strong>This was assigned to you!</strong></p>
+                                                                            </div>
+			                        }
+		                        </div>
+	                        </NavLink>
             }
-        }
+        }</div>
         <title>TSE Feedback: Your Feedback</title>
     }
     else //For users that aren't logged in
@@ -143,8 +106,9 @@
             </div>
         </div>
     }
+    </div>
 }
-
+	
 @code {
     private void HomeButton()
     {

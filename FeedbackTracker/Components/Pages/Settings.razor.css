@@ -9,21 +9,20 @@
 }
 
 .settings {
-    position: fixed;
-    top: 50%;
-    left: 56%;
-    width: 75%;
-    height: 80vh;
+    position: relative;
+    top: 5vh;
+    left: 2vw;
+    width: 75vw;
+    height: 90vh;
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
-    align-items: flex-start;
+    justify-content: center;
+    align-items: center;
     text-align: left;
-    padding: 20px;
+    padding: 2vw;
     backdrop-filter: blur(200px);
     border-radius: 12px;
     box-shadow: 0 20px 35px rgba(0, 0, 0, 0.2);
-    transform: translate(-50%, -50%);
     animation: fadeIn 0.5s ease-in;
 }
 
@@ -128,6 +127,7 @@ h3 {
     align-items: center;
     justify-content: flex-start;
     background-color: transparent;
+    overflow-x:auto;
     color: #000000;
     border: none;
     padding: 30px;
