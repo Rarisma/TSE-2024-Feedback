@@ -65,22 +65,41 @@ main {
             overflow: hidden;
             text-overflow: ellipsis;
         }
-
 .about-navbar {
     position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
-    width: 100%;
+    width: 100vw;
     background-color: #2b2b2b;
     color: #fff;
-    height: 40px;
-    padding: 10px 20px;
+    height: 4vh;
+    padding: 1vh 2vw;
+    font-size:4vw;
     display: flex;
     justify-content: flex-end;
     align-items: center;
-    clip-path: inset(0 0 0 250px);
 }
+@media screen and (min-width: 641px) {
+    .about-navbar {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: 100vw;
+        background-color: #2b2b2b;
+        color: #fff;
+        height: 4vh;
+        padding: 1vh 2vw;
+        display: flex;
+        font-size: 2.5vh;
+        justify-content: flex-end;
+        align-items: center;
+        clip-path: inset(0 0 0 250px);
+    }
+}
+
+
 
 @media (max-width: 640.98px) {
     .top-row {

@@ -8,7 +8,9 @@
 @inject NavigationManager NavigationManager
 @rendermode InteractiveServer
 
+
 <PageTitle>TSE Feedback: Your Feedback</PageTitle>
+
 
 @{
     <title>Your Feedback</title>
@@ -44,6 +46,7 @@
                     <option value="public">Public Feedback</option>
                     <option value="private">Private Feedback</option>
                 </select>
+
             </RadzenCard>
 
             <RadzenDataGrid Style="border-bottom-left-radius: 10px; border-bottom-right-radius: 10px;"
@@ -98,8 +101,9 @@
             </div>
         </div>
     }
-}
 
+}
+	
 @code {
     private void HomeButton()
     {
@@ -236,6 +240,7 @@
     /// </summary>
     protected override async Task OnInitializedAsync()
     {
+        JAuth.EnforceAuth();
         if (JAuth.IsAuthorised())
         {
             if(JAuth.GetUser()!=null){
