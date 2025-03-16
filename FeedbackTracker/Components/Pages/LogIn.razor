@@ -106,6 +106,7 @@
                     <form @onsubmit="Submit">
                         <input type="text" class="form-control mb-3" placeholder="Username" @bind-value="Username" aria-label="Enter username">
                         <input type="password" class="form-control mb-3" placeholder="Password" @bind-value="Password" aria-label="Enter password">
+                        <input type="text" hidden="@Hide2FA" class="form-control mb-3" placeholder="000000" @bind-value="Code" aria-label="Enter 2FA Code">
 
                         <!-- Remember me button, needs additional code-->
                         <div class="d-flex align-items-center mb-3">
