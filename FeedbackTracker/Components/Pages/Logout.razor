@@ -5,11 +5,41 @@
 @inject ILocalStorageService LocalStorage
 @rendermode InteractiveServer
 
-<h3>Are you sure you want to logout?</h3>
-<button @onclick="DeleteSession">Yes</button>
-<NavLink href="/">No</NavLink>
+@if (!isAuthorized)
+{
+    <div style="display: flex; justify-content: center; margin-top: 120px;">
+        <img src="/Images/LoginCone.png" alt="Please Log In" style="width: 80%; height: auto;">
+    </div>
+}
+else {
+    <div class="logout-container">
+        <RadzenCard class="logout-card rz-shadow-5 rz-border-radius-6 rz-p-8">
+            <RadzenStack Gap="2rem" Class="rz-p-4">
+                <RadzenText TextStyle="TextStyle.H4" TagName="TagName.H3" class="rz-text-align-center">
+                    Are you sure you want to logout?
+                </RadzenText>
+                <div class="icon">
+                    <RadzenIcon Icon="logout" style="font-size: 3rem; color: #4361ee;" />
+                </div>
+                <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="1.5rem">
+                    <RadzenButton Text="Yes" ButtonStyle="ButtonStyle.Primary" Click="DeleteSession" />
+                    <RadzenButton Text="No" ButtonStyle="ButtonStyle.Light" Click="@(() => navigation.NavigateTo("/"))" />
+                </RadzenStack>
+            </RadzenStack>
+        </RadzenCard>
+    </div>
+}
+
+@* For scrolling bug *@
+<style>
+    body {
+        overflow: hidden;
+    }
+</style>
 
 @code {
+    private bool isAuthorized;
+
 	private async void DeleteSession()
 	{
 		await LocalStorage.SetItemAsStringAsync("UserTok", "");
@@ -19,4 +49,14 @@
 		navigation.NavigateTo("/");
 	}
 
+    protected override Task OnInitializedAsync() {
+    isAuthorized = Auth.IsAuthorised();
+
+    if (isAuthorized)
+    {
+        Auth.EnforceAuth();
+    }
+    StateHasChanged();
+    return Task.CompletedTask;
+    }
 }

@@ -5,6 +5,7 @@
 @inject JAuth JAuth
 @inject IJSRuntime JSRuntime
 @inject NavigationManager NavigationManager
+@inject NotificationService NotificationService
 
 
 @*
@@ -152,7 +153,6 @@ Commented the 2FA button and replaced with a dummy until it works
     private string SelectedTheme { get; set; } = "blue";
     public bool isDisabled = false;
     private string MFAButtonText = "Enable 2fa";
-
     private void SelectCategory(SettingsCategory category)
     {
         SelectedCategory = category;

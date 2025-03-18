@@ -8,15 +8,21 @@
 @inject NavigationManager NavigationManager
 @rendermode InteractiveServer
 
+
+<PageTitle>TSE Feedback: Your Feedback</PageTitle>
+
+
 @{
-
     <title>Your Feedback</title>
-        <div style="text-align: center;" >
-            <h1>Your Feedback</h1>
-        </div>
-
-        <div class="sort-container">
-            <div class="sort-box">
+    @if (JAuth.IsAuthorised())
+    {
+        <RadzenCard Style="margin-bottom: 30px;">
+            <div style="text-align: center;">
+                <h1 style="font-size: 3.2rem; font-weight: 700; color: #333333; text-shadow: 0 0 5px rgba(0, 0, 0, 0.3);">
+                    Your Feedback
+                </h1>
+            </div>
+            <RadzenCard Style="border-top-left-radius: 10px; border-bop-right-radius: 10px;">
                 <label for="teachername">Show from:</label>
                 <select id="teachername" @onchange="SortByTeacher">
                     <option value="all">Everyone</option>
@@ -32,9 +38,7 @@
                         <option value="">No Assignments</option>
                     }
                 </select>
-            </div>
 
-            <div class="sort-box">
                 <label for="sorting">Sort By:</label>
                 <select id="sorting" @onchange="SortBySelected">
                     <option value="az">A-Z</option>
@@ -42,51 +46,62 @@
                     <option value="public">Public Feedback</option>
                     <option value="private">Private Feedback</option>
                 </select>
+
+            </RadzenCard>
+
+            <RadzenDataGrid Style="border-bottom-left-radius: 10px; border-bottom-right-radius: 10px;"
+                            AllowFiltering="false" AllowSorting="true" PageSize="10" AllowPaging="true" Data="@SpecificFeedbacks" EmptyText="No feedback found">
+                <Columns>
+                    <RadzenDataGridColumn TItem="Core.Definitions.Feedback" Property="Title" Title="Title" />
+                    <RadzenDataGridColumn TItem="Core.Definitions.Feedback" Property="FeedbackText" Title="Feedback" />
+                    <RadzenDataGridColumn TItem="Core.Definitions.Feedback" Title="Assignee">
+                        <Template Context="feedback">
+                            @if (Users != null)
+                            {
+                                @foreach (var assignee in Users)
+                                {
+                                    if (assignee.UserID == feedback.AssigneeID)
+                                    {
+                                        <strong>@assignee.Username</strong>
+                                    }
+                                }
+                            }
+                        </Template>
+                    </RadzenDataGridColumn>
+
+                    <RadzenDataGridColumn TItem="Core.Definitions.Feedback" Title="Status">
+                        <Template Context="feedback">
+                            @if (JAuth.User.UserID == feedback.AssigneeID)
+                            {
+                                <strong>You assigned this!</strong>
+                            }
+                            else
+                            {
+                                <strong>This was assigned to you!</strong>
+                            }
+                        </Template>
+                    </RadzenDataGridColumn>
+
+                    <RadzenDataGridColumn TItem="Core.Definitions.Feedback" Title="View">
+                        <Template Context="feedback">
+                            <RadzenButton ButtonStyle="ButtonStyle.Light" Icon="visibility" Click="@(args => NavigateToFeedback(feedback.FeedbackID))" />
+                        </Template>
+                    </RadzenDataGridColumn>
+                </Columns>
+            </RadzenDataGrid>
+        </RadzenCard>
+    }
+    else //For users that aren't logged in
+    {
+        <div class="loggedout">
+            <div class="loggedout-msg">
+                <img src="/Images/LoginCone.png" alt="Login Required" class="cone-img">
+                <h2>Please log in to access the feedback form.</h2>
+                <button class="btn btn-loggedout" @onclick=HomeButton>Return Home</button>
             </div>
         </div>
-        <div class="feedback-container">
-        @if (SpecificFeedbacks != null)
-        {
-            foreach (var feedback in SpecificFeedbacks)
-            {
-                        
-	                        <NavLink href="@($"/viewfeedback/{feedback.FeedbackID}")">
-		                        <div class="feedback-box">
-			                        <div class="flex">
-									<h4>@feedback.Title</h4>
-								</div>
-			                        @if (Users != null)
-			                        {
-				                        foreach (var assignee in Users)
-				                        {
-					                        if (assignee.UserID == feedback.AssigneeID)
-					                        {
-						                        <div class="flex">
-							                        <strong>@assignee.Username</strong>
-						                        </div>
-					                        }
-				                        }
-			                        }
-			                        <div class="flex">
-				                        <p>@feedback.FeedbackText</p>
-			                        </div>
-			                        @if (JAuth.User.UserID == feedback.AssigneeID)
-			                        {
-				                        <div class="flex">
-					                        <p><strong>You assigned this!</strong></p>
-                                            </div>
-			                        }
-			                        else
-                                {
-                                                                        <div class="flex">
-	                                                                        <p><strong>This was assigned to you!</strong></p>
-                                                                            </div>
-			                        }
-		                        </div>
-	                        </NavLink>
-            }
-        }</div>
-        <title>TSE Feedback: Your Feedback</title>
+    }
+
 }
 	
 @code {
@@ -94,7 +109,12 @@
     {
         NavigationManager.NavigateTo("/LogIn");
     }
-    
+
+    private void NavigateToFeedback(int feedbackId)
+    {
+        NavigationManager.NavigateTo($"/viewfeedback/{feedbackId}");
+    }
+
     /// <summary>
     /// These are lists that contain the data from the related
     /// datbase, e.g. Teachers contains data about the user
@@ -123,13 +143,11 @@
 
         if (SelectedOption == "az") // alphabetical
         {
-            SpecificFeedbacks.Sort((current, next) => String.Compare(current.Title, 
-                next.Title, StringComparison.Ordinal));
+            SpecificFeedbacks = SpecificFeedbacks.OrderBy(f => f.Title).ToList();
         }
         else if (SelectedOption == "za") // reverse alphabetical
         {
-            SpecificFeedbacks.Sort((current, next) => String.Compare(next.Title, 
-                current.Title, StringComparison.Ordinal));
+            SpecificFeedbacks = SpecificFeedbacks.OrderByDescending(f => f.Title).ToList();
         }
         else if (SelectedOption == "public") // public
         {
@@ -154,15 +172,7 @@
         }
         else
         {
-            SpecificFeedbacks.Clear();
-            foreach (var feedback in AllFeedbacks) // loops through original list to add all related feedbacks
-            {
-                // checks if the teacher assigned the feedback by seeing if they have the same ID as the assignee ID
-                if (SelectedTeacherID != null && int.Parse(SelectedTeacherID) == feedback.AssigneeID)
-                {
-                    SpecificFeedbacks.Add(feedback);
-                }
-            }
+            SpecificFeedbacks = AllFeedbacks .Where(f => SelectedTeacherID != null && int.Parse(SelectedTeacherID) == f.AssigneeID) .ToList();
         }
     }
 
@@ -240,8 +250,6 @@
                 // clear notifications
                 await clearNotifications();
             }
-
         }
     }
-
 }
