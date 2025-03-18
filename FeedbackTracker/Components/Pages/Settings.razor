@@ -11,9 +11,9 @@
 The 2FA Code was making the browser crash. Commented it. 
 Commented the 2FA button and replaced with a dummy until it works
 *@
-
+<title>TSE Modules: </title>
 <!-- Settings Page Layout-->
-<div class="settings">
+<div class="settings container">
     <h3>Settings</h3>
     <div class="settings-container">
         <!-- Left side: Categories -->
@@ -27,7 +27,7 @@ Commented the 2FA button and replaced with a dummy until it works
         </div>
 
         <!-- Right Side: Options -->
-        <div class="options">
+        <div class="options overflow-auto">
             @* GENERAL SETTINGS (maybe theme selector or dark mode?)*@
             @if (SelectedCategory == SettingsCategory.General) {
                 <div class="option">
@@ -96,10 +96,9 @@ Commented the 2FA button and replaced with a dummy until it works
             @* ACCOUNT SETTINGS *@ 
             else if (SelectedCategory == SettingsCategory.Account)
             {
-                if (JAuth.IsAuthorised()){
-                    <div class="option">
-                        <h2 for="account-option">Account Options</h2>
-                    </div>
+                <div class="option">
+                    <h2 for="account-option">Account Options</h2>
+                </div>
                     <form>
                         <div class="mb-3">
                             <label for="firstName" class="form-label">First Name</label>
@@ -131,8 +130,17 @@ Commented the 2FA button and replaced with a dummy until it works
                 {
                     <div style="display: flex; justify-content: center; margin-top: 120px;">
                         <img src="/Images/LoginCone.png" alt="Please Log In" style="width: 80%; height: auto;">
+
                     </div>
-                }
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Confirm Password</label>
+                        <input type="password" class="form-control" id="password" placeholder="Confirm Password" @bind-value="Password" maxlength="100">
+                    </div>
+                    <div class="d-flex justify-content-center w-100">
+                        <!-- Button below needs @onclick once a function can update account details-->
+                        <button type="button" class="btn btn-primary" style="width: 38%; margin-top: 10px;">Update Profile</button>
+                    </div>
+                </form>
             }
         </div>
     </div>
@@ -193,25 +201,10 @@ Commented the 2FA button and replaced with a dummy until it works
     private string? Password { get; set; }
 
     private bool isAuthorized;
-
     protected override Task OnInitializedAsync()
     {
-        isAuthorized = JAuth.IsAuthorised();
-        if (isAuthorized)
-        {
-            JAuth.EnforceAuth();
-        }
-        if (JAuth.User != null && JAuth.User.MFASecret != null)
-        {
-            MFAButtonText = "2FA Enabled, your code is: " + JAuth.User.MFASecret;
-            isDisabled = true;
-
-        }
-        isAuthorized = JAuth.IsAuthorised();
+        JAuth.EnforceAuth();
         StateHasChanged();
         return Task.CompletedTask;
     }
 }
-
-
-

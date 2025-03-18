@@ -99,7 +99,7 @@ public class JAuth(NavigationManager navigationManager)
 			if (!IsAuthorised())
 			{
 				Log.Information("User unauthorised.");
-				navigationManager.NavigateTo("/LogIn");
+				navigationManager.NavigateTo("/login");
 			}
 			Log.Information("User authorised.");
 			return;
