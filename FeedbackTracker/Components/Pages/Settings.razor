@@ -25,11 +25,11 @@ Commented the 2FA button and replaced with a dummy until it works
                 <li><button class="btn-categories @(SelectedCategory == SettingsCategory.Account ? "active" : "")" @onclick="() => SelectCategory(SettingsCategory.Account)"><img class="settings-icon" src="/Images/SettingsIcons/user.png" /> Account</button></li>
             </ul>
         </div>
+
         <!-- Right Side: Options -->
         <div class="options">
             @* GENERAL SETTINGS (maybe theme selector or dark mode?)*@
-            @if (SelectedCategory == SettingsCategory.General)
-            {
+            @if (SelectedCategory == SettingsCategory.General) {
                 <div class="option">
                     <h2>General Settings</h2>
                     <label class="label-text">Theme:</label>
@@ -43,11 +43,10 @@ Commented the 2FA button and replaced with a dummy until it works
                         </select>
                         <button @onclick="ApplyTheme" class="theme-apply-btn">Apply</button>
                     </div>
-                </div>
-            }
+                </div> }
+
             @* PRIVACY SETTINGS *@
-            else if (SelectedCategory == SettingsCategory.Privacy)
-            {
+            else if (SelectedCategory == SettingsCategory.Privacy) {
                 @if (JAuth.IsAuthorised()) {
                     <div class="option">
                     <h2 for="privacy-option">Privacy Settings</h2>
@@ -79,10 +78,10 @@ Commented the 2FA button and replaced with a dummy until it works
                         }
                     </div> }
                 else {
-}                   <div style="display: flex; justify-content: center; margin-top: 120px;">
+                    <div style="display: flex; justify-content: center; margin-top: 120px;">
                         <img src="/Images/LoginCone.png" alt="Please Log In" style="width: 80%; height: auto;">
                     </div>
-            }
+            } }
             @* NOTIFICATION SETTINGS *@
             else if (SelectedCategory == SettingsCategory.Notifications)
             {
@@ -128,7 +127,7 @@ Commented the 2FA button and replaced with a dummy until it works
                         </div>
                     </form>
                 }
-                else
+                else if (!JAuth.IsAuthorised())
                 {
                     <div style="display: flex; justify-content: center; margin-top: 120px;">
                         <img src="/Images/LoginCone.png" alt="Please Log In" style="width: 80%; height: auto;">
