@@ -99,6 +99,7 @@
                     <form @onsubmit="Submit">
                         <input type="text" class="form-control mb-3" placeholder="Username" @bind-value="Username" aria-label="Enter username">
                         <input type="password" class="form-control mb-3" placeholder="Password" @bind-value="Password" aria-label="Enter password">
+                        <input type="text" hidden="@Hide2FA" class="form-control mb-3" placeholder="000000" @bind-value="Code" aria-label="Enter 2FA Code">
 
                         <button type="submit" class="btn btn-primary w-100" aria-label="Log in">Log In</button>
 
