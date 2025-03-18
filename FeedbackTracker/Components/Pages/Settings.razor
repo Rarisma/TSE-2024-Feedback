@@ -48,36 +48,40 @@ Commented the 2FA button and replaced with a dummy until it works
             @* PRIVACY SETTINGS *@
             else if (SelectedCategory == SettingsCategory.Privacy)
             {
-                <div class="option">
+                @if (JAuth.IsAuthorised()) {
+                    <div class="option">
                     <h2 for="privacy-option">Privacy Settings</h2>
-                    @if (isDisabled == true)
-                    {
-                        <center><p style="font-size: 25px"><strong>@MFAButtonText</strong></p></center>
-                        <center>
-                            <div style="border: 2px solid black; padding: 15px; width: 60%; text-align: center; background-color: #f9f9f9; border-radius: 10px;">
-                                <p style="font-size: 25px;">To use this code, please use an authenticator (you can find them on Google extensions)</p>
-                                <p style="font-size: 25px;">Enter the secret (the series of letters and numbers) into the authenticator and enter the code it displays when logging in</p>
-                                <p style="font-size: 25px;">Keep in mind that the code only lasts 30 seconds before a new code is generated</p>
-                            </div>
-                        </center>
-
-                    }
-                    else
-                    {
-                        <center>
-                            <div style="border: 2px solid black; padding: 15px; width: 60%; text-align: center; background-color: #f9f9f9; border-radius: 10px;">
-                                <p style="font-size: 25px;">By activating 2FA, you will be required to use an authenticator (which can be found on the google extension store)</p>
-                                <p style="font-size: 25px;">A secret key will be displayed that you need to add to the authenticator</p>
-                                <p style="font-size: 25px;">You SHOULD write this key down as well</p>
-                            </div>
-                            <button @onclick="Click2FA" type="submit" class="sett btn-primary"
-                                style="width: 40%; height: 60px; font-size: 22px; font-weight: bold; margin-top: 20px;"
-                                aria-label="2FA">
-                                Enable 2FA
-                            </button>
-                        </center>
-                    }
-                </div>
+                        @if (isDisabled == true)
+                        {
+                            <center><p style="font-size: 25px"><strong>@MFAButtonText</strong></p></center>
+                            <center>
+                                <div style="border: 2px solid black; padding: 15px; width: 60%; text-align: center; background-color: #f9f9f9; border-radius: 10px;">
+                                    <p style="font-size: 25px;">To use this code, please use an authenticator (you can find them on Google extensions)</p>
+                                    <p style="font-size: 25px;">Enter the secret (the series of letters and numbers) into the authenticator and enter the code it displays when logging in</p>
+                                    <p style="font-size: 25px;">Keep in mind that the code only lasts 30 seconds before a new code is generated</p>
+                                </div>
+                            </center>
+                        }
+                        else
+                        {
+                            <center>
+                                <div style="border: 2px solid black; padding: 15px; width: 60%; text-align: center; background-color: #f9f9f9; border-radius: 10px;">
+                                    <p style="font-size: 25px;">By activating 2FA, you will be required to use an authenticator (which can be found on the google extension store)</p>
+                                    <p style="font-size: 25px;">A secret key will be displayed that you need to add to the authenticator</p>
+                                    <p style="font-size: 25px;">You SHOULD write this key down as well</p>
+                                </div>
+                                <button @onclick="Click2FA" type="submit" class="sett btn-primary"
+                                    style="width: 40%; height: 60px; font-size: 22px; font-weight: bold; margin-top: 20px;"
+                                    aria-label="2FA">
+                                    Enable 2FA
+                                </button>
+                            </center>
+                        }
+                    </div> }
+                else {
+}                   <div style="display: flex; justify-content: center; margin-top: 120px;">
+                        <img src="/Images/LoginCone.png" alt="Please Log In" style="width: 80%; height: auto;">
+                    </div>
             }
             @* NOTIFICATION SETTINGS *@
             else if (SelectedCategory == SettingsCategory.Notifications)
