@@ -198,12 +198,16 @@
 		    Authored feedbacks
 	    </div>
         @foreach (var feedback in allFeedback.Where(fb => fb.AssigneeID == assignee.UserID))
-        {
-            <div class="feedback-box">
+        {            
+	        <div class="feedback-box">
+				<a style="color:black;text-decoration:none"href="@($"/viewfeedback/{feedback.FeedbackID}")">
+
                 <h4>@feedback.Title</h4>
                 <p><strong>@feedback.FeedbackText</strong></p>
                 <p><strong>Completed:</strong> @feedback.Closed</p>
-            </div>
+
+				</a>
+			</div>
 
         }
 
@@ -213,9 +217,11 @@
         @foreach (var feedback in allFeedback.Where(fb => fb.AssignedUserID == assignee.UserID))
 	    {
 		    <div class="feedback-box">
+			    <a style="color:black;text-decoration:none"href="@($"/viewfeedback/{feedback.FeedbackID}")">
 			    <h4>@feedback.Title</h4>
 			    <p><strong>@feedback.FeedbackText</strong></p>
 			    <p><strong>Completed:</strong> @feedback.Closed</p>
+			    </a>
 		    </div>
 
 	    }
