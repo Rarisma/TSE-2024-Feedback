@@ -9,14 +9,14 @@
 @inject NavigationManager NavigationManager
 
 <title>TSE Feedback: Create Feedback </title>
-
+<div class="container">
 @if (Auth.IsAuthorised())
-{
-    <PageTitle>Feedback Page</PageTitle>
-    <div class="create-feedback">
-    <h3>Create Feedback</h3>
-        <!-- Feedback form -->
-        <div class="card-body">
+{   <PageTitle>Feedback Page</PageTitle>
+             
+            <!-- Feedback form -->
+		<div class="create-feedback">
+            <h3>Create Feedback</h3>
+
             <!--Name-->
             <div class="mb-3">
                 <label for="title" class="first-label">Name:</label>
@@ -91,30 +91,19 @@
 
 
             <div class="mb-3 text-center">
-                <button class="btn btn-primary" @onclick="SendFeedback"  style="min-width: 200px;">Submit Feedback</button>
+                <button class="btn btn-primary" @onclick="SendFeedback">Submit Feedback</button>
             </div>
-        </div>
-    </div>
+			</div>
+
 
 }
 
 //For users that aren't logged in
 else
 {
-    <style>
-        body {
-            overflow: hidden;
-        }
-    </style>
-    <div class="loggedout">
-        <div class="loggedout-msg">
-            <img src="/Images/LoginCone.png" alt="Login Required" class="cone-img">
-            <h2>Please log in to create feedback.</h2>
-            <button class="btn btn-loggedout" @onclick=HomeButton>Return Home</button>
-        </div>
-    </div>
-}
 
+}
+</div>
 @code {
     //Goes back to the login page
     private void HomeButton()

@@ -1,16 +1,20 @@
 ﻿@page "/settings"
+@using Application.API
+@inject UserAPI UserClientAccess
 @rendermode InteractiveServer
 @inject JAuth JAuth
 @inject IJSRuntime JSRuntime
 @inject NavigationManager NavigationManager
+@inject NotificationService NotificationService
+
 
 @*
 The 2FA Code was making the browser crash. Commented it. 
 Commented the 2FA button and replaced with a dummy until it works
 *@
-
+<title>TSE Modules: </title>
 <!-- Settings Page Layout-->
-<div class="settings">
+<div class="settings container">
     <h3>Settings</h3>
     <div class="settings-container">
         <!-- Left side: Categories -->
@@ -22,11 +26,11 @@ Commented the 2FA button and replaced with a dummy until it works
                 <li><button class="btn-categories @(SelectedCategory == SettingsCategory.Account ? "active" : "")" @onclick="() => SelectCategory(SettingsCategory.Account)"><img class="settings-icon" src="/Images/SettingsIcons/user.png" /> Account</button></li>
             </ul>
         </div>
+
         <!-- Right Side: Options -->
-        <div class="options">
+        <div class="options overflow-auto">
             @* GENERAL SETTINGS (maybe theme selector or dark mode?)*@
-            @if (SelectedCategory == SettingsCategory.General)
-            {
+            @if (SelectedCategory == SettingsCategory.General) {
                 <div class="option">
                     <h2>General Settings</h2>
                     <label class="label-text">Theme:</label>
@@ -40,16 +44,45 @@ Commented the 2FA button and replaced with a dummy until it works
                         </select>
                         <button @onclick="ApplyTheme" class="theme-apply-btn">Apply</button>
                     </div>
-                </div>
-            }
+                </div> }
+
             @* PRIVACY SETTINGS *@
-            else if (SelectedCategory == SettingsCategory.Privacy)
-            {
-                <div class="option">
+            else if (SelectedCategory == SettingsCategory.Privacy) {
+                @if (JAuth.IsAuthorised()) {
+                    <div class="option">
                     <h2 for="privacy-option">Privacy Settings</h2>
-                    <button type="submit" class="sett btn-primary" style="width: 30%; margin-top: 10px;" aria-label="2FA">2FA</button>
-                </div>
-            }
+                        @if (isDisabled == true)
+                        {
+                            <center><p style="font-size: 25px"><strong>@MFAButtonText</strong></p></center>
+                            <center>
+                                <div style="border: 2px solid black; padding: 15px; width: 60%; text-align: center; background-color: #f9f9f9; border-radius: 10px;">
+                                    <p style="font-size: 25px;">To use this code, please use an authenticator (you can find them on Google extensions)</p>
+                                    <p style="font-size: 25px;">Enter the secret (the series of letters and numbers) into the authenticator and enter the code it displays when logging in</p>
+                                    <p style="font-size: 25px;">Keep in mind that the code only lasts 30 seconds before a new code is generated</p>
+                                </div>
+                            </center>
+                        }
+                        else
+                        {
+                            <center>
+                                <div style="border: 2px solid black; padding: 15px; width: 60%; text-align: center; background-color: #f9f9f9; border-radius: 10px;">
+                                    <p style="font-size: 25px;">By activating 2FA, you will be required to use an authenticator (which can be found on the google extension store)</p>
+                                    <p style="font-size: 25px;">A secret key will be displayed that you need to add to the authenticator</p>
+                                    <p style="font-size: 25px;">You SHOULD write this key down as well</p>
+                                </div>
+                                <button @onclick="Click2FA" type="submit" class="sett btn-primary"
+                                    style="width: 40%; height: 60px; font-size: 22px; font-weight: bold; margin-top: 20px;"
+                                    aria-label="2FA">
+                                    Enable 2FA
+                                </button>
+                            </center>
+                        }
+                    </div> }
+                else {
+                    <div style="display: flex; justify-content: center; margin-top: 120px;">
+                        <img src="/Images/LoginCone.png" alt="Please Log In" style="width: 80%; height: auto;">
+                    </div>
+            } }
             @* NOTIFICATION SETTINGS *@
             else if (SelectedCategory == SettingsCategory.Notifications)
             {
@@ -64,10 +97,9 @@ Commented the 2FA button and replaced with a dummy until it works
             @* ACCOUNT SETTINGS *@ 
             else if (SelectedCategory == SettingsCategory.Account)
             {
-                if (JAuth.IsAuthorised()){
-                    <div class="option">
-                        <h2 for="account-option">Account Options</h2>
-                    </div>
+                <div class="option">
+                    <h2 for="account-option">Account Options</h2>
+                </div>
                     <form>
                         <div class="mb-3">
                             <label for="firstName" class="form-label">First Name</label>
@@ -95,13 +127,22 @@ Commented the 2FA button and replaced with a dummy until it works
                         </div>
                     </form>
                 }
-                else
+                else if (!JAuth.IsAuthorised())
                 {
                     <div style="display: flex; justify-content: center; margin-top: 120px;">
                         <img src="/Images/LoginCone.png" alt="Please Log In" style="width: 80%; height: auto;">
+
                     </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Confirm Password</label>
+                        <input type="password" class="form-control" id="password" placeholder="Confirm Password" @bind-value="Password" maxlength="100">
+                    </div>
+                    <div class="d-flex justify-content-center w-100">
+                        <!-- Button below needs @onclick once a function can update account details-->
+                        <button type="button" class="btn btn-primary" style="width: 38%; margin-top: 10px;">Update Profile</button>
+                    </div>
+                    
                 }
-            }
         </div>
     </div>
 </div>
@@ -110,7 +151,8 @@ Commented the 2FA button and replaced with a dummy until it works
     //getters and setters for the selected settings category
     private SettingsCategory SelectedCategory { get; set; } = SettingsCategory.General;
     private string SelectedTheme { get; set; } = "blue";
-
+    public bool isDisabled = false;
+    private string MFAButtonText = "Enable 2fa";
     private void SelectCategory(SettingsCategory category)
     {
         SelectedCategory = category;
@@ -134,6 +176,15 @@ Commented the 2FA button and replaced with a dummy until it works
         }
     }
 
+    public async void Click2FA()
+    {
+        UserAPI API = new UserAPI();
+        await API.CreateTotpKey(JAuth.User.UserID.ToString(), JAuth.User.Password);
+        JAuth.User = await API.GetUserByID(JAuth.User.UserID);
+        isDisabled = true;
+        MFAButtonText = "2FA Enabled, your code is: " + JAuth.User.MFASecret;
+        StateHasChanged();
+    }
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
@@ -148,48 +199,12 @@ Commented the 2FA button and replaced with a dummy until it works
     private string? LastName { get; set; }
     private string? Username { get; set; }
     private string? Password { get; set; }
-    
-    private bool isAuthorized;
 
+    private bool isAuthorized;
     protected override Task OnInitializedAsync()
     {
-        isAuthorized = JAuth.IsAuthorised();
-        if (isAuthorized)
-        {
-            JAuth.EnforceAuth();
-        }
+        JAuth.EnforceAuth();
         StateHasChanged();
         return Task.CompletedTask;
     }
 }
-
-@*
-NEEDS FIXING
-
-@code {
-    public bool isDisabled = false;
-    private string MFAButtonText = "Enable 2fa";
-    public async void Click2FA()
-    {
-        UserAPI API = new UserAPI();
-        await API.Enable2FA(JAuth.User.UserID.ToString(), JAuth.User.Password);
-        JAuth.User = await API.GetUserByID(JAuth.User.UserID);
-        isDisabled = true;
-        MFAButtonText = "2FA Enabled, your code is: " + JAuth.User.MFASecret;
-
-    }
-
-        
-    protected override async Task OnInitializedAsync()
-    {
-        if (JAuth.User.MFASecret != null)
-        {
-            MFAButtonText = "2FA Enabled, your code is: " + JAuth.User.MFASecret;
-            isDisabled = true;
-
-        }
-    }
-}
-*@
-
-

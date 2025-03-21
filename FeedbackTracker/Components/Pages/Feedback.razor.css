@@ -10,9 +10,18 @@
 }
 
 /* MAIN PAGE */
+html, body {
+    height: 100%;
+    margin: 0;
+    overflow: auto;
+    background: linear-gradient(135deg, #74ABE2 0%, #5563DE 100%);
+    font-family: 'Lato', sans-serif;
+}
 .card-body {
     margin-top: -25px;
     width: 100%;
+    max-height: 75vh;
+    overflow-y: auto;
 }
 
 .first-label, .label-text {
@@ -23,7 +32,7 @@
 }
 
 .first-label {
-    margin-top: 80px;
+    margin-top: 40px;
     color: #333;
 }
 
@@ -80,67 +89,78 @@
     }
 
 .create-feedback {
-    position: fixed;
-    top: 50%;
-    left: 56%;
-    width: 75%;
-    height: 88vh;
+    position:relative;
+    left:1vw;
+    height:90vh;
+    width:auto;
+    overflow:auto;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: flex-start;
     text-align: center;
-    padding: 30px;
+    padding: 3vw;
+    margin-top:4vh;
     backdrop-filter: blur(200px);
     border-radius: 12px;
     box-shadow: 0 20px 35px rgba(0, 0, 0, 0.2);
-    transform: translate(-50%, -50%);
     animation: fadeIn 0.5s ease-in;
 }
 
-h3 {
-    position: relative;
-    top: 30px;
-    left: 50%;
-    transform: translateX(-50%);
-    margin: 0;
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: #333333;
-    text-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
-}
-
-/* FOR USERS NOT LOGGED IN */
-.loggedout {
-    display: block;
-}
-
-.cone-img {
-    display: block;
-    margin: 100px auto 15px;
-    height: auto;
-    max-width: 70%;
-}
-
-.btn.btn-loggedout {
-    background-color: #1B6EC2;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-    display: block;
-    margin: 50px auto 15px;
-    width: auto;
-    max-width: 350px;
-}
-
-    .btn.btn-loggedout:hover {
-        background-color: #0B5ED7;
+    .card {
+        border-radius: 0.5rem;
+        background-color: var(--light-color);
+        color: var(--light-text);
+        border: none;
+        box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+        margin: 1.5vw;
+        padding: 2vw;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
 
-h2 {
-    text-align: center;
-    margin: 0 auto 15px;
-}
+    h3 {
+        position: relative;
+        top: 5.5vh;
+        left: 50%;
+        transform: translateX(-50%);
+        margin: 1vw;
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #333333;
+        text-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+        margin-bottom: 20px;
+    }
+
+    /* FOR USERS NOT LOGGED IN */
+    .loggedout {
+        display: block;
+    }
+
+    .cone-img {
+        display: block;
+        margin: 100px auto 15px;
+        height: auto;
+        max-width: 70%;
+    }
+
+    .btn.btn-loggedout {
+        background-color: #1B6EC2;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        display: block;
+        margin: 50px auto 15px;
+        width: auto;
+        max-width: 350px;
+    }
+
+        .btn.btn-loggedout:hover {
+            background-color: #0B5ED7;
+        }
+
+    h2 {
+        text-align: center;
+        margin: 0 auto 15px;
+    }
