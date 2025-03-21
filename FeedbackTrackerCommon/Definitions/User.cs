@@ -46,5 +46,5 @@ public class User
 	public string? MFASecret { get; set; }
 
     [Column("School")]
-    public string School { get; set; }
+    public string? School { get; set; }
 }

@@ -11,7 +11,7 @@ namespace Core.Definitions;
     [Column("SchoolName")]
     public string SchoolName { get; set; }
 
-    [Column("Education_Level")]
+    [Column("EducationLevel")]
     public string EducationLevel { get; set; }
 
     [Column("City")]
