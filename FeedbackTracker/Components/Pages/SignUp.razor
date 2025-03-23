@@ -112,7 +112,7 @@
                     <!-- Dropdown -->
                     <div class="mb-3">
                         <label for="schoolDropdown" class="form-label">Select School</label>
-                        <select class="form-control" id="schoolDropdown" @bind="SelectedSchool">
+                        <select class="form-control" id="schoolDropdown" @bind="School">
                             <option value="">Select a School</option>
                             @foreach (var school in Schools)
                             {
@@ -144,7 +144,6 @@
 
 
     private List<School>? Schools = new();
-    private string SelectedSchool = "";
 
     protected override async Task OnInitializedAsync()
     {

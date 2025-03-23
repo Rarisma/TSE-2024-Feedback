@@ -110,4 +110,17 @@ public class ModuleAPI
             return new();
         }
     }
+
+    public async void AddUserToModule(string userid,string moduleid)
+    {
+        try
+        {
+            HttpResponseMessage response = await _httpClient.PostAsync($"Module/AddUserToModule?userID={Uri.EscapeDataString(userid.ToString())}&moduleID={Uri.EscapeDataString(moduleid.ToString())}",null);
+            response.EnsureSuccessStatusCode();
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Failed to get all modules");
+        }
+    }
 }

@@ -54,7 +54,7 @@
                 <Columns>
                     <RadzenDataGridColumn TItem="Core.Definitions.Feedback" Property="Title" Title="Title" />
                     <RadzenDataGridColumn TItem="Core.Definitions.Feedback" Property="FeedbackText" Title="Feedback" />
-                    <RadzenDataGridColumn TItem="Core.Definitions.Feedback" Title="Assignee">
+                    <RadzenDataGridColumn TItem="Core.Definitions.Feedback" Title="Created-BY">
                         <Template Context="feedback">
                             @if (Users != null)
                             {
@@ -68,7 +68,20 @@
                             }
                         </Template>
                     </RadzenDataGridColumn>
-
+                    <RadzenDataGridColumn TItem="Core.Definitions.Feedback" Title="Assigned-TO">
+	                    <Template Context="feedback">
+		                    @if (Users != null)
+		                    {
+			                    @foreach (var assignee in Users)
+			                    {
+				                    if (assignee.UserID == feedback.AssignedUserID)
+				                    {
+					                    <strong>@assignee.Username</strong>
+				                    }
+			                    }
+		                    }
+	                    </Template>
+                    </RadzenDataGridColumn>
                     <RadzenDataGridColumn TItem="Core.Definitions.Feedback" Title="Status">
                         <Template Context="feedback">
                             @if (JAuth.User.UserID == feedback.AssigneeID)
