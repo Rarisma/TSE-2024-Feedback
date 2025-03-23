@@ -70,10 +70,10 @@ public class UserController(AuthService authService) : Controller
 				Password = BCrypt.Net.BCrypt.HashPassword(password),
 				IsStudent = true,
 				IsTeacher = false,
-				Email = email
+				Email = email,
+				Initalised = true
 			};
-
-
+			
 			//Add user to database
 			await using TrackerContext ctx = new();
 			ctx.User.Add(account);
