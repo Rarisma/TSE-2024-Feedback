@@ -29,9 +29,10 @@ public class Program
         builder.Services.AddScoped<JAuth>();
         builder.Services.AddRadzenComponents();
         builder.Services.AddSingleton<EmailAPI>(_ => new EmailAPI());
+        builder.Services.AddSingleton<SchoolAPI>(_ => new SchoolAPI());
 
-		//Configure Serilog
-		Log.Logger = new LoggerConfiguration()
+        //Configure Serilog
+        Log.Logger = new LoggerConfiguration()
 			.WriteTo.Console()
 			.WriteTo.File("logs/log-app.txt", rollingInterval: RollingInterval.Day)
 			.CreateLogger();

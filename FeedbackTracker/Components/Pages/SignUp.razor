@@ -1,9 +1,10 @@
 ﻿@page "/SignUp"
 @using Application.API
+@using Core.Definitions
 @inject NavigationManager NavigationManager
 @rendermode InteractiveServer
 @inject IJSRuntime JSRuntime
-
+@inject SchoolAPI schoolAPI
 
 <title>TSE Feedback: Sign Up </title>
 
@@ -115,7 +116,7 @@
                             <option value="">Select a School</option>
                             @foreach (var school in Schools)
                             {
-                                <option value="@school">@school</option>
+                                <option value="@school.Id">@school.SchoolName</option>
                             }
                         </select>
                     </div>
@@ -142,14 +143,27 @@
 @code {
 
 
-    private List<string> Schools = new();
+    private List<School>? Schools = new();
     private string SelectedSchool = "";
 
     protected override async Task OnInitializedAsync()
     {
-        //await GetSchoolNames();
+        await GetSchoolNames();	    
+        StateHasChanged();
+	    await InvokeAsync(StateHasChanged);
     }
 
+    private async Task GetSchoolNames()
+    {
+	    List<School>? schools = await schoolAPI.GetAllSchools();
+
+	    if (schools != null)
+	    {
+		    Schools = schools;
+	    }
+
+
+    }
     private void LoginTab()
     {
         NavigationManager.NavigateTo("/LogIn");

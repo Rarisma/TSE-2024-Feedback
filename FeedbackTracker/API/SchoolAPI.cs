@@ -37,14 +37,14 @@ public class SchoolAPI
 
 
     // Gets school names
-    public async Task<List<string>?> GetSchoolNames()
+    public async Task<List<School>?> GetAllSchools()
     {
         try
         {
-            HttpResponseMessage response = await _httpClient.GetAsync("School/GetSchoolNames");
+            HttpResponseMessage response = await _httpClient.GetAsync("School/GetAllSchools");
             response.EnsureSuccessStatusCode();
             string jsonString = await response.Content.ReadAsStringAsync();
-            return JsonSerializer.Deserialize<List<string>>(jsonString);
+            return JsonSerializer.Deserialize<List<School>>(jsonString);
         }
         catch (Exception ex)
         {

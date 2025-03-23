@@ -54,9 +54,22 @@ public class SchoolController : Controller
         catch (Exception ex) { return "Encountered an error: " + ex.Message; }
 
 
+    }
 
+    [HttpGet("GetAllSchools")]
+    public string GetAllSchools()
+    {
+        try
+        {
+            // Find School
+            using TrackerContext ctx = new();
+            List<School> school = ctx.School.ToList();
 
+            return JsonSerializer.Serialize(school);
 
+        }
+
+        catch (Exception ex) { return "Encountered an error: " + ex.Message; }
 
 
     }
