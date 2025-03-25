@@ -72,9 +72,9 @@ public class UserController(AuthService authService) : Controller
 				IsTeacher = false,
 				Email = Email,
 				School = School,
+				Initalised = true
 			};
-
-
+			
 			//Add user to database
 			await using TrackerContext ctx = new();
 			ctx.User.Add(account);
