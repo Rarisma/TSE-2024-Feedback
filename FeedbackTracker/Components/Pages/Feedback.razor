@@ -12,96 +12,55 @@
 <div class="container">
 @if (Auth.IsAuthorised())
 {   <PageTitle>Feedback Page</PageTitle>
-             
-            <!-- Feedback form -->
-		<div class="create-feedback">
-            <h3>Create Feedback</h3>
-
             <!--Name-->
-            <div class="mb-3">
-                <label for="title" class="first-label">Name:</label>
-                <input id="title" type="text" @bind="_title" placeholder="Enter Feedback Here..." maxlength="3000" class="form-control" />
-            </div>
-
+        <RadzenCard Style="margin: 5vh auto; max-width: 800px; background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px); border-radius: 12px; box-shadow: 0 20px 35px rgba(0, 0, 0, 0.2);">
+        <RadzenText TextStyle="TextStyle.H3" Style="text-align: center; margin-bottom: 20px; color: #333333;">Create Feedback</RadzenText>
             <!--Text-->
-            <div class="mb-3">
-                <label for="text" class="label-text">Feedback Information:</label>
-                <textarea id="text" type="text" @bind="_text" placeholder="Enter Information About Feedback Here..." class="form-control" style="height: 100px; resize: none;" maxlength="8000"></textarea>
-            </div>
-
+        <div class="mb-3">
+            <RadzenText TextStyle="TextStyle.Subtitle1" Style="display: block; margin-bottom: 10px;">Name:</RadzenText>
+            <RadzenTextBox @bind-Value="_title" Placeholder="Enter Feedback Here..." MaxLength="3000" Style="width: 100%; background-color: rgba(255, 255, 255, 0.25); padding: 15px; border-radius: 8px;" />
+        </div>
             <!--Module-->
-            <div class="mb-3">
-                <label for="module" class="label-text">Feedback Module:</label>
-                <select id="module" @onchange="ModuleSelected" class="form-select">
-                    @if (_modules.Count > 0)
-                    {
-                        for (int i = 0; i < _modules.Count; i++)
-                        {
-                            <option value="@_modules[i].ModuleID">@_modules[i].Module</option>
-                        }
-                    }
-                    else
-                    {
-                        <option value="">No modules</option>
-                    }
-                </select>
-            </div>
+        <div class="mb-3">
+            <RadzenText TextStyle="TextStyle.Subtitle1" Style="display: block; margin-bottom: 10px;">Feedback Information:</RadzenText>
+            <RadzenTextArea @bind-Value="_text" Placeholder="Enter Information About Feedback Here..." Style="width: 100%; height: 100px; resize: none; background-color: rgba(255, 255, 255, 0.25); padding: 15px; border-radius: 8px;" MaxLength="8000" />
+        </div>
 
+        <div class="mb-3">
+            <RadzenText TextStyle="TextStyle.Subtitle1" Style="display: block; margin-bottom: 10px;">Feedback Module:</RadzenText>
+            <RadzenDropDown TValue="int" @onchange="ModuleSelected" Data="_modules" 
+                            TextProperty="Module" ValueProperty="ModuleID" 
+                            Style="width: 100%; background-color: rgba(255, 255, 255, 0.25); padding: 10px; border-radius: 8px;" />
+        </div>
             <!--Assign-->
-            <div class="mb-3">
-                <label for="assign" class="label-text">Teacher To Assign Feedback:</label>
-                <select id="assign" @bind=_assignedUserID class="form-select">
-                    @if (_users.Count > 0)
-                    {
-                        for (int i = 0; i < _users.Count; i++)
-                        {
-                            if (_users[i].IsTeacher)
-                            {
-                                <option value="@_users[i].UserID">@_users[i].Username</option>
-                            }
-                        }
-                        <option value="">No Teacher</option>
-
-                    }
-                </select>
-            </div>
+        <div class="mb-3">
+            <RadzenText TextStyle="TextStyle.Subtitle1" Style="display: block; margin-bottom: 10px;">Teacher To Assign Feedback:</RadzenText>
+            <RadzenDropDown TValue="int" @bind-Value="_assignedUserID" Data="@_users.Where(u => u.IsTeacher)" 
+                            TextProperty="Username" ValueProperty="UserID" 
+                            Style="width: 100%; background-color: rgba(255, 255, 255, 0.25); padding: 10px; border-radius: 8px;" />
+        </div>
                 
                 <!--Label-->
-                <div class="mb-3">
-                    <label for="Label">Label:</label>
-                    <select id="Label" @bind="_label" class="form-select">
-                        <!-- add each module to select options-->
-                        <option value="0">@FeedbackLabel.Positive</option>
-                        <option value="1">@FeedbackLabel.Improvement</option>
-                        <option value="2">@FeedbackLabel.Question</option>
-                        <option value="3">@FeedbackLabel.Error</option>
+        <div class="mb-3">
+            <RadzenText TextStyle="TextStyle.Subtitle1" Style="display: block; margin-bottom: 10px;">Label:</RadzenText>
+            <RadzenDropDown TValue="int" @bind-Value="_label" 
+                            Data='@(Enum.GetValues(typeof(FeedbackLabel)))' 
+                            Style="width: 100%; background-color: rgba(255, 255, 255, 0.25); padding: 10px; border-radius: 8px;" />
+        </div>
+                
+        <div class="mb-3">
+            <RadzenText TextStyle="TextStyle.Subtitle1" Style="display: block; margin-bottom: 10px;">Visibility:</RadzenText>
+            <RadzenDropDown TValue="int" @bind-Value="_visibility" 
+                            Data='@(Enum.GetValues(typeof(FeedbackVisibility)))' 
+                            Style="width: 100%; background-color: rgba(255, 255, 255, 0.25); padding: 10px; border-radius: 8px;" />
+        </div>
 
-                    </select>
-                </div>
-                <!--Visibility-->
-                <div class="mb-3">
-                    <label for="Visibility">Visibility:</label>
-                    <select id="Visibility" @bind="_visibility" class="form-select">
-                        <!-- Select Visibility Options -->
-                        <option value="0">@FeedbackVisibility.Public</option>
-                        <option value="1">@FeedbackVisibility.Private</option>
-
-                    </select>
-                </div>
-
-
-            <div class="mb-3 text-center">
-                <button class="btn btn-primary" @onclick="SendFeedback">Submit Feedback</button>
-            </div>
-			</div>
-
-
-}
-
-//For users that aren't logged in
-else
-{
-
+        <div class="mb-3 text-center">
+            <RadzenButton Text="Submit Feedback" Click="SendFeedback" 
+                          ButtonStyle="ButtonStyle.Primary" 
+                          Style="margin: 20px auto; width: 30%; background-color: #5563DE; padding: 12px 20px; color: white; font-weight: 500; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);" />
+        </div>
+    </RadzenCard>
 }
 </div>
 @code {
