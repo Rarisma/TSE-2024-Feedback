@@ -29,6 +29,7 @@ public class Program
         builder.Services.AddScoped<JAuth>();
         builder.Services.AddRadzenComponents();
         builder.Services.AddSingleton<EmailAPI>(_ => new EmailAPI());
+        builder.Services.AddSingleton<BulkAPI>(_ => new BulkAPI());
 
 		//Configure Serilog
 		Log.Logger = new LoggerConfiguration()
