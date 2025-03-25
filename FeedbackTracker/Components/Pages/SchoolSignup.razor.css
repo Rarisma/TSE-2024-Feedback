@@ -1,0 +1,94 @@
+﻿/* Fade Animation */
+@keyframes fadeAnimation {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* Page Structure */
+html, body {
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+    background: linear-gradient(135deg, #74ABE2 0%, #5563DE 100%);
+    font-family: 'Lato', sans-serif;
+}
+
+.sign-up-box {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    width: 100%;
+    max-width: 600px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+    animation: fadeAnimation 1.2s ease-in;
+    margin-bottom: 70px;
+}
+
+    .sign-up-box:hover {
+        transform: translateY(-5px);
+    }
+
+.btn-primary {
+    background-color: #5563DE;
+    border: none;
+}
+
+    .btn-primary:hover {
+        background-color: #6C7AE0;
+    }
+
+.btn-outline-primary:hover {
+    background-color: #5563DE;
+    color: #fff;
+}
+
+input.form-control {
+    background: rgba(255, 255, 255, 0.15);
+    border: none;
+    color: #4A4A4A;
+}
+
+    input.form-control:focus {
+        background: rgba(255, 255, 255, 0.25);
+        color: #4A4A4A;
+    }
+
+.top-heading {
+    font-family: 'Helvetica Neue', sans-serif;
+    color: #333;
+    text-align: center;
+    font-size: 2.5em;
+    margin: 30px 0;
+    letter-spacing: 1px;
+}
+
+.logo-icon {
+    width: 100px;
+    height: auto;
+    margin-right: 30px;
+}
+
+/* Additional styling for School Signup fields */
+.school-signup-form .form-label {
+    color: #333;
+    font-weight: bold;
+}
+
+.school-signup-form .form-control {
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid transparent;
+    color: #4A4A4A;
+    border-radius: 4px;
+    transition: background 0.3s ease, border 0.3s ease;
+}
+
+    .school-signup-form .form-control:focus {
+        background: rgba(255, 255, 255, 0.25);
+        border: 1px solid #5563DE;
+    }

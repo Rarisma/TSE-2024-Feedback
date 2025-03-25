@@ -67,7 +67,7 @@
                                 </div>
 
                                 <div class="d-grid">
-                                    <button type="button" class="btn btn-primary">Assign Module</button>
+                                    <button type="button" class="btn btn-primary" @onclick="assignModule">Assign Module</button>
                                 </div>
                             </form>
                         </div>
@@ -107,8 +107,8 @@
     private List<User> _users = new();
     private int _selectedUserId;
     private string _selectedModuleId;
-    private List<Modules> _modules = new();
-    
+    private List<Modules>? _modules = new();
+
     // assigne
     // author of feedback (get current user)
     private User? _assignee;
@@ -124,6 +124,18 @@
         await ModuleClient.CreateModule(newModule);
     }
 
+    // Module Creation
+    private async void assignModule()
+    {
+        // Create a new module object
+        if (_selectedModuleId != null && _selectedUserId != null)
+        {
+            ModuleClient.AddUserToModule(_selectedUserId.ToString(),_selectedModuleId);
+
+            StateHasChanged();
+        }
+    }
+
     private async Task LoadUsers()
     {
         var AllUsers = await UserAPI.GetAllUsers();
@@ -131,6 +143,24 @@
         if (AllUsers != null)
         {
             _users = AllUsers;
+
+            _selectedUserId = _users[0].UserID;
+        }
+        else
+        {
+            Console.WriteLine("Failed to load users.");
+        }
+    }
+
+    private async Task GetModules()
+    {
+        var modules = await ModuleClient.GetAllModules();
+
+        if (modules != null)
+        {
+            _modules = modules;
+
+            _selectedModuleId = _modules[0].ModuleID.ToString();
         }
         else
         {
@@ -145,7 +175,11 @@
         {
             _assignee = JAuth.User;
             await LoadUsers();
-            _modules = await ModuleClient.GetAllModules();
+
+            await GetModules();
+            StateHasChanged();
+
+            await InvokeAsync(StateHasChanged);
         }
     }
 

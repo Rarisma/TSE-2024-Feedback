@@ -1,0 +1,61 @@
+﻿@page "/SchoolSignUp"
+@using Application.API
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
+@rendermode InteractiveServer
+
+<title>School Signup</title>
+
+<div class="container-fluid">
+    <!-- Top Section with Heading -->
+    <div class="row justify-content-center align-items-center pt-3">
+        <div class="col text-center">
+            <h3 class="top-heading">CMP2804-24/25 TSE Feedback Tracking Tool!</h3>
+        </div>
+    </div>
+
+    <!-- Signup Form -->
+    <div class="container mt-4">
+        <div class="sign-up-box school-signup-form mx-auto" style="max-width: 500px;">
+            <div class="card-body">
+                <form @onsubmit="Submit">
+                    <div class="mb-3">
+                        <label for="schoolName" class="form-label">School Name</label>
+                        <input type="text" class="form-control" id="schoolName" placeholder="Enter School Name" @bind="SchoolName" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="educationLevel" class="form-label">Education Level</label>
+                        <select class="form-control" id="educationLevel" @bind="EducationLevel" required>
+                            <option value="Primary">Primary Education</option>
+                            <option value="Secondary">Secondary Education</option>
+                            <option value="Further">Further Education</option>
+                            <option value="Higher">Higher Education</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="city" class="form-label">City</label>
+                        <input type="text" class="form-control" id="city" placeholder="Enter City" @bind="City" required>
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">Sign Up School</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private async void Submit()
+    {
+        await new SchoolAPI().CreateSchool(SchoolName.ToString(), EducationLevel.ToString(), City.ToString());
+
+    }
+
+    public string SchoolName { get; set; }
+    public string EducationLevel { get; set; }
+    public string City { get; set; }
+
+
+
+}

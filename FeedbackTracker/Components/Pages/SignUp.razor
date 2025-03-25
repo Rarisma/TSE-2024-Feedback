@@ -1,8 +1,10 @@
 ﻿@page "/SignUp"
 @using Application.API
+@using Core.Definitions
 @inject NavigationManager NavigationManager
 @rendermode InteractiveServer
 @inject IJSRuntime JSRuntime
+@inject SchoolAPI schoolAPI
 
 <title>TSE Feedback: Sign Up </title>
 
@@ -14,7 +16,8 @@
             if (Password.Length >= 8 && Password.Any(char.IsUpper) && Password.Any(c => !char.IsLetterOrDigit(c)))
             {
                 //Send req to create user.
-                await new UserAPI().CreateUser(Username, Password, Email);
+                await new UserAPI().CreateUser(Username.ToString(), Password.ToString(), Email.ToString(), School.ToString());
+                await JSRuntime.InvokeVoidAsync("alert", "user created");
                 NavigationManager.NavigateTo("/");
             }
             else
@@ -53,6 +56,12 @@
     /// Entered Password Confirmation
     /// </summary>
     public string Password2 { get; set; }
+
+
+    /// <summary>
+    /// Entered School
+    /// </summary>
+    public string School { get; set; }
 }
 
 <!-- Page Structure -->
@@ -100,6 +109,21 @@
                         <label for="confirmPassword" class="form-label">Confirm Password</label>
                         <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm password" @bind-value="Password2" maxlength="500" required>
                     </div>
+                    <!-- Dropdown -->
+                    <div class="mb-3">
+                        <label for="schoolDropdown" class="form-label">Select School</label>
+                        <select class="form-control" id="schoolDropdown" @bind="School">
+                            <option value="">Select a School</option>
+                            @foreach (var school in Schools)
+                            {
+                                <option value="@school.Id">@school.SchoolName</option>
+                            }
+                        </select>
+                    </div>
+                    <!-- School Signup -->
+                    <div class="d-grid mb-3">
+                        <button type="button" class="btn btn-secondary" @onclick="SchoolSignup">School Signup</button>
+                    </div>
                     <!-- Privacy Policy -->
                     <div class="mb-3 form-check">
                         <input type="checkbox" class="form-check-input" id="privacyPolicy" required>
@@ -117,8 +141,41 @@
 
 <!-- Function to navigate users to the signup tab -->
 @code {
+
+
+    private List<School>? Schools = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetSchoolNames();	    
+        StateHasChanged();
+	    await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task GetSchoolNames()
+    {
+	    List<School>? schools = await schoolAPI.GetAllSchools();
+
+	    if (schools != null)
+	    {
+		    Schools = schools;
+	    }
+
+
+    }
     private void LoginTab()
     {
         NavigationManager.NavigateTo("/LogIn");
     }
+
+
+    private void ResetTab()
+    {
+        NavigationManager.NavigateTo("/ResetPassword");
+    }
+    private void SchoolSignup()
+    {
+        NavigationManager.NavigateTo("/SchoolSignUp");
+    }
+
 }
