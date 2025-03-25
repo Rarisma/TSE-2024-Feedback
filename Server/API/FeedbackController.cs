@@ -33,7 +33,7 @@ public class FeedbackController : Controller
                 .Where(f => f.AssignedUserID == userID
                          || f.AssigneeID == userID
                          || f.Visibility == FeedbackVisibility.Public
-                         || f.AssignedUserID == 0 && userIDs.Contains(userID)).ToList ();
+                         || f.AssignedUserID == null && userIDs.Contains(userID)).ToList ();
 
 
             //Serialise to JSON

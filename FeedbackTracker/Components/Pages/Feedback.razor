@@ -140,7 +140,7 @@ else
     private async Task GetAssignableUsers()
     {
         // Get module teachers.
-        List<User?> modUsers = (await ModuleClient.GetUsersInModule(_moduleID))!.ToList();
+        List<User?> modUsers = (await ModuleClient.GetUsersInModule(_moduleID, Auth.User.UserID))!.ToList();
         
         if(modUsers is { Count: > 0 }) 
         {

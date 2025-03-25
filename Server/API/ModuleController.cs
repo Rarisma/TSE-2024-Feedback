@@ -82,7 +82,7 @@ public class ModuleController : Controller
     /// <param name="moduleID">Module ID Number</param>
     /// <return>Module Object</return>
     [HttpGet("GetUsersInModule")]
-    public string GetUsersInModule(int moduleID)
+    public string GetUsersInModule(int moduleID, int userID)
     {
         try
         {
@@ -90,7 +90,7 @@ public class ModuleController : Controller
             using TrackerContext ctx = new();
             var users = (from Users_Modules usermodule in ctx.UsersModules
                          join userdata in ctx.User on usermodule.UserID equals userdata.UserID
-                         where usermodule.ModuleID == moduleID
+                         where usermodule.ModuleID == moduleID && userID != userdata.UserID
                          select new {
                              userdata.UserID,
                              userdata.Username,
