@@ -18,10 +18,22 @@ public class User
 	[Column("USERNAME")]
 	public string Username { get; set; }
 
-	/// <summary>
-	/// User's password
-	/// </summary>
-	[Column("PASSWORD")]
+    /// <summary>
+    /// users first name
+    /// </summary>
+    [Column("FIRST_NAME")]
+    public string? FirstName { get; set; }
+
+    /// <summary>
+    /// users first name
+    /// </summary>
+    [Column("LAST_NAME")]
+    public string? LastName { get; set; }
+
+    /// <summary>
+    /// User's password
+    /// </summary>
+    [Column("PASSWORD")]
 	public string Password { get; set; }
 
 	/// <summary>
