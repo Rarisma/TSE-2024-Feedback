@@ -4,7 +4,7 @@
 @inject API.UserAPI UserClient
 @rendermode InteractiveServer
 @inject IJSRuntime Js
-
+@inject NotificationService NotificationService
 <div Style="display: flex; flex-direction: column; height: 100%; padding: 0; background-color: #2c3e50;">
     <!-- Title header -->
     <div Style="display: flex; align-items: center; justify-content: center; padding: 12px 15px; border-bottom: 1px solid #34495e; font-family: 'Poppins', sans-serif;">
@@ -33,15 +33,6 @@
                 <NavLink href="usersfeedback" Style="display: flex; align-items: center; padding: 8px 10px; border-radius: 5px; text-decoration: none; color: #ffffff; transition: background-color 0.2s;" class="nav-item">
                     <RadzenIcon Icon="assignment" Style="font-size: 18px; color: #dddddd;" class="nav-icon" />
                     <span class="nav-text"> Your Feedback</span>
-                    @if (New_Feedback)
-                    {
-                        <span Style="color: #ff6b6b; font-weight: bold; margin-left: 5px; animation: pulse 1s infinite;">🔔</span>
-                        playsound = true;
-                    }
-                    else
-                    {
-                        playsound = false;
-                    }
                 </NavLink>
             </div>
 
@@ -79,45 +70,21 @@
 
 
 @code{
-    bool playsound = false;
-    bool New_Feedback = false;
     User? user;
     protected override Task OnInitializedAsync()
     {
         NavigationManager.LocationChanged += async (_, _) =>
                 {
 
-                    if (NavigationManager.Uri == "/usersfeedback" && playsound == true)
-                    {
-                        playsound = false;
-                        NavigationManager.NavigateTo(NavigationManager.Uri);
-                    }
                     //NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);        
                     // if logged in
                     if (Auth.IsAuthorised())
                     {
                         await Task.Delay(50); // ensure delay to allow for user to be correctly loaded
                         user = Auth.GetUser();
-                        // check if user has new feedback
 
-                        if (user != null){
-                            List<Core.Definitions.Notification?>? notifications = await UserClient.GetNotification(user.UserID);
-
-                            if (notifications.Count > 0){
-
-                                New_Feedback = true;
-
-                                await InvokeAsync(StateHasChanged);
-                            }else{
-                                New_Feedback = false;
-
-                                await InvokeAsync(StateHasChanged);
-                            }
-
-                        }else{
-                            NavigationManager.NavigateTo(NavigationManager.Uri);
-
-                        }
+                        // show any notifications
+                        Notify();
 
 
                     }
@@ -127,10 +94,61 @@
     }
     protected override async Task OnAfterRenderAsync(bool firstrender)
     {
-        //Console.WriteLine("playsound: " + playsound);
+        /*Console.WriteLine("playsound: " + playsound);
+
             if(playsound){
             await Js.InvokeVoidAsync("PlaySoundEffect", "sounds/notification.wav");
             }
+		*/
+
+    }
+
+    async void Notify()
+    {
+	    if (user != null){
+		    List<Core.Definitions.Notification?>? notifications = await UserClient.GetNotification(user.UserID);
+
+		    if (notifications.Count > 0){
+                    
+			    // play sound
+			    await Js.InvokeVoidAsync("PlaySoundEffect", "sounds/notification.wav");
+			    foreach (var notification in notifications)
+			    {
+                    // show notifications
+				    NotificationService.Notify(new NotificationMessage
+					    {
+						    Severity = NotificationSeverity.Info,
+						    Duration = 10000,
+						    ShowProgress = true,
+						    SummaryContent = ns =>@<RadzenText TextStyle="TextStyle.H6">@notification.Title <br /> @notification.TimeSinceCreation</RadzenText>,
+							DetailContent = ns => @<RadzenText TextStyle="TextStyle.H6">@notification.Message</RadzenText>,
+						    CloseOnClick = true,
+						    /*
+						      Click = fn()
+								Payload = data to use
+                            
+						     */
+					    });
+			    }
+                // setup clear all
+                NotificationService.Notify(new NotificationMessage
+                {
+	                Severity = NotificationSeverity.Info, 
+	                Duration = 10000,
+                        SummaryContent = ns =>@<RadzenButton Text="Clear all" Click="@(args => ns.Messages.Clear())" />,
+                });
+
+                // delete notifications
+                await UserClient.NotificationDelete(user.UserID);
+
+			    await InvokeAsync(StateHasChanged);
+		    }
+
+	    }else{
+		    NavigationManager.NavigateTo(NavigationManager.Uri);
+
+	    }
+
 
     }
 

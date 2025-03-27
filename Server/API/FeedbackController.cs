@@ -110,7 +110,9 @@ public class FeedbackController : Controller
 			{
 				// notification id
 				UserID = fb.Entity.AssignedUserID,
+				/*
 				FeedbackID = fb.Entity.FeedbackID,
+				*/
 				Timestamp = DateTime.Now,
 			};
 

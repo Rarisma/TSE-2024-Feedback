@@ -152,37 +152,41 @@
                     }
                 </div>
             </div>
+            @{/*
+		<!-- Notifications Card -->
+		<div class="card notification-card">
+		<div class="card-header">
+		<i class="bi bi-bell me-2"></i>Notifications
+		</div>
+		<div class="card-body">
+		@if (notifications != null && notifications.Count > 0)
+		{
 
-            <!-- Notifications Card -->
-            <div class="card notification-card">
-                <div class="card-header">
-                    <i class="bi bi-bell me-2"></i>Notifications
-                </div>
-                <div class="card-body">
-                    @if (notifications != null && notifications.Count > 0)
-                    {
-                        @foreach (var notification in notifications)
-                        {
-                            <div class="notification-item">
-                                @foreach (var fb in notfiFB.Where(f => f.FeedbackID == notification.FeedbackID))
-                                {
-                                    <div>@fb.Title</div>
-                                }
-                                <div><i class="bi bi-clock me-1"></i> Time: @notification.Timestamp.ToLocalTime()</div>
+		@foreach (var notification in notifications)
+		{
+		<div class="notification-item">
 
-                            </div>
-                        }
-                    }
+		@foreach (var fb in notfiFB.Where(f => f.FeedbackID == notification.FeedbackID))
+		{
+		<div>@fb.Title</div>
+		}
+		<div><i class="bi bi-clock me-1"></i> Time: @notification.Timestamp.ToLocalTime()</div>
 
-                    else
-                    {
-                        <div class="notification-item">
-                            <div>No notifications!</div>
-                        </div>
-                    }
+		</div>
+		}
 
-                </div>
-            </div>
+		}
+
+		else
+		{
+		<div class="notification-item">
+		<div>No notifications!</div>
+		</div>
+		}
+
+		</div>
+		</div>*/
+			}
         </div>
 
     </div>
@@ -297,7 +301,6 @@
             {
                 await getAverageResolveTime(assignee.UserID);
             }
-            await getNotifications();
             await countOpenFeedback();
         }
 
@@ -321,23 +324,6 @@
         completionRate = await UserClient.getAverageResolveTime(usrID);
     }
 
-    private List<Core.Definitions.Feedback> notfiFB = new();
-    private async Task getNotifications()
-
-    {
-        if (assignee != null)
-        {
-
-            notifications = await UserClient.GetNotification(assignee.UserID);
-            foreach (var notification in notifications)
-            {
-                Core.Definitions.Feedback tempFB = await FeedbackClientAccess.GetFeedbackByID(notification.FeedbackID);
-                notfiFB.Add(tempFB);
-            }
-            await InvokeAsync(StateHasChanged);
-
-        }
-    }
     protected override async Task OnInitializedAsync()
     {
         base.OnInitialized();

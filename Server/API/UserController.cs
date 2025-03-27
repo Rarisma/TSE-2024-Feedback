@@ -211,7 +211,9 @@ public class UserController(AuthService authService) : Controller
                            {
 	                           notification.NotificationID,
                                notification.UserID,
-                               notification.FeedbackID,
+							   notification.Title,
+							   notification.Message,
+							   notification.TimeSinceCreation,
                                notification.Timestamp
                            }).ToList();
 
@@ -225,10 +227,11 @@ public class UserController(AuthService authService) : Controller
     /// Creates a new user object.
     /// </summary>
     /// <param name="userid">Account user id</param>
-    /// <param name="feedbackId"></param>
+    /// <param name="title"></param>
+    /// <param name="message"></param>
     /// <returns></returns>
     [HttpPost("Notification")]
-    public async void NotificationPost(int userid, int feedbackId)
+    public async void NotificationPost(int userid, string title, string message)
     {
         try
         {
@@ -237,7 +240,10 @@ public class UserController(AuthService authService) : Controller
 			Notification notification = new()
 			{
 				UserID = userid,
-				FeedbackID = feedbackId,
+				// remove feedback after merge
+				FeedbackId = 156,
+                Title = title,
+				Message = message,
 				Timestamp = DateTime.Now,
 			};
 
@@ -250,7 +256,7 @@ public class UserController(AuthService authService) : Controller
         }
         catch (Exception ex)
         {
-            Log.Error(ex, "Failed to create user");
+            Log.Error(ex, "Failed to create notification");
         }
     }
 
@@ -273,7 +279,7 @@ public class UserController(AuthService authService) : Controller
         }
         catch (Exception ex)
         {
-            Log.Error(ex, "Failed to create user");
+            Log.Error(ex, "Failed to delete notification");
         }
     }
 
