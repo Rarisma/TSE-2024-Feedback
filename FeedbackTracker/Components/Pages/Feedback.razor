@@ -10,11 +10,11 @@
 
 <title>TSE Feedback: Create Feedback </title>
 <div class="container">
-@if (Auth.IsAuthorised())
-{   <PageTitle>Feedback Page</PageTitle>
-             
-            <!-- Feedback form -->
-		<div class="create-feedback">
+    @if (Auth.IsAuthorised())
+    {   <PageTitle>Feedback Page</PageTitle>
+
+        <!-- Feedback form -->
+        <div class="create-feedback">
             <h3>Create Feedback</h3>
 
             <!--Name-->
@@ -65,44 +65,44 @@
                     }
                 </select>
             </div>
-                
-                <!--Label-->
-                <div class="mb-3">
-                    <label for="Label">Label:</label>
-                    <select id="Label" @bind="_label" class="form-select">
-                        <!-- add each module to select options-->
-                        <option value="0">@FeedbackLabel.Positive</option>
-                        <option value="1">@FeedbackLabel.Improvement</option>
-                        <option value="2">@FeedbackLabel.Question</option>
-                        <option value="3">@FeedbackLabel.Error</option>
 
-                    </select>
-                </div>
-                <!--Visibility-->
-                <div class="mb-3">
-                    <label for="Visibility">Visibility:</label>
-                    <select id="Visibility" @bind="_visibility" class="form-select">
-                        <!-- Select Visibility Options -->
-                        <option value="0">@FeedbackVisibility.Public</option>
-                        <option value="1">@FeedbackVisibility.Private</option>
+            <!--Label-->
+            <div class="mb-3">
+                <label for="Label">Label:</label>
+                <select id="Label" @bind="_label" class="form-select">
+                    <!-- add each module to select options-->
+                    <option value="0">@FeedbackLabel.Positive</option>
+                    <option value="1">@FeedbackLabel.Improvement</option>
+                    <option value="2">@FeedbackLabel.Question</option>
+                    <option value="3">@FeedbackLabel.Error</option>
 
-                    </select>
-                </div>
+                </select>
+            </div>
+            <!--Visibility-->
+            <div class="mb-3">
+                <label for="Visibility">Visibility:</label>
+                <select id="Visibility" @bind="_visibility" class="form-select">
+                    <!-- Select Visibility Options -->
+                    <option value="0">@FeedbackVisibility.Public</option>
+                    <option value="1">@FeedbackVisibility.Private</option>
+
+                </select>
+            </div>
 
 
             <div class="mb-3 text-center">
                 <button class="btn btn-primary" @onclick="SendFeedback">Submit Feedback</button>
             </div>
-			</div>
+        </div>
 
 
-}
+    }
 
-//For users that aren't logged in
-else
-{
+    //For users that aren't logged in
+    else
+    {
 
-}
+    }
 </div>
 @code {
     //Goes back to the login page
@@ -115,7 +115,7 @@ else
 
     private int _visibility;
 
-    
+
     // name
     private string _title = string.Empty;
     // text
@@ -125,7 +125,7 @@ else
     private int _moduleID;
     // get modules
     private List<Modules> _modules = new();
-    
+
     // assign
     // author of feedback (get current user)
     private User _assignee = new();
@@ -140,10 +140,11 @@ else
     private async Task GetAssignableUsers()
     {
         // Get module teachers.
-        List<User?> modUsers = (await ModuleClient.GetUsersInModule(_moduleID, Auth.User.UserID))!.ToList();
-        
+        List<User?> modUsers = (await ModuleClient.GetUsersInModule(_moduleID))!.ToList();
+
         if(modUsers is { Count: > 0 }) 
         {
+            modUsers.RemoveAll(u => u.UserID == Auth.User.UserID);
             _users = modUsers;
             _assignedUserID = modUsers[0].UserID;
         }

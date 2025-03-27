@@ -74,15 +74,13 @@ public class ModuleAPI
     /// <summary>
     /// return users in module
     /// </summary>
-    public async Task<List<User?>?> GetUsersInModule(int moduleID, int userID)
+    public async Task<List<User?>?> GetUsersInModule(int moduleID)
     {
         try
         {
-			HttpResponseMessage response = await _httpClient.GetAsync(
-				$"Module/GetUsersInModule?moduleID={Uri.EscapeDataString(moduleID.ToString())}" +
-                $"&userID={Uri.EscapeDataString(userID.ToString())}"
-			);
-			response.EnsureSuccessStatusCode();
+            HttpResponseMessage response = await _httpClient.GetAsync(
+                $"Module/GetUsersInModule?moduleID={Uri.EscapeDataString(moduleID.ToString())}");
+            response.EnsureSuccessStatusCode();
             string jsonString = await response.Content.ReadAsStringAsync();
             return JsonSerializer.Deserialize<List<User?>>(jsonString);
         }
