@@ -58,7 +58,7 @@ public class UserController(AuthService authService) : Controller
 	/// <param name="email">Account email (in plaintext)</param>
 	/// <returns></returns>
 	[HttpPost("CreateUser")]
-	public async void CreateUser(string username, string password, string email)
+	public async void CreateUser(string Username, string Password, string Email, string School)
 	{
 		try
 		{
@@ -66,14 +66,15 @@ public class UserController(AuthService authService) : Controller
 			//NOTE: bCrypt is very secure. (Salting is handled automatically)
 			User account = new()
 			{
-				Username = username,
-				Password = BCrypt.Net.BCrypt.HashPassword(password),
+				Username = Username,
+				Password = BCrypt.Net.BCrypt.HashPassword(Password),
 				IsStudent = true,
 				IsTeacher = false,
-				Email = email
+				Email = Email,
+				School = School,
+				Initalised = true
 			};
-
-
+			
 			//Add user to database
 			await using TrackerContext ctx = new();
 			ctx.User.Add(account);

@@ -6,118 +6,144 @@
 @inject FeedbackAPI FeedbackClientAccess
 @inject UserAPI UserAPI
 @inject JAuth JAuth
+@inject NavigationManager NavigationManager
 
-@{
-	//Show title.
-	<PageTitle>Feedback</PageTitle>
-	
-		@if (SelectedFeedback != null)
+<PageTitle>Feedback</PageTitle>
+
+<RadzenCard Style="margin: 20px; background-color: #f5f7fa; border: none; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+	@if (SelectedFeedback != null)
+	{
+		@if (!isEditing)
 		{
-			@if (!isEditing)
-			{
-				// display feedback {title,deadline,description,create extension request button}
-				<div class="flex-row">
-					<div class="flex-column">
-						<h1 class="card-text"><strong><u>@SelectedFeedback.Title</u></strong></h1>
-						<p class="card-text"><strong>Created By:</strong> @users.First(u => u.UserID == SelectedFeedback.AssigneeID).Username</p>
-						<p class="card-text"><strong>Opened on:</strong> @SelectedFeedback.CreatedDate?.ToString("g")</p>
-						
-						@if (SelectedFeedback.Closed)
-						{
-							<p class="card-text"><strong>Closed on:</strong> @SelectedFeedback.ClosedDate?.ToString("g")</p>
-						}
-						
-						<p class="card-text"><strong>Description:</strong> @SelectedFeedback.FeedbackText</p>
-						<!-- <p class="card-text"><strong>Label:</strong> @SelectedFeedback.Label.ToString()</p> -->
-					</div>
-					<div>
-						@if (SelectedFeedback.Closed)
-						{
-							<p>This feedback is closed, it can't be edited and new comments can't be added.</p>
-						}
-						else
-						{
-							if (@JAuth.User!.UserID == SelectedFeedback.AssigneeID)
-							{
-								<button class="btn btn-primary" @onclick="EnableEditing">Edit </button>
-							}
-						}
-
-						@if (JAuth.User!.IsTeacher)
-						{
-							@if (SelectedFeedback.Closed)
-							{
-								<button class="btn btn-primary" @onclick="ToggleCompletion">Mark as incomplete </button>
-							}
-							else
-							{								
-								<button class="btn btn-primary" @onclick="ToggleCompletion">Mark as Complete </button>
-							}
-						}
-					</div>
-				</div>
-			}
-			
-			
-			@if (isEditing)
-			{
-				<div>
-					<label for="editTitle">Title:</label>
-					<input id="editTitle" type="text" @bind="editingTitle" />
-				</div>
-				<div>
-					<label for="editDescription">Description:</label>
-					<textarea id="editDescription" @bind="editingDescription"></textarea>
-				</div>
-				<button @onclick="SaveChanges">Save</button>
-				<button @onclick="CancelEditing">Cancel</button>
-			}
-
-			@try
-			{
-				if (SelectedComments != null)
-				{
-					//If theres no comments, show a message
-					if (SelectedComments.Count == 0)
+			<RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween" AlignItems="AlignItems.Start" Gap="1rem" Style="margin-bottom: 20px;">
+				<RadzenStack>
+					<RadzenText TextStyle="TextStyle.H3" Style="color: #2c3e50; font-weight: bold; text-decoration: underline;">@SelectedFeedback.Title</RadzenText>
+					<RadzenText TextStyle="TextStyle.Body1" Style="margin-top: 10px;">
+						<b>Created By:</b> @users.First(u => u.UserID == SelectedFeedback.AssigneeID).Username
+					</RadzenText>
+					<RadzenText TextStyle="TextStyle.Body1">
+						<b>Opened on:</b> @SelectedFeedback.CreatedDate?.ToString("g")
+					</RadzenText>
+					
+					@if (SelectedFeedback.Closed)
 					{
-						<p>No comments yet!</p>
+						<RadzenText TextStyle="TextStyle.Body1">
+							<b>Closed on:</b> @SelectedFeedback.ClosedDate?.ToString("g")
+						</RadzenText>
+					}
+					
+					<RadzenText TextStyle="TextStyle.Body1" Style="margin-top: 10px;">
+						<b>Description:</b> @SelectedFeedback.FeedbackText
+					</RadzenText>
+				</RadzenStack>
+				
+				<RadzenStack>
+					@if (SelectedFeedback.Closed)
+					{
+						<RadzenBadge BadgeStyle="BadgeStyle.Warning" Text="Closed" Style="font-size: 14px; margin-bottom: 10px;" />
+						<RadzenText TextStyle="TextStyle.Body1">This feedback is closed, it can't be edited and new comments can't be added.</RadzenText>
 					}
 					else
 					{
-						// Show comments.
-						foreach (var comment in SelectedComments)
+						if (@JAuth.User!.UserID == SelectedFeedback.AssigneeID)
 						{
-							<p>Commented by: @users.First(u => u.UserID == comment.CommenterID).Username</p>
-							<p>Content: @comment.Body</p>
+							<RadzenButton Text="Edit" Icon="edit" ButtonStyle="ButtonStyle.Primary" Style="background-color: #3498db; margin-bottom: 10px;" Click="@EnableEditing" />
 						}
 					}
 
-					<!-- Comment input -->
-					@if (!SelectedFeedback.Closed)
+					@if (JAuth.User!.IsTeacher)
 					{
-						<div class="comment-box" style="margin-top: 20px;">
-							<textarea @bind="newCommentText"
-							placeholder="Add a comment..."
-							rows="3" cols="100"></textarea>
-							<br />
-							<button class="btn btn-primary" @onclick="SubmitComment">Submit Comment</button>
-						</div>
+						@if (SelectedFeedback.Closed)
+						{
+							<RadzenButton Text="Mark as Incomplete" Icon="refresh" ButtonStyle="ButtonStyle.Secondary" Style="background-color: #7f8c8d;" Click="@ToggleCompletion" />
+						}
+						else
+						{
+							<RadzenButton Text="Mark as Complete" Icon="check_circle" ButtonStyle="ButtonStyle.Success" Style="background-color: #2ecc71;" Click="@ToggleCompletion" />
+						}
 					}
-					else 
-					{
-						<p><strong>Cannot create any new comments, feedback is closed.</strong></p>
-					}
-				}
-			}
-			catch (Exception ex)
-			{
-				Log.Error(ex, "Failed to load feedback viewer");
-			}
-
+				</RadzenStack>
+			</RadzenStack>
 		}
 		
-		<NavLink class="btn btn-primary" href="usersfeedback">Back</NavLink>
-}
+		@if (isEditing)
+		{
+			<RadzenCard Style="background-color: #ecf0f1; margin-bottom: 20px;">
+				<RadzenStack Gap="1rem">
+					<RadzenFormField Text="Title" Style="width: 100%;">
+						<RadzenTextBox @bind-Value="editingTitle" Style="width: 100%;" />
+					</RadzenFormField>
+					<RadzenFormField Text="Description" Style="width: 100%;">
+						<RadzenTextArea @bind-Value="editingDescription" Style="width: 100%; min-height: 100px;" />
+					</RadzenFormField>
+					<RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End" Gap="1rem">
+						<RadzenButton Text="Save" Icon="save" ButtonStyle="ButtonStyle.Primary" Style="background-color: #3498db;" Click="@SaveChanges" />
+						<RadzenButton Text="Cancel" Icon="cancel" ButtonStyle="ButtonStyle.Light" Style="background-color: #95a5a6;" Click="@CancelEditing" />
+					</RadzenStack>
+				</RadzenStack>
+			</RadzenCard>
+		}
+
+		@try
+		{
+			@if (SelectedComments != null)
+			{
+				<RadzenCard Style="background-color: #2c3e50; color: white; margin-top: 20px; margin-bottom: 20px;">
+					<RadzenText TextStyle="TextStyle.H5" Style="color: white; margin-bottom: 15px;">Comments</RadzenText>
+					
+					@if (SelectedComments.Count == 0)
+					{
+						<RadzenText TextStyle="TextStyle.Body1" Style="color: #ecf0f1;">No comments yet!</RadzenText>
+					}
+					else
+					{
+						<RadzenStack Gap="1rem">
+							@foreach (var comment in SelectedComments)
+							{
+								<RadzenCard Style="background-color: #34495e; color: white; margin-bottom: 10px;">
+									<RadzenText TextStyle="TextStyle.Body1" Style="color: #3498db; font-weight: bold;">
+										@users.First(u => u.UserID == comment.CommenterID).Username
+									</RadzenText>
+									<RadzenText TextStyle="TextStyle.Body1" Style="color: #ecf0f1; margin-top: 5px;">
+										@comment.Body
+									</RadzenText>
+								</RadzenCard>
+							}
+						</RadzenStack>
+					}
+				</RadzenCard>
+
+				@if (!SelectedFeedback.Closed)
+				{
+					<RadzenCard Style="background-color: #ecf0f1; margin-top: 20px;">
+						<RadzenStack>
+							<RadzenFormField Text="Add a comment" Style="width: 100%;">
+								<RadzenTextArea @bind-Value="newCommentText" Placeholder="Write your comment here..." Style="width: 100%; min-height: 80px;" />
+							</RadzenFormField>
+							<div style="text-align: right; margin-top: 10px;">
+								<RadzenButton Text="Submit Comment" Icon="send" ButtonStyle="ButtonStyle.Primary" Style="background-color: #3498db;" Click="@SubmitComment" />
+							</div>
+						</RadzenStack>
+					</RadzenCard>
+				}
+				else 
+				{
+					<RadzenText TextStyle="TextStyle.Body1" Style="font-weight: bold; color: #e74c3c; margin-top: 10px;">
+						Cannot create any new comments, feedback is closed.
+					</RadzenText>
+				}
+			}
+		}
+		catch (Exception ex)
+		{
+			Log.Error(ex, "Failed to load feedback viewer");
+		}
+	}
+	
+	<div style="margin-top: 20px;">
+		<RadzenButton Text="Back" Icon="arrow_back" ButtonStyle="ButtonStyle.Secondary" Style="background-color: #7f8c8d;" Click="@(() => NavigateToUsersFeedback())" />
+	</div>
+</RadzenCard>
 
 @code {
 	private string newCommentText = "";
@@ -129,6 +155,11 @@
 
 	[Parameter]
 	public string? FeedbackID { get; set; }
+
+	private void NavigateToUsersFeedback()
+	{
+		NavigationManager.NavigateTo("usersfeedback");
+	}
 
 	private async Task LoadFeedback(int ID)
 	{
@@ -145,9 +176,6 @@
 	private bool isEditing;
 	private string editingTitle;
 	private string editingDescription;
-
-	// selected feedback
-	//private FeedbackTrackerCommon.Definitions.Feedback? SelectedFeedback;
 
 	private void EnableEditing()
 	{
@@ -234,5 +262,4 @@
 			new FeedbackAPI().SetStatus(int.Parse(FeedbackID), SelectedFeedback.Closed);
 		}
 	}
-	
 }

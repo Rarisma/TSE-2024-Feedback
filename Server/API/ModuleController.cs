@@ -107,17 +107,41 @@ public class ModuleController : Controller
     }
 
     /// <summary>
+    /// Get Module by ID
+    /// </summary>
+    /// <param name="moduleID">Module ID Number</param>
+    /// <return>Module Object</return>
+    [HttpPost("AddUserToModule")]
+    public async void AddUserToModule(int userId,int moduleID)
+    {
+        try
+        {
+            //Find account
+            using TrackerContext ctx = new();
+
+            var userMod = new Users_Modules() {ModuleID = moduleID,UserID = userId};
+
+            ctx.UsersModules.Add(userMod);
+
+            await ctx.SaveChangesAsync();
+            Log.Debug("added user to module");
+        }
+        catch (Exception ex) { Log.Error(ex, "Failed to add user to module"); }
+    }
+
+    /// <summary>
     /// Gets all modules
     /// </summary>
     /// <returns>Every Module.</returns>
     [HttpGet("GetAllModules")]
-    public async Task<List<Modules>> GetAllModules()
+    public async Task<string>? GetAllModules()
     {
         try
         {
             //Just get all modules.
             await using TrackerContext ctx = new();
-            return ctx.Modules.ToList();
+            List<Modules>? modules =  ctx.Modules.ToList();
+            return JsonSerializer.Serialize(modules);
         }
         catch (Exception e)
         {

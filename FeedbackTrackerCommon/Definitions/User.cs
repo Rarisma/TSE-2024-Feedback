@@ -44,4 +44,13 @@ public class User
 
 	[Column("TOTP")]
 	public string? MFASecret { get; set; }
+
+  [Column("School")]
+  public string? School { get; set; }
+	/// <summary>
+	/// Shows a user a setup page when logging in for the first time if false
+	/// (used in Bulk API)
+	/// </summary>
+	[Column("INITIALISED")]
+	public bool Initalised { get; set; }
 }

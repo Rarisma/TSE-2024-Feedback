@@ -6,6 +6,8 @@
 @using Serilog
 @inject JAuth JAuth
 @inject NavigationManager NavigationManager
+@inject UserAPI UserClient
+@inject ModuleAPI ModuleClient
 @rendermode InteractiveServer
 
 
@@ -47,6 +49,22 @@
                     <option value="private">Private Feedback</option>
                 </select>
 
+                <label for="modulesort">Sort By:</label>
+                <select id="modulesort" @onchange="SortByModule">
+                    <option value="all">All Modules</option>
+                    @if (_modules.Count > 0)
+                    {
+                        for (int i = 0; i < _modules.Count; i++)
+                        {
+                            <option value="@_modules[i].ModuleID">@_modules[i].Module</option>
+                        }
+                    }
+                    else
+                    {
+                        <option value="">No assigned modules</option>
+                    }
+                </select>
+
             </RadzenCard>
 
             <RadzenDataGrid Style="border-bottom-left-radius: 10px; border-bottom-right-radius: 10px;"
@@ -54,7 +72,7 @@
                 <Columns>
                     <RadzenDataGridColumn TItem="Core.Definitions.Feedback" Property="Title" Title="Title" />
                     <RadzenDataGridColumn TItem="Core.Definitions.Feedback" Property="FeedbackText" Title="Feedback" />
-                    <RadzenDataGridColumn TItem="Core.Definitions.Feedback" Title="Assignee">
+                    <RadzenDataGridColumn TItem="Core.Definitions.Feedback" Title="Created-BY">
                         <Template Context="feedback">
                             @if (Users != null)
                             {
@@ -68,7 +86,20 @@
                             }
                         </Template>
                     </RadzenDataGridColumn>
-
+                    <RadzenDataGridColumn TItem="Core.Definitions.Feedback" Title="Assigned-TO">
+	                    <Template Context="feedback">
+		                    @if (Users != null)
+		                    {
+			                    @foreach (var assignee in Users)
+			                    {
+				                    if (assignee.UserID == feedback.AssignedUserID)
+				                    {
+					                    <strong>@assignee.Username</strong>
+				                    }
+			                    }
+		                    }
+	                    </Template>
+                    </RadzenDataGridColumn>
                     <RadzenDataGridColumn TItem="Core.Definitions.Feedback" Title="Status">
                         <Template Context="feedback">
                             @if (JAuth.User.UserID == feedback.AssigneeID)
@@ -134,6 +165,21 @@
 
     private string SelectedTeacherID { get; set; } = "";
 
+    // moduleID
+    private int _moduleID;
+    // get modules
+    private List<Modules> _modules = new();
+
+    // assign
+    // author of feedback (get current user)
+    private User _assignee = new();
+
+    // assigned user
+    private int _assignedUserID;
+    // get possible users to assign to
+    private List<User> _users = new() { new() { UserID = 0, Username = "No users" } };
+
+
     /// <summary>
     /// Sorts the feedbacks based on the specific filter applied
     /// by the user, by rearranging the lists
@@ -163,22 +209,38 @@
         }
     }
 
+
+    private void SortByModule(ChangeEventArgs e)
+    {
+        var selectedModuleID = e.Value.ToString();
+        if (selectedModuleID == "all") // if the user wishes to see all of their feedbacks
+        {
+            SpecificFeedbacks = new List<Core.Definitions.Feedback>(AllFeedbacks);
+        }
+        else
+        {
+            SpecificFeedbacks = AllFeedbacks.Where(f => selectedModuleID != null && int.Parse(selectedModuleID) == f.ModuleID).ToList();
+        }
+    }
+
     /// <summary>
     /// Creates a new list depending on the username of the teacher,
     /// all feedbacks not associated with that teacher will be excluded
     /// </summary>
     private void SortByTeacher(ChangeEventArgs e)
     {
-        SelectedTeacherID = e.Value.ToString();
+        var SelectedTeacherID = e.Value.ToString();
         if (SelectedTeacherID == "all") // if the user wishes to see all of their feedbacks
         {
             SpecificFeedbacks = new List<Core.Definitions.Feedback>(AllFeedbacks);
         }
         else
         {
-            SpecificFeedbacks = AllFeedbacks .Where(f => SelectedTeacherID != null && int.Parse(SelectedTeacherID) == f.AssigneeID) .ToList();
+            SpecificFeedbacks = AllFeedbacks.Where(f => SelectedTeacherID != null && int.Parse(SelectedTeacherID) == f.AssigneeID).ToList();
         }
     }
+
+
 
     /// <summary>
     /// Loads all the feedbacks into the two specific feedback lists
@@ -201,6 +263,52 @@
             Log.Error(ex, "Failed to load feedbacks.");
         }
     }
+
+
+    // get users that can be assigned feedback
+    private async Task GetAssignableUsers()
+    {
+        // Get module teachers.
+        List<User?> modUsers = (await ModuleClient.GetUsersInModule(_moduleID))!.ToList();
+
+        if (modUsers is { Count: > 0 })
+        {
+            _users = modUsers;
+            _assignedUserID = modUsers[0].UserID;
+        }
+
+        StateHasChanged();
+    }
+
+
+    // getModules (get modules user in / can access)
+
+    private async Task GetModules()
+    {
+
+        //TODO get modules user is in
+
+        List<Modules?>? newModules = await UserClient.GetModules(_assignee.UserID);
+
+        if (newModules != null)
+        {
+            try
+            {
+                _modules = newModules;
+                _moduleID = _modules.First().ModuleID;
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Error getting modules");
+            }
+        }
+
+        await GetAssignableUsers();
+        // refresh ui with new data
+        StateHasChanged();
+    }
+
+
 
     /// <summary>
     /// Loads the data for people that have assigned feedback to the current user

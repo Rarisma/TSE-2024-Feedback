@@ -4,6 +4,7 @@
 @rendermode InteractiveServer
 @inject ModuleAPI ModuleClient
 @inject FeedbackAPI FeedbackClientAccess
+@inject BulkAPI BulkAPI
 @inject UserAPI UserAPI
 @inject JAuth JAuth
 
@@ -66,12 +67,30 @@
                                 </div>
 
                                 <div class="d-grid">
-                                    <button type="button" class="btn btn-primary">Assign Module</button>
+                                    <button type="button" class="btn btn-primary" @onclick="assignModule">Assign Module</button>
                                 </div>
                             </form>
                         </div>
                     </div>
 
+                    <div class="card">
+                        <div class="card-body">
+                            <p class="text-center">Bulk Create Users</p>
+                            <input id="moduleName" type="text" class="form-control" @bind="_BulkUserEmails" placeholder="Enter user emails (CSV)">
+                            <button class="btn btn-success" @onclick="BulkCreateUsers">Create Users</button>
+                        </div>
+                        
+                        <div class="card-body">
+                            <p class="text-center">Bulk Create Modules</p>
+                            <input id="moduleName" type="text" class="form-control" @bind="_BulkModules" placeholder="Enter Module names (CSV)">
+                        </div>
+                        <p class="text-center">Bulk Assign Modules</p>
+                        <button class="btn btn-success" @onclick="BulkCreateModules">Create Modules</button>
+                        <input type="text" class="form-control" @bind="_BulkModUserEmails" placeholder="Enter user emails (CSV)">
+                        <input type="number" class="form-control" @bind="_BulkModID" placeholder="Module ID">
+                        <button class="btn btn-success" @onclick="BulkAssignModules">Assign Modules</button>
+                        <!-- TODO: Add bulk assign teacher here when IsStudent/IsTeacher is one variable -->
+                    </div>
                 </div> 
             </div> 
         </div> 
@@ -80,12 +99,16 @@
 
 @code {
     private string _moduleName;
+    private string _BulkUserEmails;
+    private string _BulkModules;
+    private string _BulkModUserEmails;
+    private int _BulkModID;
 
     private List<User> _users = new();
     private int _selectedUserId;
     private string _selectedModuleId;
-    private List<Modules> _modules = new();
-    
+    private List<Modules>? _modules = new();
+
     // assigne
     // author of feedback (get current user)
     private User? _assignee;
@@ -101,6 +124,18 @@
         await ModuleClient.CreateModule(newModule);
     }
 
+    // Module Creation
+    private async void assignModule()
+    {
+        // Create a new module object
+        if (_selectedModuleId != null && _selectedUserId != null)
+        {
+            ModuleClient.AddUserToModule(_selectedUserId.ToString(),_selectedModuleId);
+
+            StateHasChanged();
+        }
+    }
+
     private async Task LoadUsers()
     {
         var AllUsers = await UserAPI.GetAllUsers();
@@ -108,6 +143,24 @@
         if (AllUsers != null)
         {
             _users = AllUsers;
+
+            _selectedUserId = _users[0].UserID;
+        }
+        else
+        {
+            Console.WriteLine("Failed to load users.");
+        }
+    }
+
+    private async Task GetModules()
+    {
+        var modules = await ModuleClient.GetAllModules();
+
+        if (modules != null)
+        {
+            _modules = modules;
+
+            _selectedModuleId = _modules[0].ModuleID.ToString();
         }
         else
         {
@@ -122,7 +175,18 @@
         {
             _assignee = JAuth.User;
             await LoadUsers();
-            _modules = await ModuleClient.GetAllModules();
+
+            await GetModules();
+            StateHasChanged();
+
+            await InvokeAsync(StateHasChanged);
         }
     }
+
+    private async void BulkCreateUsers() => await BulkAPI.CreateUsers(_BulkUserEmails);
+
+    private async void BulkCreateModules() => await BulkAPI.CreateModules(_BulkModules);
+
+    private async void BulkAssignModules() => await BulkAPI.AssignUserModule(_BulkModUserEmails, _BulkModID);
+
 }
