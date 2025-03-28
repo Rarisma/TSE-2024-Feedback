@@ -5,28 +5,26 @@ namespace Server;
 
 public class EmailSending
 {
-	private const string TseEmail = "tsefeedback9@gmail.com";
-	private const string EmailPassword = "uunx kzkn yimy whmd";
-
-	public static async Task SendEmailAsync(string ReceivingAddress, string body, string subject)
+	public static async Task SendEmailAsync(string receivingAddress, string body, string subject)
 	{
 		var Client = new SmtpClient("smtp.gmail.com", 587)
 		{
 			EnableSsl = true,
-			Credentials = new NetworkCredential(TseEmail, EmailPassword)
+			Credentials = new NetworkCredential(Program.Secrets["ResetEmail"], 
+				Program.Secrets["ResetEmail"])
 		};
 
 		try
 		{
 			var Email = new MailMessage
 			{
-				From = new MailAddress(TseEmail),
+				From = new MailAddress(Program.Secrets["ResetEmailPassword"]),
 				Subject = subject,
 				Body = body,
 				IsBodyHtml = true
 			};
 
-			Email.To.Add(ReceivingAddress);
+			Email.To.Add(receivingAddress);
 
 			await Client.SendMailAsync(Email);
 		}
