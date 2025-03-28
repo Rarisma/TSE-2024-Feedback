@@ -16,7 +16,7 @@
             if (Password.Length >= 8 && Password.Any(char.IsUpper) && Password.Any(c => !char.IsLetterOrDigit(c)))
             {
                 //Send req to create user.
-                await new UserAPI().CreateUser(Username.ToString(), Password.ToString(), Email.ToString(), School.ToString());
+                await new UserAPI().CreateUser(Username.ToString(), Password.ToString(), Email.ToString(), School.ToString(),FirstName.ToString(),LastName.ToString());
                 await JSRuntime.InvokeVoidAsync("alert", "user created");
                 NavigationManager.NavigateTo("/");
             }
@@ -41,6 +41,16 @@
     /// Entered Username
     /// </summary>
     public string Username { get; set; }
+
+    /// <summary>
+    /// Entered first name
+    /// </summary>
+    public string FirstName { get; set; }
+
+    /// <summary>
+    /// Entered last name
+    /// </summary>
+    public string LastName { get; set; }
 
     /// <summary>
     /// Entered Email
@@ -86,12 +96,12 @@
                 <form @onsubmit="Submit">
                     <!-- Account creation textboxes/fields -->
                     <div class="mb-3">
-                        <label for="firstName" class="form-label">First Name</label>
-                        <input type="text" class="form-control" id="firstName" placeholder="Enter first name" maxlength="25" required>
+                        <label for="firstName" class="form-label" >First Name</label>
+						<input type="text" class="form-control" id="firstName" @bind-value="FirstName" placeholder="Enter first name" maxlength="25" required>
                     </div>
                     <div class="mb-3">
-                        <label for="lastName" class="form-label">Last Name</label>
-                        <input type="text" class="form-control" id="lastName" placeholder="Enter last name" maxlength="25" required>
+                        <label for="lastName" class="form-label" >Last Name</label>
+						<input type="text" class="form-control" id="lastName" @bind-value="LastName" placeholder="Enter last name" maxlength="25" required>
                     </div>
                     <div class="mb-3">
                         <label for="username" class="form-label">Username</label>

@@ -56,13 +56,15 @@ public class UserAPI
 	/// Creates a new user.
 	/// </summary>
 
-	public async Task CreateUser(string Username, string Password, string Email, string School)
+	public async Task CreateUser(string Username, string Password, string Email, string School,string FirstName,string LastName)
 	{
 		try
 		{
 			string url = $"User/CreateUser?Username={Uri.EscapeDataString(Username)}" +
 						 $"&Password={Uri.EscapeDataString(Password)}" +
                          $"&School={Uri.EscapeDataString(School)}" +
+                         $"&LastName={Uri.EscapeDataString(LastName)}" +
+                         $"&FirstName={Uri.EscapeDataString(FirstName)}" +
                          $"&Email={Uri.EscapeDataString(Email)}";
 
 			HttpResponseMessage response = await _httpClient.PostAsync(url, null);
