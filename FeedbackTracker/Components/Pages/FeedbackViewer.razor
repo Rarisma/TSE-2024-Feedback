@@ -4,6 +4,7 @@
 @using Core.Definitions
 @using Serilog
 @inject FeedbackAPI FeedbackClientAccess
+@inject ModuleAPI ModuleAPI
 @inject UserAPI UserAPI
 @inject JAuth JAuth
 @inject NavigationManager NavigationManager
@@ -13,13 +14,19 @@
 <RadzenCard Style="margin: 20px; background-color: #f5f7fa; border: none; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
 	@if (SelectedFeedback != null)
 	{
-		@if (!isEditing)
+		@if (!_isEditing)
 		{
 			<RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween" AlignItems="AlignItems.Start" Gap="1rem" Style="margin-bottom: 20px;">
 				<RadzenStack>
 					<RadzenText TextStyle="TextStyle.H3" Style="color: #2c3e50; font-weight: bold; text-decoration: underline;">@SelectedFeedback.Title</RadzenText>
 					<RadzenText TextStyle="TextStyle.Body1" Style="margin-top: 10px;">
-						<b>Created By:</b> @users.First(u => u.UserID == SelectedFeedback.AssigneeID).Username
+						<b>Created By:</b> @_users.First(u => u.UserID == SelectedFeedback.AssigneeID).Username
+					</RadzenText>
+					<RadzenText TextStyle="TextStyle.Body1">
+						<b>Assigned To:</b> @_users.First(u => u.UserID == SelectedFeedback.AssignedUserID).Username
+					</RadzenText>
+					<RadzenText TextStyle="TextStyle.Body1">
+						<b>Module: </b> @moduleTitle
 					</RadzenText>
 					<RadzenText TextStyle="TextStyle.Body1">
 						<b>Opened on:</b> @SelectedFeedback.CreatedDate?.ToString("g")
@@ -66,7 +73,7 @@
 			</RadzenStack>
 		}
 		
-		@if (isEditing)
+		@if (_isEditing)
 		{
 			<RadzenCard Style="background-color: #ecf0f1; margin-bottom: 20px;">
 				<RadzenStack Gap="1rem">
@@ -86,23 +93,25 @@
 
 		@try
 		{
-			@if (SelectedComments != null)
+			@if (_selectedComments != null)
 			{
 				<RadzenCard Style="background-color: #2c3e50; color: white; margin-top: 20px; margin-bottom: 20px;">
 					<RadzenText TextStyle="TextStyle.H5" Style="color: white; margin-bottom: 15px;">Comments</RadzenText>
 					
-					@if (SelectedComments.Count == 0)
+					@if (_selectedComments.Count == 0)
 					{
 						<RadzenText TextStyle="TextStyle.Body1" Style="color: #ecf0f1;">No comments yet!</RadzenText>
 					}
 					else
 					{
 						<RadzenStack Gap="1rem">
-							@foreach (var comment in SelectedComments)
+							@foreach (var comment in _selectedComments)
 							{
 								<RadzenCard Style="background-color: #34495e; color: white; margin-bottom: 10px;">
 									<RadzenText TextStyle="TextStyle.Body1" Style="color: #3498db; font-weight: bold;">
-										@users.First(u => u.UserID == comment.CommenterID).Username
+										@_users.First(u => u.UserID == comment.CommenterID).Username
+										
+										at @comment.CommentTime
 									</RadzenText>
 									<RadzenText TextStyle="TextStyle.Body1" Style="color: #ecf0f1; margin-top: 5px;">
 										@comment.Body
@@ -118,7 +127,8 @@
 					<RadzenCard Style="background-color: #ecf0f1; margin-top: 20px;">
 						<RadzenStack>
 							<RadzenFormField Text="Add a comment" Style="width: 100%;">
-								<RadzenTextArea @bind-Value="newCommentText" Placeholder="Write your comment here..." Style="width: 100%; min-height: 80px;" />
+								<RadzenTextArea @bind-Value="_newCommentText" Placeholder="Write your comment here..." 
+								                Style="width: 100%; min-height: 80px;" Disabled="false" />
 							</RadzenFormField>
 							<div style="text-align: right; margin-top: 10px;">
 								<RadzenButton Text="Submit Comment" Icon="send" ButtonStyle="ButtonStyle.Primary" Style="background-color: #3498db;" Click="@SubmitComment" />
@@ -141,17 +151,18 @@
 	}
 	
 	<div style="margin-top: 20px;">
-		<RadzenButton Text="Back" Icon="arrow_back" ButtonStyle="ButtonStyle.Secondary" Style="background-color: #7f8c8d;" Click="@(() => NavigateToUsersFeedback())" />
+		<RadzenButton Text="Back" Icon="arrow_back" ButtonStyle="ButtonStyle.Secondary"
+		              Style="background-color: #7f8c8d;" Click="@(() => NavigateToUsersFeedback())" />
 	</div>
 </RadzenCard>
 
 @code {
-	private string newCommentText = "";
-	private Core.Definitions.Feedback? SelectedFeedback;
+	private string _newCommentText = "";
+	public Core.Definitions.Feedback? SelectedFeedback;
 
-	private List<User> users = new();
+	private List<User> _users = new();
 
-	private List<FeedbackComments>? SelectedComments;
+	private List<FeedbackComments>? _selectedComments;
 
 	[Parameter]
 	public string? FeedbackID { get; set; }
@@ -161,10 +172,11 @@
 		NavigationManager.NavigateTo("usersfeedback");
 	}
 
-	private async Task LoadFeedback(int ID)
+	private async Task LoadFeedback(int id)
 	{
-		SelectedFeedback = await FeedbackClientAccess.GetFeedbackByID(ID);
-
+		SelectedFeedback = await FeedbackClientAccess.GetFeedbackByID(id);
+		var mod = await ModuleAPI.GetModuleByID(SelectedFeedback.ModuleID);
+		moduleTitle = mod.Module;
 		if (SelectedFeedback != null)
 		{
 			StateHasChanged();
@@ -173,35 +185,42 @@
 
 	//Editing
 
-	private bool isEditing;
+	private bool _isEditing;
 	private string editingTitle;
 	private string editingDescription;
+	private string moduleTitle;
 
 	private void EnableEditing()
 	{
-		isEditing = true;
-		editingTitle = SelectedFeedback.Title;
-		editingDescription = SelectedFeedback.FeedbackText;
+		_isEditing = true;
+		if (SelectedFeedback != null)
+		{
+			editingTitle = SelectedFeedback.Title;
+			editingDescription = SelectedFeedback.FeedbackText;
+		}
 	}
 
 
 	private async Task LoadUsers()
 	{
-		var AllUsers = await UserAPI.GetAllUsers();
+		var allUsers = await UserAPI.GetAllUsers();
 
-		if (AllUsers != null)
+		if (allUsers != null)
 		{
-			users = AllUsers;
+			_users = allUsers;
 		}
 	}
 
 
 	private void CancelEditing()
 	{
-		isEditing = false;
+		_isEditing = false;
 		// Revert changes
-		editingTitle = SelectedFeedback.Title;
-		editingDescription = SelectedFeedback.FeedbackText;
+		if (SelectedFeedback != null)
+		{
+			editingTitle = SelectedFeedback.Title;
+			editingDescription = SelectedFeedback.FeedbackText;
+		}
 	}
 
 
@@ -216,13 +235,13 @@
 			StateHasChanged();
 
 		}
-		isEditing = false;
+		_isEditing = false;
 	}
 	
-    private async Task LoadComments(int ID)
+    private async Task LoadComments(int id)
     {
-        SelectedComments = await FeedbackClientAccess.GetComments(ID);
-        if (SelectedComments == null)
+        _selectedComments = await FeedbackClientAccess.GetComments(id);
+        if (_selectedComments == null)
         {
             Console.WriteLine("No comments found.");
         }
@@ -231,11 +250,20 @@
 	/// <summary>
 	/// Create a new comment
 	/// </summary>
-	private async void SubmitComment()
+	private async Task SubmitComment()
 	{
-		//Send comment then reset text.
-		await FeedbackClientAccess.CreateComment(SelectedFeedback!.FeedbackID,JAuth.User!.UserID,newCommentText);
-		newCommentText = "";
+		//Send comment to db
+		await FeedbackClientAccess.CreateComment(SelectedFeedback!.FeedbackID,JAuth.User!.UserID,_newCommentText);
+		
+		//Show locally without a refresh
+		_selectedComments.Add(new FeedbackComments
+		{
+			CommenterID = JAuth.User!.UserID,
+			Body = _newCommentText,
+			CommentTime = DateTime.Now,
+		});
+		StateHasChanged();
+		_newCommentText = "";
 	}
 
 	protected override async Task OnInitializedAsync()
