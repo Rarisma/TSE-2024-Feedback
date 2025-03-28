@@ -1,4 +1,6 @@
 using System.Text;
+using Core.Definitions;
+using Microsoft.AspNetCore.Identity;
 using dotenv.net;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -105,33 +107,48 @@ internal static class Program
 	[HttpDelete("DeleteOldUsers")]
 	private static void DeleteOldUsers()
 	{
-		try
-		{
-			// Stores the date 1 year ago
-			using TrackerContext ctx = new();
-			var oneYearAgo = DateTime.Now.AddYears(-1);
+        try
+        {
+            // Stores the date 1 year ago
+            using TrackerContext ctx = new();
+            var oneYearAgo = DateTime.Now.AddYears(-1);
 
-			// compares last login with one year ago
-			var oldUsers = ctx.User
-				.Where(user => user.LastLogin < oneYearAgo).ToList();
+            // compares last login with one year ago
+            var oldUsers = ctx.User
+                .Where(user => user.LastLogin.HasValue && user.LastLogin.Value.Year < oneYearAgo.Year).ToList();
 
-			// gets old user ids 
-			var oldUserIds = oldUsers.Select(u => u.UserID).ToList();
+            if (oldUsers.Any())
+            {
+                // gets old user ids 
+                var oldUserIds = oldUsers.Select(u => u.UserID).ToList();
 
-			// checks if they have any feedbacks
-			var userFeedbacks = ctx.Feedback
-				.Where(f =>  oldUserIds.Contains(f.AssigneeID) || 
-				             oldUserIds.Contains((int)f.AssignedUserID!)).ToList();
-			
-			// Removes user feedbacks and old users
-			ctx.Feedback.RemoveRange(userFeedbacks);
-			ctx.User.RemoveRange(oldUsers);
-			ctx.SaveChanges();
+                // checks if they have any feedbacks
+                var userFeedbacks = ctx.Feedback.ToList()
+                    .Where(f => oldUserIds.Contains(f.AssigneeID) ||
+                                (f.AssignedUserID.HasValue && oldUserIds.Contains(f.AssignedUserID.Value))).ToList();
 
-		}
-		catch (Exception ex)
-		{
-			Log.Error(ex, "Failed to delete old users");
-		}
-	}
+
+                Log.Information("deleting old users.. ");
+
+                // Removes user feedbacks and old users
+                ctx.Feedback.RemoveRange(userFeedbacks);
+                ctx.User.RemoveRange(oldUsers);
+
+                foreach (var usr in oldUsers)
+                {
+                    Log.Information("deleted: " + usr.Username);
+                }
+                ctx.SaveChanges();
+
+            }
+            else
+            {
+                Log.Information("no old users.. ");
+            }
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Failed to delete old users");
+        }
+    }
 }
