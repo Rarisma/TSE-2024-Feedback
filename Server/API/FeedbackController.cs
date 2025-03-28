@@ -154,7 +154,8 @@ public class FeedbackController : Controller
 		        comment.Body = text;
 		        comment.CommenterID =  userID;
 		        comment.FeedbackID = feedbackID;
-	        
+		        comment.CommentTime = DateTime.Now;
+		        
 		        //Add comment to database
 		        using TrackerContext ctx = new();
 		        ctx.FeedbackComments.Add(comment);
