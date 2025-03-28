@@ -1,6 +1,7 @@
 using System.Text;
 using Core.Definitions;
 using Microsoft.AspNetCore.Identity;
+using dotenv.net;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -10,6 +11,7 @@ namespace Server;
 
 internal static class Program
 {
+	public static IDictionary<string, string>? Secrets;
 	public static void Main(string[] args)
 	{
 		var builder = WebApplication.CreateBuilder(args);
@@ -28,22 +30,17 @@ internal static class Program
 			.CreateLogger();
 
 		//Configure Entity Framework Core with MySQL
-		string? connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-		builder.Services.AddDbContext<TrackerContext>(options =>
-			options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+		builder.Services.AddDbContext<TrackerContext>();
 
 		//Enable Serilog.
 		builder.Host.UseSerilog();
 
 		//Register Services for Dependency Injection
 		builder.Services.AddScoped<AuthService>();
-
-		//Configure JWT Authentication
-		var jwtSettings = builder.Configuration.GetSection("JwtSettings");
-		var secretKey = jwtSettings.GetValue<string>("SecretKey");
-		var issuer = jwtSettings.GetValue<string>("Issuer");
-		var audience = jwtSettings.GetValue<string>("Audience");
-
+		
+		DotEnv.Load();
+		Secrets = DotEnv.Read();
+		
 		builder.Services.AddAuthentication(options =>
 			{
 				options.DefaultAuthenticateScheme = "JwtBearer";
@@ -52,7 +49,7 @@ internal static class Program
 			.AddJwtBearer("JwtBearer", options =>
 			{
 				//Check secret key is valid.
-				if (secretKey == null)
+				if (!Secrets.ContainsKey("JWTSecret"))
 				{
 					throw new Exception("Secret key is null");
 				}
@@ -63,9 +60,9 @@ internal static class Program
 					ValidateAudience = true,
 					ValidateLifetime = true,
 					ValidateIssuerSigningKey = true,
-					ValidIssuer = issuer,
-					ValidAudience = audience,
-					IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey))
+					ValidIssuer = Secrets["JWTEndpoint"],
+					ValidAudience = Secrets["JWTEndpoint"],
+					IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Secrets["JWTSecret"]))
 				};
 			});
 

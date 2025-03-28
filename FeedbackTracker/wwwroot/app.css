@@ -1,143 +1,252 @@
-html, body {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    --primary-color: #4e73df;
-    --secondary-color: #4e73df;
-    --tertiary-color: #EBF0F5;
-    --info-color: #36b9cc;
-    --warning-color: #f6c23e;
-    --danger-color: #e74a3b;
-    --light-color: #f8f9fc;
-    --light-text: white;
-    --dark-text: dark;
-    --dark-color: #5a5c69;
-    height: 100%;
-    margin: 0;
-    overflow: auto;
-}
-.blue {
-    --primary-color: #4e73df;
-    --secondary-color: #92b4f2;
-    --tertiary-color: whitesmoke;
-    --info-color: #36b9cc;
-    --warning-color: #f6c23e;
-    --danger-color: #e74a3b;
-    --light-color: #f8f9fc;
-    --light-text: white;
-    --dark-text: black;
-    --dark-color: #EBF0F5;
-}
+/* THEMES */
 
-.red {
-    --primary-color: #ff66b3;
-    --secondary-color: #ff1a8d;
-    --tertiary-color: whitesmoke;
-    --info-color: #36b9cc;
-    --warning-color: #f6c23e;
-    --danger-color: #e74a3b;
-    --light-color: #f8f9fc;
-    --light-text: white;
-    --dark-text: black;
-    --dark-color: #EBF0F5;
-}
+/* To add a new theme:
 
-.green {
-    --primary-color: #a8ee90;
-    --secondary-color: #7ab665;
-    --tertiary-color: whitesmoke;
-    --info-color: yellow;
-    --warning-color: orange;
-    --danger-color: red;
-    --light-color: #d2f8d2;
-    --light-text: white;
-    --dark-text: black;
-    --dark-color: #50C878;
-}
+   1. Create a new theme class in this file and define the styles
 
-.about-navbar {
-    
-    position: fixed;
-    z-index: 10;
-}
+   2. Update themes.js:
+      - Add the new theme to applyTheme() by including it in the classList.remove() call
 
-.info-section {
-    position: relative;
-    z-index: 5;
-}
+   3. Update AppTheme.cs:
+      - Add the new theme to the dictionary and CycleTheme method
 
-a, .btn-link {
-    color: #006bb7;
-}
-
-.btn-primary {
-    color: #fff;
-    background-color: #1b6ec2;
-    border-color: #1861ac;
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-.content {
-    padding-top: 1.1rem;
-}
-
-h1:focus {
-    outline: none;
-}
-
-.valid.modified:not([type=checkbox]) {
-    outline: 1px solid #26b050;
-}
-
-.invalid {
-    outline: 1px solid #e50000;
-}
-
-.validation-message {
-    color: #e50000;
-}
-
-.blazor-error-boundary {
-    background: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTYiIGhlaWdodD0iNDkiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIG92ZXJmbG93PSJoaWRkZW4iPjxkZWZzPjxjbGlwUGF0aCBpZD0iY2xpcDAiPjxyZWN0IHg9IjIzNSIgeT0iNTEiIHdpZHRoPSI1NiIgaGVpZ2h0PSI0OSIvPjwvY2xpcFBhdGg+PC9kZWZzPjxnIGNsaXAtcGF0aD0idXJsKCNjbGlwMCkiIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0yMzUgLTUxKSI+PHBhdGggZD0iTTI2My41MDYgNTFDMjY0LjcxNyA1MSAyNjUuODEzIDUxLjQ4MzcgMjY2LjYwNiA1Mi4yNjU4TDI2Ny4wNTIgNTIuNzk4NyAyNjcuNTM5IDUzLjYyODMgMjkwLjE4NSA5Mi4xODMxIDI5MC41NDUgOTIuNzk1IDI5MC42NTYgOTIuOTk2QzI5MC44NzcgOTMuNTEzIDI5MSA5NC4wODE1IDI5MSA5NC42NzgyIDI5MSA5Ny4wNjUxIDI4OS4wMzggOTkgMjg2LjYxNyA5OUwyNDAuMzgzIDk5QzIzNy45NjMgOTkgMjM2IDk3LjA2NTEgMjM2IDk0LjY3ODIgMjM2IDk0LjM3OTkgMjM2LjAzMSA5NC4wODg2IDIzNi4wODkgOTMuODA3MkwyMzYuMzM4IDkzLjAxNjIgMjM2Ljg1OCA5Mi4xMzE0IDI1OS40NzMgNTMuNjI5NCAyNTkuOTYxIDUyLjc5ODUgMjYwLjQwNyA1Mi4yNjU4QzI2MS4yIDUxLjQ4MzcgMjYyLjI5NiA1MSAyNjMuNTA2IDUxWk0yNjMuNTg2IDY2LjAxODNDMjYwLjczNyA2Ni4wMTgzIDI1OS4zMTMgNjcuMTI0NSAyNTkuMzEzIDY5LjMzNyAyNTkuMzEzIDY5LjYxMDIgMjU5LjMzMiA2OS44NjA4IDI1OS4zNzEgNzAuMDg4N0wyNjEuNzk1IDg0LjAxNjEgMjY1LjM4IDg0LjAxNjEgMjY3LjgyMSA2OS43NDc1QzI2Ny44NiA2OS43MzA5IDI2Ny44NzkgNjkuNTg3NyAyNjcuODc5IDY5LjMxNzkgMjY3Ljg3OSA2Ny4xMTgyIDI2Ni40NDggNjYuMDE4MyAyNjMuNTg2IDY2LjAxODNaTTI2My41NzYgODYuMDU0N0MyNjEuMDQ5IDg2LjA1NDcgMjU5Ljc4NiA4Ny4zMDA1IDI1OS43ODYgODkuNzkyMSAyNTkuNzg2IDkyLjI4MzcgMjYxLjA0OSA5My41Mjk1IDI2My41NzYgOTMuNTI5NSAyNjYuMTE2IDkzLjUyOTUgMjY3LjM4NyA5Mi4yODM3IDI2Ny4zODcgODkuNzkyMSAyNjcuMzg3IDg3LjMwMDUgMjY2LjExNiA4Ni4wNTQ3IDI2My41NzYgODYuMDU0N1oiIGZpbGw9IiNGRkU1MDAiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvZz48L3N2Zz4=) no-repeat 1rem/1.8rem, #b32121;
-    padding: 1rem 1rem 1rem 3.7rem;
-    color: white;
-}
-
-    .blazor-error-boundary::after {
-        content: "An error has occurred.";
-    }
-
-.darker-border-checkbox.form-check-input {
-    border-color: #929292;
-}
-
-
-/*
-    create feedback class
+   4. Update NavMenu.razor:
+      - Add a Material Icon (GetThemeIcon) for the new theme in the footer icon section!
 */
 
-.create-form{
-    width:80vw;
-    height:80vh;
-    padding:5vh;
-    color:whitesmoke;
-    background-color:#262626;
-    display:flex;
-    flex:auto;
-    flex-direction:column;
-    justify-content:space-around;
-    border: 3px solid black;
-
+:root {
+    /* app consistencies */
+    --border-radius: 8px;
+    --button-radius: 4px;
+    /* shadows and hover effects */
+    --card-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    --hover-transition: all 0.2s ease;
 }
 
-.create-btn {
-    width: 10vw;
-    height: 5vh;
-    color:whitesmoke;
-    background-color:darkslategrey;
-    padding: 1vh;
-    display: flex;
-    justify-content: center;
+/* =========== SCROLLBAR =========== */
+
+* {
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-color) transparent;
 }
 
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: var(--border-color);
+    border-radius: 4px;
+}
+
+    ::-webkit-scrollbar-thumb:hover {
+        background-color: var(--text-secondary);
+    }
+
+/* =========== THEME DEFINITIONS =========== */
+
+/* Light Theme */
+body.theme-light {
+    --primary: #4a90e2;
+    --primary-dark: #357abd;
+    --primary-light: #a3c1f0;
+    --accent: #6aa8f7;
+    --background: #f7f7f7;
+
+    --navbar: #e0e0e0;
+    --footer: #e0e0e0;
+    --main-body: #ffffff;
+    --card-bg: #ffffff;
+    --sidebar-bg: #e0e0e0;
+    --sidebar-border: rgba(0, 0, 0, 0.05);
+    --border-color: #d0d0d0;
+
+    --text-primary: #2a2a2a;
+    --text-secondary: #5a5a5a;
+    --text-on-primary: #ffffff;
+    --text-on-sidebar: #2a2a2a;
+    --text-on-dark: #ffffff;
+
+    --icon-color: #000000;
+    --hover-overlay: rgba(0, 0, 0, 0.03);
+    --active-overlay: rgba(0, 0, 0, 0.07);
+}
+
+/* Dark Mode */
+body.theme-dark {
+    --primary: #6aa8f7;
+    --primary-dark: #4a90e2;
+    --primary-light: #a3c1f0;
+    --accent: #48c9ff;
+    --background: #121212;
+
+    --navbar: #252525;
+    --footer: #252525;
+    --main-body: #2d2d2d;
+    --card-bg: #2d2d2d;
+    --sidebar-bg: #252525;
+    --sidebar-border: rgba(255, 255, 255, 0.05);
+    --border-color: #505050;
+
+    --text-primary: #e0e0e0;
+    --text-secondary: #a0a0a0;
+    --text-on-primary: #ffffff;
+    --text-on-sidebar: #e0e0e0;
+    --text-on-dark: #ffffff;
+
+    --icon-color: #ffffff;
+    --hover-overlay: rgba(255, 255, 255, 0.05);
+    --active-overlay: rgba(255, 255, 255, 0.1);
+}
+
+/* Dark/Light Hybrid Theme */
+body.theme-hybrid {
+    --primary: #2a3b5e;
+    --primary-dark: #1f2d47;
+    --primary-light: #3e4f7a;
+    --accent: #48c9ff;
+    --background: #f0f0f0;
+
+    --navbar: #2c3e50;
+    --footer: #2c3e50;
+    --main-body: #f0f0f0;
+    --card-bg: #ffffff;
+    --sidebar-bg: #2c3e50;
+    --sidebar-border: rgba(255, 255, 255, 0.1);
+    --border-color: #d5d5d5;
+    --text-primary: #2a2a2a;
+
+    --text-secondary: #5a5a5a;
+    --text-on-primary: #ffffff;
+    --text-on-sidebar: #ffffff;
+    --text-on-dark: #ffffff;
+
+    --icon-color: #ffffff;
+    --hover-overlay: rgba(0, 0, 0, 0.05);
+    --active-overlay: rgba(0, 0, 0, 0.1);
+}
+
+/* =========== COMPONENTS =========== */
+
+/* Layout container */
+.rz-layout, div.rz-layout {
+    position: fixed !important;
+    height: 100vh !important;
+    width: 100vw !important;
+    overflow: hidden !important;
+}
+
+/* navmenu */
+.rz-sidebar {
+    background-color: var(--sidebar-bg) !important;
+    border-right: 1px solid var(--sidebar-border) !important;
+    color: var(--text-on-sidebar) !important;
+}
+
+.nav-item {
+    transition: var(--hover-transition);
+}
+
+    .nav-item:hover {
+        background-color: var(--hover-overlay) !important;
+    }
+
+    .nav-item.active,
+    .nav-link.active {
+        background-color: var(--active-overlay) !important;
+    }
+
+/* positioning and styles for the rz-body */
+.rz-body {
+    background-color: var(--navbar) !important;
+    position: fixed !important;
+    right: 0 !important;
+    width: calc(100% - 240px) !important;
+    height: 100vh !important;
+}
+
+/* body container */
+.app-container {
+    background-color: var(--main-body) !important;
+    color: var(--text-primary) !important;
+    box-shadow: var(--card-shadow) !important;
+    border-radius: var(--border-radius) !important;
+    position: relative !important;
+    overflow: auto !important;
+    max-height: 100% !important;
+}
+
+/* update header and footer colours */
+.rz-header {
+    background-color: var(--navbar) !important;
+    border-bottom: 1px solid var(--border-color) !important;
+    color: var(--text-on-sidebar) !important;
+}
+
+.rz-footer {
+    background-color: var(--footer) !important;
+    border-top: 1px solid var(--border-color) !important;
+    color: var(--text-on-sidebar) !important;
+}
+
+/* buttons */
+.rz-button.rz-primary,
+.btn-primary {
+    background-color: var(--primary) !important;
+    color: var(--text-on-primary) !important;
+    border-color: var(--primary-dark) !important;
+    border-radius: var(--button-radius) !important;
+    transition: var(--hover-transition);
+}
+
+    .rz-button.rz-primary:hover,
+    .btn-primary:hover {
+        background-color: var(--primary-dark) !important;
+    }
+
+.btn-secondary {
+    background-color: var(--accent) !important;
+    color: var(--text-on-primary) !important;
+    border-radius: var(--button-radius) !important;
+    transition: var(--hover-transition);
+}
+
+.form-control,
+.rz-textbox {
+    border: 1px solid var(--border-color) !important;
+    border-radius: var(--border-radius) !important;
+    background-color: var(--card-bg) !important;
+    color: var(--text-primary) !important;
+    transition: var(--hover-transition);
+}
+
+    .form-control:focus,
+    .rz-textbox:focus {
+        border-color: var(--primary) !important;
+        box-shadow: 0 0 0 0.2rem rgba(var(--primary-rgb), 0.25) !important;
+    }
+
+/* navbar icons */
+.material-icons,
+.rz-icon {
+    color: var(--icon-color) !important;
+}
+
+/* toggle icons */
+#theme-toggle-button .theme-icon {
+    color: var(--icon-color) !important;
+}
+
+/* exceptions, only show when there's an error */
+#blazor-error-ui {
+    display: none;
+}
+
+    #blazor-error-ui.show-blazor-error {
+        display: block;
+    }

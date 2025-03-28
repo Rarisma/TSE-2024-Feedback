@@ -3,6 +3,7 @@ using Application.API;
 using Application.Components;
 using Serilog;
 using Radzen;
+using FeedbackTracker.Services;
 
 namespace Application;
 
@@ -31,6 +32,7 @@ public class Program
         builder.Services.AddSingleton<EmailAPI>(_ => new EmailAPI());
         builder.Services.AddSingleton<SchoolAPI>(_ => new SchoolAPI());
         builder.Services.AddSingleton<BulkAPI>(_ => new BulkAPI());
+        builder.Services.AddScoped<AppTheme>();
 
         //Configure Serilog
         Log.Logger = new LoggerConfiguration()

@@ -30,4 +30,10 @@ public class FeedbackComments
     /// </summary>
 	[Column("FEEDBACK_ID")]
 	public int FeedbackID { get; set; }
+	
+	/// <summary>
+	/// Comment time
+	/// </summary>
+	[Column("CommentTime")]
+	public DateTime CommentTime { get; set; }
 }
