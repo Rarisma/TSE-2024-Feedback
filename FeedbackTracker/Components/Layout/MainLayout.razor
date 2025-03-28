@@ -1,6 +1,9 @@
 ﻿@inherits LayoutComponentBase
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JSRuntime
+@using FeedbackTracker.Services
+@inject AppTheme AppTheme
+@implements IDisposable
 
 <RadzenComponents @rendermode="InteractiveServer" />
 
@@ -10,13 +13,13 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap" rel="stylesheet">
 
 <!-- Page Structure -->
-<RadzenLayout Style="height: 100vh; overflow: hidden; background-color: #2c3e50;">
-    <RadzenSidebar Expanded="true" Style="background-color: #2c3e50; padding: 0; overflow-y: hidden; border-right: 1px solid #34495e; width: 240px;">
+<RadzenLayout class="@AppTheme.ColourTheme" Style="height: 100vh; overflow: hidden;">
+    <RadzenSidebar class="@AppTheme.ColourTheme" Expanded="true" Style="width: 240px;">
         <NavMenu />
     </RadzenSidebar>
     
-    <RadzenBody Style="background-color: #2c3e50; padding: 10px;">
-        <div Style="background: linear-gradient(to bottom right, #f0f0f0, #d0e1f9); height: calc(100% - 0px); padding: 20px; border-radius: 10px; overflow: auto; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);" class="@CurrentTheme">
+    <RadzenBody class="@AppTheme.ColourTheme" Style="padding: 10px;">
+        <div class="app-container @AppTheme.ColourTheme" style="height: calc(100% - 0px); padding: 20px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);">
             @Body
         </div>
     </RadzenBody>
@@ -30,12 +33,12 @@
        NavigationManager.Uri.Contains("privacypolicy") ||
        NavigationManager.Uri.Contains("termsofservice"))
 {
-        <RadzenFooter Style="background-color: #2c3e50; color: #ffffff; padding: 0 16px; height: 22px; border-top: 1px solid #34495e;">
-        <div Style="display: flex; justify-content: flex-end; align-items: center; width: 100%; font-size: 0.75rem;">
-            <NavLink href="/about" Style="color: #dddddd; margin: 0 8px; text-decoration: none; font-size: 0.75rem;">About</NavLink>
-            <NavLink href="/termsofservice" Style="color: #dddddd; margin: 0 8px; text-decoration: none; font-size: 0.75rem;">Terms of Service</NavLink>
-            <NavLink href="/privacypolicy" Style="color: #dddddd; margin: 0 8px; text-decoration: none; font-size: 0.75rem;">Privacy Policy</NavLink>
-        </div>
+        <RadzenFooter class="@AppTheme.ColourTheme" Style="padding: 0 16px; height: 22px;">
+            <div Style="display: flex; justify-content: flex-end; align-items: center; width: 100%; font-size: 0.75rem;">
+                <NavLink href="/about" class="text-primary" Style="margin: 0 8px; text-decoration: none; font-size: 0.75rem;">About</NavLink>
+                <NavLink href="/termsofservice" class="text-primary" Style="margin: 0 8px; text-decoration: none; font-size: 0.75rem;">Terms of Service</NavLink>
+                <NavLink href="/privacypolicy" class="text-primary" Style="margin: 0 8px; text-decoration: none; font-size: 0.75rem;">Privacy Policy</NavLink>
+            </div>
         </RadzenFooter>
     }      
 </RadzenLayout>
@@ -49,22 +52,37 @@
 @* COLOUR CHANGER *@
 
 @code {
-    private string CurrentTheme { get; set; } = "blue"; //hold current items
 
     //run on first render
-    protected override Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
-        //supposed to work when the url is changed
+        //detect url changes
         NavigationManager.LocationChanged += HandleLocationChanged;
-        return Task.CompletedTask;
+        //apply the theme changes
+        AppTheme.OnChange += StateHasChanged;
+        base.OnInitialized();
     }
 
     //event handler for url changes
-    private async void HandleLocationChanged(object? sender, LocationChangedEventArgs e)
+    private void HandleLocationChanged(object? sender, LocationChangedEventArgs e)
     {
-        //retrieve saved theme
-        CurrentTheme = await JSRuntime.InvokeAsync<string?>("localStorage.getItem", "selectedTheme") ?? "blue"; 
-        await JSRuntime.InvokeVoidAsync("changeTheme", CurrentTheme);
-        await InvokeAsync(StateHasChanged);
+        StateHasChanged();
+    }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JSRuntime.InvokeVoidAsync("ThemeHelpers.applyTheme", AppTheme.ColourTheme);
+
+            //apply the class to the page content
+            await JSRuntime.InvokeVoidAsync("eval", $@"document.body.classList.add('{AppTheme.ColourTheme}');");
+        }
+    }
+
+    //avoid memory leaks
+    public void Dispose()
+    {
+        NavigationManager.LocationChanged -= HandleLocationChanged;
+        AppTheme.OnChange -= StateHasChanged;
     }
 }

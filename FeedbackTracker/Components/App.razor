@@ -17,17 +17,19 @@
 	<link rel="icon" type="image/png" href="favicon.png" />    
     <!-- Bootstrap Icons -->
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <!-- Material Icons (for navmenu) -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <HeadOutlet />
 </head>
 
 <body>
     <Routes />
     <script src="/_framework/blazor.web.js"></script>
-    <script src="JS/colour_changer.js"></script>
+    <script src="JS/themes.js"></script>
     <audio id="effectplayer">
         <source id="effectplayerSource" src="" />
     </audio>
-    <script src="scripts/sound.js"></script>
+    <script src="JS/sound.js"></script>
     <script src="_content/Radzen.Blazor/Radzen.Blazor.js?v=@(typeof(Radzen.Colors).Assembly.GetName().Version)"></script>
 </body>
 </html>
@@ -39,10 +41,10 @@
     {
         if (firstRender)
         {
-            //retrieve the theme from localstorage, or default to blue
-            string savedTheme = await JSRuntime.InvokeAsync<string?>("localStorage.getItem", "selectedTheme") ?? "blue"; 
+            //retrieve the theme a cookie, or default to light
+            string savedTheme = await JSRuntime.InvokeAsync<string?>("ThemeHelpers.getCurrentTheme") ?? "theme-light";
             
-            //run changeTheme and apply the saved theme
+            // apply the theme
             await JSRuntime.InvokeVoidAsync("changeTheme", savedTheme); 
             StateHasChanged();
         }
