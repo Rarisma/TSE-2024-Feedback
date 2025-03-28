@@ -5,20 +5,15 @@ on:
     branches:
       - main
       - dev
-      - Actions
+
   pull_request:
     branches:
       - main
       - dev
-      - Actions
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        project: [FeedbackTracker, FeedbackTrackerCommon, Server]
-
     steps:
       - name: Check Code
         uses: actions/checkout@v4
@@ -36,4 +31,8 @@ jobs:
 
       - name: Test
         run: dotnet test FeedbackTracker/FeedbackTracker.sln --no-build --verbosity normal
-      
+
+      - name: Analyse code quality
+        uses: JetBrains/ReSharper-InspectCode@v0.3
+        with:
+          solution: FeedbackTracker/FeedbackTracker.sln
