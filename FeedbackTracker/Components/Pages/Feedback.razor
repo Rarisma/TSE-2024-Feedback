@@ -33,6 +33,7 @@
                             Style="width: 100%; background-color: rgba(255, 255, 255, 0.25); padding: 10px; border-radius: 8px;" />
         </div>
             <!--Assign-->
+
         <div class="mb-3">
             <RadzenText TextStyle="TextStyle.Subtitle1" Style="display: block; margin-bottom: 10px;">Teacher To Assign Feedback:</RadzenText>
             <RadzenDropDown TValue="int" @bind-Value="_assignedUserID" Data="@_users.Where(u => u.IsTeacher)" 
@@ -74,7 +75,7 @@
 
     private int _visibility;
 
-    
+
     // name
     private string _title = string.Empty;
     // text
@@ -84,7 +85,7 @@
     private int _moduleID;
     // get modules
     private List<Modules> _modules = new();
-    
+
     // assign
     // author of feedback (get current user)
     private User _assignee = new();
@@ -100,9 +101,10 @@
     {
         // Get module teachers.
         List<User?> modUsers = (await ModuleClient.GetUsersInModule(_moduleID))!.ToList();
-        
+
         if(modUsers is { Count: > 0 }) 
         {
+            modUsers.RemoveAll(u => u.UserID == Auth.User.UserID);
             _users = modUsers;
             _assignedUserID = modUsers[0].UserID;
         }
