@@ -60,10 +60,10 @@ public class AuthService(IConfiguration configuration, TrackerContext context)
 	{
 		//Get values from the configuration file
 		IConfigurationSection jwtSettings = configuration.GetSection("JwtSettings");
-		string? secretKey = jwtSettings.GetValue<string>("SecretKey");
-		string? issuer = jwtSettings.GetValue<string>("Issuer");
-		string? audience = jwtSettings.GetValue<string>("Audience");
-		int expiryMinutes = jwtSettings.GetValue<int>("ExpiryMinutes");
+		string? secretKey = Program.Secrets["JWTSecret"];
+		string? issuer = Program.Secrets["JWTEndpoint"];
+		string? audience = Program.Secrets["JWTEndpoint"];
+		int expiryMinutes = 600;
 
 		if (secretKey == null) { throw new Exception("Secret key is null"); }
 		SymmetricSecurityKey securityKey = new(Encoding.UTF8.GetBytes(secretKey));

@@ -96,7 +96,7 @@ public class UserController(AuthService authService) : Controller
 	/// <param name="code">account MFA Code</param>
 	/// <returns></returns>
 	[HttpGet("Authenticate")]
-	public async Task<string?> Authenticate(string username, string password, string code)
+	public async Task<string?> Authenticate(string username, string password, string code = "")
 	{
 		return await authService.AuthenticateUserAsync(username, password, code);
 	}
