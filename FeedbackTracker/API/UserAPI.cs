@@ -166,12 +166,14 @@ public class UserAPI
 	/// <summary>
 	/// Add new notification
 	/// </summary>
-	public async Task NotificationPost(int userID, string title,string message)
+	public async Task NotificationPost(int userID, string title,string message,string type,string payload)
 	{
 		try
 		{
 			string url = $"User/Notification?userid={Uri.EscapeDataString(userID.ToString())}" +
                          $"&Title={Uri.EscapeDataString(title.ToString())}" +
+                         $"&Type={Uri.EscapeDataString(type.ToString())}" +
+                         $"&Payload={Uri.EscapeDataString(payload.ToString())}" +
                          $"&Message={Uri.EscapeDataString(message.ToString())}";
 			HttpResponseMessage response = await _httpClient.PostAsync(url, null);
 			response.EnsureSuccessStatusCode();

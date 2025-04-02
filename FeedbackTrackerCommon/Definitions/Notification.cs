@@ -31,9 +31,21 @@ namespace Core.Definitions;
         public string? Message { get; set; } = string.Empty;
 
         ///<summary>
-        /// TIME
+        /// type
         /// </summary>
-        [Column("TIMESTAMP")]
+        [Column("TYPE")]
+        public string? Type { get; set; } = string.Empty;
+
+        ///<summary>
+        /// payload (any extra data)
+        /// </summary>
+        [Column("PAYLOAD")]
+        public string? Payload { get; set; } = string.Empty;
+
+    ///<summary>
+    /// TIME
+    /// </summary>
+    [Column("TIMESTAMP")]
         public DateTime Timestamp { get; set; } = DateTime.Now;
 
         ///<summary>

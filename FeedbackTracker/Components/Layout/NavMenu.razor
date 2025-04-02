@@ -1,4 +1,5 @@
-﻿@using Core.Definitions
+﻿@using System.Text.Json
+@using Core.Definitions
 @inject JAuth Auth
 @inject NavigationManager NavigationManager
 @inject API.UserAPI UserClient
@@ -118,37 +119,48 @@
     async void Notify()
     {
 	    if (user != null){
+            // get notifications
 		    List<Core.Definitions.Notification?>? notifications = await UserClient.GetNotification(user.UserID);
 
 		    if (notifications.Count > 0){
                     
 			    // play sound
 			    await Js.InvokeVoidAsync("PlaySoundEffect", "sounds/notification.wav");
+
 			    foreach (var notification in notifications)
 			    {
                     // show notifications
-				    NotificationService.Notify(new NotificationMessage
+				    NotificationService.Notify(new NotificationMessage()
 					    {
+                            // setup
+
+                            // notification type
 						    Severity = NotificationSeverity.Info,
+                            // linger time
 						    Duration = 10000,
+                            // show time left
 						    ShowProgress = true,
-						    SummaryContent = ns =>@<RadzenText TextStyle="TextStyle.H6">@notification.Title <br /> @notification.TimeSinceCreation</RadzenText>,
+                            // title
+						    SummaryContent = ns =>@<RadzenText TextStyle="TextStyle.H6">@notification.Title :@notification.TimeSinceCreation</RadzenText>,
+                            // main content
 							DetailContent = ns => @<RadzenText TextStyle="TextStyle.H6">@notification.Message</RadzenText>,
-						    CloseOnClick = true,
-						    /*
-						      Click = fn()
-								Payload = data to use
-                            
-						     */
+                            // show x to close
+						    CloseOnClick = true, 
+                            // function to do on click
+	                        Click = notifications =>
+	                        {
+                                // if notification relates to feedback
+		                        if (notification.Type == "FEEDBACK")
+		                        {
+	                            // re-direct to feedback
+		                        NavigationManager.NavigateTo($"/viewfeedback/{notification.Payload}");
+
+		                        }
+	                            // clear notifications
+		                        NotificationService.Messages.Clear();
+	                        },
 					    });
 			    }
-                // setup clear all
-                NotificationService.Notify(new NotificationMessage
-                {
-	                Severity = NotificationSeverity.Info, 
-	                Duration = 10000,
-                        SummaryContent = ns =>@<RadzenButton Text="Clear all" Click="@(args => ns.Messages.Clear())" />,
-                });
 
                 // delete notifications
                 await UserClient.NotificationDelete(user.UserID);
@@ -160,8 +172,6 @@
 		    NavigationManager.NavigateTo(NavigationManager.Uri);
 
 	    }
-
-
 
     }
 

@@ -216,7 +216,9 @@ public class UserController(AuthService authService) : Controller
 							   notification.Title,
 							   notification.Message,
 							   notification.TimeSinceCreation,
-                               notification.Timestamp
+                               notification.Timestamp,
+							   notification.Type,
+							   notification.Payload
                            }).ToList();
 
             //Serialise to JSON
@@ -233,7 +235,7 @@ public class UserController(AuthService authService) : Controller
     /// <param name="message"></param>
     /// <returns></returns>
     [HttpPost("Notification")]
-    public async void NotificationPost(int userid, string title, string message)
+    public async void NotificationPost(int userid, string title, string message,string type,string payload)
     {
         try
         {
@@ -247,6 +249,9 @@ public class UserController(AuthService authService) : Controller
                 Title = title,
 				Message = message,
 				Timestamp = DateTime.Now,
+				Type = type,
+				Payload = payload
+
 			};
 
 

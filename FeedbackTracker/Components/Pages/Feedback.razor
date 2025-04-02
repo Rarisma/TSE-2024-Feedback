@@ -168,9 +168,7 @@
         Log.Information("Feedback Created: {fb}", fb.Title);
         await new FeedbackAPI().CreateFeedback(fb);
         Log.Information("Posted to server");
-        
-        // create notification
-        await UserClient.NotificationPost(_assignedUserID, "New Feedback", $"created: {fb.Title}");
+
 
         NavigationManager.NavigateTo("/");
 
