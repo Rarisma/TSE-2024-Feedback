@@ -33,7 +33,7 @@ public class FeedbackController : Controller
                 .Where(f => f.AssignedUserID == userID
                          || f.AssigneeID == userID
                          || f.Visibility == FeedbackVisibility.Public
-                         || f.AssignedUserID == 0 && userIDs.Contains(userID)).ToList ();
+                         || f.AssignedUserID == null && userIDs.Contains(userID)).ToList ();
 
 
             //Serialise to JSON
@@ -156,7 +156,8 @@ public class FeedbackController : Controller
 		        comment.Body = text;
 		        comment.CommenterID =  userID;
 		        comment.FeedbackID = feedbackID;
-	        
+		        comment.CommentTime = DateTime.Now;
+		        
 		        //Add comment to database
 		        using TrackerContext ctx = new();
 		        ctx.FeedbackComments.Add(comment);

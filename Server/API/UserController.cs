@@ -58,7 +58,7 @@ public class UserController(AuthService authService) : Controller
 	/// <param name="email">Account email (in plaintext)</param>
 	/// <returns></returns>
 	[HttpPost("CreateUser")]
-	public async void CreateUser(string Username, string Password, string Email, string School)
+	public async void CreateUser(string Username, string Password, string Email, string School,string FirstName, string LastName)
 	{
 		try
 		{
@@ -67,6 +67,8 @@ public class UserController(AuthService authService) : Controller
 			User account = new()
 			{
 				Username = Username,
+				FirstName = FirstName,
+				LastName = LastName,
 				Password = BCrypt.Net.BCrypt.HashPassword(Password),
 				IsStudent = true,
 				IsTeacher = false,
@@ -94,7 +96,7 @@ public class UserController(AuthService authService) : Controller
 	/// <param name="code">account MFA Code</param>
 	/// <returns></returns>
 	[HttpGet("Authenticate")]
-	public async Task<string?> Authenticate(string username, string password, string code)
+	public async Task<string?> Authenticate(string username, string password, string code = "")
 	{
 		return await authService.AuthenticateUserAsync(username, password, code);
 	}

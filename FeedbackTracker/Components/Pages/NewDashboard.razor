@@ -7,6 +7,8 @@
 @inject FeedbackAPI FeedbackClientAccess
 @inject UserAPI UserClient
 @inject IJSRuntime JSRuntime
+@using FeedbackTracker.Services
+@inject AppTheme AppTheme
 <div class="dashboard-header text-center">
     <div class="container">
         <div class="greeting">
@@ -329,6 +331,7 @@
         base.OnInitialized();
         JAuth.EnforceAuth();
 
+        AppTheme.OnChange += UpdateSelectedTheme;
 
         userGreeting();
         if (JAuth.IsAuthorised())
@@ -345,28 +348,39 @@
             }
 
         }
-        StateHasChanged();
         await InvokeAsync(StateHasChanged);
     }
 
     private string SelectedTheme { get; set; } = "blue";
     // colour changer
-    private async Task ApplyTheme()
+    private void ApplyTheme()
     {
-	    if (!string.IsNullOrEmpty(SelectedTheme))
-	    {
-		    await JSRuntime.InvokeVoidAsync("changeTheme", SelectedTheme.ToLower());
-		    StateHasChanged();
-	    }
+            if (!string.IsNullOrEmpty(SelectedTheme))
+        {
+            //set theme
+            AppTheme.ColourTheme = SelectedTheme.ToLower();
+            StateHasChanged();
+        }
     }
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    private void UpdateSelectedTheme()
     {
-	    if (firstRender)
-	    {
-		    SelectedTheme = await JSRuntime.InvokeAsync<string?>("localStorage.getItem", "selectedTheme") ?? "blue";
+        SelectedTheme = AppTheme.ColourTheme;
+        StateHasChanged();
+    }
 
-		    await ApplyTheme();
-	    }
+    //prevent memory leaks
+    public void Dispose()
+    {
+        AppTheme.OnChange -= UpdateSelectedTheme;
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            SelectedTheme = AppTheme.ColourTheme;
+            StateHasChanged();
+        }
     }
 
 

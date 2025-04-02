@@ -68,7 +68,7 @@
             </RadzenCard>
 
             <RadzenDataGrid Style="border-bottom-left-radius: 10px; border-bottom-right-radius: 10px;"
-                            AllowFiltering="false" AllowSorting="true" PageSize="10" AllowPaging="true" Data="@SpecificFeedbacks" EmptyText="No feedback found">
+            AllowFiltering="false" AllowSorting="true" PageSize="10" AllowPaging="true" Data="@SpecificFeedbacks" EmptyText="No feedback found">
                 <Columns>
                     <RadzenDataGridColumn TItem="Core.Definitions.Feedback" Property="Title" Title="Title" />
                     <RadzenDataGridColumn TItem="Core.Definitions.Feedback" Property="FeedbackText" Title="Feedback" />
@@ -105,6 +105,10 @@
                             @if (JAuth.User.UserID == feedback.AssigneeID)
                             {
                                 <strong>You assigned this!</strong>
+                            }
+                            else if (JAuth.User.UserID != feedback.AssigneeID && JAuth.User.UserID != feedback.AssignedUserID)
+                            {
+                                <p></p>
                             }
                             else
                             {

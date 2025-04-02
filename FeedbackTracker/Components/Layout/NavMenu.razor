@@ -5,17 +5,21 @@
 @rendermode InteractiveServer
 @inject IJSRuntime Js
 @inject NotificationService NotificationService
-<div Style="display: flex; flex-direction: column; height: 100%; padding: 0; background-color: #2c3e50;">
+@using FeedbackTracker.Services
+@inject AppTheme AppTheme
+
+<div class="@AppTheme.ColourTheme" Style="display: flex; flex-direction: column; height: 100%; padding: 0;">
+
     <!-- Title header -->
-    <div Style="display: flex; align-items: center; justify-content: center; padding: 12px 15px; border-bottom: 1px solid #34495e; font-family: 'Poppins', sans-serif;">
-        <span class="nav-text-full" Style="color: #ffffff; font-weight: 600; font-size: 16px; text-align: center;">Feedback Tracker</span>
-        <span class="nav-text-short" Style="color: #ffffff; font-weight: 600; font-size: 16px; display: none; text-align: center;">TSE</span>
+    <div Style="display: flex; align-items: center; justify-content: center; padding: 12px 15px; border-bottom: 1px solid var(--sidebar-border); font-family: 'Poppins', sans-serif;">
+        <span class="nav-text-full" Style="color: var(--light-text); font-weight: 600; font-size: 16px; text-align: center;">Feedback Tracker</span>
+        <span class="nav-text-short" Style="color: var(--light-text); font-weight: 600; font-size: 16px; display: none; text-align: center;">TSE</span>
     </div>
 
     <div Style="flex: 1; display: flex; flex-direction: column; overflow-y: auto; padding-top: 15px;">
         <div Style="padding: 5px 15px; margin-bottom: 10px;">
-            <NavLink href="" Match="NavLinkMatch.All" Style="display: flex; align-items: center; padding: 8px 10px; border-radius: 5px; text-decoration: none; color: #ffffff; transition: background-color 0.2s;" class="nav-item">
-                <RadzenIcon Icon="home" Style="font-size: 20px; color: #ffffff; margin-right: 2px;" class="nav-icon" />
+            <NavLink href="" Match="NavLinkMatch.All" Style="display: flex; align-items: center; padding: 8px 10px; border-radius: 5px; text-decoration: none; color: var(--light-text); transition: background-color 0.2s;" class="nav-item">
+                <RadzenIcon Icon="home" Style="font-size: 20px; color: var(--light-text); margin-right: 2px;" class="nav-icon" />
                 <span class="nav-text">  Home</span>
             </NavLink>
         </div>
@@ -23,15 +27,15 @@
         @if (Auth.IsAuthorised())
         {
             <div Style="padding: 5px 15px; margin: 2px 0;">
-                <NavLink href="feedback" Style="display: flex; align-items: center; padding: 8px 10px; border-radius: 5px; text-decoration: none; color: #ffffff; transition: background-color 0.2s;" class="nav-item">
-                    <RadzenIcon Icon="note_add" Style="font-size: 20px; color: #ffffff; margin-right: 2px;" class="nav-icon" />
+                <NavLink href="feedback" Style="display: flex; align-items: center; padding: 8px 10px; border-radius: 5px; text-decoration: none; color: var(--light-text); transition: background-color 0.2s;" class="nav-item">
+                    <RadzenIcon Icon="note_add" Style="font-size: 20px; color: var(--light-text); margin-right: 2px;" class="nav-icon" />
                     <span class="nav-text">  Create Feedback</span>
                 </NavLink>
             </div>
             
             <div Style="padding: 5px 15px; margin: 2px 0;">
-                <NavLink href="usersfeedback" Style="display: flex; align-items: center; padding: 8px 10px; border-radius: 5px; text-decoration: none; color: #ffffff; transition: background-color 0.2s;" class="nav-item">
-                    <RadzenIcon Icon="assignment" Style="font-size: 18px; color: #dddddd;" class="nav-icon" />
+                <NavLink href="usersfeedback" Style="display: flex; align-items: center; padding: 8px 10px; border-radius: 5px; text-decoration: none; color: var(--light-text); transition: background-color 0.2s;" class="nav-item">
+                    <RadzenIcon Icon="assignment" Style="font-size: 18px; color: var(--icon-color); margin-right: 2px;" class="nav-icon" />
                     <span class="nav-text"> Your Feedback</span>
                 </NavLink>
             </div>
@@ -39,8 +43,8 @@
             @if (user != null && user.IsTeacher)
             {
                 <div Style="padding: 5px 15px; margin: 2px 0;">
-                    <NavLink href="TeacherDashboard" Style="display: flex; align-items: center; padding: 8px 10px; border-radius: 5px; text-decoration: none; color: #ffffff; transition: background-color 0.2s;" class="nav-item">
-                        <RadzenIcon Icon="assessment" Style="font-size: 18px; color: #dddddd;" class="nav-icon" />
+                    <NavLink href="TeacherDashboard" Style="display: flex; align-items: center; padding: 8px 10px; border-radius: 5px; text-decoration: none; color: var(--light-text); transition: background-color 0.2s;" class="nav-item">
+                        <RadzenIcon Icon="assessment" Style="font-size: 18px; color: var(--icon-color); margin-right: 2px;" class="nav-icon" />
                         <span class="nav-text">Teacher Dashboard</span>
                     </NavLink>
                 </div>
@@ -49,20 +53,23 @@
     </div>
     
     <!-- Bottom Navigation Icons -->
-    <div Style="padding: 15px; margin-top: auto; border-top: 1px solid #34495e;">
-        <div class="settings-buttons" Style="display: flex; align-items: center; justify-content: flex-start;">
-            <RadzenButton Click="@(() => NavigationManager.NavigateTo("/settings"))" 
-                Style="padding: 0; width: 34px; height: 34px; margin-right: 10px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background-color: transparent; color: #dddddd; box-shadow: none;">
-                <RadzenIcon Icon="settings" />
-            </RadzenButton>
-            <RadzenButton Click="@(() => NavigationManager.NavigateTo("/contact"))"          
-                Style="padding: 0; width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background-color: transparent; color: #dddddd; box-shadow: none;">
-                <RadzenIcon Icon="help_outline" />
-            </RadzenButton>
-            <RadzenButton Click="@(() => NavigationManager.NavigateTo("/logout"))"          
-                Style="padding: 0; width: 34px; height: 34px; margin-left: 10px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background-color: transparent; color: #dddddd; box-shadow: none;">
-                <RadzenIcon Icon="logout" />
-                </RadzenButton>
+    <div Style="padding: 15px; margin-top: auto; border-top: 1px solid var(--sidebar-border);">
+        <div class="settings-buttons" Style="display: flex; align-items: center; justify-content: center; width: 100%;">
+            <a href="/settings" class="nav-button"
+            Style="padding: 0; width: 34px; height: 34px; margin-right: 12px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background-color: transparent; color: var(--icon-color); border: none; text-decoration: none; cursor: pointer;">
+                <span class="material-icons">settings</span>
+            </a>
+            <a href="/contact" class="nav-button"
+            Style="padding: 0; width: 34px; height: 34px; margin-right: 12px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background-color: transparent; color: var(--icon-color); border: none; text-decoration: none; cursor: pointer;">
+                <span class="material-icons">help_outline</span>
+            </a>
+            <button @onclick="CycleTheme" id="theme-toggle-button" class="nav-button"
+            Style="padding: 0; width: 34px; height: 34px; margin-right: 12px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background-color: transparent; border: none; cursor: pointer;">
+                <span class="material-icons theme-icon" style="color: var(--icon-color) !important;">@GetThemeIcon(AppTheme.ColourTheme)</span>
+            </button>
+            @if (Auth.IsAuthorised()){ <a href="/logout" class="nav-button"
+            Style="padding: 0; width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background-color: transparent; color: var(--icon-color); border: none; text-decoration: none; cursor: pointer;">
+                <span class="material-icons">logout</span></a>}
         </div>
     </div>
 </div>
@@ -99,7 +106,12 @@
             if(playsound){
             await Js.InvokeVoidAsync("PlaySoundEffect", "sounds/notification.wav");
             }
-		*/
+		*/ 
+        //initialize the theme
+        if (firstrender)
+        {
+            await AppTheme.InitializeAsync();
+        }
 
     }
 
@@ -150,6 +162,34 @@
 	    }
 
 
+
     }
 
+    protected override void OnInitialized()
+    {
+        //update the icon
+        AppTheme.OnChange += StateHasChanged;
+        base.OnInitialized();
+    }
+
+    private string GetThemeIcon(string theme)
+    {
+        return theme switch
+        {
+            "theme-light" => "light_mode",
+            "theme-dark" => "dark_mode",
+            "theme-hybrid" => "contrast",
+        };
+    }
+
+    private void CycleTheme()
+    {
+        AppTheme.CycleTheme();
+    }
+
+    //avoid memory leaks
+    public void Dispose()
+    {
+        AppTheme.OnChange -= StateHasChanged;
+    }
 }
