@@ -13,42 +13,45 @@
 @if (JAuth.IsAuthorised())
 {
     <div class="d-flex justify-content-center align-items-center" style="min-height: 90vh; flex-direction: column;">
-        <h3 class="text-center mb-4" style="font-family: 'Lato', sans-serif; color: #4A4A4A;">
+        <h3 class="text-center mb-4" style="font-family: 'Lato', sans-serif; color: #2c3e50;">
             Teacher Dashboard - Module Management
         </h3>
 
-        <div class="container mt-5">
+        <div class="text-center mb-4">
+            Logged in as: @_assignee.Username
+        </div>
+
+        <div class="container mt-4">
             <div class="row justify-content-center">
                 <div class="col-md-8">
-                    <!-- Create Module Card -->
-                    <div class="card mb-4">
+                    <!-- Create Module  -->
+                    <div class="card mb-4 shadow-sm">
                         <div class="card-header bg-primary text-white text-center">
                             <h5 class="mb-0">Create Module</h5>
                         </div>
                         <div class="card-body">
-                            <p class="text-center">Logged in as: <strong>@_assignee.Username</strong></p>
                             <form>
                                 <div class="mb-3">
                                     <label for="moduleName" class="form-label">Module Name</label>
                                     <input id="moduleName" type="text" class="form-control" @bind="_moduleName" placeholder="Enter module name">
                                 </div>
                                 <div class="d-grid">
-                                    <button class="btn btn-success" @onclick="SendModule">Create Module</button>
+                                    <button class="btn btn-primary" @onclick="SendModule">Create Module</button>
                                 </div>
                             </form>
                         </div>
                     </div>
 
-                    <!-- Assign Module Card -->
-                    <div class="card">
+                    <!-- Assign Module  -->
+                    <div class="card mb-4 shadow-sm">
                         <div class="card-header bg-primary text-white text-center">
                             <h5 class="mb-0">Assign Module to User</h5>
                         </div>
                         <div class="card-body">
                             <form>
                                 <div class="mb-3">
-                                    <label for="userSelect" class="form-label">Select User</label>
-                                    <select id="userSelect" class="form-control" @bind="_selectedUserId">
+                                    <label for="assignUserSelect" class="form-label">Select User</label>
+                                    <select id="assignUserSelect" class="form-control" @bind="_selectedUserId">
                                         @foreach (var user in _users)
                                         {
                                             <option value="@user.UserID">@user.Username</option>
@@ -57,8 +60,8 @@
                                 </div>
 
                                 <div class="mb-3">
-                                    <label for="moduleSelect" class="form-label">Select Module</label>
-                                    <select id="moduleSelect" class="form-control" @bind="_selectedModuleId">
+                                    <label for="assignModuleSelect" class="form-label">Select Module</label>
+                                    <select id="assignModuleSelect" class="form-control" @bind="_selectedModuleId">
                                         @foreach (var module in _modules)
                                         {
                                             <option value="@module.ModuleID">@module.Module</option>
@@ -73,28 +76,93 @@
                         </div>
                     </div>
 
-                    <div class="card">
-                        <div class="card-body">
-                            <p class="text-center">Bulk Create Users</p>
-                            <input id="moduleName" type="text" class="form-control" @bind="_BulkUserEmails" placeholder="Enter user emails (CSV)">
-                            <button class="btn btn-success" @onclick="BulkCreateUsers">Create Users</button>
+                    <!-- Remove from Module  -->
+                    <div class="card mb-4 shadow-sm">
+                        <div class="card-header bg-primary text-white text-center">
+                            <h5 class="mb-0">Remove User from Module</h5>
                         </div>
-                        
                         <div class="card-body">
-                            <p class="text-center">Bulk Create Modules</p>
-                            <input id="moduleName" type="text" class="form-control" @bind="_BulkModules" placeholder="Enter Module names (CSV)">
+                            <form>
+                                <div class="mb-3">
+                                    <label for="removeUserSelect" class="form-label">Select User</label>
+                                    <select id="removeUserSelect" class="form-control" @bind="_selectedUserId">
+                                        @foreach (var user in _users)
+                                        {
+                                            <option value="@user.UserID">@user.Username</option>
+                                        }
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="removeModuleSelect" class="form-label">Select Module</label>
+                                    <select id="removeModuleSelect" class="form-control" @bind="_selectedModuleId">
+                                        @foreach (var module in _modules)
+                                        {
+                                            <option value="@module.ModuleID">@module.Module</option>
+                                        }
+                                    </select>
+                                </div>
+
+                                <div class="d-grid">
+                                    <button type="button" class="btn btn-danger" @onclick="RemoveFromModule">Remove from Module</button>
+                                </div>
+                            </form>
                         </div>
-                        <p class="text-center">Bulk Assign Modules</p>
-                        <button class="btn btn-success" @onclick="BulkCreateModules">Create Modules</button>
-                        <input type="text" class="form-control" @bind="_BulkModUserEmails" placeholder="Enter user emails (CSV)">
-                        <input type="number" class="form-control" @bind="_BulkModID" placeholder="Module ID">
-                        <button class="btn btn-success" @onclick="BulkAssignModules">Assign Modules</button>
-                        <!-- TODO: Add bulk assign teacher here when IsStudent/IsTeacher is one variable -->
                     </div>
-                </div> 
-            </div> 
-        </div> 
-    </div> 
+
+                    <!-- Bulk -->
+                    <div class="card mb-4 shadow-sm">
+                        <div class="card-header bg-primary text-white text-center">
+                            <h5 class="mb-0">Bulk Operations</h5>
+                        </div>
+                        <div class="card-body">
+                            <!-- Create Users -->
+                            <div class="mb-4">
+                                <h6 class="mb-3 text-center">Bulk Create Users</h6>
+                                <div class="mb-3">
+                                    <input type="text" class="form-control" @bind="_BulkUserEmails" placeholder="Enter user emails (CSV)">
+                                </div>
+                                <div class="d-grid">
+                                    <button class="btn btn-primary" @onclick="BulkCreateUsers">Create Users</button>
+                                </div>
+                            </div>
+
+                            <hr class="my-4">
+
+                            <!-- Create Modules -->
+                            <div class="mb-4">
+                                <h6 class="mb-3 text-center">Bulk Create Modules</h6>
+                                <div class="mb-3">
+                                    <input type="text" class="form-control" @bind="_BulkModules" placeholder="Enter Module names (CSV)">
+                                </div>
+                                <div class="d-grid">
+                                    <button class="btn btn-primary" @onclick="BulkCreateModules">Create Modules</button>
+                                </div>
+                            </div>
+
+                            <hr class="my-4">
+
+                            <!-- Assign Modules -->
+                            <div>
+                                <h6 class="mb-3 text-center">Bulk Assign Modules</h6>
+                                <div class="mb-3">
+                                    <input type="text" class="form-control" @bind="_BulkModUserEmails" placeholder="Enter user emails (CSV)">
+                                </div>
+                                <div class="mb-3">
+                                    <input type="number" class="form-control" @bind="_BulkModID" placeholder="Module ID">
+                                </div>
+                                <div class="d-grid">
+                                    <button class="btn btn-primary" @onclick="BulkAssignModules">Assign Modules</button>
+                                </div>
+                            </div>
+
+                            <!-- TODO: Add bulk assign teacher here when IsStudent/IsTeacher is one variable -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 }
 
 @code {
@@ -131,6 +199,18 @@
         if (_selectedModuleId != null && _selectedUserId != null)
         {
             ModuleClient.AddUserToModule(_selectedUserId.ToString(),_selectedModuleId);
+
+            StateHasChanged();
+        }
+    }
+
+    // Remove from module
+    private async void RemoveFromModule()
+    {
+        // Create a new module object
+        if (_selectedModuleId != null && _selectedUserId != null)
+        {
+            ModuleClient.RemoveUserFromModule(_selectedUserId.ToString(), _selectedModuleId);
 
             StateHasChanged();
         }

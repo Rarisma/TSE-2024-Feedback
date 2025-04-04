@@ -129,6 +129,25 @@ public class ModuleController : Controller
         catch (Exception ex) { Log.Error(ex, "Failed to add user to module"); }
     }
 
+    /// Remove Users from module
+    [HttpPost("RemoveUserFromModule")]
+    public async void RemoveUserFromModule(int userId,int moduleID)
+    {
+        try
+        {
+            using TrackerContext ctx = new();
+            var userMod = ctx.UsersModules
+                .Where(um => um.UserID == userId && um.ModuleID == moduleID)
+                .FirstOrDefault();
+
+            ctx.UsersModules.Remove(userMod);
+            await ctx.SaveChangesAsync();
+            Log.Debug("removed user from module");
+        }
+        catch (Exception ex) { Log.Error(ex, "Failed to remove user from module"); }
+
+    }
+
     /// <summary>
     /// Gets all modules
     /// </summary>
