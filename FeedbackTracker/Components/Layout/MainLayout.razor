@@ -18,26 +18,21 @@
         <NavMenu />
     </RadzenSidebar>
     
-    <RadzenBody class="@AppTheme.ColourTheme" Style="padding: 10px;">
-        <div class="app-container @AppTheme.ColourTheme" style="height: calc(100% - 0px); padding: 20px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);">
+    <RadzenBody class="@AppTheme.ColourTheme" Style="@BodyStyle">
+        <div class="app-container @AppTheme.ColourTheme" style="@ContainerStyle">
             @Body
         </div>
     </RadzenBody>
     
 <!-- About -->
 <!-- condition -->
-@if (NavigationManager.Uri.Contains("login") ||
-       NavigationManager.Uri.Contains("SignUp") ||
-       NavigationManager.Uri.Contains("contact") ||
-       NavigationManager.Uri.Contains("about") ||
-       NavigationManager.Uri.Contains("privacypolicy") ||
-       NavigationManager.Uri.Contains("termsofservice"))
+@if (ShowFooter)
 {
-        <RadzenFooter class="@AppTheme.ColourTheme" Style="padding: 0 16px; height: 22px;">
+        <RadzenFooter class="@AppTheme.ColourTheme" Style="padding: 0 16px; height: 22px; z-index: 1000;">
             <div Style="display: flex; justify-content: flex-end; align-items: center; width: 100%; font-size: 0.75rem;">
-                <NavLink href="/about" class="text-primary" Style="margin: 0 8px; text-decoration: none; font-size: 0.75rem;">About</NavLink>
-                <NavLink href="/termsofservice" class="text-primary" Style="margin: 0 8px; text-decoration: none; font-size: 0.75rem;">Terms of Service</NavLink>
-                <NavLink href="/privacypolicy" class="text-primary" Style="margin: 0 8px; text-decoration: none; font-size: 0.75rem;">Privacy Policy</NavLink>
+                <NavLink href="/about" Style="margin: 0 8px; text-decoration: none; font-size: 0.75rem; color: #fff;">About</NavLink>
+                <NavLink href="/termsofservice" Style="margin: 0 8px; text-decoration: none; font-size: 0.75rem; color: #fff;">Terms of Service</NavLink>
+                <NavLink href="/privacypolicy" Style="margin: 0 8px; text-decoration: none; font-size: 0.75rem; color: #fff;">Privacy Policy</NavLink>
             </div>
         </RadzenFooter>
     }      
@@ -49,9 +44,20 @@
     <a class="dismiss">🗙</a>
 </div>
 
-@* COLOUR CHANGER *@
-
 @code {
+    private bool ShowFooter => 
+        NavigationManager.Uri.Contains("login") ||
+        NavigationManager.Uri.Contains("SignUp") ||
+        NavigationManager.Uri.Contains("contact") ||
+        NavigationManager.Uri.Contains("about") ||
+        NavigationManager.Uri.Contains("privacypolicy") ||
+        NavigationManager.Uri.Contains("termsofservice");
+
+    private string FooterHeight => ShowFooter ? "22px" : "0px";
+    
+    private string BodyStyle => $"padding: 10px; height: calc(100% - {FooterHeight});";
+    
+    private string ContainerStyle => $"height: calc(100% - {FooterHeight}); padding: 20px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);";
 
     //run on first render
     protected override void OnInitialized()
