@@ -120,7 +120,20 @@ public class ModuleAPI
         }
         catch (Exception ex)
         {
-            Log.Error(ex, "Failed to get all modules");
+            Log.Error(ex, "Failed to add user to module");
+        }
+    }
+
+    public async void RemoveUserFromModule(string userid, string moduleid)
+    {
+        try
+        {
+            HttpResponseMessage response = await _httpClient.PostAsync($"Module/RemoveUserFromModule?userID={Uri.EscapeDataString(userid.ToString())}&moduleID={Uri.EscapeDataString(moduleid.ToString())}", null);
+            response.EnsureSuccessStatusCode();
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Failed to remove user from module");
         }
     }
 }
