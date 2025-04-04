@@ -91,7 +91,7 @@ body.theme-dark {
     --card-bg: #2d2d2d;
     --sidebar-bg: #252525;
     --sidebar-border: rgba(255, 255, 255, 0.05);
-    --border-color: #505050;
+    --border-color: #3c3c3c;
 
     --text-primary: #e0e0e0;
     --text-secondary: #a0a0a0;
@@ -118,7 +118,7 @@ body.theme-hybrid {
     --card-bg: #ffffff;
     --sidebar-bg: #2c3e50;
     --sidebar-border: rgba(255, 255, 255, 0.1);
-    --border-color: #d5d5d5;
+    --border-color: #3d5266;
     --text-primary: #2a2a2a;
 
     --text-secondary: #5a5a5a;
@@ -129,6 +129,212 @@ body.theme-hybrid {
     --icon-color: #ffffff;
     --hover-overlay: rgba(0, 0, 0, 0.05);
     --active-overlay: rgba(0, 0, 0, 0.1);
+}
+
+/* =========== DASHBOARD =========== */
+
+.dashboardContainer {
+    padding: 1rem 0;
+}
+
+.dashboardCard {
+    background-color: var(--card-bg);
+}
+
+.welcomeCard {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    border-radius: 16px;
+    padding: 2.5rem;
+}
+
+.welcomeCardDark {
+    background: linear-gradient(135deg, rgba(44, 62, 80, 0.9), var(--primary-dark));
+    border-radius: 16px;
+    padding: 2.5rem;
+}
+
+.welcomeHeader {
+    display: flex;
+    margin-bottom: 0.5rem;
+}
+
+.welcomeTitle {
+    font-size: 3rem;
+    color: var(--text-on-primary);
+}
+
+.profileContainer {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.profileCard {
+    background: rgba(255,255,255,0.15);
+    padding: 1rem;
+    border-radius: 12px;
+    display: flex;
+    gap: 1rem;
+}
+
+.profileIcon {
+    font-size: 2rem;
+    background: var(--primary);
+    border-radius: 8px;
+    color: var(--text-on-primary);
+}
+
+.profileUsername {
+    font-weight: bold;
+    color: var(--text-on-primary);
+}
+
+.statCard {
+    border-radius: 16px;
+    background-color: var(--card-bg);
+}
+
+.statContainer {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.statIconContainer {
+    background: var(--primary-light);
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.statIcon {
+    font-size: 1.75rem;
+    color: #ffffff;
+}
+
+.statTitle {
+    color: var(--text-primary);
+}
+
+.statValue {
+    font-size: 1.75rem;
+    font-weight: bold;
+    color: var(--text-primary);
+}
+
+.sectionCard {
+    margin-bottom: 1.5rem;
+    padding: 1.5rem;
+    border-radius: 16px;
+    background-color: var(--card-bg);
+}
+
+.sectionTitle {
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+}
+
+.sectionIcon {
+    color: var(--accent);
+    margin-right: 0.75rem;
+}
+
+.moduleItem {
+    padding: 0.75rem;
+    background: var(--hover-overlay);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.moduleText {
+    color: var(--text-primary);
+}
+
+.emptyMessage {
+    color: var(--text-secondary);
+}
+
+.notificationSectionHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.activityHeader {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.activityIcon {
+    font-size: 1.5rem;
+    color: var(--primary);
+    margin-right: 0.75rem;
+}
+
+.feedbackTable {
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    margin-bottom: 1rem;
+}
+
+.tableHeader {
+    display: grid;
+    grid-template-columns: 2fr 4fr 1fr 1fr;
+    background-color: var(--hover-overlay);
+    padding: 16px;
+}
+
+.tableHeaderCell, .tableHeaderCellCenter {
+    font-weight: 600;
+    color: var(--text-primary);
+    padding: 0 8px;
+}
+
+.tableHeaderCellCenter {
+    text-align: center;
+}
+
+.tableRow {
+    display: grid;
+    grid-template-columns: 2fr 4fr 1fr 1fr;
+    padding: 14px;
+    border-bottom: 1px solid var(--border-color);
+    align-items: center;
+}
+
+.tableCell {
+    color: var(--text-primary);
+    padding: 0 8px;
+}
+
+.tableCellCenter {
+    text-align: center;
+    padding: 0 8px;
+}
+
+.emptyActivityContainer {
+    text-align: center;
+    padding: 2rem;
+}
+
+.emptyActivityTitle {
+    margin-top: 1rem;
+    color: var(--text-primary);
+}
+
+.boldUsername {
+    font-weight: 700;
+}
+
+.moduleIcon {
+    color: var(--accent);
 }
 
 /* =========== COMPONENTS =========== */
