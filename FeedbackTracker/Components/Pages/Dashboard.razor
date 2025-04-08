@@ -97,9 +97,25 @@
             </RadzenCard>
         </RadzenColumn>
 
-        <!-- Right side, recent activity -->
+        <!-- Right side, average resolve time -->
         <RadzenColumn SizeMD="8">
-            <RadzenCard class="dashboardCard">
+            <RadzenCard class="sectionCard mb-4">
+                <div class="activityHeader">
+                    <RadzenIcon Icon="assessment" class="activityIcon" />
+                    <RadzenText TextStyle="TextStyle.H5" class="sectionTitle">Average Resolution Time</RadzenText>
+                </div>
+                <div class="statContainer">
+                    <div class="statIconContainer">
+                        <RadzenIcon Icon="timer" class="statIcon" />
+                    </div>
+                    <div>
+                        <RadzenText class="statValue">@completionRate</RadzenText>
+                    </div>
+                </div>
+            </RadzenCard>
+
+            <!-- Recent activity -->
+            <RadzenCard class="dashboardCard" Style="border-radius:15px;">
                 <div class="activityHeader">
                     <RadzenIcon Icon="dynamic_feed" class="activityIcon" />
                     <RadzenText TextStyle="TextStyle.H5" class="sectionTitle">Recent Activity</RadzenText>
