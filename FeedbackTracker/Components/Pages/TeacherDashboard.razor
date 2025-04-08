@@ -156,7 +156,23 @@
                                 </div>
                             </div>
 
-                            <!-- TODO: Add bulk assign teacher here when IsStudent/IsTeacher is one variable -->
+                            <!-- IsStudent/IsTeacher-->
+                            <div>
+                                <h6 class="mb-3 text-center">Bulk Assign Role assign</h6>
+                                <div class="mb-3">
+                                    <input type="text" class="form-control" @bind="_BulkModUserEmails" placeholder="Enter user emails (CSV)">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="bulkTeacher" class="form-label">Select Role</label>
+                                    <select id="bulkTeacher" class="form-control" @bind="_BulkRolestr">
+                                         <option value="false" selected>student</option>
+                                        <option value="true">teacher</option>
+                                    </select>
+                                </div>
+                                <div class="d-grid">
+                                    <button class="btn btn-primary" @onclick="BulkAssignRoles">Assign Roles</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -170,6 +186,7 @@
     private string _BulkUserEmails;
     private string _BulkModules;
     private string _BulkModUserEmails;
+    private string _BulkRolestr = "false";
     private int _BulkModID;
 
     private List<User> _users = new();
@@ -268,5 +285,7 @@
     private async void BulkCreateModules() => await BulkAPI.CreateModules(_BulkModules);
 
     private async void BulkAssignModules() => await BulkAPI.AssignUserModule(_BulkModUserEmails, _BulkModID);
+    
+    private async void BulkAssignRoles() => await BulkAPI.SetTeacher(_BulkModUserEmails, bool.Parse(_BulkRolestr));
 
 }

@@ -36,11 +36,6 @@ public class User
     [Column("PASSWORD")]
 	public string Password { get; set; }
 
-	/// <summary>
-	/// Is the user a student
-	/// </summary>
-	[Column("ISSTUDENT")]
-	public bool IsStudent { get; set; }
 
 	/// <summary>
 	/// Is the user a teacher

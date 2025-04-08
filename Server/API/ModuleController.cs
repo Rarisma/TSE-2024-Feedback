@@ -95,7 +95,6 @@ public class ModuleController : Controller
                              userdata.UserID,
                              userdata.Username,
                              userdata.Password,
-                             userdata.IsStudent,
                              userdata.IsTeacher
                          }).ToList();
 
