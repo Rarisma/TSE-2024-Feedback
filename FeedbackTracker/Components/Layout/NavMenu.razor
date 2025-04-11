@@ -108,7 +108,7 @@
                         if (user != null){
                             List<Core.Definitions.Notification?>? notifications = await UserClient.GetNotification(user.UserID);
 
-                            if (notifications.Count > 0){
+                            if (notifications?.Count > 0){
 
                                 New_Feedback = true;
 
