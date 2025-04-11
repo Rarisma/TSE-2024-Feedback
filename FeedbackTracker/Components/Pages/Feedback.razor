@@ -44,16 +44,32 @@
                 <!--Label-->
         <div class="mb-3">
             <RadzenText TextStyle="TextStyle.Subtitle1" Style="display: block; margin-bottom: 10px;">Label:</RadzenText>
-            <RadzenDropDown TValue="int" @bind-Value="_label" 
-                                Data='@(Enum.GetValues(typeof(FeedbackLabel)))'
+            <RadzenDropDown TValue="int" @bind-Value="_label"
+                                Data='@(Enum.GetValues(typeof(FeedbackLabel))
+                                        .Cast<FeedbackLabel>()
+                                        .Select(e => new EnumOption
+                                        {
+                                            Value = (int)e,
+                                            Text = $"{e}"
+                                        }).ToList())'
+                                TextProperty="Text"
+                                ValueProperty="Value"
                             Style="width: 100%; background-color: rgba(255, 255, 255, 0.25); padding: 10px; border-radius: 8px;" />
         </div>
                 
         <div class="mb-3">
             <RadzenText TextStyle="TextStyle.Subtitle1" Style="display: block; margin-bottom: 10px;">Visibility:</RadzenText>
-            <RadzenDropDown TValue="int" @bind-Value="_visibility" 
-                                Data='@(Enum.GetValues(typeof(FeedbackVisibility)))'
-                            Style="width: 100%; background-color: rgba(255, 255, 255, 0.25); padding: 10px; border-radius: 8px;" />
+            <RadzenDropDown TValue="int" @bind-Value="_visibility"
+                                Data='@(Enum.GetValues(typeof(FeedbackVisibility))
+                                        .Cast<FeedbackVisibility>()
+                                        .Select(e => new EnumOption
+                                        {
+                                            Value = (int)e,
+                                            Text = $"{e}"
+                                        }).ToList())'
+                                TextProperty="Text"
+                                ValueProperty="Value"
+                                    Style="width: 100%; background-color: rgba(255, 255, 255, 0.25); padding: 10px; border-radius: 8px;" />
         </div>
 
         <div class="mb-3 text-center">
@@ -75,6 +91,11 @@
 
     private int _visibility;
 
+    public class EnumOption
+    {
+        public int Value { get; set; }
+        public string Text { get; set; }
+    }
 
     // name
     private string _title = string.Empty;
