@@ -5,20 +5,20 @@ public enum FeedbackLabel
     /// <summary>
     /// Positive feedback
     /// </summary>
-    Positive,
+    Positive = 0,
     
     /// <summary>
     /// Feedback suggesting what can be improved.
     /// </summary>
-    Improvement,
+    Improvement = 1,
     
     /// <summary>
     /// Question about module
     /// </summary>
-    Question,
+    Question = 2,
     
     /// <summary>
     /// Mistake/Error that needs fixing
     /// </summary>
-    Error
+    Error = 3
 }
