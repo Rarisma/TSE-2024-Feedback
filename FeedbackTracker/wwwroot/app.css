@@ -456,3 +456,48 @@ body.theme-hybrid {
     #blazor-error-ui.show-blazor-error {
         display: block;
     }
+
+/* =========== RADZEN DATAGRID =========== */
+
+.rz-column-header, .rz-grid-table thead th .rz-column-title {
+    background-color: var(--sidebar-bg) !important;
+    color: var(--text-on-sidebar) !important;
+}
+
+.rz-grid-table thead th, .rz-grid-table thead {
+    background-color: var(--sidebar-bg) !important;
+    border-bottom: 1px solid var(--sidebar-bg) !important;
+}
+
+.rz-grid-table th {
+    border-right: 1px solid var(--border-color) !important;
+    border-bottom: none !important;
+}
+
+.rz-data-row td, .rz-grid-table td {
+    background-color: var(--card-bg) !important;
+    color: var(--text-primary) !important;
+    border-bottom: 1px solid var(--border-color) !important;
+    border-right: 1px solid var(--border-color) !important;
+}
+
+.rz-paginator, .rz-pager {
+    background-color: var(--sidebar-bg) !important;
+    color: var(--text-on-sidebar) !important;
+}
+
+.rz-cell-data {
+    color: var(--text-primary) !important;
+}
+
+.rz-datatable-thead th {
+    background-color: var(--sidebar-bg) !important;
+}
+
+/* forward and backwards pagenav buttons */
+.rz-paginator-first, .rz-paginator-prev, .rz-paginator-next, .rz-paginator-last, .rz-pager button,
+.rz-pager-first, .rz-pager-prev, .rz-pager-next, .rz-pager-last {
+    background-color: var(--sidebar-bg) !important;
+    color: var(--text-on-sidebar) !important;
+    border: 1px solid var(--border-color) !important;
+}
