@@ -28,7 +28,7 @@
 
         <div class="mb-3">
             <RadzenText TextStyle="TextStyle.Subtitle1" Style="display: block; margin-bottom: 10px;">Feedback Module:</RadzenText>
-            <RadzenDropDown TValue="int" @onchange="ModuleSelected" Data="_modules" 
+            <RadzenDropDown TValue="int" @bind-Value="_moduleID" @onchange="ModuleSelected" Data="_modules" 
                             TextProperty="Module" ValueProperty="ModuleID" 
                             Style="width: 100%; background-color: rgba(255, 255, 255, 0.25); padding: 10px; border-radius: 8px;" />
         </div>
@@ -45,14 +45,14 @@
         <div class="mb-3">
             <RadzenText TextStyle="TextStyle.Subtitle1" Style="display: block; margin-bottom: 10px;">Label:</RadzenText>
             <RadzenDropDown TValue="int" @bind-Value="_label" 
-                            Data='@(Enum.GetValues(typeof(FeedbackLabel)))' 
+                                Data='@(Enum.GetValues(typeof(FeedbackLabel)))'
                             Style="width: 100%; background-color: rgba(255, 255, 255, 0.25); padding: 10px; border-radius: 8px;" />
         </div>
                 
         <div class="mb-3">
             <RadzenText TextStyle="TextStyle.Subtitle1" Style="display: block; margin-bottom: 10px;">Visibility:</RadzenText>
             <RadzenDropDown TValue="int" @bind-Value="_visibility" 
-                            Data='@(Enum.GetValues(typeof(FeedbackVisibility)))' 
+                                Data='@(Enum.GetValues(typeof(FeedbackVisibility)))'
                             Style="width: 100%; background-color: rgba(255, 255, 255, 0.25); padding: 10px; border-radius: 8px;" />
         </div>
 
@@ -126,8 +126,6 @@
 
     private async Task GetModules() {
 
-        //TODO get modules user is in
-
         List<Modules?>? newModules = await UserClient.GetModules(_assignee.UserID);
 
         if(newModules != null){
@@ -135,6 +133,7 @@
             {
                 _modules = newModules;
                 _moduleID = _modules.First().ModuleID;
+
             }
             catch (Exception ex)
             {
