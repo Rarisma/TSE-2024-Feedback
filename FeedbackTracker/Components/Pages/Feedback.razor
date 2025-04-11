@@ -197,6 +197,7 @@
         await new FeedbackAPI().CreateFeedback(fb);
         Log.Information("Posted to server");
 
+        NavigationManager.NavigateTo("/");
     }
 
     // get logged-in user
