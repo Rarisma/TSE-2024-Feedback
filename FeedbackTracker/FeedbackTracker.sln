@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core", "..\FeedbackTrackerC
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Server", "..\Server\Server.csproj", "{054EB2E7-65D6-4BCA-919C-C8D4CAF0CA41}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerTests", "ServerTests\ServerTests.csproj", "{EA0CDB87-78A6-475E-B7EC-3FC88C10DAF3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{054EB2E7-65D6-4BCA-919C-C8D4CAF0CA41}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{054EB2E7-65D6-4BCA-919C-C8D4CAF0CA41}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{054EB2E7-65D6-4BCA-919C-C8D4CAF0CA41}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EA0CDB87-78A6-475E-B7EC-3FC88C10DAF3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EA0CDB87-78A6-475E-B7EC-3FC88C10DAF3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EA0CDB87-78A6-475E-B7EC-3FC88C10DAF3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EA0CDB87-78A6-475E-B7EC-3FC88C10DAF3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
