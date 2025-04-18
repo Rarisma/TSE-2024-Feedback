@@ -10,59 +10,85 @@
 
 <title>TSE Feedback: Create Feedback </title>
 <div class="container">
-@if (Auth.IsAuthorised())
-{   <PageTitle>Feedback Page</PageTitle>
-            <!--Name-->
+    @if (Auth.IsAuthorised())
+    {   <PageTitle>Feedback Page</PageTitle>
+
         <RadzenCard Style="margin: 5vh auto; max-width: 800px; background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px); border-radius: 12px; box-shadow: 0 20px 35px rgba(0, 0, 0, 0.2);">
-        <RadzenText TextStyle="TextStyle.H3" Style="text-align: center; margin-bottom: 20px; color: #333333;">Create Feedback</RadzenText>
-            <!--Text-->
-        <div class="mb-3">
-            <RadzenText TextStyle="TextStyle.Subtitle1" Style="display: block; margin-bottom: 10px;">Name:</RadzenText>
-            <RadzenTextBox @bind-Value="_title" Placeholder="Enter Feedback Here..." MaxLength="3000" Style="width: 100%; background-color: rgba(255, 255, 255, 0.25); padding: 15px; border-radius: 8px;" />
-        </div>
-            <!--Module-->
-        <div class="mb-3">
-            <RadzenText TextStyle="TextStyle.Subtitle1" Style="display: block; margin-bottom: 10px;">Feedback Information:</RadzenText>
-            <RadzenTextArea @bind-Value="_text" Placeholder="Enter Information About Feedback Here..." Style="width: 100%; height: 100px; resize: none; background-color: rgba(255, 255, 255, 0.25); padding: 15px; border-radius: 8px;" MaxLength="8000" />
-        </div>
+            <RadzenTemplateForm TItem="@Core.Definitions.Feedback" Data="@_feedback" Submit ="@SendFeedback">
+                <!--Title-->
+                <RadzenText TextStyle="TextStyle.H3" Style="text-align: center; margin-bottom: 20px; color: #333333;">Create Feedback</RadzenText>
+                <!--Name-->
+                <div class="mb-3">
+                    <RadzenText TextStyle="TextStyle.Subtitle1" Style="display: block; margin-bottom: 10px;">Name:</RadzenText>
+                    <RadzenTextBox @bind-Value="_feedback.Title" Name="Title" Placeholder="Enter Feedback Here..." MaxLength="3000" Style="width: 100%; background-color: rgba(255, 255, 255, 0.25); padding: 15px; border-radius: 8px;" />
+                    <RadzenRequiredValidator Component="Title" Text="Required" />
+                </div>
+                <!--Text-->
+                <div class="mb-3">
+                    <RadzenText TextStyle="TextStyle.Subtitle1" Style="display: block; margin-bottom: 10px;">Feedback Information:</RadzenText>
+                    <RadzenTextArea @bind-Value="_feedback.FeedbackText"  Name="Text" Placeholder="Enter Information About Feedback Here..." Style="width: 100%; height: 100px; resize: none; background-color: rgba(255, 255, 255, 0.25); padding: 15px; border-radius: 8px;" MaxLength="8000" />
+                    <RadzenRequiredValidator Component="Text" Text="Required" />
+                </div>
+                <!--Module-->
+                <div class="mb-3">
+                    <RadzenText TextStyle="TextStyle.Subtitle1" Style="display: block; margin-bottom: 10px;">Feedback Module:</RadzenText>
+                    <RadzenDropDown TValue="int" @bind-Value="_feedback.ModuleID" @onchange="ModuleSelected" Data="_modules" 
+                    TextProperty="Module" ValueProperty="ModuleID" Name="Module"
+                    Style="width: 100%; background-color: rgba(255, 255, 255, 0.25); padding: 10px; border-radius: 8px;" />
+                    <RadzenRequiredValidator Component="Module" Text="Required" />
+                </div>
+                <!--Assign-->
 
-        <div class="mb-3">
-            <RadzenText TextStyle="TextStyle.Subtitle1" Style="display: block; margin-bottom: 10px;">Feedback Module:</RadzenText>
-            <RadzenDropDown TValue="int" @onchange="ModuleSelected" Data="_modules" 
-                            TextProperty="Module" ValueProperty="ModuleID" 
-                            Style="width: 100%; background-color: rgba(255, 255, 255, 0.25); padding: 10px; border-radius: 8px;" />
-        </div>
-            <!--Assign-->
+                <div class="mb-3">
+                    <RadzenLabel TextStyle="TextStyle.Subtitle1" Style="display: block; margin-bottom: 10px;">Teacher To Assign Feedback:</RadzenLabel>
+                    <RadzenDropDown TValue="int?" @bind-Value="_feedback.AssignedUserID" Data="@_users.Where(u => u.IsTeacher)" 
+                    TextProperty="Username" ValueProperty="UserID" Name="Assignee"
+                    Style="width: 100%; background-color: rgba(255, 255, 255, 0.25); padding: 10px; border-radius: 8px;" />
+                    <RadzenRequiredValidator Component="Assignee" Text="Required" />
+                </div>
 
-        <div class="mb-3">
-            <RadzenText TextStyle="TextStyle.Subtitle1" Style="display: block; margin-bottom: 10px;">Teacher To Assign Feedback:</RadzenText>
-            <RadzenDropDown TValue="int" @bind-Value="_assignedUserID" Data="@_users.Where(u => u.IsTeacher)" 
-                            TextProperty="Username" ValueProperty="UserID" 
-                            Style="width: 100%; background-color: rgba(255, 255, 255, 0.25); padding: 10px; border-radius: 8px;" />
-        </div>
-                
                 <!--Label-->
-        <div class="mb-3">
-            <RadzenText TextStyle="TextStyle.Subtitle1" Style="display: block; margin-bottom: 10px;">Label:</RadzenText>
-            <RadzenDropDown TValue="int" @bind-Value="_label" 
-                            Data='@(Enum.GetValues(typeof(FeedbackLabel)))' 
-                            Style="width: 100%; background-color: rgba(255, 255, 255, 0.25); padding: 10px; border-radius: 8px;" />
-        </div>
-                
-        <div class="mb-3">
-            <RadzenText TextStyle="TextStyle.Subtitle1" Style="display: block; margin-bottom: 10px;">Visibility:</RadzenText>
-            <RadzenDropDown TValue="int" @bind-Value="_visibility" 
-                            Data='@(Enum.GetValues(typeof(FeedbackVisibility)))' 
-                            Style="width: 100%; background-color: rgba(255, 255, 255, 0.25); padding: 10px; border-radius: 8px;" />
-        </div>
+                <div class="mb-3">
+                    <RadzenText TextStyle="TextStyle.Subtitle1" Style="display: block; margin-bottom: 10px;">Label:</RadzenText>
+                    <RadzenDropDown TValue="Core.Definitions.FeedbackLabel?" @bind-Value="_feedback.Label"
+                    Data='@(Enum.GetValues<FeedbackLabel>()
+                                        .Select(e => new LabelOption
+                                        {
+                                            Value = (Core.Definitions.FeedbackLabel?)e,
+                                            Text = $"{e}"
+                                        }).ToList())'
+                    TextProperty="Text"
+                    ValueProperty="Value"
+                    Name="Label"
+                    Style="width: 100%; background-color: rgba(255, 255, 255, 0.25); padding: 10px; border-radius: 8px;" />
+                    <RadzenRequiredValidator Component="Label" Text="Required" />
+                </div>
 
-        <div class="mb-3 text-center">
-            <RadzenButton Text="Submit Feedback" Click="SendFeedback" 
-                          ButtonStyle="ButtonStyle.Primary" 
-                          Style="margin: 20px auto; width: 30%; background-color: #5563DE; padding: 12px 20px; color: white; font-weight: 500; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);" />
-        </div>
-    </RadzenCard>
-}
+                <div class="mb-3">
+                    <RadzenText TextStyle="TextStyle.Subtitle1" Style="display: block; margin-bottom: 10px;">Visibility:</RadzenText>
+                    <RadzenDropDown TValue="Core.Definitions.FeedbackVisibility" @bind-Value="_feedback.Visibility"
+                    Data='@(Enum.GetValues<FeedbackVisibility>()
+                                        .Select(e => new VisibiltyOption
+                                        {
+                                            Value = (Core.Definitions.FeedbackVisibility)e,
+                                            Text = $"{e}"
+                                        }).ToList())'
+                    TextProperty="Text"
+                    ValueProperty="Value"
+                    Name="Visibility"
+                    Style="width: 100%; background-color: rgba(255, 255, 255, 0.25); padding: 10px; border-radius: 8px;" />
+                    <RadzenRequiredValidator Component="Visibility" Text="Required" />
+                </div>
+
+                <div class="mb-3 text-center">
+                    <RadzenButton ButtonType="ButtonType.Submit" Text="Submit Feedback"
+                    ButtonStyle="ButtonStyle.Primary" 
+                    Style="margin: 20px auto; width: 30%; background-color: #5563DE; padding: 12px 20px; color: white; font-weight: 500; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);" />
+                </div>
+            </RadzenTemplateForm>
+        </RadzenCard>
+
+    }
 </div>
 @code {
     //Goes back to the login page
@@ -71,27 +97,30 @@
         NavigationManager.NavigateTo("/LogIn");
     }
 
-    private int _label;
+    public class LabelOption
+    {
+        public Core.Definitions.FeedbackLabel? Value { get; set; }
+        public string Text { get; set; }
+    }
 
-    private int _visibility;
+    public class VisibiltyOption
+    {
+        public Core.Definitions.FeedbackVisibility Value { get; set; }
+        public string Text { get; set; }
+    }
+
+    private Core.Definitions.Feedback _feedback = new Core.Definitions.Feedback { Label=0 };
 
 
-    // name
-    private string _title = string.Empty;
-    // text
-    private string _text = string.Empty;
-
-    // moduleID
-    private int _moduleID;
     // get modules
     private List<Modules> _modules = new();
 
     // assign
     // author of feedback (get current user)
     private User _assignee = new();
-
     // assigned user
     private int _assignedUserID;
+
     // get possible users to assign to
     private List<User> _users = new(){ new() { UserID=0, Username="No users"} };
 
@@ -100,25 +129,25 @@
     private async Task GetAssignableUsers()
     {
         // Get module teachers.
-        List<User?> modUsers = (await ModuleClient.GetUsersInModule(_moduleID))!.ToList();
+        List<User?> modUsers = (await ModuleClient.GetUsersInModule(_feedback.ModuleID))!.ToList();
 
         if(modUsers is { Count: > 0 }) 
         {
             modUsers.RemoveAll(u => u.UserID == Auth.User.UserID);
             _users = modUsers;
-            _assignedUserID = modUsers[0].UserID;
+            _feedback.AssignedUserID = modUsers[0].UserID;
         }
 
         StateHasChanged();
     }
-    
+
     /// <summary>
     /// Updates module (UI)
     /// </summary>
     /// <param name="e"></param>
     private async void ModuleSelected(ChangeEventArgs e)
     {
-        _moduleID = int.Parse(e.Value?.ToString()!);
+        _feedback.ModuleID = int.Parse(e.Value?.ToString()!);
         await GetAssignableUsers();
     }
 
@@ -126,15 +155,14 @@
 
     private async Task GetModules() {
 
-        //TODO get modules user is in
-
         List<Modules?>? newModules = await UserClient.GetModules(_assignee.UserID);
 
         if(newModules != null){
             try
             {
                 _modules = newModules;
-                _moduleID = _modules.First().ModuleID;
+                _feedback.ModuleID = _modules.First().ModuleID;
+
             }
             catch (Exception ex)
             {
@@ -149,19 +177,19 @@
 
 
     // sendFeedback function
-    private async void SendFeedback()
+    private async void SendFeedback(Core.Definitions.Feedback feedback)
     {
         //Create feedback object
         Core.Definitions.Feedback fb = new Core.Definitions.Feedback
         {
-            AssignedUserID = _assignedUserID,
+            AssignedUserID = feedback.AssignedUserID,
             AssigneeID = _assignee.UserID,
-            ModuleID = _moduleID,
-            FeedbackText = _text,
+            ModuleID = feedback.ModuleID,
+            FeedbackText = feedback.FeedbackText,
             Closed = false,
-            Title = _title,
-            Label = (FeedbackLabel?)_label,
-            Visibility = (FeedbackVisibility)_visibility,
+            Title = feedback.Title,
+            Label = feedback.Label,
+            Visibility = feedback.Visibility,
             CreatedDate = DateTime.Now
         };
         // Send to API
@@ -169,9 +197,7 @@
         await new FeedbackAPI().CreateFeedback(fb);
         Log.Information("Posted to server");
 
-
         NavigationManager.NavigateTo("/");
-
     }
 
     // get logged-in user

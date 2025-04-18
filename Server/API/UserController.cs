@@ -70,7 +70,6 @@ public class UserController(AuthService authService) : Controller
 				FirstName = FirstName,
 				LastName = LastName,
 				Password = BCrypt.Net.BCrypt.HashPassword(Password),
-				IsStudent = true,
 				IsTeacher = false,
 				Email = Email,
 				School = School,
@@ -212,12 +211,33 @@ public class UserController(AuthService authService) : Controller
 			Log.Error(ex, "Failed to update password");
 		}
 	}
+    /// <summary>
+    /// update teacher status
+    /// </summary>
+    /// <param name="userid"></param>
+	/// <param name="role"></param>
+    [HttpPut("RoleUpdate")]
+    public async void RoleUpdate(int userid, bool role)
+    {
+        try
+        {
+            await using TrackerContext ctx = new();
+            User account = ctx.User.First(user => user.UserID == userid);
+            account.IsTeacher = role;
+            ctx.User.Update(account);
+            await ctx.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Failed to update role");
+        }
+    }
 
-	/// <summary>
-	/// Gets an average resolve time for a teacher
-	/// </summary>
-	/// <param name="userId"></param>
-	[HttpGet("GetAvgResolveTime")]
+    /// <summary>
+    /// Gets an average resolve time for a teacher
+    /// </summary>
+    /// <param name="userId"></param>
+    [HttpGet("GetAvgResolveTime")]
 	public float GetAverageResolveTime(int userId)
 	{
 		using TrackerContext ctx = new();

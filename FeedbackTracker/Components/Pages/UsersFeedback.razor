@@ -19,15 +19,15 @@
     <title>Your Feedback</title>
     @if (JAuth.IsAuthorised())
     {
-        <RadzenCard Style="margin-bottom: 30px;">
-            <div style="text-align: center;">
-                <h1 style="font-size: 3.2rem; font-weight: 700; color: #333333; text-shadow: 0 0 5px rgba(0, 0, 0, 0.3);">
+        <RadzenCard Style="margin-bottom: 30px; background-color: var(--main-body); border: 1px solid var(--border-color);">
+            <div style="text-align: center; margin-bottom: 20px;">
+                <h1 style="font-size: 3.2rem; font-weight: 700; color: var(--text-primary); text-shadow: 0 0 5px rgba(0, 0, 0, 0.3);">
                     Your Feedback
                 </h1>
             </div>
-            <RadzenCard Style="border-top-left-radius: 10px; border-bop-right-radius: 10px;">
-                <label for="teachername">Show from:</label>
-                <select id="teachername" @onchange="SortByTeacher">
+            <RadzenCard Style="border-top-left-radius: 10px; border-top-right-radius: 10px; background-color: var(--card-bg); border: 1px solid var(--border-color); padding: 15px;">
+                <label for="teachername" style="color: var(--text-primary); margin-right: 10px; font-weight: bold;">Show from:</label>
+                <select id="teachername" @onchange="SortByTeacher" style="background-color: var(--card-bg); color: var(--text-primary); border: 1px solid var(--border-color); border-radius: var(--border-radius); padding: 5px; margin-right: 15px;">
                     <option value="all">Everyone</option>
                     @if (Users != null)
                     {
@@ -42,16 +42,16 @@
                     }
                 </select>
 
-                <label for="sorting">Sort By:</label>
-                <select id="sorting" @onchange="SortBySelected">
+                <label for="sorting" style="color: var(--text-primary); margin-right: 10px; font-weight: bold;">Sort By:</label>
+                <select id="sorting" @onchange="SortBySelected" style="background-color: var(--card-bg); color: var(--text-primary); border: 1px solid var(--border-color); border-radius: var(--border-radius); padding: 5px; margin-right: 15px;">
                     <option value="az">A-Z</option>
                     <option value="za">Z-A</option>
                     <option value="public">Public Feedback</option>
                     <option value="private">Private Feedback</option>
                 </select>
 
-                <label for="modulesort">Sort By:</label>
-                <select id="modulesort" @onchange="SortByModule">
+                <label for="modulesort" style="color: var(--text-primary); margin-right: 10px; font-weight: bold;">Sort By:</label>
+                <select id="modulesort" @onchange="SortByModule" style="background-color: var(--card-bg); color: var(--text-primary); border: 1px solid var(--border-color); border-radius: var(--border-radius); padding: 5px;">
                     <option value="all">All Modules</option>
                     @if (_modules.Count > 0)
                     {
@@ -68,12 +68,12 @@
 
             </RadzenCard>
 
-            <RadzenDataGrid Style="border-bottom-left-radius: 10px; border-bottom-right-radius: 10px;"
-            AllowFiltering="false" AllowSorting="true" PageSize="10" AllowPaging="true" Data="@SpecificFeedbacks" EmptyText="No feedback found">
+            <RadzenDataGrid Style="border-bottom-left-radius: 10px; border-bottom-right-radius: 10px;background-color: var(--card-bg); color: var(--text-primary); border: 1px solid var(--border-color);"
+                            AllowFiltering="false" AllowSorting="true" PageSize="10" AllowPaging="true" Data="@SpecificFeedbacks" EmptyText="No feedback found">
                 <Columns>
-                    <RadzenDataGridColumn TItem="Core.Definitions.Feedback" Property="Title" Title="Title" />
-                    <RadzenDataGridColumn TItem="Core.Definitions.Feedback" Property="FeedbackText" Title="Feedback" />
-                    <RadzenDataGridColumn TItem="Core.Definitions.Feedback" Title="Created-BY">
+                    <RadzenDataGridColumn TItem="Core.Definitions.Feedback" Property="Title" Title="Title" TextAlign="TextAlign.Center" />
+                    <RadzenDataGridColumn TItem="Core.Definitions.Feedback" Property="FeedbackText" Title="Feedback" TextAlign="TextAlign.Center" />
+                    <RadzenDataGridColumn TItem="Core.Definitions.Feedback" Title="Created-BY" TextAlign="TextAlign.Center">
                         <Template Context="feedback">
                             @if (Users != null)
                             {
@@ -81,13 +81,13 @@
                                 {
                                     if (assignee.UserID == feedback.AssigneeID)
                                     {
-                                        <strong>@assignee.Username</strong>
+                                        <strong style="color: var(--text-primary);">@assignee.Username</strong>
                                     }
                                 }
                             }
                         </Template>
                     </RadzenDataGridColumn>
-                    <RadzenDataGridColumn TItem="Core.Definitions.Feedback" Title="Assigned-TO">
+                    <RadzenDataGridColumn TItem="Core.Definitions.Feedback" Title="Assigned-TO" TextAlign="TextAlign.Center">
 	                    <Template Context="feedback">
 		                    @if (Users != null)
 		                    {
@@ -101,26 +101,27 @@
 		                    }
 	                    </Template>
                     </RadzenDataGridColumn>
-                    <RadzenDataGridColumn TItem="Core.Definitions.Feedback" Title="Status">
+                    <RadzenDataGridColumn TItem="Core.Definitions.Feedback" Title="Status" TextAlign="TextAlign.Center">
                         <Template Context="feedback">
                             @if (JAuth.User.UserID == feedback.AssigneeID)
                             {
-                                <strong>You assigned this!</strong>
+                                <strong style="color: var(--text-primary);">You assigned this!</strong>
                             }
                             else if (JAuth.User.UserID != feedback.AssigneeID && JAuth.User.UserID != feedback.AssignedUserID)
                             {
-                                <p></p>
+                                <p style="color: var(--text-primary);"></p>
                             }
                             else
                             {
-                                <strong>This was assigned to you!</strong>
+                                <strong style="color: var(--text-primary);">This was assigned to you!</strong>
                             }
                         </Template>
                     </RadzenDataGridColumn>
 
-                    <RadzenDataGridColumn TItem="Core.Definitions.Feedback" Title="View">
+                    <RadzenDataGridColumn TItem="Core.Definitions.Feedback" Title="View" TextAlign="TextAlign.Center">
                         <Template Context="feedback">
-                            <RadzenButton ButtonStyle="ButtonStyle.Light" Icon="visibility" Click="@(args => NavigateToFeedback(feedback.FeedbackID))" />
+                            <RadzenButton ButtonStyle="ButtonStyle.Light" Icon="visibility" Click="@(args => NavigateToFeedback(feedback.FeedbackID))"
+                                          Style="background-color: var(--primary); color: var(--text-on-primary); border: none; width: 40px; height: 40px; border-radius: 4px;" />
                         </Template>
                     </RadzenDataGridColumn>
                 </Columns>

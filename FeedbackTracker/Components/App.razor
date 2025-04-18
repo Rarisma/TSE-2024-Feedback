@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="_content/Radzen.Blazor/css/default.css" />
     <link rel="stylesheet" href="app.css" />
     <link rel="stylesheet" href="/Application.styles.css" />
+    <link rel="stylesheet" href="preloader.css" />
     <link rel="icon" type="image/png" href="favicon.png" />
     <link rel="stylesheet" href="Application.styles.css" />
 	<link rel="icon" type="image/png" href="favicon.png" />    
@@ -23,9 +24,24 @@
 </head>
 
 <body>
+    <!-- Preloader -->
+    <div id="preloader">
+        <div class="wrapper">
+            <div class="box-wrap">
+                <div class="box one"></div>
+                <div class="box two"></div>
+                <div class="box three"></div>
+                <div class="box four"></div>
+                <div class="box five"></div>
+                <div class="box six"></div>
+            </div>
+        </div>
+    </div>
+    
     <Routes />
     <script src="/_framework/blazor.web.js"></script>
     <script src="JS/themes.js"></script>
+    <script src="JS/preloader.js"></script>
     <audio id="effectplayer">
         <source id="effectplayerSource" src="" />
     </audio>

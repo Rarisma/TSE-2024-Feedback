@@ -48,7 +48,6 @@ public class BulkController
                 Email = email,
                 Username = "TempStudent" + email,
                 Initalised = false,
-                IsStudent = false,
                 Password = BCrypt.Net.BCrypt.HashPassword(email),
             };
             db.User.Add(user);

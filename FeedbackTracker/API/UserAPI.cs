@@ -221,5 +221,26 @@ public class UserAPI
         }
     }
 
+    /// <summary>
+    /// Updates user role
+    /// </summary>
+    /// <param name="userid">Account id</param>
+    /// <param name="role">Account role</param>
+    public async Task UpdateRole(int userid, bool role)
+    {
+        try
+        {
+            string url = $"User/UpdatePassword?userid={Uri.EscapeDataString(userid.ToString())}" +
+             $"&role={Uri.EscapeDataString(role.ToString())}";
+            HttpResponseMessage response = await _httpClient.PutAsync(url, null);
+            response.EnsureSuccessStatusCode();
+            await response.Content.ReadAsStringAsync();
+
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, $"Error updating role");
+        }
+    }
 
 }
