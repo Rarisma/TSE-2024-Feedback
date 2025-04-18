@@ -6,6 +6,7 @@
 @using Serilog
 @inject FeedbackAPI FeedbackClientAccess
 @inject UserAPI UserClient
+@inject NotificationAPI NotificationClient
 @inject IJSRuntime JSRuntime
 @inject NavigationManager NavigationManager
 @using FeedbackTracker.Services
@@ -242,10 +243,10 @@
         if (assignee != null)
         {
 
-            notifications = await UserClient.GetNotification(assignee.UserID);
+            notifications = await NotificationClient.GetNotificationByUser(assignee.UserID);
             foreach (var notification in notifications)
             {
-                Core.Definitions.Feedback tempFB = await FeedbackClientAccess.GetFeedbackByID(notification.FeedbackID);
+                Core.Definitions.Feedback tempFB = await FeedbackClientAccess.GetFeedbackByID(notification.FeedbackId.Value);
                 notfiFB.Add(tempFB);
             }
             await InvokeAsync(StateHasChanged);
