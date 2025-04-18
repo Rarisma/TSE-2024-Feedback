@@ -66,7 +66,7 @@ public class FeedbackAPI
 			//Send
 			HttpResponseMessage response = await _httpClient.PostAsync("Feedback/CreateFeedback", content);
 			response.EnsureSuccessStatusCode();
-			return await response.Content.ReadAsStringAsync();
+            return await response.Content.ReadAsStringAsync();
 		}
 		catch (Exception ex)
 		{

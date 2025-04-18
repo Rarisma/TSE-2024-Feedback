@@ -56,16 +56,16 @@ public class NotificationAPI
     /// <summary>
     /// Add new notification
     /// </summary>
-    /// <param name="userID">users id</param>
+    /// <param name="userid">users id</param>
     /// <param name="title">title / header</param>
     /// <param name="message">main message</param>
     /// <param name="type">type of notifiaction (Feedback)</param>
     /// <param name="payload">additional data (feedback id for example)</param>
-    public async Task NotificationPost(int userID, string title, string message, string type, string payload)
+    public async Task NotificationPost(int userid, string title, string message, string type, string payload)
     {
         try
         {
-            string url = $"notification?userid={Uri.EscapeDataString(userID.ToString())}" +
+            string url = $"notification?userid={Uri.EscapeDataString(userid.ToString())}" +
                          $"&Title={Uri.EscapeDataString(title.ToString())}" +
                          $"&Type={Uri.EscapeDataString(type.ToString())}" +
                          $"&Payload={Uri.EscapeDataString(payload.ToString())}" +

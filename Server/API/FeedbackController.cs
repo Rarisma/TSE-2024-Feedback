@@ -8,12 +8,23 @@ namespace Server.API;
 [Route("Feedback")]
 public class FeedbackController : Controller 
 {
-	/// <summary>
-	/// Get all feedbacks for the user
-	/// </summary>
-	/// <param name="userID">User</param>
-	/// <returns>List of Feedback Objects</returns>
-	[HttpGet("GetAssignedFeedbacks")]
+    private readonly INotificationService _notificationService;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NotificationController"/> class.
+    /// </summary>
+    /// <param name="notificationService">Service for handling notification operations.</param>
+    public FeedbackController(INotificationService notificationService)
+    {
+        _notificationService = notificationService;
+    }
+
+    /// <summary>
+    /// Get all feedbacks for the user
+    /// </summary>
+    /// <param name="userID">User</param>
+    /// <returns>List of Feedback Objects</returns>
+    [HttpGet("GetAssignedFeedbacks")]
 	public string GetAssignedFeedbacks(int userID)
 	{
 		try
@@ -88,7 +99,7 @@ public class FeedbackController : Controller
 	/// <param name="feedbackObject">Feedback object in json format</param>
 	/// <returns></returns>
 	[HttpPost("CreateFeedback")]
-	public string CreateFeedback([FromBody]Feedback? feedbackObject)
+	public async Task<string> CreateFeedback([FromBody]Feedback? feedbackObject)
 	{
 		try
 		{
@@ -104,7 +115,9 @@ public class FeedbackController : Controller
             var fb = ctx.Feedback.Add(feedback);
             ctx.SaveChanges();
 
-			return "Feedback created successfully";
+            var result = await _notificationService.CreateNotificationAsync(feedback.AssignedUserID.Value, "New Feedback", feedback.Title, "FEEDBACK", feedback.FeedbackID.ToString());
+
+            return "Feedback created successfully";
 		}
 		catch (Exception ex) {
 				return "Encountered an error: " + ex.Message; }

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
+using Radzen;
 
 namespace Server;
 
@@ -37,8 +38,10 @@ internal static class Program
 
 		//Register Services for Dependency Injection
 		builder.Services.AddScoped<AuthService>();
-		
-		DotEnv.Load();
+
+        builder.Services.AddScoped<INotificationService, NotificationService>();
+
+        DotEnv.Load();
 		Secrets = DotEnv.Read();
 		
 		builder.Services.AddAuthentication(options =>
@@ -69,7 +72,6 @@ internal static class Program
 		builder.Services.AddAuthorization();
 
 		builder.Services.AddSingleton<EmailSending>();
-
 		// Build the app
 		var app = builder.Build();
 
@@ -90,8 +92,8 @@ internal static class Program
 
 		app.UseHttpsRedirection();
 
-		// Apply CORS Policy
-		app.UseCors("AllowBlazorClient");
+        // Apply CORS Policy
+        app.UseCors("AllowBlazorClient");
 
 		// Enable Authentication and Authorization
 		app.UseAuthentication();
