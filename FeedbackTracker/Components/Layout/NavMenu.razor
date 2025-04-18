@@ -3,6 +3,7 @@
 @inject JAuth Auth
 @inject NavigationManager NavigationManager
 @inject API.UserAPI UserClient
+@inject API.NotificationAPI NotificationClient
 @rendermode InteractiveServer
 @inject IJSRuntime Js
 @inject NotificationService NotificationService
@@ -120,7 +121,7 @@
     {
 	    if (user != null){
             // get notifications
-		    List<Core.Definitions.Notification?>? notifications = await UserClient.GetNotification(user.UserID);
+            List<Core.Definitions.Notification?>? notifications = await NotificationClient.GetNotificationByUser(user.UserID);
 
 		    if (notifications.Count > 0){
                     
@@ -163,7 +164,7 @@
 			    }
 
                 // delete notifications
-                await UserClient.NotificationDelete(user.UserID);
+                await NotificationClient.NotificationDelete(user.UserID);
 
 			    await InvokeAsync(StateHasChanged);
 		    }

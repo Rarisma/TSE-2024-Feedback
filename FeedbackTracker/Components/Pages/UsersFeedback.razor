@@ -7,6 +7,7 @@
 @inject JAuth JAuth
 @inject NavigationManager NavigationManager
 @inject UserAPI UserClient
+@inject NotificationAPI NotificationClient
 @inject ModuleAPI ModuleClient
 @rendermode InteractiveServer
 
@@ -339,11 +340,11 @@
     }
 
     private async Task clearNotifications(){
-        List<Notification?>? notifications = await UserClientAccess.GetNotification(JAuth.GetUser().UserID);
+        List<Notification?>? notifications = await NotificationClient.GetNotificationByUser(JAuth.GetUser().UserID);
 
         if (notifications.Count > 0)
         {
-            await UserClientAccess.NotificationDelete(JAuth.GetUser().UserID);
+            await NotificationClient.NotificationDelete(JAuth.GetUser().UserID);
 
         }
     }

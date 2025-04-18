@@ -104,23 +104,6 @@ public class FeedbackController : Controller
             var fb = ctx.Feedback.Add(feedback);
             ctx.SaveChanges();
 
-            // notify
-            Notification notification = new()
-            {
-                UserID = fb.Entity.AssignedUserID,
-                // remove feedback after merge
-                FeedbackId = fb.Entity.FeedbackID,
-                Title = "New Feedback",
-                Message = $"title: {fb.Entity.Title}",
-                Timestamp = DateTime.Now,
-                Type = "FEEDBACK",
-                Payload = fb.Entity.FeedbackID.ToString()
-
-            };
-
-            ctx.Notification.Add(notification);
-			ctx.SaveChanges();
-
 			return "Feedback created successfully";
 		}
 		catch (Exception ex) {
