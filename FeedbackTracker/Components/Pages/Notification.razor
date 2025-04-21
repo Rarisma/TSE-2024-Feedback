@@ -1,0 +1,109 @@
+﻿@using System.Text.Json
+@using Core.Definitions
+@inject JAuth Auth
+@inject NavigationManager NavigationManager
+@inject API.UserAPI UserClient
+@inject API.NotificationAPI NotificationClient
+@rendermode InteractiveServer
+@inject IJSRuntime Js
+@inject NotificationService NotificationService
+@implements IDisposable
+@code {
+	User? user;
+	private bool _initialized;
+	private EventHandler<LocationChangedEventArgs>? _locationHandler;
+	protected override Task OnInitializedAsync()
+	{
+		if (!_initialized)
+		{
+			_locationHandler = async (_, _) =>
+				{
+
+					//NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);
+					// if logged in
+					if (Auth.IsAuthorised())
+					{
+						await Task.Delay(50); // ensure delay to allow for user to be correctly loaded
+						user = Auth.GetUser();
+
+						Notify();
+					}
+					await InvokeAsync(StateHasChanged);
+				};
+			NavigationManager.LocationChanged += _locationHandler;
+			_initialized = true;
+			user = Auth.GetUser();
+			Notify();
+		}
+		return Task.CompletedTask;
+	}
+
+	async void Notify()
+	{
+		// clear notifications
+		NotificationService.Messages.Clear();
+
+		if (user != null)
+		{
+			// get notifications
+			List<Core.Definitions.Notification?>? notifications = await NotificationClient.GetNotificationByUser(user.UserID);
+
+			if (notifications.Count > 0)
+			{
+
+				// play sound
+				await Js.InvokeVoidAsync("PlaySoundEffect", "sounds/notification.wav");
+
+				foreach (var notification in notifications)
+				{
+					// show notifications
+					NotificationService.Notify(new NotificationMessage()
+						{
+							// setup
+
+							// notification type
+							Severity = NotificationSeverity.Info,
+							// linger time
+							Duration = 10000,
+							// show time left
+							ShowProgress = true,
+							// title
+							SummaryContent = ns =>@<RadzenText TextStyle="TextStyle.H6">@notification.Title :@notification.TimeSinceCreation</RadzenText>,
+						// main content
+						DetailContent = ns => @<RadzenText TextStyle="TextStyle.H6">@notification.Message</RadzenText>,
+						// show x to close
+						CloseOnClick = true,
+						// function to do on click
+						Click = notifications =>
+						{
+							// if notification relates to feedback
+							if (notification.Type == "FEEDBACK")
+							{
+								// re-direct to feedback
+								NavigationManager.NavigateTo($"/viewfeedback/{notification.Payload}");
+
+							}
+							// clear notifications
+							NotificationService.Messages.Clear();
+						},
+					});
+				}
+
+				// delete notifications
+				//await NotificationClient.NotificationDelete(user.UserID);
+
+				await InvokeAsync(StateHasChanged);
+			}
+
+		}
+
+	}	
+	public void Dispose()
+	{
+		if (_locationHandler != null)
+		{
+			NavigationManager.LocationChanged -= _locationHandler;
+		}
+	}
+
+}

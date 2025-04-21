@@ -340,15 +340,6 @@
             }
     }
 
-    private async Task clearNotifications(){
-        List<Notification?>? notifications = await NotificationClient.GetNotificationByUser(JAuth.GetUser().UserID);
-
-        if (notifications.Count > 0)
-        {
-            await NotificationClient.NotificationDelete(JAuth.GetUser().UserID);
-
-        }
-    }
     /// <summary>
     /// Loads the feedback data and teacher data as soon as the page is loaded
     /// </summary>
@@ -360,9 +351,6 @@
             if(JAuth.GetUser()!=null){
                 await LoadAllFeedback(JAuth.User.UserID);
                 await LoadAssignees();
-
-                // clear notifications
-                await clearNotifications();
             }
         }
     }

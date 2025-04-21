@@ -11,6 +11,9 @@
 @inject AppTheme AppTheme
 
 <div class="@AppTheme.ColourTheme" Style="display: flex; flex-direction: column; height: 100%; padding: 0;">
+        
+    <!-- Call notification Toasts-->
+    <Application.Components.Pages.Notification/>
 
     <!-- Title header -->
     <div Style="display: flex; align-items: center; justify-content: center; padding: 12px 15px; border-bottom: 1px solid var(--sidebar-border); font-family: 'Poppins', sans-serif;">
@@ -93,10 +96,6 @@
                         user = Auth.GetUser();
 
 
-                        // show any notifications
-                        Notify();
-
-
                     }
                     await InvokeAsync(StateHasChanged);
                 };
@@ -104,12 +103,6 @@
     }
     protected override async Task OnAfterRenderAsync(bool firstrender)
     {
-        /*Console.WriteLine("playsound: " + playsound);
-
-            if(playsound){
-            await Js.InvokeVoidAsync("PlaySoundEffect", "sounds/notification.wav");
-            }
-		*/ 
         //initialize the theme
         if (firstrender)
         {
@@ -117,66 +110,6 @@
         }
 
     }
-
-    async void Notify()
-    {
-	    if (user != null){
-            // get notifications
-            List<Core.Definitions.Notification?>? notifications = await NotificationClient.GetNotificationByUser(user.UserID);
-
-		    if (notifications.Count > 0){
-                    
-			    // play sound
-			    await Js.InvokeVoidAsync("PlaySoundEffect", "sounds/notification.wav");
-
-			    foreach (var notification in notifications)
-			    {
-                    // show notifications
-				    NotificationService.Notify(new NotificationMessage()
-					    {
-                            // setup
-
-                            // notification type
-						    Severity = NotificationSeverity.Info,
-                            // linger time
-						    Duration = 10000,
-                            // show time left
-						    ShowProgress = true,
-                            // title
-						    SummaryContent = ns =>@<RadzenText TextStyle="TextStyle.H6">@notification.Title :@notification.TimeSinceCreation</RadzenText>,
-                            // main content
-							DetailContent = ns => @<RadzenText TextStyle="TextStyle.H6">@notification.Message</RadzenText>,
-                            // show x to close
-						    CloseOnClick = true, 
-                            // function to do on click
-	                        Click = notifications =>
-	                        {
-                                // if notification relates to feedback
-		                        if (notification.Type == "FEEDBACK")
-		                        {
-	                            // re-direct to feedback
-		                        NavigationManager.NavigateTo($"/viewfeedback/{notification.Payload}");
-
-		                        }
-	                            // clear notifications
-		                        NotificationService.Messages.Clear();
-	                        },
-					    });
-			    }
-
-                // delete notifications
-                await NotificationClient.NotificationDelete(user.UserID);
-
-			    await InvokeAsync(StateHasChanged);
-		    }
-
-	    }else{
-		    NavigationManager.NavigateTo(NavigationManager.Uri);
-
-	    }
-
-    }
-
     protected override void OnInitialized()
     {
         //update the icon

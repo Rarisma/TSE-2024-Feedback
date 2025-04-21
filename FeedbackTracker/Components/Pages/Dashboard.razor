@@ -15,7 +15,6 @@
 <title>Dashboard - Feedback Tracker</title>
 
 <div class="dashboardContainer">
-
     <!-- Greeting section -->
     <RadzenCard class="@(AppTheme.ColourTheme == "theme-dark" ? "welcomeCardDark" : "welcomeCard")">
         <RadzenRow AlignItems="AlignItems.Center">
@@ -188,7 +187,6 @@
     private string? completionRate = "not found";
     private User assignee = new() { };
     private List<Modules> modules = new() { };
-    private List<Notification> notifications = new() { };
     private int openCount = 0;
     private async Task countOpenFeedback()
     {
@@ -212,7 +210,6 @@
             {
                 await getAverageResolveTime(assignee.UserID);
             }
-            await getNotifications();
             await countOpenFeedback();
         }
 
@@ -237,22 +234,6 @@
     }
 
     private List<Core.Definitions.Feedback> notfiFB = new();
-    private async Task getNotifications()
-
-    {
-        if (assignee != null)
-        {
-
-            notifications = await NotificationClient.GetNotificationByUser(assignee.UserID);
-            foreach (var notification in notifications)
-            {
-                Core.Definitions.Feedback tempFB = await FeedbackClientAccess.GetFeedbackByID(notification.FeedbackId.Value);
-                notfiFB.Add(tempFB);
-            }
-            await InvokeAsync(StateHasChanged);
-
-        }
-    }
     protected override async Task OnInitializedAsync()
     {
         base.OnInitialized();
