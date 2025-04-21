@@ -70,5 +70,19 @@ namespace Server.API.Controllers
             var result = await _notificationService.DeleteNotificationsByUserAsync(userID);
             return result ? Ok("Notifications deleted successfully") : StatusCode(500, "Failed to delete notifications");
         }
+
+        /// <summary>
+        /// Deletes all notifications associated with a specific ID.
+        /// </summary>
+        /// <param name="NotificationID">The ID of the user whose notifications should be deleted.</param>
+        /// <returns>
+        /// Returns a 200 OK response if successful; otherwise, a 500 Internal Server Error.
+        /// </returns>
+        [HttpDelete("")]
+        public async Task<IActionResult> Delete(int NotificationID)
+        {
+            var result = await _notificationService.DeleteNotificationAsync(NotificationID);
+            return result ? Ok("Notifications deleted successfully") : StatusCode(500, "Failed to delete notifications");
+        }
     }
 }

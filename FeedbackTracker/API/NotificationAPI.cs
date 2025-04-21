@@ -84,11 +84,30 @@ public class NotificationAPI
     /// Delete users notification store
     /// </summary>
     /// <param name="userID">users id</param>
-    public async Task NotificationDelete(int userID)
+    public async Task NotificationDeleteByUser(int userID)
     {
         try
         {
             string url = $"notification/ByUser?userID={Uri.EscapeDataString(userID.ToString())}";
+            using var response = await _httpClient.DeleteAsync(url);
+            response.EnsureSuccessStatusCode();
+            await response.Content.ReadAsStringAsync();
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, $"Error Deleting notification");
+        }
+    }
+
+    /// <summary>
+    /// Delete users notification store
+    /// </summary>
+    /// <param name="NotificationID">users id</param>
+    public async Task NotificationDelete(int NotificationID)
+    {
+        try
+        {
+            string url = $"notification?NotificationID={Uri.EscapeDataString(NotificationID.ToString())}";
             using var response = await _httpClient.DeleteAsync(url);
             response.EnsureSuccessStatusCode();
             await response.Content.ReadAsStringAsync();

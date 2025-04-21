@@ -57,10 +57,11 @@
 				foreach (var notification in notifications)
 				{
 					// show notifications
-					NotificationService.Notify(new NotificationMessage()
+					NotificationService.Notify(
+						new NotificationMessage()
 						{
 							// setup
-
+							Style = "btn-primary",
 							// notification type
 							Severity = NotificationSeverity.Info,
 							// linger time
@@ -69,13 +70,13 @@
 							ShowProgress = true,
 							// title
 							SummaryContent = ns =>@<RadzenText TextStyle="TextStyle.H6">@notification.Title :@notification.TimeSinceCreation</RadzenText>,
-						// main content
-						DetailContent = ns => @<RadzenText TextStyle="TextStyle.H6">@notification.Message</RadzenText>,
-						// show x to close
-						CloseOnClick = true,
-						// function to do on click
-						Click = notifications =>
-						{
+							// main content
+							DetailContent = ns => @<RadzenText TextStyle="TextStyle.H6">@notification.Message</RadzenText>,
+							// show x to close
+							CloseOnClick = true,
+							// function to do on click
+							Click = async notifications =>
+							{
 							// if notification relates to feedback
 							if (notification.Type == "FEEDBACK")
 							{
@@ -84,9 +85,13 @@
 
 							}
 							// clear notifications
-							NotificationService.Messages.Clear();
-						},
-					});
+							//NotificationService.Messages.Clear();
+
+							// delete notification from db
+							await NotificationClient.NotificationDelete(notification.NotificationID);
+							},
+						}
+					);
 				}
 
 				// delete notifications

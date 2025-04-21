@@ -34,6 +34,13 @@ namespace Server
         /// <param name="userId">The ID of the user whose notifications should be deleted.</param>
         /// <returns>True if the notifications were deleted successfully; otherwise, false.</returns>
         Task<bool> DeleteNotificationsByUserAsync(int userId);
+
+        /// <summary>
+        /// Deletes notification by id.
+        /// </summary>
+        /// <param name="NotificationID">The ID of the notification.</param>
+        /// <returns>True if the notifications were deleted successfully; otherwise, false.</returns>
+        Task<bool> DeleteNotificationAsync(int NotificationID);
     }
 
     /// <summary>
@@ -115,6 +122,26 @@ namespace Server
             {
                 var notifications = await _context.Notification
                     .Where(n => n.UserID == userId)
+                    .ToListAsync();
+
+                _context.Notification.RemoveRange(notifications);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Failed to delete notifications");
+                return false;
+            }
+        }
+
+        /// <inheritdoc/>
+        public async Task<bool> DeleteNotificationAsync(int NotificationID)
+        {
+            try
+            {
+                var notifications = await _context.Notification
+                    .Where(n => n.NotificationID == NotificationID)
                     .ToListAsync();
 
                 _context.Notification.RemoveRange(notifications);
