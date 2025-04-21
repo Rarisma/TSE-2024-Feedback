@@ -11,10 +11,11 @@
 @inject AppTheme AppTheme
 
 <div class="@AppTheme.ColourTheme" Style="display: flex; flex-direction: column; height: 100%; padding: 0;">
-        
-    <!-- Call notification Toasts-->
-    <Application.Components.Pages.Notification/>
 
+    <!-- Call notification Toasts-->
+    @if(ShowNotifications){
+        <Application.Components.Pages.Notification/>
+    }
     <!-- Title header -->
     <div Style="display: flex; align-items: center; justify-content: center; padding: 12px 15px; border-bottom: 1px solid var(--sidebar-border); font-family: 'Poppins', sans-serif;">
         <span class="nav-text-full" Style="color: var(--light-text); font-weight: 600; font-size: 16px; text-align: center;">Feedback Tracker</span>
@@ -28,7 +29,7 @@
                 <span class="nav-text">  Home</span>
             </NavLink>
         </div>
-        
+
         @if (Auth.IsAuthorised())
         {
             <div Style="padding: 5px 15px; margin: 2px 0;">
@@ -37,7 +38,7 @@
                     <span class="nav-text">  Create Feedback</span>
                 </NavLink>
             </div>
-            
+
             <div Style="padding: 5px 15px; margin: 2px 0;">
                 <NavLink href="usersfeedback" Style="display: flex; align-items: center; padding: 8px 10px; border-radius: 5px; text-decoration: none; color: var(--light-text); transition: background-color 0.2s;" class="nav-item">
                     <RadzenIcon Icon="assignment" Style="font-size: 18px; color: var(--icon-color); margin-right: 2px;" class="nav-icon" />
@@ -56,7 +57,7 @@
             }
         }
     </div>
-    
+
     <!-- Bottom Navigation Icons -->
     <div Style="padding: 15px; margin-top: auto; border-top: 1px solid var(--sidebar-border);">
         <div class="settings-buttons" Style="display: flex; align-items: center; justify-content: center; width: 100%;">
@@ -73,8 +74,8 @@
                 <span class="material-icons theme-icon" style="color: var(--icon-color) !important;">@GetThemeIcon(AppTheme.ColourTheme)</span>
             </button>
             @if (Auth.IsAuthorised()){ <a href="/logout" class="nav-button"
-            Style="padding: 0; width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background-color: transparent; color: var(--icon-color); border: none; text-decoration: none; cursor: pointer;">
-                <span class="material-icons">logout</span></a>}
+                Style="padding: 0; width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background-color: transparent; color: var(--icon-color); border: none; text-decoration: none; cursor: pointer;">
+                    <span class="material-icons">logout</span></a>}
         </div>
     </div>
 </div>
@@ -83,6 +84,13 @@
 
 @code{
     User? user;
+    private bool ShowNotifications =>
+    NavigationManager.Uri.Contains("") ||
+    NavigationManager.Uri.Contains("feedback") ||
+    NavigationManager.Uri.Contains("viewfeedback") ||
+    NavigationManager.Uri.Contains("usersfeedback") ||
+    NavigationManager.Uri.Contains("TeacherDashboard");
+
     protected override Task OnInitializedAsync()
     {
         NavigationManager.LocationChanged += async (_, _) =>
