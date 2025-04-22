@@ -13,80 +13,97 @@
     @if (Auth.IsAuthorised())
     {   <PageTitle>Feedback Page</PageTitle>
 
-        <RadzenCard Style="margin: 5vh auto; max-width: 800px; background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px); border-radius: 12px; box-shadow: 0 20px 35px rgba(0, 0, 0, 0.2);">
-            <RadzenTemplateForm TItem="@Core.Definitions.Feedback" Data="@_feedback" Submit ="@SendFeedback">
+        <RadzenTemplateForm TItem="@Core.Definitions.Feedback" Data="@_feedback" Submit="@SendFeedback">
+            <RadzenCard class="feedbackCard">
                 <!--Title-->
-                <RadzenText TextStyle="TextStyle.H3" Style="text-align: center; margin-bottom: 20px; color: #333333;">Create Feedback</RadzenText>
+                <div class="text-center mb-4">
+                    <RadzenIcon Icon="feedback" Style="font-size: 2rem; color: var(--primary);" />
+                    <RadzenText TextStyle="TextStyle.H3" Style="text-align: center; color: var(--text-primary);">Create Feedback</RadzenText>
+                </div>
+
                 <!--Name-->
-                <div class="mb-3">
-                    <RadzenText TextStyle="TextStyle.Subtitle1" Style="display: block; margin-bottom: 10px;">Name:</RadzenText>
-                    <RadzenTextBox @bind-Value="_feedback.Title" Name="Title" Placeholder="Enter Feedback Here..." MaxLength="3000" Style="width: 100%; background-color: rgba(255, 255, 255, 0.25); padding: 15px; border-radius: 8px;" />
-                    <RadzenRequiredValidator Component="Title" Text="Required" />
+                <div class="mb-4">
+                    <div class="feedbackMainHeading">
+                        <RadzenIcon Icon="title" class="feedbackIcon" />
+                        <RadzenText TextStyle="TextStyle.Subtitle1" class="feedbackHeading">Title</RadzenText>
+                    </div>
+                    <RadzenTextBox @bind-Value="_feedback.Title" Name="Title" Placeholder="Enter Feedback Title..." MaxLength="3000" class="feedbackInput feedbackText" />
+                    <RadzenRequiredValidator Component="Title" Text="Title is required" />
                 </div>
-                <!--Text-->
-                <div class="mb-3">
-                    <RadzenText TextStyle="TextStyle.Subtitle1" Style="display: block; margin-bottom: 10px;">Feedback Information:</RadzenText>
-                    <RadzenTextArea @bind-Value="_feedback.FeedbackText"  Name="Text" Placeholder="Enter Information About Feedback Here..." Style="width: 100%; height: 100px; resize: none; background-color: rgba(255, 255, 255, 0.25); padding: 15px; border-radius: 8px;" MaxLength="8000" />
-                    <RadzenRequiredValidator Component="Text" Text="Required" />
+
+                <!--Description-->
+                <div class="mb-4">
+                    <div class="feedbackMainHeading">
+                        <RadzenIcon Icon="description" class="feedbackIcon" />
+                        <RadzenText TextStyle="TextStyle.Subtitle1" class="feedbackHeading">Description</RadzenText>
+                    </div>
+                    <RadzenTextArea @bind-Value="_feedback.FeedbackText" Name="Text" Placeholder="Enter Information About Feedback Here..." class="feedbackInput feedbackText feedbackTextArea" MaxLength="8000" />
+                    <RadzenRequiredValidator Component="Text" Text="Description is required" />
                 </div>
+
                 <!--Module-->
-                <div class="mb-3">
-                    <RadzenText TextStyle="TextStyle.Subtitle1" Style="display: block; margin-bottom: 10px;">Feedback Module:</RadzenText>
-                    <RadzenDropDown TValue="int" @bind-Value="_feedback.ModuleID" @onchange="ModuleSelected" Data="_modules" 
-                    TextProperty="Module" ValueProperty="ModuleID" Name="Module"
-                    Style="width: 100%; background-color: rgba(255, 255, 255, 0.25); padding: 10px; border-radius: 8px;" />
-                    <RadzenRequiredValidator Component="Module" Text="Required" />
-                </div>
-                <!--Assign-->
-
-                <div class="mb-3">
-                    <RadzenLabel TextStyle="TextStyle.Subtitle1" Style="display: block; margin-bottom: 10px;">Teacher To Assign Feedback:</RadzenLabel>
-                    <RadzenDropDown TValue="int?" @bind-Value="_feedback.AssignedUserID" Data="@_users.Where(u => u.IsTeacher)" 
-                    TextProperty="Username" ValueProperty="UserID" Name="Assignee"
-                    Style="width: 100%; background-color: rgba(255, 255, 255, 0.25); padding: 10px; border-radius: 8px;" />
-                    <RadzenRequiredValidator Component="Assignee" Text="Required" />
+                <div class="mb-4">
+                    <div class="feedbackMainHeading">
+                        <RadzenIcon Icon="school" class="feedbackIcon" />
+                        <RadzenText TextStyle="TextStyle.Subtitle1" class="feedbackHeading">Module</RadzenText>
+                    </div>
+                    <RadzenDropDown TValue="int" @bind-Value="_feedback.ModuleID" @onchange="ModuleSelected" Data="_modules"
+                    TextProperty="Module" ValueProperty="ModuleID" Name="Module" AllowClear="false" AllowFiltering="true" class="feedbackInput feedbackDrop" />
+                    <RadzenRequiredValidator Component="Module" Text="Module is required" />
                 </div>
 
-                <!--Label-->
-                <div class="mb-3">
-                    <RadzenText TextStyle="TextStyle.Subtitle1" Style="display: block; margin-bottom: 10px;">Label:</RadzenText>
-                    <RadzenDropDown TValue="Core.Definitions.FeedbackLabel?" @bind-Value="_feedback.Label"
-                    Data='@(Enum.GetValues<FeedbackLabel>()
-                                        .Select(e => new LabelOption
-                                        {
-                                            Value = (Core.Definitions.FeedbackLabel?)e,
-                                            Text = $"{e}"
-                                        }).ToList())'
-                    TextProperty="Text"
-                    ValueProperty="Value"
-                    Name="Label"
-                    Style="width: 100%; background-color: rgba(255, 255, 255, 0.25); padding: 10px; border-radius: 8px;" />
-                    <RadzenRequiredValidator Component="Label" Text="Required" />
+                <!--Assign Teacher-->
+                <div class="mb-4">
+                    <div class="feedbackMainHeading">
+                        <RadzenIcon Icon="person_add" class="feedbackIcon" />
+                        <RadzenText TextStyle="TextStyle.Subtitle1" class="feedbackHeading">Assigned Teacher</RadzenText>
+                    </div>
+                    <RadzenDropDown TValue="int?" @bind-Value="_feedback.AssignedUserID" Data="@_users.Where(u => u.IsTeacher)"
+                     TextProperty="Username" ValueProperty="UserID" Name="Assignee" AllowClear="false" AllowFiltering="true" class="feedbackInput feedbackDrop" />
+                    <RadzenRequiredValidator Component="Assignee" Text="Assignee is required" />
                 </div>
 
-                <div class="mb-3">
-                    <RadzenText TextStyle="TextStyle.Subtitle1" Style="display: block; margin-bottom: 10px;">Visibility:</RadzenText>
-                    <RadzenDropDown TValue="Core.Definitions.FeedbackVisibility" @bind-Value="_feedback.Visibility"
-                    Data='@(Enum.GetValues<FeedbackVisibility>()
-                                        .Select(e => new VisibiltyOption
-                                        {
-                                            Value = (Core.Definitions.FeedbackVisibility)e,
-                                            Text = $"{e}"
-                                        }).ToList())'
-                    TextProperty="Text"
-                    ValueProperty="Value"
-                    Name="Visibility"
-                    Style="width: 100%; background-color: rgba(255, 255, 255, 0.25); padding: 10px; border-radius: 8px;" />
-                    <RadzenRequiredValidator Component="Visibility" Text="Required" />
+                <div class="row">
+
+                    <!--Label-->
+                    <div class="col-md-6 mb-4">
+                        <div class="feedbackMainHeading">
+                            <RadzenIcon Icon="label" class="feedbackIcon" />
+                            <RadzenText TextStyle="TextStyle.Subtitle1" class="feedbackHeading">Label</RadzenText>
+                        </div>
+
+                        <RadzenDropDown TValue="Core.Definitions.FeedbackLabel?" @bind-Value="_feedback.Label"
+                                        Data='@(Enum.GetValues<FeedbackLabel>().Select(e => new LabelOption
+                                        {Value = (Core.Definitions.FeedbackLabel?)e,Text = $"{e}"}).ToList())'
+                        TextProperty="Text" ValueProperty="Value" Name="Label" class="feedbackInput feedbackDrop" />
+                        <RadzenRequiredValidator Component="Label" Text="Label is required"/>
+
+                    </div>
+
+                    <!--Visibility-->
+                    <div class="col-md-6 mb-4">
+                        <div class="feedbackMainHeading">
+                            <RadzenIcon Icon="visibility" class="feedbackIcon" />
+                            <RadzenText TextStyle="TextStyle.Subtitle1" class="feedbackHeading">Visibility</RadzenText>
+                        </div>
+
+                        <RadzenDropDown TValue="Core.Definitions.FeedbackVisibility" @bind-Value="_feedback.Visibility"
+                                        Data='@(Enum.GetValues<FeedbackVisibility>().Select(e => new VisibiltyOption
+                                        {Value = (Core.Definitions.FeedbackVisibility)e,Text = $"{e}"}).ToList())'
+                        TextProperty="Text" ValueProperty="Value" Name="Visibility" class="feedbackInput feedbackDrop" />
+                        <RadzenRequiredValidator Component="Visibility" Text="Visibility is required" />
+
+                    </div>
                 </div>
 
-                <div class="mb-3 text-center">
-                    <RadzenButton ButtonType="ButtonType.Submit" Text="Submit Feedback"
+                <!--Button-->
+                <div class="text-center mt-5">
+                    <RadzenButton ButtonType="ButtonType.Submit" Text="Submit Feedback" Icon="send"
                     ButtonStyle="ButtonStyle.Primary" 
-                    Style="margin: 20px auto; width: 30%; background-color: #5563DE; padding: 12px 20px; color: white; font-weight: 500; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);" />
+                    class="feedbackButton" />
                 </div>
+            </RadzenCard>
             </RadzenTemplateForm>
-        </RadzenCard>
 
     }
 </div>

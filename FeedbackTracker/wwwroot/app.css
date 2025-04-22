@@ -337,6 +337,59 @@ body.theme-hybrid {
     color: var(--accent);
 }
 
+/* =========== FEEDBACK FORM =========== */
+
+.feedbackCard {
+    margin: 5vh auto;
+    background-color: var(--card-bg);
+    border-radius: var(--border-radius);
+    box-shadow: var(--card-shadow);
+}
+
+.feedbackIcon {
+    margin-right: 8px;
+    margin-bottom: 8px;
+    color: var(--primary);
+}
+
+.feedbackHeading {
+    color: var(--text-primary);
+}
+
+.feedbackMainHeading {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.feedbackInput {
+    width: 100%;
+    background-color: var(--hover-overlay);
+    color: var(--text-primary);
+    border-color: var(--border-color);
+    border-radius: var(--button-radius);
+}
+
+.feedbackText {
+    padding: 12px;
+}
+
+.feedbackDrop {
+    padding: 8px;
+}
+
+.feedbackTextArea {
+    height: 120px;
+    resize: none;
+}
+
+.feedbackButton {
+    background-color: var(--primary);
+    color: var(--text-on-primary);
+    padding: 12px 25px;
+    border-radius: var(--button-radius);
+}
+
 /* =========== COMPONENTS =========== */
 
 /* Layout container */

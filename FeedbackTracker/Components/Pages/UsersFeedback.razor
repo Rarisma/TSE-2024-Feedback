@@ -16,8 +16,6 @@
 
 @{
     <title>Your Feedback</title>
-    @if (JAuth.IsAuthorised())
-    {
         <RadzenCard Style="margin-bottom: 30px; background-color: var(--main-body); border: 1px solid var(--border-color);">
             <div style="text-align: center; margin-bottom: 20px;">
                 <h1 style="font-size: 3.2rem; font-weight: 700; color: var(--text-primary); text-shadow: 0 0 5px rgba(0, 0, 0, 0.3);">
@@ -126,17 +124,6 @@
                 </Columns>
             </RadzenDataGrid>
         </RadzenCard>
-    }
-    else //For users that aren't logged in
-    {
-        <div class="loggedout">
-            <div class="loggedout-msg">
-                <img src="/Images/LoginCone.png" alt="Login Required" class="cone-img">
-                <h2>Please log in to access the feedback form.</h2>
-                <button class="btn btn-loggedout" @onclick=HomeButton>Return Home</button>
-            </div>
-        </div>
-    }
 
 }
 	
