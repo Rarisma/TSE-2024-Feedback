@@ -61,7 +61,7 @@
 						new NotificationMessage()
 						{
 							// setup
-							Style = "position:relative;width:25vw;height:15vh;right:2vw;padding:2px;",
+								Style = "position:relative;bottom: 2vh;width:25vw;height:15vh;right:2vw;padding:2px;",
 							// notification type
 							Severity = NotificationSeverity.Info,
 							// linger time
@@ -102,7 +102,7 @@
 					new NotificationMessage()
 						{
 							// setup
-							Style = "position:relative;width:25vw;height:15vh;right:2vw;padding:2px;",
+							Style = "position:relative;bottom: 2vh;width:25vw;height:15vh;right:2vw;padding:2px;",
 							// notification type
 							Severity = NotificationSeverity.Info,
 							// linger time
@@ -110,7 +110,7 @@
 							// show time left
 							//ShowProgress = true,
 							// title
-							SummaryContent = ns => @<RadzenText TextStyle="TextStyle.H6" class="sectionTitle">Clear all!</RadzenText>,
+							SummaryContent = ns => @<RadzenText TextStyle="TextStyle.H6" class="sectionTitle">Click this to Clear all!</RadzenText>,
 							// main content
 							DetailContent = ns => @<RadzenText TextStyle="TextStyle.H6" class="sectionTitle"></RadzenText>,
 							// show x to close
