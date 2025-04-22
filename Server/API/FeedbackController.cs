@@ -115,7 +115,7 @@ public class FeedbackController : Controller
             var fb = ctx.Feedback.Add(feedback);
             ctx.SaveChanges();
 
-			// add feeedback
+			// add notification
             var result = await _notificationService.CreateNotificationAsync(feedback.AssignedUserID.Value, "New Feedback", feedback.Title, "FEEDBACK", feedback.FeedbackID.ToString());
 
             return "Feedback created successfully";
@@ -145,7 +145,7 @@ public class FeedbackController : Controller
  	/// <param name="text">Comment content</param>
     /// </summary>
     [HttpPost("CreateComment")]
-    public string CreateComment(int feedbackID, int userID, [FromBody] string? text)
+    public async Task<string> CreateComment(int feedbackID, int userID, [FromBody] string? text)
     {
         try
         {
@@ -161,7 +161,13 @@ public class FeedbackController : Controller
 		        using TrackerContext ctx = new();
 		        ctx.FeedbackComments.Add(comment);
 		        ctx.SaveChanges();
-	        }
+
+                // add notification
+
+				var feedback = ctx.Feedback.First(f=>f.FeedbackID == comment.FeedbackID);
+
+                var result = await _notificationService.CreateNotificationAsync(feedback.AssignedUserID.Value, "New Comment on : "+feedback.Title.ToString(), comment.Body, "COMMENT", comment.FeedbackID.ToString());
+            }
 
 	        return "Comment created successfully";
         }

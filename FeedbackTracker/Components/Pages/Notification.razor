@@ -61,11 +61,11 @@
 						new NotificationMessage()
 						{
 							// setup
-							Style = "position:fixed;width:25vw;height:20vh;right:5vw;",
+							Style = "position:relative;width:25vw;height:15vh;right:2vw;padding:2px;",
 							// notification type
 							Severity = NotificationSeverity.Info,
 							// linger time
-							Duration = 10000,
+							Duration = 20000,
 							// show time left
 							ShowProgress = true,
 							// title
@@ -78,7 +78,7 @@
 							Click = async notifications =>
 							{
 							// if notification relates to feedback
-							if (notification.Type == "FEEDBACK")
+							if (notification.Type == "FEEDBACK" || notification.Type == "COMMENT")
 							{
 								// re-direct to feedback
 								NavigationManager.NavigateTo($"/viewfeedback/{notification.Payload}");
@@ -92,10 +92,39 @@
 							},
 						}
 					);
-				}
 
-				// delete notifications
-				//await NotificationClient.NotificationDelete(user.UserID);
+					
+
+				}
+				// clear all
+				// show notifications
+				NotificationService.Notify(
+					new NotificationMessage()
+						{
+							// setup
+							Style = "position:relative;width:25vw;height:15vh;right:2vw;padding:2px;",
+							// notification type
+							Severity = NotificationSeverity.Info,
+							// linger time
+							Duration = 20000,
+							// show time left
+							//ShowProgress = true,
+							// title
+							SummaryContent = ns => @<RadzenText TextStyle="TextStyle.H6" class="sectionTitle">Clear all!</RadzenText>,
+							// main content
+							DetailContent = ns => @<RadzenText TextStyle="TextStyle.H6" class="sectionTitle"></RadzenText>,
+							// show x to close
+							CloseOnClick = true,
+							// function to do on click
+							Click = async notifications =>
+							{
+								// delete notifications
+							NotificationService.Messages.Clear();
+								await NotificationClient.NotificationDelete(user.UserID);
+							},
+						}
+				);
+
 
 				await InvokeAsync(StateHasChanged);
 			}
