@@ -118,9 +118,10 @@
 							// function to do on click
 							Click = async notifications =>
 							{
-								// delete notifications
+
+							await NotificationClient.NotificationDeleteByUser(user.UserID);								
+							// delete notifications
 							NotificationService.Messages.Clear();
-								await NotificationClient.NotificationDelete(user.UserID);
 							},
 						}
 				);
