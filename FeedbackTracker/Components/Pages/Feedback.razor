@@ -7,7 +7,7 @@
 @inject ModuleAPI ModuleClient
 @inject UserAPI UserClient
 @inject NavigationManager NavigationManager
-
+@inject IJSRuntime JS
 <title>TSE Feedback: Create Feedback </title>
 <div class="container">
     @if (Auth.IsAuthorised())
@@ -137,8 +137,6 @@
             _users = modUsers;
             _feedback.AssignedUserID = modUsers[0].UserID;
         }
-
-        StateHasChanged();
     }
 
     /// <summary>
@@ -171,8 +169,6 @@
         }
 
         await GetAssignableUsers();
-        // refresh ui with new data
-        StateHasChanged();
     }
 
 
@@ -221,6 +217,14 @@
         {
             await GetUser();
             await GetModules();
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            StateHasChanged();
         }
     }
 }

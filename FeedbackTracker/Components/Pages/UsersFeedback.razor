@@ -7,6 +7,7 @@
 @inject JAuth JAuth
 @inject NavigationManager NavigationManager
 @inject UserAPI UserClient
+@inject NotificationAPI NotificationClient
 @inject ModuleAPI ModuleClient
 @rendermode InteractiveServer
 
@@ -339,15 +340,6 @@
             }
     }
 
-    private async Task clearNotifications(){
-        List<Notification?>? notifications = await UserClientAccess.GetNotification(JAuth.GetUser().UserID);
-
-        if (notifications.Count > 0)
-        {
-            await UserClientAccess.NotificationDelete(JAuth.GetUser().UserID);
-
-        }
-    }
     /// <summary>
     /// Loads the feedback data and teacher data as soon as the page is loaded
     /// </summary>
@@ -359,9 +351,6 @@
             if(JAuth.GetUser()!=null){
                 await LoadAllFeedback(JAuth.User.UserID);
                 await LoadAssignees();
-
-                // clear notifications
-                await clearNotifications();
             }
         }
     }
