@@ -20,8 +20,11 @@ public class SchoolAPI
         try
         {
             //Format for server
-            StringContent SchoolData = new StringContent($"\"{SchoolName}\"", Encoding.UTF8, "application/json");
-            HttpResponseMessage response = await _httpClient.PostAsync($"School/CreateSchool", SchoolData);
+            string url = $"School/CreateSchool?SchoolName={Uri.EscapeDataString(SchoolName.ToString())}" +
+                        $"&EducationLevel={Uri.EscapeDataString(EducationLevel.ToString())}" +
+                        $"&City={Uri.EscapeDataString(City.ToString())}";
+            //StringContent SchoolData = new StringContent($"{SchoolName}", Encoding.UTF8, "application/json");
+            HttpResponseMessage response = await _httpClient.PostAsync(url, null);
 
 
             //Send

@@ -6,7 +6,10 @@ namespace Core.Definitions;
 public class Users_Modules
 {
 	[Key]
-	[Column("USER_ID")]
+	[Column("ID")]
+    public int ID { get; init; }
+
+    [Column("USER_ID")]
 	public int UserID { get; init; }
 
 	[Column("MODULE_ID")]

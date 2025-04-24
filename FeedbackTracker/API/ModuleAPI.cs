@@ -136,4 +136,19 @@ public class ModuleAPI
             Log.Error(ex, "Failed to remove user from module");
         }
     }
+
+    public async Task<string> AddToModuleBySchool(string schoolid, string moduleid)
+    {
+        try
+        {
+            HttpResponseMessage response = await _httpClient.PostAsync($"Module/AddToModuleBySchool?schoolID={Uri.EscapeDataString(schoolid.ToString())}&moduleID={Uri.EscapeDataString(moduleid.ToString())}", null);
+            response.EnsureSuccessStatusCode();
+            return "success";
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Failed to add user to module");
+            return "Error";
+        }
+    }
 }
