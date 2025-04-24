@@ -47,6 +47,8 @@
 @code {
     private bool ShowFooter => 
         NavigationManager.Uri.Contains("login") ||
+        NavigationManager.Uri.Contains("LogIn") ||
+        NavigationManager.Uri.Contains("ResetPassword") ||
         NavigationManager.Uri.Contains("SignUp") ||
         NavigationManager.Uri.Contains("contact") ||
         NavigationManager.Uri.Contains("about") ||

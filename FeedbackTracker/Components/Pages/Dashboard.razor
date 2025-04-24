@@ -20,7 +20,7 @@
         <RadzenRow AlignItems="AlignItems.Center">
             <RadzenColumn SizeMD="8">
                 <div class="welcomeHeader">
-                    <RadzenText TextStyle="TextStyle.H2" class="welcomeTitle">@welcomeMessage, <span class="boldUsername">@assignee.Username @welcomeSymbol</span></RadzenText>
+                    <RadzenText TextStyle="TextStyle.H2" class="welcomeTitle">@welcomeMessage, <span class="boldUsername">@assignee.FirstName @welcomeSymbol</span></RadzenText>
                 </div>
                 <RadzenButton Text="Create New Feedback" Icon="add_circle" Click="@(() => NavigationManager.NavigateTo("/Feedback"))" />
             </RadzenColumn>

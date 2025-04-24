@@ -8,6 +8,7 @@
 @inject UserAPI UserAPI
 @inject JAuth JAuth
 @inject Radzen.NotificationService NotificationService
+@inject FeedbackTracker.Services.AppTheme AppTheme
 
 <title>TSE Modules: Create Module</title>
 <RadzenNotification />
@@ -15,11 +16,11 @@
 @if (JAuth.IsAuthorised())
 {
     <div class="d-flex justify-content-center align-items-center" style="min-height: 90vh; flex-direction: column;">
-        <h3 class="text-center mb-4" style="font-family: 'Lato', sans-serif; color: #2c3e50;">
+        <h3 class="text-center mb-4" style="font-family: 'Lato', sans-serif; color: var(--text-primary);">
             Teacher Dashboard - Module Management
         </h3>
 
-        <div class="text-center mb-4">
+        <div class="text-center mb-4" style="color: var(--text-primary);">
             Logged in as: @_assignee.Username
         </div>
 
@@ -27,11 +28,11 @@
             <div class="row justify-content-center">
                 <div class="col-md-8">
                     <!-- Create Module  -->
-                    <div class="card mb-4 shadow-sm">
-                        <div class="card-header bg-primary text-white text-center">
-                            <h5 class="mb-0">Create Module</h5>
+                    <div class="card mb-4 shadow-sm" style="background-color: var(--card-bg); border-color: var(--border-color);">
+                        <div class="card-header text-white text-center" style="background-color: var(--primary);">
+                            <h5 class="mb-0" style="color: #fff;">Create Module</h5>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body" style="color: var(--text-primary);">
                             <form>
                                 <div class="mb-3">
                                     <label for="moduleName" class="form-label">Module Name</label>
@@ -45,11 +46,11 @@
                     </div>
 
                     <!-- Assign Module  -->
-                    <div class="card mb-4 shadow-sm">
-                        <div class="card-header bg-primary text-white text-center">
-                            <h5 class="mb-0">Assign Module to User</h5>
+                    <div class="card mb-4 shadow-sm" style="background-color: var(--card-bg); border-color: var(--border-color);">
+                        <div class="card-header text-white text-center" style="background-color: var(--primary);">
+                            <h5 class="mb-0" style="color: #fff;">Assign Module to User</h5>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body" style="color: var(--text-primary);">
                             <form>
                                 <div class="mb-3">
                                     <label for="assignUserSelect" class="form-label">Select User</label>
@@ -79,11 +80,11 @@
                     </div>
 
                     <!-- Remove from Module  -->
-                    <div class="card mb-4 shadow-sm">
-                        <div class="card-header bg-primary text-white text-center">
-                            <h5 class="mb-0">Remove User from Module</h5>
+                    <div class="card mb-4 shadow-sm" style="background-color: var(--card-bg); border-color: var(--border-color);">
+                        <div class="card-header text-white text-center" style="background-color: var(--primary);">
+                            <h5 class="mb-0" style="color: #fff;">Remove User from Module</h5>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body" style="color: var(--text-primary);">
                             <form>
                                 <div class="mb-3">
                                     <label for="removeUserSelect" class="form-label">Select User</label>
@@ -113,14 +114,14 @@
                     </div>
 
                     <!-- Bulk -->
-                    <div class="card mb-4 shadow-sm">
-                        <div class="card-header bg-primary text-white text-center">
-                            <h5 class="mb-0">Bulk Operations</h5>
+                    <div class="card mb-4 shadow-sm" style="background-color: var(--card-bg); border-color: var(--border-color);">
+                        <div class="card-header text-white text-center" style="background-color: var(--primary);">
+                            <h5 class="mb-0" style="color: #fff;">Bulk Operations</h5>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body" style="color: var(--text-primary);">
                             <!-- Create Users -->
                             <div class="mb-4">
-                                <h6 class="mb-3 text-center">Bulk Create Users</h6>
+                                <h6 class="mb-3 text-center" style="color: var(--text-primary);">Bulk Create Users</h6>
                                 <div class="mb-3">
                                     <input type="text" class="form-control" @bind="_BulkUserEmails" placeholder="Enter user emails (CSV)">
                                 </div>
@@ -133,7 +134,7 @@
 
                             <!-- Create Modules -->
                             <div class="mb-4">
-                                <h6 class="mb-3 text-center">Bulk Create Modules</h6>
+                                <h6 class="mb-3 text-center" style="color: var(--text-primary);">Bulk Create Modules</h6>
                                 <div class="mb-3">
                                     <input type="text" class="form-control" @bind="_BulkModules" placeholder="Enter Module names (CSV)">
                                 </div>
@@ -146,7 +147,7 @@
 
                             <!-- Assign Modules -->
                             <div>
-                                <h6 class="mb-3 text-center">Bulk Assign Modules</h6>
+                                <h6 class="mb-3 text-center" style="color: var(--text-primary);">Bulk Assign Modules</h6>
                                 <div class="mb-3">
                                     <input type="text" class="form-control" @bind="_BulkModUserEmails" placeholder="Enter user emails (CSV)">
                                 </div>
@@ -160,7 +161,7 @@
 
                             <!-- IsStudent/IsTeacher-->
                             <div>
-                                <h6 class="mb-3 text-center">Bulk Assign Role assign</h6>
+                                <h6 class="mb-3 text-center" style="color: var(--text-primary); margin-top: 18px;">Bulk Assign Role assign</h6>
                                 <div class="mb-3">
                                     <input type="text" class="form-control" @bind="_BulkModUserEmails" placeholder="Enter user emails (CSV)">
                                 </div>

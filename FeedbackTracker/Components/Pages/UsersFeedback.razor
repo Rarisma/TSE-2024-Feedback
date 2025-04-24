@@ -101,18 +101,7 @@
                     </RadzenDataGridColumn>
                     <RadzenDataGridColumn TItem="Core.Definitions.Feedback" Title="Status" TextAlign="TextAlign.Center">
                         <Template Context="feedback">
-                            @if (JAuth.User.UserID == feedback.AssigneeID)
-                            {
-                                <strong style="color: var(--text-primary);">You assigned this!</strong>
-                            }
-                            else if (JAuth.User.UserID != feedback.AssigneeID && JAuth.User.UserID != feedback.AssignedUserID)
-                            {
-                                <p style="color: var(--text-primary);"></p>
-                            }
-                            else
-                            {
-                                <strong style="color: var(--text-primary);">This was assigned to you!</strong>
-                            }
+                            <RadzenBadge Text="@(feedback.Closed ? "Closed" : "Open")" BadgeStyle="@(feedback.Closed ? BadgeStyle.Success : BadgeStyle.Warning)" />
                         </Template>
                     </RadzenDataGridColumn>
 

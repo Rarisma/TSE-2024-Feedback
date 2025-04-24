@@ -8,38 +8,39 @@
 @inject UserAPI UserAPI
 @inject JAuth JAuth
 @inject NavigationManager NavigationManager
+@inject FeedbackTracker.Services.AppTheme AppTheme
 
 <PageTitle>Feedback</PageTitle>
 
-<RadzenCard Style="margin: 20px; background-color: #f5f7fa; border: none; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+<RadzenCard Style="margin: 20px; background-color: var(--card-bg); border: none; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
 	@if (SelectedFeedback != null)
 	{
 		@if (!_isEditing)
 		{
 			<RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.SpaceBetween" AlignItems="AlignItems.Start" Gap="1rem" Style="margin-bottom: 20px;">
 				<RadzenStack>
-					<RadzenText TextStyle="TextStyle.H3" Style="color: #2c3e50; font-weight: bold; text-decoration: underline;">@SelectedFeedback.Title</RadzenText>
-					<RadzenText TextStyle="TextStyle.Body1" Style="margin-top: 10px;">
+					<RadzenText TextStyle="TextStyle.H3" Style="color: var(--text-primary); font-weight: bold; text-decoration: underline;">@SelectedFeedback.Title</RadzenText>
+					<RadzenText TextStyle="TextStyle.Body1" Style="margin-top: 10px; color: var(--text-primary);">
 						<b>Created By:</b> @_users.First(u => u.UserID == SelectedFeedback.AssigneeID).Username
 					</RadzenText>
-					<RadzenText TextStyle="TextStyle.Body1">
+					<RadzenText TextStyle="TextStyle.Body1" Style="color: var(--text-primary);">
 						<b>Assigned To:</b> @_users.First(u => u.UserID == SelectedFeedback.AssignedUserID).Username
 					</RadzenText>
-					<RadzenText TextStyle="TextStyle.Body1">
+					<RadzenText TextStyle="TextStyle.Body1" Style="color: var(--text-primary);">
 						<b>Module: </b> @moduleTitle
 					</RadzenText>
-					<RadzenText TextStyle="TextStyle.Body1">
+					<RadzenText TextStyle="TextStyle.Body1" Style="color: var(--text-primary);">
 						<b>Opened on:</b> @SelectedFeedback.CreatedDate?.ToString("g")
 					</RadzenText>
 					
 					@if (SelectedFeedback.Closed)
 					{
-						<RadzenText TextStyle="TextStyle.Body1">
+						<RadzenText TextStyle="TextStyle.Body1" Style="color: var(--text-primary);">
 							<b>Closed on:</b> @SelectedFeedback.ClosedDate?.ToString("g")
 						</RadzenText>
 					}
 					
-					<RadzenText TextStyle="TextStyle.Body1" Style="margin-top: 10px;">
+					<RadzenText TextStyle="TextStyle.Body1" Style="margin-top: 10px; color: var(--text-primary);">
 						<b>Description:</b> @SelectedFeedback.FeedbackText
 					</RadzenText>
 				</RadzenStack>
@@ -48,13 +49,13 @@
 					@if (SelectedFeedback.Closed)
 					{
 						<RadzenBadge BadgeStyle="BadgeStyle.Warning" Text="Closed" Style="font-size: 14px; margin-bottom: 10px;" />
-						<RadzenText TextStyle="TextStyle.Body1">This feedback is closed, it can't be edited and new comments can't be added.</RadzenText>
+						<RadzenText TextStyle="TextStyle.Body1" Style="color: var(--text-primary);">This feedback is closed, it can't be edited and new comments can't be added.</RadzenText>
 					}
 					else
 					{
 						if (@JAuth.User!.UserID == SelectedFeedback.AssigneeID)
 						{
-							<RadzenButton Text="Edit" Icon="edit" ButtonStyle="ButtonStyle.Primary" Style="background-color: #3498db; margin-bottom: 10px;" Click="@EnableEditing" />
+							<RadzenButton Text="Edit" Icon="edit" ButtonStyle="ButtonStyle.Primary" Style="margin-bottom: 10px;" Click="@EnableEditing" />
 						}
 					}
 
@@ -62,11 +63,11 @@
 					{
 						@if (SelectedFeedback.Closed)
 						{
-							<RadzenButton Text="Mark as Incomplete" Icon="refresh" ButtonStyle="ButtonStyle.Secondary" Style="background-color: #7f8c8d;" Click="@ToggleCompletion" />
+							<RadzenButton Text="Mark as Incomplete" Icon="refresh" ButtonStyle="ButtonStyle.Secondary" Click="@ToggleCompletion" />
 						}
 						else
 						{
-							<RadzenButton Text="Mark as Complete" Icon="check_circle" ButtonStyle="ButtonStyle.Success" Style="background-color: #2ecc71;" Click="@ToggleCompletion" />
+							<RadzenButton Text="Mark as Complete" Icon="check_circle" ButtonStyle="ButtonStyle.Success" Click="@ToggleCompletion" />
 						}
 					}
 				</RadzenStack>
@@ -75,7 +76,7 @@
 		
 		@if (_isEditing)
 		{
-			<RadzenCard Style="background-color: #ecf0f1; margin-bottom: 20px;">
+			<RadzenCard Style="background-color: var(--card-bg); margin-bottom: 20px; border-color: var(--border-color);">
 				<RadzenStack Gap="1rem">
 					<RadzenFormField Text="Title" Style="width: 100%;">
 						<RadzenTextBox @bind-Value="editingTitle" Style="width: 100%;" />
@@ -84,8 +85,8 @@
 						<RadzenTextArea @bind-Value="editingDescription" Style="width: 100%; min-height: 100px;" />
 					</RadzenFormField>
 					<RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End" Gap="1rem">
-						<RadzenButton Text="Save" Icon="save" ButtonStyle="ButtonStyle.Primary" Style="background-color: #3498db;" Click="@SaveChanges" />
-						<RadzenButton Text="Cancel" Icon="cancel" ButtonStyle="ButtonStyle.Light" Style="background-color: #95a5a6;" Click="@CancelEditing" />
+						<RadzenButton Text="Save" Icon="save" ButtonStyle="ButtonStyle.Primary" Click="@SaveChanges" />
+						<RadzenButton Text="Cancel" Icon="cancel" ButtonStyle="ButtonStyle.Light" Click="@CancelEditing" />
 					</RadzenStack>
 				</RadzenStack>
 			</RadzenCard>
@@ -95,25 +96,25 @@
 		{
 			@if (_selectedComments != null)
 			{
-				<RadzenCard Style="background-color: #2c3e50; color: white; margin-top: 20px; margin-bottom: 20px;">
-					<RadzenText TextStyle="TextStyle.H5" Style="color: white; margin-bottom: 15px;">Comments</RadzenText>
+				<RadzenCard Style="background-color: var(--sidebar-bg); color: var(--text-on-sidebar); margin-top: 20px; margin-bottom: 20px;">
+					<RadzenText TextStyle="TextStyle.H5" Style="color: var(--text-on-sidebar); margin-bottom: 15px;">Comments</RadzenText>
 					
 					@if (_selectedComments.Count == 0)
 					{
-						<RadzenText TextStyle="TextStyle.Body1" Style="color: #ecf0f1;">No comments yet!</RadzenText>
+						<RadzenText TextStyle="TextStyle.Body1" Style="color: var(--text-on-sidebar);">No comments yet!</RadzenText>
 					}
 					else
 					{
 						<RadzenStack Gap="1rem">
 							@foreach (var comment in _selectedComments)
 							{
-								<RadzenCard Style="background-color: #34495e; color: white; margin-bottom: 10px;">
-									<RadzenText TextStyle="TextStyle.Body1" Style="color: #3498db; font-weight: bold;">
+								<RadzenCard Style="background-color: var(--card-bg); margin-bottom: 10px; border: 1px solid var(--border-color);">
+									<RadzenText TextStyle="TextStyle.Body1" Style="color: var(--text-primary); font-weight: bold;">
 										@_users.First(u => u.UserID == comment.CommenterID).Username
 										
 										at @comment.CommentTime
 									</RadzenText>
-									<RadzenText TextStyle="TextStyle.Body1" Style="color: #ecf0f1; margin-top: 5px;">
+									<RadzenText TextStyle="TextStyle.Body1" Style="color: var(--text-primary); margin-top: 5px;">
 										@comment.Body
 									</RadzenText>
 								</RadzenCard>
@@ -124,21 +125,21 @@
 
 				@if (!SelectedFeedback.Closed)
 				{
-					<RadzenCard Style="background-color: #ecf0f1; margin-top: 20px;">
+					<RadzenCard Style="background-color: var(--card-bg); margin-top: 20px; border-color: var(--border-color);">
 						<RadzenStack>
-							<RadzenFormField Text="Add a comment" Style="width: 100%;">
+							<RadzenFormField Text="Add a comment" Style="width: 100%; color: var(--text-primary);">
 								<RadzenTextArea @bind-Value="_newCommentText" Placeholder="Write your comment here..." 
-								                Style="width: 100%; min-height: 80px;" Disabled="false" />
+								                Style="width: 100%; min-height: 80px; background-color: var(--card-bg); color: var(--text-primary); border-color: var(--border-color);" Disabled="false" />
 							</RadzenFormField>
 							<div style="text-align: right; margin-top: 10px;">
-								<RadzenButton Text="Submit Comment" Icon="send" ButtonStyle="ButtonStyle.Primary" Style="background-color: #3498db;" Click="@SubmitComment" />
+								<RadzenButton Text="Submit Comment" Icon="send" ButtonStyle="ButtonStyle.Primary" Click="@SubmitComment" />
 							</div>
 						</RadzenStack>
 					</RadzenCard>
 				}
 				else 
 				{
-					<RadzenText TextStyle="TextStyle.Body1" Style="font-weight: bold; color: #e74c3c; margin-top: 10px;">
+					<RadzenText TextStyle="TextStyle.Body1" Style="font-weight: bold; color: var(--accent); margin-top: 10px;">
 						Cannot create any new comments, feedback is closed.
 					</RadzenText>
 				}
@@ -152,7 +153,7 @@
 	
 	<div style="margin-top: 20px;">
 		<RadzenButton Text="Back" Icon="arrow_back" ButtonStyle="ButtonStyle.Secondary"
-		              Style="background-color: #7f8c8d;" Click="@(() => NavigateToUsersFeedback())" />
+		              Click="@(() => NavigateToUsersFeedback())" />
 	</div>
 </RadzenCard>
 
