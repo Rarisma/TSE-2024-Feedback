@@ -5,6 +5,7 @@
 @using Blazored.LocalStorage
 @using Serilog
 @inject ILocalStorageService LocalStorage
+@inject Radzen.NotificationService NotificationService
 
 
 <!-- Authentication method, ran once button is clicked -->
@@ -36,6 +37,7 @@
             var attempted_user = await API.GetUserByUsername(Username);
             if (attempted_user == null)
             {
+                NotificationService.Notify(NotificationSeverity.Error, "Error", "Username not found");
                 return;
             }
         
@@ -58,11 +60,16 @@
                     StateHasChanged();
                     NavigationManager.NavigateTo("/");
                 }
+                else
+                {
+                    NotificationService.Notify(NotificationSeverity.Error, "Error", "Incorrect password");
+                }
             }
         }
         catch (Exception ex)
         {
             Log.Error(ex, "Login failed");
+            NotificationService.Notify(NotificationSeverity.Error, "Error", "Login failed");
         }
     }
 
@@ -74,6 +81,7 @@
 }
 @rendermode InteractiveServer
 <title>TSE Feedback: Log In </title>
+<RadzenNotification />
 <div class="login-page full-height">
     <!-- Top Section with Logo and Heading -->
     <!-- Image from: https://giphy.com/gifs/sandisk-bubble-loading-speech-2gHUXJe61iM0y7TpNu-->
