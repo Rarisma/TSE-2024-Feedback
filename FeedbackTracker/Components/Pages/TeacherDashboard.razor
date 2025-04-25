@@ -158,7 +158,22 @@
                                     <button class="btn btn-primary" @onclick="BulkAssignModules">Assign Modules</button>
                                 </div>
                             </div>
-
+                            <!-- Assign Modules -->
+                            <div>
+                                <h6 class="mb-3 text-center">Assign module to everyone in the school (for school feedback)</h6>
+                                <div class="mb-3">
+                                    <label for="assignModuleSelect" class="form-label">Select Module</label>
+                                    <select id="assignModuleSelect" class="form-control" @bind="_selectedModuleId">
+                                        @foreach (var module in _modules)
+                                        {
+                                            <option value="@module.ModuleID">@module.Module</option>
+                                        }
+                                    </select>
+                                </div>
+                                <div class="d-grid">
+                                    <button class="btn btn-primary" @onclick="BulkAssignModulesBySchool">Assign Module to people in your school</button>
+                                </div>
+                            </div>
                             <!-- IsStudent/IsTeacher-->
                             <div>
                                 <h6 class="mb-3 text-center" style="color: var(--text-primary); margin-top: 18px;">Bulk Assign Role assign</h6>
@@ -315,6 +330,9 @@
         await BulkAPI.CreateModules(_BulkModules);
         NotificationService.Notify(NotificationSeverity.Success, "Success", "Modules created successfully");
     }
+
+
+    private async void BulkAssignModulesBySchool() => await ModuleClient.AddToModuleBySchool(_assignee.School, _selectedModuleId.ToString());
 
     private async void BulkAssignModules() 
     {

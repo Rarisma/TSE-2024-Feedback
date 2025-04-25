@@ -1,6 +1,7 @@
 ﻿@page "/SchoolSignUp"
 @using Application.API
 @inject NavigationManager NavigationManager
+@inject SchoolAPI SchoolAPI
 @inject IJSRuntime JSRuntime
 @rendermode InteractiveServer
 
@@ -46,15 +47,27 @@
 </div>
 
 @code {
+
     private async void Submit()
     {
-        await new SchoolAPI().CreateSchool(SchoolName.ToString(), EducationLevel.ToString(), City.ToString());
+        try
+        {
+            string? resp = await SchoolAPI.CreateSchool(SchoolName.ToString(), EducationLevel.ToString(), City.ToString());
+            NavigationManager.NavigateTo("/");
+            
+        }
+        catch{
+            NavigationManager.NavigateTo(NavigationManager.Uri);
+        }
+
+
+
 
     }
 
-    public string SchoolName { get; set; }
-    public string EducationLevel { get; set; }
-    public string City { get; set; }
+    public string? SchoolName { get; set; }
+    public string? EducationLevel { get; set; }
+    public string? City { get; set; }
 
 
 

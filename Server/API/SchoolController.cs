@@ -26,9 +26,21 @@ public class SchoolController : Controller
             // Add School to database
             using TrackerContext Ctx = new();
             Ctx.School.Add(School);
+            try
+            {
+                // Add school module
+                var module = new Modules { Module = SchoolName + " General" };
+                Ctx.Modules.Add(module);
+            }
+
+            catch (Exception ex)
+            {
+                return "Encountered an error in module creation: " + ex.Message;
+            }
+
+            // Add new teacher user for school
+
             Ctx.SaveChanges();
-
-
             return "School Created Successfully";
         }
 
