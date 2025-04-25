@@ -35,6 +35,8 @@ public class FeedbackController : Controller
 			List<Users_Modules> usersModules = ctx.UsersModules
 				.Where(f => f.UserID == userID).ToList();
 
+			User user = ctx.User.FirstOrDefault(f => f.UserID == userID);
+
 			//todo: remove this if not needed in future.
 			//List<int> moduleIDs = ctx.UsersModules
 			//	.Where(um => um.UserID == userID)
@@ -43,8 +45,8 @@ public class FeedbackController : Controller
             List<Feedback> feedback = ctx.Feedback
                 .Where(f => f.AssignedUserID == userID
                          || f.AssigneeID == userID
-                         || f.Visibility == FeedbackVisibility.Public
-                         || f.AssignedUserID == null && userIDs.Contains(userID)).ToList ();
+                         || (f.Visibility == FeedbackVisibility.Public && f.Assignee.School == user.School)
+                         || f.AssignedUserID == null && userIDs.Contains(userID)).ToList();
 
 
             //Serialise to JSON
@@ -58,14 +60,15 @@ public class FeedbackController : Controller
     /// </summary>
     /// <returns>List of Feedback Objects</returns>
     [HttpGet("GetPublicFeedbacks")]
-    public string GetPublicFeedbacks()
+    public string GetPublicFeedbacks(int schoolID)
     {
         try
         {
 			// Find public feedbacks
             using TrackerContext ctx = new();
             List<Feedback> publicFeedbacks = ctx.Feedback
-                .Where(f => f.Visibility == FeedbackVisibility.Public).ToList();
+                .Where(f => f.Visibility == FeedbackVisibility.Public &&
+                            f.Assignee.School == schoolID.ToString()).ToList();
 
 			// Serialise to JSON
             return JsonSerializer.Serialize(publicFeedbacks);

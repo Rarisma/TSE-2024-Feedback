@@ -218,8 +218,6 @@
         }
     }
 
-
-
     /// <summary>
     /// Loads all the feedbacks into the two specific feedback lists
     /// by communicating with the API
@@ -308,7 +306,7 @@
                             Users.Add(user); // adds to list
                         }
                     }
-                    catch (Exception ex) // teachers fails to load
+                    catch (Exception ex) // teachers fail to load
                     {
                         Log.Error(ex,"Failed to load teacher.");
                     }
