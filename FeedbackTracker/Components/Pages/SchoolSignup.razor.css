@@ -19,7 +19,7 @@ html, body {
 }
 
 .sign-up-box {
-    background: rgba(255, 255, 255, 0.2);
+    background: var(--card-bg);
     backdrop-filter: blur(10px);
     width: 100%;
     max-width: 600px;
@@ -35,33 +35,33 @@ html, body {
     }
 
 .btn-primary {
-    background-color: #5563DE;
+    background-color: var(--primary);
     border: none;
 }
 
     .btn-primary:hover {
-        background-color: #6C7AE0;
+        background-color: var(--primary-dark);
     }
 
 .btn-outline-primary:hover {
-    background-color: #5563DE;
-    color: #fff;
+    background-color: var(--primary);
+    color: var(--text-on-primary);
 }
 
 input.form-control {
-    background: rgba(255, 255, 255, 0.15);
-    border: none;
-    color: #4A4A4A;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
 }
 
     input.form-control:focus {
-        background: rgba(255, 255, 255, 0.25);
-        color: #4A4A4A;
+        background: var(--card-bg);
+        color: var(--text-primary);
     }
 
 .top-heading {
     font-family: 'Helvetica Neue', sans-serif;
-    color: #333;
+    color: var(--text-primary);
     text-align: center;
     font-size: 2.5em;
     margin: 30px 0;
@@ -76,19 +76,19 @@ input.form-control {
 
 /* Additional styling for School Signup fields */
 .school-signup-form .form-label {
-    color: #333;
+    color: var(--text-primary);
     font-weight: bold;
 }
 
 .school-signup-form .form-control {
-    background: rgba(255, 255, 255, 0.15);
-    border: 1px solid transparent;
-    color: #4A4A4A;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
     border-radius: 4px;
     transition: background 0.3s ease, border 0.3s ease;
 }
 
     .school-signup-form .form-control:focus {
-        background: rgba(255, 255, 255, 0.25);
-        border: 1px solid #5563DE;
+        background: var(--card-bg);
+        border: 1px solid var(--primary);
     }
