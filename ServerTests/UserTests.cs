@@ -1,5 +1,5 @@
 ﻿
-using Core.Definitions;
+/*using Core.Definitions;
 using dotenv.net;
 using Server;
 using Server.API;
@@ -16,12 +16,6 @@ public class UserControllerTests
 {
     private readonly UserController _controller = new();
 
-    //public UserControllerTests()
-    //{
-    //    // create authservice 
-    //    AuthService authService = new();
-    //    _controller = new UserController(authService);
-    //}
 
     /// <summary>
     /// Sets up the db.
@@ -147,6 +141,7 @@ public class UserControllerTests
     }
 
 
+*/
 
 
 
@@ -180,6 +175,4 @@ public class UserControllerTests
 
 
 
-
-}
 

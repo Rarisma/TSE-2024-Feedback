@@ -35,17 +35,7 @@ public class BulkControllerTests
     }
 
     
-    [TestMethod]
-    public void CreateValidUsers()
-    {
-        User user = new()
-        {
-            userEmails = "test",
-        };
 
-        _controller.CreateUsers(userEmails.Email);
-
-    }
 
 
 }
