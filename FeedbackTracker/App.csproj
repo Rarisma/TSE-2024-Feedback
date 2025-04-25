@@ -25,10 +25,4 @@
    <ItemGroup>
 	<PackageReference Include="Blazored.LocalStorage" Version="4.5.0" />
    </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="MSTest.TestFramework" Version="3.0.4" />
-    <PackageReference Include="MSTest.TestAdapter" Version="3.0.4" />
-  </ItemGroup>
-
 </Project>
