@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <TargetFramework>net9.0</TargetFramework>
@@ -10,15 +10,17 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.6.0"/>
-        <PackageReference Include="MSTest.TestAdapter" Version="3.0.4"/>
-        <PackageReference Include="MSTest.TestFramework" Version="3.0.4"/>
-        <PackageReference Include="coverlet.collector" Version="6.0.0"/>
+        <PackageReference Include="DotEnv" Version="0.0.1.1" />
+        <PackageReference Include="dotenv.net" Version="3.2.1" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.6.0" />
+        <PackageReference Include="MSTest.TestFramework" Version="3.0.4" />
+        <PackageReference Include="coverlet.collector" Version="6.0.0" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\..\FeedbackTrackerCommon\Core.csproj" />
       <ProjectReference Include="..\..\Server\Server.csproj" />
+      <ProjectReference Include="..\App.csproj" />
     </ItemGroup>
 
     <ItemGroup>

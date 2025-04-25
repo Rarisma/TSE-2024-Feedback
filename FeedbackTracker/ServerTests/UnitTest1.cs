@@ -1,7 +1,9 @@
+using Application.Components.Pages;
 using Core.Definitions;
 using dotenv.net;
 using Server;
 using Server.API;
+
 
 namespace ServerTests;
 
@@ -59,7 +61,7 @@ public class FeedbackControllerTests
             
         };
         
-        // Call function with invalid feedback
+        // Call function with valid feedback
         _controller.CreateFeedback(testFeedback);
         
         // Assert the database has an error
@@ -135,8 +137,8 @@ public class FeedbackControllerTests
     [TestMethod]
     public void GetPublicFeedbacksInvalid()
     {
-        // Call function with invalid feedback ID
-        var result = _controller.GetPublicFeedbacks(null);
+        // Call function with Public feedbacks
+        var result = _controller.GetPublicFeedbacks();
 
         // Assert our result is an error.
         Assert.IsTrue(result.Contains("Invalid feedback ID"));
@@ -198,6 +200,56 @@ public class FeedbackControllerTests
         Assert.IsFalse(ctx.Feedback.Contains(publicfeedback), "Feedback not cleaned up.");
         Assert.IsFalse(ctx.Feedback.Contains(privatefeedback), "Feedback not cleaned up.");
 
+    }
+
+
+    [TestMethod]
+    public void InvalidComment()
+    {
+        // Call function with invalid create comment
+        var result = _controller.CreateComment(-1,1,"comment");
+
+        // Assert our result is an error.
+        Assert.IsTrue(result.Contains("Invalid comment"));
+    }
+
+    [TestMethod]
+    public void CheckValidComment()
+    {
+        Feedback testFeedback = new Feedback
+        {
+            Title = Guid.NewGuid().ToString(), //GUIDs are globally unique
+            FeedbackID = 999,
+            FeedbackText = "TestDescription",
+            Label = FeedbackLabel.Question,
+            AssigneeID = 1,
+            AssignedUserID = 1,
+            Closed = false,
+            ModuleID = 1,
+            Visibility = FeedbackVisibility.Public
+
+        };
+
+        // Create Feedback
+        _controller.CreateFeedback(testFeedback);
+
+        var commentText = _controller.CreateComment(1, 1, "comment");
+
+        // Get comment 
+        var result = _controller.GetComments(1);
+
+        // Test if its the right feedback
+        Assert.IsTrue(result.Contains(commentText), "Feedback contains comment");
+
+        // Clean up
+        using TrackerContext ctx = new();
+
+        //Clean up so we don't clutter the db.
+        ctx.Feedback.Remove(testFeedback);
+        ctx.SaveChanges();
+
+        //Assert our result is a success.
+        Assert.IsFalse(ctx.Feedback.Contains(testFeedback), "Feedback not cleaned up.");
     }
 
 }
