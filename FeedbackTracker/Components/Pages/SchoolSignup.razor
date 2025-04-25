@@ -52,23 +52,16 @@
     {
         try
         {
-            string? resp = await SchoolAPI.CreateSchool(SchoolName.ToString(), EducationLevel.ToString(), City.ToString());
+            string? resp = await SchoolAPI.CreateSchool(SchoolName, EducationLevel, City);
             NavigationManager.NavigateTo("/");
             
         }
         catch{
             NavigationManager.NavigateTo(NavigationManager.Uri);
         }
-
-
-
-
     }
 
     public string? SchoolName { get; set; }
     public string? EducationLevel { get; set; }
     public string? City { get; set; }
-
-
-
 }
