@@ -77,14 +77,42 @@ public class UserAPI
 		}
 	}
 
-	/// <summary>
-	/// Authenticates a user.
-	/// </summary>
-	/// <param name="username">Username</param>
-	/// <param name="password">Password</param>
-	/// <param name="code">MFA Code (Optional)</param>
+    /// <summary>
+    /// update user
+    /// </summary>
+	/// <param name="UserID">User Id</param>
+	///<param name="LastName">email</param>
+	///<param name="FirstName">first name</param>
+	///<param name="Username">username</param>
+	///<param name="Password">password</param>
+    public async Task UpdateUser(string UserID,string FirstName, string LastName, string Username, string Password)
+    {
+        try
+        {
+			string url = $"User/UpdateUser?&UserID={Uri.EscapeDataString(Username)}"+
+						$"&Username={Uri.EscapeDataString(Username)}" +
+						 $"&Password={Uri.EscapeDataString(Password)}" +
+						 $"&LastName={Uri.EscapeDataString(LastName)}" +
+						 $"&FirstName={Uri.EscapeDataString(FirstName)}";
+
+            HttpResponseMessage response = await _httpClient.PutAsync(url, null);
+            response.EnsureSuccessStatusCode();
+            await response.Content.ReadAsStringAsync();
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, $"Error creating user");
+        }
+    }
+
+    /// <summary>
+    /// Authenticates a user.
+    /// </summary>
+    /// <param name="username">Username</param>
+    /// <param name="password">Password</param>
+    /// <param name="code">MFA Code (Optional)</param>
     /// <returns>Boolean indicating success.</returns>
-	public async Task<string> Authenticate(string username, string password, string code)
+    public async Task<string> Authenticate(string username, string password, string code)
 	{
 		try
 		{

@@ -211,6 +211,28 @@ public class UserController(AuthService authService) : Controller
 			Log.Error(ex, "Failed to update password");
 		}
 	}
+
+    [HttpPut("UpdateUser")]
+    public async void UpdateUser(string UserID,string FirstName, string LastName, string Username, string Password)
+    {
+        try
+        {
+            await using TrackerContext ctx = new();
+            User account = ctx.User.First(user => user.UserID.ToString() == UserID);
+
+			account.Username = Username;
+			account.FirstName = FirstName;
+			account.LastName = LastName;
+            account.Password = BCrypt.Net.BCrypt.HashPassword(Password);
+
+            ctx.User.Update(account);
+            await ctx.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Failed to update password");
+        }
+    }
     /// <summary>
     /// update teacher status
     /// </summary>
