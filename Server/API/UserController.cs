@@ -218,19 +218,21 @@ public class UserController(AuthService authService) : Controller
         try
         {
             await using TrackerContext ctx = new();
-            User account = ctx.User.First(user => user.UserID.ToString() == UserID);
+			Console.WriteLine("userID: " + UserID);
+            User? account = ctx.User.FirstOrDefault(user => user.UserID.ToString() == UserID);
 
+			Console.WriteLine("account before: "+account);
 			account.Username = Username;
 			account.FirstName = FirstName;
 			account.LastName = LastName;
             account.Password = BCrypt.Net.BCrypt.HashPassword(Password);
-
+			Console.WriteLine("account after: " + account);
             ctx.User.Update(account);
             await ctx.SaveChangesAsync();
         }
         catch (Exception ex)
         {
-            Log.Error(ex, "Failed to update password");
+            Log.Error(ex, "Failed to update user");
         }
     }
     /// <summary>

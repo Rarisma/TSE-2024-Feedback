@@ -1,5 +1,6 @@
 ﻿@page "/settings"
 @using Application.API
+@using Blazored.LocalStorage
 @inject UserAPI UserClientAccess
 @rendermode InteractiveServer
 @inject JAuth JAuth
@@ -7,7 +8,7 @@
 @inject NavigationManager NavigationManager
 @inject NotificationService NotificationService
 @inject FeedbackTracker.Services.AppTheme AppTheme
-
+@inject ILocalStorageService LocalStorage
 <title>TSE: Settings</title>
 <!-- Settings Page Layout-->
 <div class="@AppTheme.ColourTheme" Style="position: relative; width: 100%; height: 100%; display: grid; grid-template-rows: auto 1fr; padding: 20px; animation: fadeIn 0.5s ease-in; background-color: var(--main-body);">
@@ -104,28 +105,33 @@
                     @if (JAuth.IsAuthorised())
                     {
                         <div Style="display: grid; gap: 15px;">
+                            @if(error){
+                                <div>
+                                    <RadzenText TextStyle="TextStyle.Subtitle1" Style="background-color:palevioletred;font-family: 'Inter', sans-serif; margin-bottom: 5px; color: var(--text-primary);">@errorMessage</RadzenText>
+                                </div>
+                            }
                             <div>
-                                <RadzenText TextStyle="TextStyle.Subtitle1" Style="font-family: 'Inter', sans-serif; margin-bottom: 5px; color: var(--text-primary);">First Name</RadzenText>
+                                <RadzenText TextStyle="TextStyle.Subtitle1" Style="font-family: 'Inter', sans-serif; margin-bottom: 5px; color: var(--text-primary);">New First Name</RadzenText>
                                 <RadzenTextBox @bind-Value="FirstName" Placeholder="Change First Name" Style="width: 100%;" MaxLength="25" />
                             </div>
                             <div>
-                                <RadzenText TextStyle="TextStyle.Subtitle1" Style="font-family: 'Inter', sans-serif; margin-bottom: 5px; color: var(--text-primary);">Last Name</RadzenText>
+                                <RadzenText TextStyle="TextStyle.Subtitle1" Style="font-family: 'Inter', sans-serif; margin-bottom: 5px; color: var(--text-primary);">New Last Name</RadzenText>
                                 <RadzenTextBox @bind-Value="LastName" Placeholder="Change Last Name" Style="width: 100%;" MaxLength="25" />
                             </div>
                             <div>
-                                <RadzenText TextStyle="TextStyle.Subtitle1" Style="font-family: 'Inter', sans-serif; margin-bottom: 5px; color: var(--text-primary);">Username</RadzenText>
+                                <RadzenText TextStyle="TextStyle.Subtitle1" Style="font-family: 'Inter', sans-serif; margin-bottom: 5px; color: var(--text-primary);">New Username</RadzenText>
                                 <RadzenTextBox @bind-Value="Username" Placeholder="Change Username" Style="width: 100%;" MaxLength="25" />
                             </div>
                             <div>
-                                <RadzenText TextStyle="TextStyle.Subtitle1" Style="font-family: 'Inter', sans-serif; margin-bottom: 5px; color: var(--text-primary);">Password</RadzenText>
+                                <RadzenText TextStyle="TextStyle.Subtitle1" Style="font-family: 'Inter', sans-serif; margin-bottom: 5px; color: var(--text-primary);">New Password</RadzenText>
                                 <RadzenPassword @bind-Value="Password" Placeholder="Change Password" Style="width: 100%;" MaxLength="100"/>
                             </div>
                             <div>
-                                <RadzenText TextStyle="TextStyle.Subtitle1" Style="font-family: 'Inter', sans-serif; margin-bottom: 5px; color: var(--text-primary);">Confirm Password</RadzenText>
+                                <RadzenText TextStyle="TextStyle.Subtitle1" Style="font-family: 'Inter', sans-serif; margin-bottom: 5px; color: var(--text-primary);">Confirm New Password</RadzenText>
                                 <RadzenPassword @bind-Value="ConfirmPassword" Placeholder="Confirm Password" Style="width: 100%;" MaxLength="100" />
                             </div>
                             <div Style="text-align: center; margin-top: 15px;">
-                                <RadzenButton Text="Update Profile" ButtonStyle="ButtonStyle.Primary" @onclick="UpdateUserInfo"
+                                <RadzenButton Text="Update Profile" ButtonStyle="ButtonStyle.Primary" Click="UpdateUserInfo"
                                 Style="padding: 10px 30px; font-weight: 500; width: 200px;" />
                             </div>
                         </div>
@@ -219,9 +225,55 @@
     }
 
     public async void UpdateUserInfo(){
-        Console.WriteLine("clicked --------------------------------");
-        await UserClientAccess.UpdateUser(JAuth.User.UserID.ToString(), FirstName, LastName, Username, Password);
-                NavigationManager.Refresh();
+        if(FirstName != null && LastName != null && Username != null && Password != null && ConfirmPassword != null){
+            // update
+            if(Password == ConfirmPassword){
+                if (Password.Length >= 8 && Password.Any(char.IsUpper) && Password.Any(c => !char.IsLetterOrDigit(c)))
+                {
+                    var users = await UserClientAccess.GetAllUsers();
+                    var user = users.Find(u => u.Username == Username);
+                    if (user == null)
+                    {
+                        await UserClientAccess.UpdateUser(JAuth.User.UserID.ToString(), FirstName, LastName, Username, Password);
+                        DeleteSession();
+                        StateHasChanged();
+                    }
+                    else
+                    {
+                        // username already taken
+                        error = true;
+                        errorMessage = "Username already taken";
+                        StateHasChanged();
+                    }
+                }else{
+                       // bad password
+                        error = true;
+                        errorMessage = "bad password, must be at least 8 characters long, contain at least one uppercase letter, and one special character!";
+                        StateHasChanged();
+                }
+            }else{
+                // password not match
+                error = true;
+                errorMessage = "password does not match";
+                StateHasChanged();
+            }
+
+        }else{
+            // something missing
+            error = true;
+            errorMessage = "some data is missing";
+            StateHasChanged();
+        }
+    }
+
+
+    private async void DeleteSession()
+    {
+        await LocalStorage.SetItemAsStringAsync("UserTok", "");
+        await LocalStorage.SetItemAsStringAsync("Username", "");
+        JAuth.Deauthorise();
+
+        NavigationManager.NavigateTo("/");
     }
 
     // JAuth for specific account settings
@@ -230,6 +282,9 @@
     private string? Username { get; set; }
     private string? Password { get; set; }
     private string? ConfirmPassword { get; set; }
+
+    private string? errorMessage {get;set;}
+    private bool error {get;set;}
 
     private bool isAuthorized;
 }

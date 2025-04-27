@@ -89,7 +89,7 @@ public class UserAPI
     {
         try
         {
-			string url = $"User/UpdateUser?&UserID={Uri.EscapeDataString(Username)}"+
+			string url = $"User/UpdateUser?&UserID={Uri.EscapeDataString(UserID)}"+
 						$"&Username={Uri.EscapeDataString(Username)}" +
 						 $"&Password={Uri.EscapeDataString(Password)}" +
 						 $"&LastName={Uri.EscapeDataString(LastName)}" +
