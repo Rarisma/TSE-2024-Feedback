@@ -1,5 +1,6 @@
 ﻿@page "/settings"
 @using Application.API
+@using Blazored.LocalStorage
 @inject UserAPI UserClientAccess
 @rendermode InteractiveServer
 @inject JAuth JAuth
@@ -7,19 +8,19 @@
 @inject NavigationManager NavigationManager
 @inject NotificationService NotificationService
 @inject FeedbackTracker.Services.AppTheme AppTheme
-
+@inject ILocalStorageService LocalStorage
 <title>TSE: Settings</title>
 <!-- Settings Page Layout-->
 <div class="@AppTheme.ColourTheme" Style="position: relative; width: 100%; height: 100%; display: grid; grid-template-rows: auto 1fr; padding: 20px; animation: fadeIn 0.5s ease-in; background-color: var(--main-body);">
     <h3 Style="margin: 0 0 40px 0; font-size: 2.5rem; font-weight: 700; color: var(--text-primary); font-family: 'Poppins', sans-serif;">Settings</h3>
- 
+
     <div Style="display: flex; width: 100%; height: 100%; gap: 20px;">
         <!-- Left side: Categories -->
         <div Style="width: 30%; border-radius: 8px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); overflow: hidden; background-color: var(--card-bg);">
             <RadzenPanelMenu Style="width: 100%; height: 100%;">
                 <RadzenPanelMenuItem Text="General" Icon="settings" Selected="SelectedCategory == SettingsCategory.General" Click="() => SelectCategory(SettingsCategory.General)" Style="padding: 15px; font-family: 'Inter', sans-serif;" />
                 <RadzenPanelMenuItem Text="Privacy" Icon="shield" Selected="SelectedCategory == SettingsCategory.Privacy" Click="() => SelectCategory(SettingsCategory.Privacy)" Style="padding: 15px; font-family: 'Inter', sans-serif;" />
-                <RadzenPanelMenuItem Text="Notifications" Icon="notifications" Selected="SelectedCategory == SettingsCategory.Notifications" Click="() => SelectCategory(SettingsCategory.Notifications)" Style="padding: 15px; font-family: 'Inter', sans-serif;" />
+                <!--<RadzenPanelMenuItem Text="Notifications" Icon="notifications" Selected="SelectedCategory == SettingsCategory.Notifications" Click="() => SelectCategory(SettingsCategory.Notifications)" Style="padding: 15px; font-family: 'Inter', sans-serif;" />-->
                 <RadzenPanelMenuItem Text="Account" Icon="person" Selected="SelectedCategory == SettingsCategory.Account" Click="() => SelectCategory(SettingsCategory.Account)" Style="padding: 15px; font-family: 'Inter', sans-serif;" />
             </RadzenPanelMenu>
         </div>
@@ -34,11 +35,11 @@
                         <RadzenText TextStyle="TextStyle.Subtitle1" Style="font-family: 'Inter', sans-serif; margin-bottom: 10px; color: var(--text-primary);">Theme:</RadzenText>
                         <div Style="display: flex; align-items: center; gap: 15px;">
                             <RadzenDropDown TValue="string" @bind-Value="SelectedTheme" TextProperty="Text" ValueProperty="Value" 
-                                Data="@(new[] { new { Text = "Light Theme", Value = "theme-light" }, new { Text = "Dark Theme", Value = "theme-dark" }, new { Text = "Hybrid Theme", Value = "theme-hybrid" }
+                            Data="@(new[] { new { Text = "Light Theme", Value = "theme-light" }, new { Text = "Dark Theme", Value = "theme-dark" }, new { Text = "Hybrid Theme", Value = "theme-hybrid" }
                                 })"
-                                Style="width: 200px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);" />
+                            Style="width: 200px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);" />
                             <RadzenButton Text="Apply" Click="ApplyTheme" ButtonStyle="ButtonStyle.Primary" 
-                                Style="padding: 8px 20px; font-weight: 500;" />
+                            Style="padding: 8px 20px; font-weight: 500;" />
                         </div>
                     </div>
                 </div> }
@@ -68,7 +69,7 @@
                                     <p Style="font-size: 1rem; color: var(--text-primary);">You SHOULD write this key down as well</p>
                                 </div>
                                 <RadzenButton Text="Enable 2FA" Click="Click2FA" ButtonStyle="ButtonStyle.Primary" 
-                                    Style="padding: 12px 25px; font-size: 1rem; font-weight: 500;" />
+                                Style="padding: 12px 25px; font-size: 1rem; font-weight: 500;" />
                             </div>
                         }
                     </div> }
@@ -79,8 +80,9 @@
                             <p Style="font-size: 1.2rem; color: var(--text-primary);">Please log in to access privacy settings</p>
                         </div>
                     </div>
-            } }
+                } }
             @* NOTIFICATION SETTINGS *@
+            @*
             else if (SelectedCategory == SettingsCategory.Notifications)
             {
                 <div Style="margin-bottom: 20px;">
@@ -92,39 +94,45 @@
                     </div>
                 </div>
             }
-            
+            *@
             @* ACCOUNT SETTINGS *@ 
+
             else if (SelectedCategory == SettingsCategory.Account)
             {
                 <div Style="margin-bottom: 20px;">
                     <h2 Style="font-size: 1.8rem; font-weight: 600; margin-bottom: 25px; color: var(--text-primary); font-family: 'Poppins', sans-serif;">Account Settings</h2>
-                    
+
                     @if (JAuth.IsAuthorised())
                     {
                         <div Style="display: grid; gap: 15px;">
+                            @if(error){
+                                <div>
+                                    <RadzenText TextStyle="TextStyle.Subtitle1" Style="background-color:palevioletred;font-family: 'Inter', sans-serif; margin-bottom: 5px; color: var(--text-primary);">@errorMessage</RadzenText>
+                                </div>
+                            }
                             <div>
-                                <RadzenText TextStyle="TextStyle.Subtitle1" Style="font-family: 'Inter', sans-serif; margin-bottom: 5px; color: var(--text-primary);">First Name</RadzenText>
+                                <RadzenText TextStyle="TextStyle.Subtitle1" Style="font-family: 'Inter', sans-serif; margin-bottom: 5px; color: var(--text-primary);">New First Name</RadzenText>
                                 <RadzenTextBox @bind-Value="FirstName" Placeholder="Change First Name" Style="width: 100%;" MaxLength="25" />
                             </div>
                             <div>
-                                <RadzenText TextStyle="TextStyle.Subtitle1" Style="font-family: 'Inter', sans-serif; margin-bottom: 5px; color: var(--text-primary);">Last Name</RadzenText>
+                                <RadzenText TextStyle="TextStyle.Subtitle1" Style="font-family: 'Inter', sans-serif; margin-bottom: 5px; color: var(--text-primary);">New Last Name</RadzenText>
                                 <RadzenTextBox @bind-Value="LastName" Placeholder="Change Last Name" Style="width: 100%;" MaxLength="25" />
                             </div>
                             <div>
-                                <RadzenText TextStyle="TextStyle.Subtitle1" Style="font-family: 'Inter', sans-serif; margin-bottom: 5px; color: var(--text-primary);">Username</RadzenText>
+                                <RadzenText TextStyle="TextStyle.Subtitle1" Style="font-family: 'Inter', sans-serif; margin-bottom: 5px; color: var(--text-primary);">New Username</RadzenText>
                                 <RadzenTextBox @bind-Value="Username" Placeholder="Change Username" Style="width: 100%;" MaxLength="25" />
                             </div>
                             <div>
-                                <RadzenText TextStyle="TextStyle.Subtitle1" Style="font-family: 'Inter', sans-serif; margin-bottom: 5px; color: var(--text-primary);">Password</RadzenText>
-                                <RadzenPassword @bind-Value="Password" Placeholder="Change Password" Style="width: 100%;" MaxLength="100" />
+                                <RadzenText TextStyle="TextStyle.Subtitle1" Style="font-family: 'Inter', sans-serif; margin-bottom: 5px; color: var(--text-primary);">New Password</RadzenText>
+                                <RadzenPassword @bind-Value="Password" Placeholder="Change Password" Style="width: 100%;" MaxLength="100"/>
                             </div>
                             <div>
-                                <RadzenText TextStyle="TextStyle.Subtitle1" Style="font-family: 'Inter', sans-serif; margin-bottom: 5px; color: var(--text-primary);">Confirm Password</RadzenText>
-                                <RadzenPassword @bind-Value="Password" Placeholder="Confirm Password" Style="width: 100%;" MaxLength="100" />
+                                <RadzenText TextStyle="TextStyle.Subtitle1" Style="font-family: 'Inter', sans-serif; margin-bottom: 5px; color: var(--text-primary);">Confirm New Password</RadzenText>
+                                <RadzenPassword @bind-Value="ConfirmPassword" Placeholder="Confirm Password" Style="width: 100%;" MaxLength="100" />
                             </div>
                             <div Style="text-align: center; margin-top: 15px;">
-                                <RadzenButton Text="Update Profile" ButtonStyle="ButtonStyle.Primary" 
-                                    Style="padding: 10px 30px; font-weight: 500; width: 200px;" />
+                                <RadzenButton Text="Update Profile" ButtonStyle="ButtonStyle.Primary" Click="UpdateUserInfo"
+                                Style="padding: 10px 30px; font-weight: 500; width: 200px;" />
                             </div>
                         </div>
                     }
@@ -145,8 +153,8 @@
 
 <style>
     @@keyframes fadeIn {
-        from { opacity: 0; }
-        to { opacity: 1; }
+    from { opacity: 0; }
+    to { opacity: 1; }
     }
 </style>
 
@@ -216,11 +224,67 @@
         AppTheme.OnChange -= UpdateSelectedTheme;
     }
 
+    public async void UpdateUserInfo(){
+        if(FirstName != null && LastName != null && Username != null && Password != null && ConfirmPassword != null){
+            // update
+            if(Password == ConfirmPassword){
+                if (Password.Length >= 8 && Password.Any(char.IsUpper) && Password.Any(c => !char.IsLetterOrDigit(c)))
+                {
+                    var users = await UserClientAccess.GetAllUsers();
+                    var user = users.Find(u => u.Username == Username);
+                    if (user == null)
+                    {
+                        await UserClientAccess.UpdateUser(JAuth.User.UserID.ToString(), FirstName, LastName, Username, Password);
+                        DeleteSession();
+                        StateHasChanged();
+                    }
+                    else
+                    {
+                        // username already taken
+                        error = true;
+                        errorMessage = "Username already taken";
+                        StateHasChanged();
+                    }
+                }else{
+                       // bad password
+                        error = true;
+                        errorMessage = "bad password, must be at least 8 characters long, contain at least one uppercase letter, and one special character!";
+                        StateHasChanged();
+                }
+            }else{
+                // password not match
+                error = true;
+                errorMessage = "password does not match";
+                StateHasChanged();
+            }
+
+        }else{
+            // something missing
+            error = true;
+            errorMessage = "some data is missing";
+            StateHasChanged();
+        }
+    }
+
+
+    private async void DeleteSession()
+    {
+        await LocalStorage.SetItemAsStringAsync("UserTok", "");
+        await LocalStorage.SetItemAsStringAsync("Username", "");
+        JAuth.Deauthorise();
+
+        NavigationManager.NavigateTo("/");
+    }
+
     // JAuth for specific account settings
     private string? FirstName { get; set; }
     private string? LastName { get; set; }
     private string? Username { get; set; }
     private string? Password { get; set; }
+    private string? ConfirmPassword { get; set; }
+
+    private string? errorMessage {get;set;}
+    private bool error {get;set;}
 
     private bool isAuthorized;
 }
