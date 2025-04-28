@@ -19,8 +19,6 @@ public class UserControllerTests
     public UserControllerTests()
     {
         var context = new TrackerContext();
-
-        // Create the AuthService - these tests don't actually use the authentication functionality
         var authService = new AuthService(null, context);
         _controller = new UserController(authService);
     }
