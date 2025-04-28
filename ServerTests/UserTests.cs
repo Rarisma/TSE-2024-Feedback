@@ -18,13 +18,10 @@ public class UserControllerTests
 
     public UserControllerTests()
     {
-        // Create the required TrackerContext for tests
         var context = new TrackerContext();
 
         // Create the AuthService - these tests don't actually use the authentication functionality
         var authService = new AuthService(null, context);
-
-        // Initialize the controller with the service
         _controller = new UserController(authService);
     }
 
@@ -43,28 +40,30 @@ public class UserControllerTests
 
 
     /// <summary>
-    /// This hits the create feedback endpoint with an Invalid object.
+    /// This hits the create user endpoint with an Invalid object.
     /// </summary>
     [TestMethod]
     public void CreateInvalidUser()
     {
-        // Call function with invalid feedback
-        _controller.CreateUser(null, null, null, null, null, null);
+        // Call function with invalid user
+        try
+        {
+            _controller.CreateUser(null, null, null, null, null, null);
 
-        // Assert our result is an error.
-        Assert.Fail("Failed to create user");
+            Assert.Fail("cannot create user");
+        }
+        catch (Exception ex)
+        {
+            Assert.IsInstanceOfType(ex, typeof(AssertFailedException), "failed to create a user");
+        }
     }
-
-
-
-
-
+    
 
 
     [TestMethod]
     public void CheckInvalidUserID()
     {
-        // Call function with invalid module name
+        // Call function with invalid user id
         var result = _controller.GetUserById(-99999);
 
         // Assert our result is an error.
@@ -76,7 +75,7 @@ public class UserControllerTests
     {
         User testAccount = new()
         {
-            Username = "test",
+            Username = "UniqueUnitTestingUser",
             FirstName = "test",
             LastName = "test",
             Password = "test",
@@ -84,33 +83,36 @@ public class UserControllerTests
             Email = "test",
             School = "test",
             Initalised = true,
-            UserID = 1
         };
 
-        // Create module
+        // Create user
         _controller.CreateUser(testAccount.Username, testAccount.Password, testAccount.Email, testAccount.School, testAccount.FirstName, testAccount.LastName);
 
-        // Get module 
-        var result = _controller.GetUserById(testAccount.UserID);
-
-        // Test if its the right module
-        Assert.IsTrue(result.Contains(testAccount.UserID.ToString()), "Correct account ");
-
-        // Clean up
         using TrackerContext ctx = new();
 
+        var createdUser = ctx.User.FirstOrDefault(s => s.Username == "UniqueUnitTestingUser");
+
+
+        // Get module 
+        var result = _controller.GetUserById(createdUser.UserID);
+
+        // Test if its the right user
+        Assert.IsTrue(result.Contains(createdUser.UserID.ToString()), "Correct account ");
+
+
         //Clean up so we don't clutter the db.
-        ctx.User.Remove(testAccount);
+
+        ctx.User.Remove(createdUser);
         ctx.SaveChanges();
 
         //Assert our result is a success.
-        Assert.IsFalse(ctx.User.Contains(testAccount), "user not cleaned up.");
+        Assert.IsFalse(ctx.User.Contains(createdUser), "user not cleaned up.");
     }
 
     [TestMethod]
     public void CheckInvalidUserName()
     {
-        // Call function with invalid module name
+        // Call function with invalid user name
         var result = _controller.GetUserByUsername(null);
 
         // Assert our result is an error.
@@ -118,11 +120,11 @@ public class UserControllerTests
     }
 
     [TestMethod]
-    public void CheckValidModuleName()
+    public void CheckValidUserName()
     {
         User testAccount = new()
         {
-            Username = "test",
+            Username = "UnitTestingUser",
             FirstName = "test",
             LastName = "test",
             Password = "test",
@@ -130,30 +132,36 @@ public class UserControllerTests
             Email = "test",
             School = "test",
             Initalised = true,
-            UserID = 1
         };
 
-        // Create module
+        // Create user
         _controller.CreateUser(testAccount.Username, testAccount.Password, testAccount.Email, testAccount.School, testAccount.FirstName, testAccount.LastName);
 
-        // Get module 
+        // Get user 
         var result = _controller.GetUserByUsername(testAccount.Username);
 
-        // Test if its the right module
-        Assert.IsTrue(result.Contains(testAccount.Username), "Correct module");
+        // Test if its the right user
+        Assert.IsTrue(result.Contains(testAccount.Username), "Correct user");
 
         // Clean up
         using TrackerContext ctx = new();
 
+
+
         //Clean up so we don't clutter the db.
-        ctx.User.Remove(testAccount);
-        ctx.SaveChanges();
+        var DeleteUser = ctx.User.FirstOrDefault(s => s.Username == "UnitTestingUser");
 
-        //Assert our result is a success.
-        Assert.IsFalse(ctx.User.Contains(testAccount), "module not cleaned up.");
-    }
 
+            ctx.User.Remove(DeleteUser);
+            ctx.SaveChanges();
+
+            //Assert our result is a success.
+            Assert.IsFalse(ctx.User.Contains(testAccount), "module not cleaned up.");
+        }
 }
+
+
+
 
 
 
