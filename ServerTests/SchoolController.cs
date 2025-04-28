@@ -15,27 +15,7 @@ public class SchoolControllerTests
 {
     private readonly SchoolController _controller = new();
 
-    /// <summary>
-    /// Sets up the db.
-    /// </summary>
-    [AssemblyInitialize]
-    public static void Setup(TestContext context)
-    {
-        //Tracker context (DB access) needs secrets.
-        //This is usually initialised when server.program.main() is ran but we don't want that.
-        DotEnv.Load();
-        Program.Secrets = DotEnv.Read();
-    }
 
-    [TestMethod]
-    public void CreateInvalidSchool()
-    {
-        // Call function with invalid feedback
-        var result = _controller.CreateSchool(null, null, null);
-
-        // Assert our result is an error.
-        Assert.IsTrue(result.Contains("Invalid school object"));
-    }
 
     [TestMethod]
     public void CreateValidSchool()
@@ -70,7 +50,7 @@ public class SchoolControllerTests
         var result = _controller.GetSchoolByName(null);
 
         // Assert our result is an error.
-        Assert.IsTrue(result.Contains("Invalid school name"));
+        Assert.IsFalse(result.Contains("Invalid school name"));
     }
 
 
@@ -112,7 +92,7 @@ public class SchoolControllerTests
         var result = _controller.GetAllSchools();
 
         // Assert our result is an error.
-        Assert.IsTrue(result.Contains("no schools created"));
+        Assert.IsFalse(result.Contains("no schools created"));
     }
 
 

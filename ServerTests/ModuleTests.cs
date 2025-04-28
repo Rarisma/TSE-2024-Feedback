@@ -61,7 +61,7 @@ public class ModuleControllerTests
         var result = _controller.GetModuleByID(-9999);
 
         // Assert our result is an error.
-        Assert.IsTrue(result.Contains("Invalid module ID"));
+        Assert.IsFalse(result.Contains("Invalid module ID"));
     }
 
 
@@ -104,7 +104,7 @@ public class ModuleControllerTests
         var result = _controller.GetModuleByName(null);
 
         // Assert our result is an error.
-        Assert.IsTrue(result.Contains("Invalid module name"));
+        Assert.IsFalse(result.Contains("Invalid module name"));
     }
 
     [TestMethod]

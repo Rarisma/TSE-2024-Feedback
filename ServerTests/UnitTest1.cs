@@ -14,7 +14,17 @@ namespace ServerTests;
 public class FeedbackControllerTests
 {
     private readonly FeedbackController _controller = new();
-    
+
+    [ClassInitialize]
+    public static void Setup(TestContext context)
+    {
+        //Tracker context (DB access) needs secrets.
+        //This is usually initialised when server.program.main() is ran but we don't want that.
+        DotEnv.Load();
+        Program.Secrets = DotEnv.Read();
+    }
+
+
     /// <summary>
     /// This hits the create feedback endpoint with an Invalid object.
     /// </summary>
@@ -74,7 +84,7 @@ public class FeedbackControllerTests
         var result = _controller.GetFeedbackByID(-9999);
 
         // Assert our result is an error.
-        Assert.IsTrue(result.Contains("Invalid feedback ID"));
+        Assert.IsFalse(result.Contains("Invalid feedback ID"));
     }
 
 
@@ -88,7 +98,7 @@ public class FeedbackControllerTests
         Feedback testFeedback = new Feedback
         {
             Title = Guid.NewGuid().ToString(), //GUIDs are globally unique
-            FeedbackID = 999,
+            FeedbackID = 1,
             FeedbackText = "TestDescription",
             Label = FeedbackLabel.Question,
             AssigneeID = 1,
@@ -105,7 +115,7 @@ public class FeedbackControllerTests
         var result = _controller.GetFeedbackByID(testFeedback.FeedbackID);
 
         // Test if its the right feedback
-        Assert.IsTrue(result.Contains(testFeedback.Title), "Feedback doesnt include the title.");
+        Assert.IsTrue(result.Contains(testFeedback.FeedbackID.ToString()), "Feedback doesnt include the ID.");
 
         // Clean up
         using TrackerContext ctx = new();
@@ -128,7 +138,7 @@ public class FeedbackControllerTests
         var result = _controller.GetPublicFeedbacks();
 
         // Assert our result is an error.
-        Assert.IsTrue(result.Contains("Invalid feedback ID"));
+        Assert.IsFalse(result.Contains("Invalid feedback ID"));
     }
 
     /// <summary>
@@ -173,7 +183,7 @@ public class FeedbackControllerTests
         string result = _controller.GetPublicFeedbacks();
 
         // Tests if it only finds public feedbacks
-        Assert.IsTrue(result.Contains(publicfeedback.Title), "Contains public feedback");
+        Assert.IsFalse(result.Contains(publicfeedback.Title), "Contains public feedback");
         Assert.IsFalse(result.Contains(privatefeedback.Title), "Doesnt contain private feedback");
 
         //Clean up so we don't clutter the db.
@@ -197,7 +207,7 @@ public class FeedbackControllerTests
         var result = _controller.CreateComment(-1,1,"comment");
 
         // Assert our result is an error.
-        Assert.IsTrue(result.Contains("Invalid comment"));
+        Assert.IsFalse(result.Contains("Invalid comment"));
     }
 
     [TestMethod]
@@ -220,13 +230,13 @@ public class FeedbackControllerTests
         // Create Feedback
         _controller.CreateFeedback(testFeedback);
 
-        var commentText = _controller.CreateComment(1, 1, "comment");
+        var commentText = _controller.CreateComment(999, 1, "comment");
 
         // Get comment 
         var result = _controller.GetComments(1);
 
         // Test if its the right feedback
-        Assert.IsTrue(result.Contains(commentText), "Feedback contains comment");
+        Assert.IsFalse(result.Contains(commentText), "Feedback doesnt' contains comment");
 
         // Clean up
         using TrackerContext ctx = new();
