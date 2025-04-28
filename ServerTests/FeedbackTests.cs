@@ -1,6 +1,7 @@
 
 using Core.Definitions;
 using dotenv.net;
+using Microsoft.EntityFrameworkCore;
 using Server;
 using Server.API;
 
@@ -183,7 +184,7 @@ public class FeedbackControllerTests
         string result = _controller.GetPublicFeedbacks();
 
         // Tests if it only finds public feedbacks
-        Assert.IsFalse(result.Contains(publicfeedback.Title), "Contains public feedback");
+        Assert.IsTrue(result.Contains(publicfeedback.Title), "Contains public feedback");
         Assert.IsFalse(result.Contains(privatefeedback.Title), "Doesnt contain private feedback");
 
         //Clean up so we don't clutter the db.
@@ -230,10 +231,10 @@ public class FeedbackControllerTests
         // Create Feedback
         _controller.CreateFeedback(testFeedback);
 
-        var commentText = _controller.CreateComment(999, 1, "comment");
+        var commentText = _controller.CreateComment(999, 999, "comment");
 
         // Get comment 
-        var result = _controller.GetComments(1);
+        var result = _controller.GetComments(999);
 
         // Test if its the right feedback
         Assert.IsFalse(result.Contains(commentText), "Feedback doesnt' contains comment");
@@ -242,6 +243,8 @@ public class FeedbackControllerTests
         using TrackerContext ctx = new();
 
         //Clean up so we don't clutter the db.
+        ctx.Database.ExecuteSqlRaw("DELETE FROM FeedbackComments WHERE FEEDBACK_ID = 999");
+
         ctx.Feedback.Remove(testFeedback);
         ctx.SaveChanges();
 

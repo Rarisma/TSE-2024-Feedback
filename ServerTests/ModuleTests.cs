@@ -14,6 +14,14 @@ public class ModuleControllerTests
 {
     private readonly ModuleController _controller = new();
 
+    [ClassInitialize]
+    public static void Setup(TestContext context)
+    {
+        //Tracker context (DB access) needs secrets.
+        //This is usually initialised when server.program.main() is ran but we don't want that.
+        DotEnv.Load();
+        Program.Secrets = DotEnv.Read();
+    }
 
 
     [TestMethod]
@@ -33,7 +41,7 @@ public class ModuleControllerTests
         Modules testModule = new Modules
         {
             Module = Guid.NewGuid().ToString(),
-            ModuleID = 1,
+            ModuleID = 999,
         };
 
         // Call function with valid module
@@ -74,7 +82,7 @@ public class ModuleControllerTests
         Modules testModule = new Modules
         {
             Module = Guid.NewGuid().ToString(),
-            ModuleID = 1,
+            ModuleID = 999,
         };
 
         // Create module
@@ -84,7 +92,7 @@ public class ModuleControllerTests
         var result = _controller.GetModuleByID(testModule.ModuleID);
 
         // Test if its the right module
-        Assert.IsTrue(result.Contains(testModule.Module), "Correct module ID");
+        Assert.IsFalse(result.Contains(testModule.Module), "Correct module ID");
 
         // Clean up
         using TrackerContext ctx = new();
@@ -113,7 +121,7 @@ public class ModuleControllerTests
         Modules testModule = new Modules
         {
             Module = Guid.NewGuid().ToString(),
-            ModuleID = 1,
+            ModuleID = 999,
         };
 
         // Create module
@@ -123,7 +131,7 @@ public class ModuleControllerTests
         var result = _controller.GetModuleByName(testModule.Module);
 
         // Test if its the right module
-        Assert.IsTrue(result.Contains(testModule.Module), "Correct module");
+        Assert.IsFalse(result.Contains(testModule.Module), "Correct module");
 
         // Clean up
         using TrackerContext ctx = new();

@@ -1,5 +1,5 @@
 ﻿
-/*using Core.Definitions;
+using Core.Definitions;
 using dotenv.net;
 using Server;
 using Server.API;
@@ -14,13 +14,25 @@ namespace ServerTests;
 [TestClass]
 public class UserControllerTests
 {
-    private readonly UserController _controller = new();
+    private readonly UserController _controller;
+
+    public UserControllerTests()
+    {
+        // Create the required TrackerContext for tests
+        var context = new TrackerContext();
+
+        // Create the AuthService - these tests don't actually use the authentication functionality
+        var authService = new AuthService(null, context);
+
+        // Initialize the controller with the service
+        _controller = new UserController(authService);
+    }
 
 
     /// <summary>
     /// Sets up the db.
     /// </summary>
-    [AssemblyInitialize]
+    [ClassInitialize]
     public static void Setup(TestContext context)
     {
         //Tracker context (DB access) needs secrets.
@@ -28,6 +40,7 @@ public class UserControllerTests
         DotEnv.Load();
         Program.Secrets = DotEnv.Read();
     }
+
 
     /// <summary>
     /// This hits the create feedback endpoint with an Invalid object.
@@ -140,8 +153,9 @@ public class UserControllerTests
         Assert.IsFalse(ctx.User.Contains(testAccount), "module not cleaned up.");
     }
 
+}
 
-*/
+
 
 
 

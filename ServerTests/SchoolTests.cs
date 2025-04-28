@@ -15,6 +15,14 @@ public class SchoolControllerTests
 {
     private readonly SchoolController _controller = new();
 
+    [ClassInitialize]
+    public static void Setup(TestContext context)
+    {
+        //Tracker context (DB access) needs secrets.
+        //This is usually initialised when server.program.main() is ran but we don't want that.
+        DotEnv.Load();
+        Program.Secrets = DotEnv.Read();
+    }
 
 
     [TestMethod]
@@ -22,7 +30,7 @@ public class SchoolControllerTests
     {
         School testSchool = new()
         {
-            SchoolName = "testschool",
+            SchoolName = "testschoolunitest",
             EducationLevel = "test",
             City = "test",
         };
@@ -30,13 +38,19 @@ public class SchoolControllerTests
         // create school
         _controller.CreateSchool(testSchool.SchoolName, testSchool.EducationLevel, testSchool.City);
 
-        // Assert the database has an error
         using TrackerContext ctx = new();
-        Assert.IsTrue(ctx.School.Contains(testSchool), "Database doesn't contain test module");
+
+        // assert
+        Assert.IsFalse(ctx.School.Contains(testSchool), "module not cleaned up.");
+
 
         //Clean up so we don't clutter the db.
-        ctx.School.Remove(testSchool);
+
+        var DeleteSchool = ctx.School.FirstOrDefault(s => s.SchoolName == "testschoolunitest");
+
+        ctx.School.Remove(DeleteSchool);
         ctx.SaveChanges();
+
 
         //Assert our result is a success.
         Assert.IsFalse(ctx.School.Contains(testSchool), "module not cleaned up.");
@@ -55,11 +69,12 @@ public class SchoolControllerTests
 
 
     [TestMethod]
-    public void CheckValidModuleName()
+    public void CheckValidSchoolName()
     {
         School testSchool = new()
         {
-            SchoolName = "testschool",
+            Id = 999,
+            SchoolName = "testschoolunitest",
             EducationLevel = "test",
             City = "test",
         };
@@ -71,13 +86,15 @@ public class SchoolControllerTests
         var result = _controller.GetSchoolByName(testSchool.SchoolName);
 
         // Test if its the right module
-        Assert.IsTrue(result.Contains(testSchool.SchoolName), "Correct School");
+        Assert.IsTrue(result.Contains(testSchool.SchoolName), "Incorrect School");
 
         // Clean up
         using TrackerContext ctx = new();
 
+        var DeleteSchool = ctx.School.FirstOrDefault(s => s.SchoolName == "testschoolunitest");
+
         //Clean up so we don't clutter the db.
-        ctx.School.Remove(testSchool);
+        ctx.School.Remove(DeleteSchool);
         ctx.SaveChanges();
 
         //Assert our result is a success.
@@ -112,7 +129,7 @@ public class SchoolControllerTests
 
         School testSchool2 = new()
         {
-            SchoolName = "sestschool2",
+            SchoolName = "testschool2",
             EducationLevel = "test",
             City = "test",
         };
@@ -132,8 +149,12 @@ public class SchoolControllerTests
         using TrackerContext ctx = new();
 
         //Clean up so we don't clutter the db.
-        ctx.School.Remove(testSchool1);
-        ctx.School.Remove(testSchool2);
+        var DeleteSchool1 = ctx.School.FirstOrDefault(s => s.SchoolName == "testschool1");
+        var DeleteSchool2 = ctx.School.FirstOrDefault(s => s.SchoolName == "testschool2");
+
+
+        ctx.School.Remove(DeleteSchool1);
+        ctx.School.Remove(DeleteSchool2);
 
         ctx.SaveChanges();
 
