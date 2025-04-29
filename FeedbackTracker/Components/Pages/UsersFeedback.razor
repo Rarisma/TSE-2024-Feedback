@@ -191,13 +191,22 @@
     private void SortByModule(ChangeEventArgs e)
     {
         var selectedModuleID = e.Value.ToString();
-        if (selectedModuleID == "all") // if the user wishes to see all of their feedbacks
+        if (selectedModuleID == "all" || string.IsNullOrEmpty(selectedModuleID)) // if the user wishes to see all of their feedbacks or no module is selected
         {
             SpecificFeedbacks = new List<Core.Definitions.Feedback>(AllFeedbacks);
         }
-        else
+        else if (_modules != null && _modules.Count > 0)
         {
-            SpecificFeedbacks = AllFeedbacks.Where(f => selectedModuleID != null && int.Parse(selectedModuleID) == f.ModuleID).ToList();
+            //only filter if there's modules
+            try
+            {
+                SpecificFeedbacks = AllFeedbacks.Where(f => int.Parse(selectedModuleID) == f.ModuleID).ToList();
+            }
+            catch
+            {
+                //error? show all
+                SpecificFeedbacks = new List<Core.Definitions.Feedback>(AllFeedbacks);
+            }
         }
     }
 
@@ -261,27 +270,27 @@
 
     private async Task GetModules()
     {
-
-        //TODO get modules user is in
-
-        List<Modules?>? newModules = await UserClient.GetModules(_assignee.UserID);
-
-        if (newModules != null)
+        if (JAuth.GetUser() != null)
         {
-            try
+            _assignee = JAuth.GetUser();
+            var newModules = await UserClient.GetModules(_assignee.UserID);
+            
+            if (newModules != null && newModules.Count > 0)
             {
                 _modules = newModules;
                 _moduleID = _modules.First().ModuleID;
             }
-            catch (Exception ex)
+            else
             {
-                Log.Error(ex, "Error getting modules");
+                //create empty list if no modules are found
+                _modules = new List<Modules>();
             }
+            
+            await GetAssignableUsers();
+            // refresh ui with new data
+            await InvokeAsync(StateHasChanged);
         }
 
-        await GetAssignableUsers();
-        // refresh ui with new data
-        StateHasChanged();
     }
 
 
@@ -323,8 +332,10 @@
         if (JAuth.IsAuthorised())
         {
             if(JAuth.GetUser()!=null){
+                _assignee = JAuth.GetUser();
                 await LoadAllFeedback(JAuth.User.UserID);
                 await LoadAssignees();
+                await GetModules();
             }
         }
     }
