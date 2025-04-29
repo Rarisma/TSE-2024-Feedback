@@ -135,3 +135,6 @@ _NCrunch*
 /Server/logs
 /FeedbackTracker/logs
 Server/.env
+FeedbackTracker/ServerTests/.env
+FeedbackTracker/ServerTests/.env
+ServerTests/.env

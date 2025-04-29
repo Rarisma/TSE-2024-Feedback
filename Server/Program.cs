@@ -10,7 +10,7 @@ using Radzen;
 
 namespace Server;
 
-internal static class Program
+public static class Program
 {
 	public static IDictionary<string, string>? Secrets;
 	public static void Main(string[] args)
