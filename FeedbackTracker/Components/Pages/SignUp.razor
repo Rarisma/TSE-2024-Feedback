@@ -1,34 +1,78 @@
 ﻿@page "/SignUp"
 @using Application.API
+@using Core.Definitions
 @inject NavigationManager NavigationManager
 @rendermode InteractiveServer
 @inject IJSRuntime JSRuntime
-
+@inject SchoolAPI schoolAPI
+@inject Radzen.NotificationService NotificationService
+@inject UserAPI UserClientAccess
 <title>TSE Feedback: Sign Up </title>
+<RadzenNotification />
 
 @code {
-
     private async void Submit()
     {
         if (Password == Password2)
         {
-            //Send req to create user.
-            await new UserAPI().CreateUser(Username.ToString(), Password.ToString(), Email.ToString());
-            await JSRuntime.InvokeVoidAsync("alert", "user created");
-            NavigationManager.NavigateTo("/");
+            if (Password.Length >= 8 && Password.Any(char.IsUpper) && Password.Any(c => !char.IsLetterOrDigit(c)))
+            {
+                if (string.IsNullOrEmpty(School)){
+                    NotificationService.Notify(NotificationSeverity.Error, "Error", "Please select your school");
+                    return;
+                }
+                var users = await UserClientAccess.GetAllUsers();
+                var user = users.Find(u => u.Username == Username);
+                if (user != null)
+                {
+                    NotificationService.Notify(NotificationSeverity.Error, "Error", "Username already taken!");
+
+                    Username = "";
+
+                    Password = "";
+
+                    Password2 = "";
+                    StateHasChanged();
+                    return;
+                }
+                //Send req to create user.
+                await new UserAPI().CreateUser(Username.ToString(), Password.ToString(), Email.ToString(), School.ToString(),FirstName.ToString(),LastName.ToString());
+                NotificationService.Notify(NotificationSeverity.Success, "Success", "User Created");
+                NavigationManager.NavigateTo("/");
+            }
+            else
+            {
+                //Clear if invalid
+                Password = "";
+                Password2 = "";
+                NotificationService.Notify(NotificationSeverity.Error, "Error", "Password must be at least 8 characters long, contain at least one uppercase letter, and one special character!");
+                StateHasChanged();
+            }
         }
         else
         {
             //Clear if invalid
             Password = "";
             Password2 = "";
-            await JSRuntime.InvokeVoidAsync("alert", "The entered passwords don't match.");
+            NotificationService.Notify(NotificationSeverity.Error, "Error", "The entered passwords don't match.");
+            StateHasChanged();
         }
     }
+
     /// <summary>
     /// Entered Username
     /// </summary>
     public string Username { get; set; }
+
+    /// <summary>
+    /// Entered first name
+    /// </summary>
+    public string FirstName { get; set; }
+
+    /// <summary>
+    /// Entered last name
+    /// </summary>
+    public string LastName { get; set; }
 
     /// <summary>
     /// Entered Email
@@ -44,6 +88,12 @@
     /// Entered Password Confirmation
     /// </summary>
     public string Password2 { get; set; }
+
+
+    /// <summary>
+    /// Entered School
+    /// </summary>
+    public string School { get; set; }
 }
 
 <!-- Page Structure -->
@@ -68,28 +118,43 @@
                 <form @onsubmit="Submit">
                     <!-- Account creation textboxes/fields -->
                     <div class="mb-3">
-                        <label for="firstName" class="form-label">First Name</label>
-                        <input type="text" class="form-control" id="firstName" placeholder="Enter first name" required>
+                        <label for="firstName" class="form-label" >First Name</label>
+						<input type="text" class="form-control" id="firstName" @bind-value="FirstName" placeholder="Enter first name" maxlength="25" required>
                     </div>
                     <div class="mb-3">
-                        <label for="lastName" class="form-label">Last Name</label>
-                        <input type="text" class="form-control" id="lastName" placeholder="Enter last name" required>
+                        <label for="lastName" class="form-label" >Last Name</label>
+						<input type="text" class="form-control" id="lastName" @bind-value="LastName" placeholder="Enter last name" maxlength="25" required>
                     </div>
                     <div class="mb-3">
                         <label for="username" class="form-label">Username</label>
-                        <input type="text" class="form-control" id="username" placeholder="Enter Username" @bind-value="Username" required>
+                        <input type="text" class="form-control" id="username" placeholder="Enter Username" @bind-value="Username" maxlength="25" required>
                     </div>
                     <div class="mb-3">
                         <label for="email" class="form-label">Email</label>
-                        <input type="email" class="form-control" id="email" placeholder="Enter Email" @bind-value="Email" required>
+                        <input type="email" class="form-control" id="email" placeholder="Enter Email" @bind-value="Email" maxlength="100" required>
                     </div>
                     <div class="mb-3">
                         <label for="password" class="form-label">Password</label>
-                        <input type="password" class="form-control" id="password" placeholder="Create password" @bind-value="Password" required>
+                        <input type="password" class="form-control" id="password" placeholder="Create password" @bind-value="Password" maxlength="500" required>
                     </div>
                     <div class="mb-3">
                         <label for="confirmPassword" class="form-label">Confirm Password</label>
-                        <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm password" @bind-value="Password2" required>
+                        <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm password" @bind-value="Password2" maxlength="500" required>
+                    </div>
+                    <!-- Dropdown -->
+                    <div class="mb-3">
+                        <label for="schoolDropdown" class="form-label">Select School</label>
+                        <select class="form-control" id="schoolDropdown" @bind="School">
+                            <option value="">Select a School</option>
+                            @foreach (var school in Schools)
+                            {
+                                <option value="@school.Id">@school.SchoolName</option>
+                            }
+                        </select>
+                    </div>
+                    <!-- School Signup -->
+                    <div class="d-grid mb-3">
+                        <button type="button" class="btn btn-secondary" @onclick="SchoolSignup">School Signup</button>
                     </div>
                     <!-- Privacy Policy -->
                     <div class="mb-3 form-check">
@@ -108,13 +173,41 @@
 
 <!-- Function to navigate users to the signup tab -->
 @code {
+
+
+    private List<School>? Schools = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetSchoolNames();	    
+        StateHasChanged();
+	    await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task GetSchoolNames()
+    {
+	    List<School>? schools = await schoolAPI.GetAllSchools();
+
+	    if (schools != null)
+	    {
+		    Schools = schools;
+	    }
+
+
+    }
     private void LoginTab()
     {
         NavigationManager.NavigateTo("/LogIn");
     }
 
+
     private void ResetTab()
     {
         NavigationManager.NavigateTo("/ResetPassword");
     }
+    private void SchoolSignup()
+    {
+        NavigationManager.NavigateTo("/SchoolSignUp");
+    }
+
 }

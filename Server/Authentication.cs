@@ -1,7 +1,7 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using FeedbackTrackerCommon.Definitions;
+using Core.Definitions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using OtpNet;
@@ -11,15 +11,15 @@ namespace Server;
 public class AuthService(IConfiguration configuration, TrackerContext context)
 {
 	/// <summary>
-	/// Handles authentiction 
+	/// Handles authentication 
 	/// </summary>
-	/// <param name="Username">Accounts username</param>
+	/// <param name="username">Accounts username</param>
 	/// <param name="password">Accounts password</param>
 	/// <param name="TOTP">Account MFA code </param>
 	/// <returns></returns>
-	public async Task<string?> AuthenticateUserAsync(string Username, string password, string TOTP = "0")
+	public async Task<string?> AuthenticateUserAsync(string username, string password, string TOTP = "0")
 	{
-		User? user = await context.User.FirstOrDefaultAsync(u => u.Username == Username);
+		User? user = await context.User.FirstOrDefaultAsync(u => u.Username == username);
 		if (user == null) {return null;} 
 
 		// Verify password
@@ -30,20 +30,21 @@ public class AuthService(IConfiguration configuration, TrackerContext context)
 		//Verify MFA Code
 		if (user.MFASecret != null)
 		{
-			var base32Bytes = Base32Encoding.ToBytes(user.MFASecret);
+			byte[]? base32Bytes = Base32Encoding.ToBytes(user.MFASecret);
 			var totp = new Totp(base32Bytes, mode: OtpHashMode.Sha1);
-			string Verify = totp.ComputeTotp();
+			string verify = totp.ComputeTotp();
 
 			//Invalid TOTP code, unauthorised.
-			if (Verify != TOTP)
+			if (verify != TOTP)
 			{
 				return null;
 			}
 		}
 		
-		//Update login time.
+			//Update login time.
 		user.LastLogin = DateTime.Now;
 		context.User.Update(user);
+		await context.SaveChangesAsync();
 
 		// Generate JWT token
 		string token = GenerateJwtToken(user);
@@ -60,10 +61,10 @@ public class AuthService(IConfiguration configuration, TrackerContext context)
 	{
 		//Get values from the configuration file
 		IConfigurationSection jwtSettings = configuration.GetSection("JwtSettings");
-		string? secretKey = jwtSettings.GetValue<string>("SecretKey");
-		string? issuer = jwtSettings.GetValue<string>("Issuer");
-		string? audience = jwtSettings.GetValue<string>("Audience");
-		int expiryMinutes = jwtSettings.GetValue<int>("ExpiryMinutes");
+		string? secretKey = Program.Secrets["JWTSecret"];
+		string? issuer = Program.Secrets["JWTEndpoint"];
+		string? audience = Program.Secrets["JWTEndpoint"];
+		int expiryMinutes = 600;
 
 		if (secretKey == null) { throw new Exception("Secret key is null"); }
 		SymmetricSecurityKey securityKey = new(Encoding.UTF8.GetBytes(secretKey));
@@ -72,9 +73,9 @@ public class AuthService(IConfiguration configuration, TrackerContext context)
 		// Define claims
 		Claim[] claims =
 		[
-			new Claim(JwtRegisteredClaimNames.Sub, user.Username),
-			new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-			new Claim(ClaimTypes.NameIdentifier, user.UserID.ToString())
+			new(JwtRegisteredClaimNames.Sub, user.Username),
+			new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+			new(ClaimTypes.NameIdentifier, user.UserID.ToString())
 		];
 
 		// Create the token

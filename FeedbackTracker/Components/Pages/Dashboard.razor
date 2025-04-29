@@ -1,0 +1,341 @@
+@page "/"
+@rendermode InteractiveServer
+@inject JAuth JAuth
+@using Application.API
+@using Core.Definitions
+@using Serilog
+@inject FeedbackAPI FeedbackClientAccess
+@inject UserAPI UserClient
+@inject NotificationAPI NotificationClient
+@inject IJSRuntime JSRuntime
+@inject NavigationManager NavigationManager
+@using FeedbackTracker.Services
+@inject AppTheme AppTheme
+
+<title>Dashboard - Feedback Tracker</title>
+
+<div class="dashboardContainer">
+    <!-- Greeting section -->
+    <RadzenCard class="@(AppTheme.ColourTheme == "theme-dark" ? "welcomeCardDark" : "welcomeCard")">
+        <RadzenRow AlignItems="AlignItems.Center">
+            <RadzenColumn SizeMD="8">
+                <div class="welcomeHeader">
+                    <RadzenText TextStyle="TextStyle.H2" class="welcomeTitle">@welcomeMessage, <span class="boldUsername">@assignee.FirstName @welcomeSymbol</span></RadzenText>
+                </div>
+                <RadzenButton Text="Create New Feedback" Icon="add_circle" Click="@(() => NavigationManager.NavigateTo("/Feedback"))" />
+            </RadzenColumn>
+            <RadzenColumn SizeMD="4" class="profileContainer">
+                <div class="profileCard">
+                    <RadzenIcon Icon="person" class="profileIcon" />
+                    <div>
+                        <RadzenText TextStyle="TextStyle.H5" class="profileUsername">@assignee.Username</RadzenText>
+                        <RadzenBadge Text="@(assignee.IsTeacher ? "Teacher" : "Student")" BadgeStyle="BadgeStyle.Info" />
+                    </div>
+                </div>
+            </RadzenColumn>
+        </RadzenRow>
+    </RadzenCard>
+
+    <!-- Stats area, uses a loop to generate the cards. Will need updating once notification service is done -->
+    <RadzenRow Gap="1rem" class="mb-4 mt-4">
+        @foreach (var (icon, title, value) in new[]{
+        ("notifications", "Notifications", NopenCount), @*Set as 0 as default, I know there's a notification function but i'll leave this to whoever develops the service*@
+        ("assignment", "Assigned to You", allFeedback?.Count(assign => assign.AssignedUserID == assignee.UserID) ?? 0),
+        ("pending_actions", "Open Feedback", openCount)})
+        {
+            <RadzenColumn SizeMD="4">
+                <RadzenCard class="statCard">
+                    <div class="statContainer">
+                        <div class="statIconContainer">
+                            <RadzenIcon Icon="@icon" class="statIcon" />
+                        </div>
+                        <div>
+                            <RadzenText TextStyle="TextStyle.H6" class="statTitle">@title</RadzenText>
+                            <RadzenText class="statValue">@value</RadzenText>
+                        </div>
+                    </div>
+                </RadzenCard>
+            </RadzenColumn>
+        }
+    </RadzenRow>
+
+    <!-- Main dash content -->
+    <RadzenRow Gap="1.5rem">
+
+        <!-- Left side -->
+        <RadzenColumn SizeMD="4">
+            <RadzenCard class="sectionCard">
+                <RadzenText TextStyle="TextStyle.H5" class="sectionTitle">
+                    <RadzenIcon Icon="school" class="sectionIcon" /> Current Modules</RadzenText>
+                @if (modules?.Count > 0)
+                {
+                    @foreach (var module in modules)
+                    {
+                        <div class="moduleItem">
+                            <RadzenIcon Icon="book" class="moduleIcon" />
+                            <RadzenText class="moduleText">@module.Module</RadzenText>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <RadzenText class="emptyMessage">No modules assigned!</RadzenText>
+                }
+            </RadzenCard>
+
+            <!-- Notifications section, will need updating! 
+            <RadzenCard class="sectionCard">
+            <div class="notificationSectionHeader">
+            <RadzenText TextStyle="TextStyle.H5" class="sectionTitle">
+            <RadzenIcon Icon="notifications" class="sectionIcon" /> Recent Notifications
+            </RadzenText>
+            <RadzenBadge Text="?" BadgeStyle="BadgeStyle.Info" />
+            </div>
+            <div>
+            <RadzenText class="emptyMessage">For Josh or whoever sorts the notifications out</RadzenText>
+            </div>
+            </RadzenCard>-->
+        </RadzenColumn>
+
+        <!-- Right side, average resolve time -->
+        <RadzenColumn SizeMD="8">
+            <RadzenCard class="sectionCard mb-4">
+                <div class="activityHeader">
+                    <RadzenIcon Icon="assessment" class="activityIcon" />
+                    <RadzenText TextStyle="TextStyle.H5" class="sectionTitle">Average Resolution Time</RadzenText>
+                </div>
+                <div class="statContainer">
+                    <div class="statIconContainer">
+                        <RadzenIcon Icon="timer" class="statIcon" />
+                    </div>
+                    <div>
+                        <RadzenText class="statValue">@completionRate</RadzenText>
+                    </div>
+                </div>
+            </RadzenCard>
+
+            <!-- Recent activity -->
+            <RadzenCard class="dashboardCard" Style="border-radius:15px;">
+                <div class="activityHeader">
+                    <RadzenIcon Icon="dynamic_feed" class="activityIcon" />
+                    <RadzenText TextStyle="TextStyle.H5" class="sectionTitle">Recent Activity</RadzenText>
+                </div>
+                @if (allFeedback?.Any() == true)
+                {
+                    <div class="feedbackTable">
+                        <div class="tableHeader">
+                            <div class="tableHeaderCell">Title</div>
+                            <div class="tableHeaderCell">Feedback</div>
+                            <div class="tableHeaderCellCenter">Status</div>
+                            <div class="tableHeaderCellCenter">Action</div>
+                        </div>
+                        @foreach (var feedback in allFeedback.Take(6))
+                        {
+                            <div class="tableRow">
+                                <div class="tableCell">@feedback.Title</div>
+                                <div class="tableCell">@feedback.FeedbackText</div>
+                                <div class="tableCellCenter">
+                                    <RadzenBadge Text="@(feedback.Closed ? "Closed" : "Open")" BadgeStyle="@(feedback.Closed ? BadgeStyle.Success : BadgeStyle.Warning)"/>
+                                </div>
+                                <div class="tableCellCenter"><RadzenButton Icon="visibility" ButtonStyle="ButtonStyle.Primary"
+                                    Click="@(() => NavigationManager.NavigateTo($"/viewfeedback/{feedback.FeedbackID}"))"/>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <div class="text-center">
+                        <RadzenButton Text="View All Feedback" ButtonStyle="ButtonStyle.Secondary"
+                        Click="@(() => NavigationManager.NavigateTo("/usersfeedback"))" />
+                    </div>
+                }
+                else
+                {
+                    <div class="emptyActivityContainer">
+                        <RadzenText TextStyle="TextStyle.H5" class="emptyActivityTitle">No recent activity!</RadzenText>
+                        <RadzenButton Text="Create New Feedback" Icon="add" Click="@(() => NavigationManager.NavigateTo("/Feedback"))" />
+                    </div>
+                }
+            </RadzenCard>
+        </RadzenColumn>
+    </RadzenRow>
+</div>
+
+@code {
+
+    private string? welcomeMessage { get; set; }
+    private string? welcomeSymbol { get; set; }
+
+    private void userGreeting()
+    {
+        var currentTime = DateTime.Now.Hour; //get the current time
+
+        if (currentTime < 12)
+        {
+            welcomeMessage = "Good Morning";
+            welcomeSymbol = "☀️";
+        }
+        else if (currentTime < 18)
+        {
+            welcomeMessage = "Good Afternoon";
+            welcomeSymbol = "☕";
+        }
+        else
+        {
+            welcomeMessage = "Have a Good Evening";
+            welcomeSymbol = "🌃";
+        }
+    }
+    private string? completionRate = "not found";
+    private User assignee = new() { };
+    private List<Modules> modules = new() { };
+    private int openCount = 0;
+    private int NopenCount = 0;
+    private List<Core.Definitions.Notification>? notifications;
+    private async Task countOpenFeedback()
+    {
+        if (allFeedback != null)
+        {
+            foreach (var fb in allFeedback.Where(f => !f.Closed))
+            {
+                openCount += 1;
+            }
+        }
+    }
+    private async Task countNotifications()
+    {
+        if (notifications != null)
+        {
+            foreach (var noti in notifications.Where(n => n.UserID == JAuth.GetUser().UserID))
+            {
+                NopenCount += 1;
+            }
+        }
+    }
+    private async Task getNotifications(){
+        var noti = await NotificationClient.GetNotificationByUser(JAuth.GetUser().UserID);
+        if(noti.Count > 0){
+            notifications = noti;
+            await countNotifications();
+        }
+    }
+    // get logged in user
+    private async Task getUser()
+    {
+        if (JAuth.GetUser() != null)
+        {
+            assignee = JAuth.GetUser();
+            await LoadFeedback();
+            await getModules();
+            await getNotifications();
+            if (assignee.IsTeacher)
+            {
+                await getAverageResolveTime(assignee.UserID);
+            }
+            await countOpenFeedback();
+        }
+
+        await InvokeAsync(StateHasChanged);
+
+    }
+
+    private async Task getModules()
+    {
+        if (assignee != null)
+        {
+            modules = await UserClient.GetModules(assignee.UserID);
+            await InvokeAsync(StateHasChanged);
+
+        }
+    }
+
+
+    private async Task getAverageResolveTime(int usrID)
+    {
+        completionRate = await UserClient.getAverageResolveTime(usrID);
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        base.OnInitialized();
+        JAuth.EnforceAuth();
+
+        AppTheme.OnChange += UpdateSelectedTheme;
+
+        userGreeting();
+        if (JAuth.IsAuthorised())
+        {
+            await Task.Delay(50); // Wait half a second before retrying
+            try
+            {
+                await getUser();
+            }
+            catch
+            {
+
+
+            }
+
+        }
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private string SelectedTheme { get; set; } = "blue";
+    // colour changer
+    private void ApplyTheme()
+    {
+        if (!string.IsNullOrEmpty(SelectedTheme))
+        {
+            //set theme
+            AppTheme.ColourTheme = SelectedTheme.ToLower();
+            StateHasChanged();
+        }
+    }
+    private void UpdateSelectedTheme()
+    {
+        SelectedTheme = AppTheme.ColourTheme;
+        StateHasChanged();
+    }
+
+    //prevent memory leaks
+    public void Dispose()
+    {
+        AppTheme.OnChange -= UpdateSelectedTheme;
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            SelectedTheme = AppTheme.ColourTheme;
+            StateHasChanged();
+        }
+    }
+
+
+    private List<Core.Definitions.Feedback> allFeedback = new();
+
+
+    // loads feedback from api
+    private async Task LoadFeedback()
+    {
+        try
+        {
+
+            List<Core.Definitions.Feedback> feedbackList = await FeedbackClientAccess.GetAssignedFeedbacks(JAuth.GetUser().UserID) ?? new List<Core.Definitions.Feedback>();
+
+            if (assignee != null)
+            {
+
+                allFeedback = feedbackList;
+            }
+            else
+            {
+                Console.WriteLine("No feedback found. Using test data.");
+
+            }
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Error loading feedback.");
+        }
+    }
+}

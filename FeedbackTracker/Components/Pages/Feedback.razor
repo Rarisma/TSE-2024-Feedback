@@ -1,106 +1,112 @@
 @page "/feedback"
-@using System.Data.SqlTypes
 @using Application.API
-@using FeedbackTrackerCommon.Definitions
+@using Core.Definitions
+@using Serilog
 @rendermode InteractiveServer
-@inject FeedbackAPI FeedbackCLient
 @inject JAuth Auth
 @inject ModuleAPI ModuleClient
-@inject UserAPI UserCLient
+@inject UserAPI UserClient
 @inject NavigationManager NavigationManager
-
+@inject IJSRuntime JS
 <title>TSE Feedback: Create Feedback </title>
+<div class="container">
+    @if (Auth.IsAuthorised())
+    {   <PageTitle>Feedback Page</PageTitle>
 
-@if (Auth.IsAuthorised())
-{
-    <PageTitle>Feedback Page</PageTitle>
-    <div class="create-feedback">
-    <h3>Create Feedback</h3>
-        <!-- Feedback form -->
-        <div class="card-body">
-            <!--Name-->
-            <div class="mb-3">
-                <label for="title" class="first-label">Name:</label>
-                <input id="title" type="text" @bind="title" placeholder="Enter Feedback Here..." class="form-control" />
-            </div>
-
-            <!--Text-->
-            <div class="mb-3">
-                <label for="text" class="label-text">Feedback Information:</label>
-                <textarea id="text" type="text" @bind="text" placeholder="Enter Information About Feedback Here..." class="form-control" style="height: 100px; resize: none;" maxlength="8000"></textarea>
-            </div>
-
-            <!--Module-->
-            <div class="mb-3">
-                <label for="module" class="label-text">Feedback Module:</label>
-                <select id="module" @onchange="moduleSelected" class="form-select">
-                    @if (modules.Count > 0)
-                    {
-                        for (int i = 0; i < modules.Count; i++)
-                        {
-                            <option value="@modules[i].ModuleID">@modules[i].Module</option>
-                        }
-                    }
-                    else
-                    {
-                        <option value="">No modules</option>
-                    }
-                </select>
-            </div>
-
-            <!--Assign-->
-            <div class="mb-3">
-                <label for="assign" class="label-text">Teacher To Assign Feedback:</label>
-                <select id="assign" @bind=assignedUserID class="form-select">
-                    @if (users.Count > 0)
-                    {
-                        for (int i = 0; i < users.Count; i++)
-                        {
-                            if (users[i].IsTeacher)
-                            {
-                                <option value="@users[i].UserID">@users[i].Username</option>
-                            }
-                        }
-                        <option value="0">No Teacher</option>
-
-                    }
-                </select>
-            </div>
-                
-                <!--Label-->
-                <div class="mb-3">
-                    <label for="Label">Label:</label>
-                    <select id="Label" @bind="Label" class="form-select">
-                        <!-- add each module to select options-->
-                        <option value="0">@FeedbackLabel.Positive</option>
-                        <option value="1">@FeedbackLabel.Improvement</option>
-                        <option value="2">@FeedbackLabel.Question</option>
-                        <option value="3">@FeedbackLabel.Error</option>
-
-                    </select>
+        <RadzenTemplateForm TItem="@Core.Definitions.Feedback" Data="@_feedback" Submit="@SendFeedback">
+            <RadzenCard class="feedbackCard">
+                <!--Title-->
+                <div class="text-center mb-4">
+                    <RadzenIcon Icon="feedback" Style="font-size: 2rem; color: var(--primary);" />
+                    <RadzenText TextStyle="TextStyle.H3" Style="text-align: center; color: var(--text-primary);">Create Feedback</RadzenText>
                 </div>
-            </div>
-            <button class="btn btn-primary" @onclick="Sendfeedback" style="min-width: 200px; margin: 0 auto; display: block;">Submit Feedback</button>
-        </div>
-}
 
-//For users that aren't logged in
-else
-{
-    <style>
-        body {
-            overflow: hidden;
-        }
-    </style>
-    <div class="loggedout">
-        <div class="loggedout-msg">
-            <img src="/Images/LoginCone.png" alt="Login Required" class="cone-img">
-            <h2>Please log in to create feedback.</h2>
-            <button class="btn btn-loggedout" @onclick=HomeButton>Return Home</button>
-        </div>
-    </div>
-}
+                <!--Name-->
+                <div class="mb-4">
+                    <div class="feedbackMainHeading">
+                        <RadzenIcon Icon="title" class="feedbackIcon" />
+                        <RadzenText TextStyle="TextStyle.Subtitle1" class="feedbackHeading">Title</RadzenText>
+                    </div>
+                    <RadzenTextBox @bind-Value="_feedback.Title" Name="Title" Placeholder="Enter Feedback Title..." MaxLength="3000" class="feedbackInput feedbackText" />
+                    <RadzenRequiredValidator Component="Title" Text="Title is required" />
+                </div>
 
+                <!--Description-->
+                <div class="mb-4">
+                    <div class="feedbackMainHeading">
+                        <RadzenIcon Icon="description" class="feedbackIcon" />
+                        <RadzenText TextStyle="TextStyle.Subtitle1" class="feedbackHeading">Description</RadzenText>
+                    </div>
+                    <RadzenTextArea @bind-Value="_feedback.FeedbackText" Name="Text" Placeholder="Enter Information About Feedback Here..." class="feedbackInput feedbackText feedbackTextArea" MaxLength="8000" />
+                    <RadzenRequiredValidator Component="Text" Text="Description is required" />
+                </div>
+
+                <!--Module-->
+                <div class="mb-4">
+                    <div class="feedbackMainHeading">
+                        <RadzenIcon Icon="school" class="feedbackIcon" />
+                        <RadzenText TextStyle="TextStyle.Subtitle1" class="feedbackHeading">Module</RadzenText>
+                    </div>
+                    <RadzenDropDown TValue="int" @bind-Value="_feedback.ModuleID" @onchange="ModuleSelected" Data="_modules"
+                    TextProperty="Module" ValueProperty="ModuleID" Name="Module" AllowClear="false" AllowFiltering="true" class="feedbackInput feedbackDrop" />
+                    <RadzenRequiredValidator Component="Module" Text="Module is required" />
+                </div>
+
+                <!--Assign Teacher-->
+                <div class="mb-4">
+                    <div class="feedbackMainHeading">
+                        <RadzenIcon Icon="person_add" class="feedbackIcon" />
+                        <RadzenText TextStyle="TextStyle.Subtitle1" class="feedbackHeading">Assigned Teacher</RadzenText>
+                    </div>
+                    <RadzenDropDown TValue="int?" @bind-Value="_feedback.AssignedUserID" Data="@_users.Where(u => u.IsTeacher)"
+                     TextProperty="Username" ValueProperty="UserID" Name="Assignee" AllowClear="false" AllowFiltering="true" class="feedbackInput feedbackDrop" />
+                    <RadzenRequiredValidator Component="Assignee" Text="Assignee is required" />
+                </div>
+
+                <div class="row">
+
+                    <!--Label-->
+                    <div class="col-md-6 mb-4">
+                        <div class="feedbackMainHeading">
+                            <RadzenIcon Icon="label" class="feedbackIcon" />
+                            <RadzenText TextStyle="TextStyle.Subtitle1" class="feedbackHeading">Label</RadzenText>
+                        </div>
+
+                        <RadzenDropDown TValue="Core.Definitions.FeedbackLabel?" @bind-Value="_feedback.Label"
+                                        Data='@(Enum.GetValues<FeedbackLabel>().Select(e => new LabelOption
+                                        {Value = (Core.Definitions.FeedbackLabel?)e,Text = $"{e}"}).ToList())'
+                        TextProperty="Text" ValueProperty="Value" Name="Label" class="feedbackInput feedbackDrop" />
+                        <RadzenRequiredValidator Component="Label" Text="Label is required"/>
+
+                    </div>
+
+                    <!--Visibility-->
+                    <div class="col-md-6 mb-4">
+                        <div class="feedbackMainHeading">
+                            <RadzenIcon Icon="visibility" class="feedbackIcon" />
+                            <RadzenText TextStyle="TextStyle.Subtitle1" class="feedbackHeading">Visibility</RadzenText>
+                        </div>
+
+                        <RadzenDropDown TValue="Core.Definitions.FeedbackVisibility" @bind-Value="_feedback.Visibility"
+                                        Data='@(Enum.GetValues<FeedbackVisibility>().Select(e => new VisibiltyOption
+                                        {Value = (Core.Definitions.FeedbackVisibility)e,Text = $"{e}"}).ToList())'
+                        TextProperty="Text" ValueProperty="Value" Name="Visibility" class="feedbackInput feedbackDrop" />
+                        <RadzenRequiredValidator Component="Visibility" Text="Visibility is required" />
+
+                    </div>
+                </div>
+
+                <!--Button-->
+                <div class="text-center mt-5">
+                    <RadzenButton ButtonType="ButtonType.Submit" Text="Submit Feedback" Icon="send"
+                    ButtonStyle="ButtonStyle.Primary" 
+                    class="feedbackButton" />
+                </div>
+            </RadzenCard>
+            </RadzenTemplateForm>
+
+    }
+</div>
 @code {
     //Goes back to the login page
     private void HomeButton()
@@ -108,132 +114,133 @@ else
         NavigationManager.NavigateTo("/LogIn");
     }
 
-    private int Label;
-    
-    // name
-    private string title = string.Empty;
-    // text
-    private string text = string.Empty;
-
-    // moduleID
-    private int moduleID;
-    // get modules
-    private List<FeedbackTrackerCommon.Definitions.Modules> modules = new List<FeedbackTrackerCommon.Definitions.Modules>();
-    
-    // assigne
-    // author of feedback (get current user)
-    private FeedbackTrackerCommon.Definitions.User assignee = new FeedbackTrackerCommon.Definitions.User { };
-
-    // assigned user
-    private int assignedUserID;
-    // get possible users to asign to
-    private List<FeedbackTrackerCommon.Definitions.User> users = new List<FeedbackTrackerCommon.Definitions.User> { new FeedbackTrackerCommon.Definitions.User { UserID=0,Username="No users"} };
-
-
-    // get users that can be assigned feedback
-    private async void getAssignableUsers()
+    public class LabelOption
     {
-        // Get module teachers.
-        List<FeedbackTrackerCommon.Definitions.User?>? modusers = (await ModuleClient.GetUsersInModule(moduleID))
-           .ToList();
-        
-        if(modusers != null && modusers.Count>0){
-            users = modusers;
-            assignedUserID = modusers[0].UserID;
-        }
-
-        StateHasChanged();
-
+        public Core.Definitions.FeedbackLabel? Value { get; set; }
+        public string Text { get; set; }
     }
 
-    // get users that can be assigned feedback
-    private async void moduleSelected(ChangeEventArgs e)
+    public class VisibiltyOption
     {
+        public Core.Definitions.FeedbackVisibility Value { get; set; }
+        public string Text { get; set; }
+    }
 
-        // Get users
-
-        moduleID = int.Parse(e.Value?.ToString());
-        getAssignableUsers();
+    private Core.Definitions.Feedback _feedback = new Core.Definitions.Feedback { Label=0 };
 
 
+    // get modules
+    private List<Modules> _modules = new();
+
+    // assign
+    // author of feedback (get current user)
+    private User _assignee = new();
+    // assigned user
+    private int _assignedUserID;
+
+    // get possible users to assign to
+    private List<User> _users = new(){ new() { UserID=0, Username="No users"} };
+
+
+    // get users that can be assigned feedback
+    private async Task GetAssignableUsers()
+    {
+        // Get module teachers.
+        List<User?> modUsers = (await ModuleClient.GetUsersInModule(_feedback.ModuleID))!.ToList();
+
+        if(modUsers is { Count: > 0 }) 
+        {
+            modUsers.RemoveAll(u => u.UserID == Auth.User.UserID);
+            _users = modUsers;
+            _feedback.AssignedUserID = modUsers[0].UserID;
+        }
+    }
+
+    /// <summary>
+    /// Updates module (UI)
+    /// </summary>
+    /// <param name="e"></param>
+    private async void ModuleSelected(ChangeEventArgs e)
+    {
+        _feedback.ModuleID = int.Parse(e.Value?.ToString()!);
+        await GetAssignableUsers();
     }
 
     // getModules (get modules user in / can access)
-
     private async Task GetModules() {
 
-        //#TODO get modules user is in
+        List<Modules?>? newModules = await UserClient.GetModules(_assignee.UserID);
 
-        List<FeedbackTrackerCommon.Definitions.Modules?>? newmodules = await UserCLient.GetModules(assignee.UserID);
-
-        if(newmodules != null){
+        if(newModules != null){
             try
             {
-                modules = newmodules;
-                moduleID = modules.First().ModuleID;
+                _modules = newModules;
+                _feedback.ModuleID = _modules.First().ModuleID;
+
             }
-            catch{}
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Error getting modules");
+            }
         }
 
-        getAssignableUsers();
-        // refresh ui with new data
-        StateHasChanged();
+        await GetAssignableUsers();
     }
 
 
     // sendFeedback function
-    private async void Sendfeedback()
+    private async void SendFeedback(Core.Definitions.Feedback feedback)
     {
+        //Create feedback object
+        Core.Definitions.Feedback fb = new Core.Definitions.Feedback
+        {
+            AssignedUserID = feedback.AssignedUserID,
+            AssigneeID = _assignee.UserID,
+            ModuleID = feedback.ModuleID,
+            FeedbackText = feedback.FeedbackText,
+            Closed = false,
+            Title = feedback.Title,
+            Label = feedback.Label,
+            Visibility = feedback.Visibility,
+            CreatedDate = DateTime.Now
+        };
+        // Send to API
+        Log.Information("Feedback Created: {fb}", fb.Title);
+        await new FeedbackAPI().CreateFeedback(fb);
+        Log.Information("Posted to server");
 
-        FeedbackTrackerCommon.Definitions.Feedback fb = new FeedbackTrackerCommon.Definitions.Feedback();
-
-        /*
-        assign feedback
-        */
-
-        // fb.FeedbackID; Feedback ID auto increment on insert
-        fb.AssignedUserID = assignedUserID; // ID of user the feedback is assigned to.
-        fb.AssigneeID = assignee.UserID; // ID of user thats logged in 
-        fb.ModuleID = moduleID; // ID of associated module
-        fb.FeedbackText = text; // text of feedback
-        fb.Closed = false; // Feedback starts open (close would be completed)
-        fb.Title = title; // Name of feedback
-        fb.Priority = 5;
-
-        // fb.AssignedUSer;
-
-        // fb.Assignee;
-
-        // fb.Module;
-
-
-
-
-
-        //Console.WriteLine(fb.Title); // log
-
-        // call api createfeedback
-        string apiFeedback = await new FeedbackAPI().CreateFeedback(fb);
-
-        //Console.WriteLine(apiFeedback); // log
         NavigationManager.NavigateTo("/");
-
     }
 
-    // get logged in user
-    private async Task getUser()
+    // get logged-in user
+    private async Task GetUser()
     {
-        FeedbackTrackerCommon.Definitions.User? user = await UserCLient.GetUserByID(Auth.GetUser().UserID);
-        // return logged user
-        assignee = user;
+        if (Auth != null)
+        {
+            User? user = await UserClient.GetUserByID(Auth.GetUser()!.UserID);
+            // return logged user
+            if (user != null)
+            {
+                _assignee = user;
+            }
+        }
+        
     }
     
     protected override async Task OnInitializedAsync()
     {
         if (Auth.IsAuthorised())
         {
-            await getUser();
+            await GetUser();
             await GetModules();
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            StateHasChanged();
         }
     }
 }

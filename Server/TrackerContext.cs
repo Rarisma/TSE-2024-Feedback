@@ -1,15 +1,10 @@
-﻿using FeedbackTrackerCommon.Definitions;
+﻿using Core.Definitions;
 using Microsoft.EntityFrameworkCore;
 
 namespace Server;
 
-public class TrackerContext(
-	string connectionString =
-		"Server=www.hallon.rarisma.net;Database=feedbacktracker;User ID=trackeradmin;Password=RaZZmATazz0043_@@!;")
-	: DbContext
+public class TrackerContext : DbContext
 {
-	public string ConnectionString { get; set; } = connectionString;
-
 	public DbSet<User> User { get; set; }
 	public DbSet<Feedback> Feedback { get; set; }
 	public DbSet<Modules> Modules { get; set; }
@@ -20,9 +15,9 @@ public class TrackerContext(
 	
     public DbSet<Notification> Notification { get; set; }
 	public DbSet<CodeStorage> CodeStorage { get; set; }
-
+	public DbSet<School> School { get; set; }
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 	{
-		optionsBuilder.UseMySql(ConnectionString, ServerVersion.AutoDetect(ConnectionString));
+		optionsBuilder.UseMySql(Program.Secrets["SQLString"], ServerVersion.AutoDetect(Program.Secrets["SQLString"]));
 	}
 }

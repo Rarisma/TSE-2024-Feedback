@@ -1,0 +1,23 @@
+﻿.logout-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    position: relative;
+}
+
+::deep .logout-card {
+    width: 600px;
+    backdrop-filter: blur(200px);
+    background-color: transparent !important;
+}
+
+.icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    margin: 0 auto;
+}

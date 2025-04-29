@@ -2,91 +2,34 @@
 @inject FeedbackAPI FeedbackClientAccess
 @inject UserAPI UserClientAccess
 @using Application.API
+@using Core.Definitions
+@using Serilog
 @inject JAuth JAuth
 @inject NavigationManager NavigationManager
+@inject UserAPI UserClient
+@inject NotificationAPI NotificationClient
+@inject ModuleAPI ModuleClient
 @rendermode InteractiveServer
 
+
+<PageTitle>TSE Feedback: Your Feedback</PageTitle>
+
+
 @{
-
-    <style>
-
-        .title-box {
-        background-color: #1f1f1f;
-        color: white;
-        width: 100%;
-        padding: 32px;
-        text-align: center;
-        }
-
-        .sort-container {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        }
-
-        .sort-box {
-        background-color: #1f1f1f;
-        border-style: solid;
-        border-color: #1f1f1f;
-        border-radius: 8px;
-        width: 300px;
-        padding: 16px;
-        margin: 16px;
-        text-align: center;
-        color: white;
-        }
-
-        .feedback-box {
-        position: center;
-        display: block;
-        background-color: #EBF0F5;
-        border-style: solid;
-        border-color: black;
-        border-radius: 8px;
-        width: 300px;
-        padding: 16px;
-        margin-top: 16px;
-        margin-bottom: 16px;
-        margin-left: 185px;
-        text-align: center;
-        color: black;
-        text-decoration: none;
-        }
-
-        .feedback-box:hover {
-        transform: translateY(-2px);
-        }
-    </style>
-
-    <title>TSE Feedback: Your Feedback</title>
-
-    @if (JAuth.IsAuthorised())
-    {
-        <center>
-            <h1>Your Feedback</h1></center>
-        @if (SelectedFeedbacks != null && SelectedFeedbacks.Any())
-        {
-            foreach (var feedback in SelectedFeedbacks)
-            {
-                <p><strong>Title:</strong> @feedback.Title</p>
-                <p><strong>Description:</strong> @feedback.FeedbackText</p>
-                <NavLink class="btn btn-primary" href="@($"/viewfeedback/{feedback.FeedbackID}")">View</NavLink>
-            }
-        }
-        else
-        {
-            <center>
-                <p></p></center>
-        }
-
-        <div class="sort-container">
-            <div class="sort-box">
-                <label for="teachername">Sort By Teacher:</label>
-                <select id="teachername" @onchange="SortByTeacher">
-                    <option value="all">Show All</option>
-                    @if (Teachers != null)
+    <title>Your Feedback</title>
+        <RadzenCard Style="margin-bottom: 30px; background-color: var(--main-body); border: 1px solid var(--border-color);">
+            <div style="text-align: center; margin-bottom: 20px;">
+                <h1 style="font-size: 3.2rem; font-weight: 700; color: var(--text-primary); text-shadow: 0 0 5px rgba(0, 0, 0, 0.3);">
+                    Your Feedback
+                </h1>
+            </div>
+            <RadzenCard Style="border-top-left-radius: 10px; border-top-right-radius: 10px; background-color: var(--card-bg); border: 1px solid var(--border-color); padding: 15px;">
+                <label for="teachername" style="color: var(--text-primary); margin-right: 10px; font-weight: bold;">Show from:</label>
+                <select id="teachername" @onchange="SortByTeacher" style="background-color: var(--card-bg); color: var(--text-primary); border: 1px solid var(--border-color); border-radius: var(--border-radius); padding: 5px; margin-right: 15px;">
+                    <option value="all">Everyone</option>
+                    @if (Users != null)
                     {
-                        foreach (var teacher in Teachers)
+                        foreach (var teacher in Users)
                         {
                             <option value="@teacher.UserID">@teacher.Username</option>
                         }
@@ -96,77 +39,124 @@
                         <option value="">No Assignments</option>
                     }
                 </select>
-            </div>
 
-            <div class="sort-box">
-                <label for="sorting">Sort By:</label>
-                <select id="sorting" @onchange="SortBySelected">
+                <label for="sorting" style="color: var(--text-primary); margin-right: 10px; font-weight: bold;">Sort By:</label>
+                <select id="sorting" @onchange="SortBySelected" style="background-color: var(--card-bg); color: var(--text-primary); border: 1px solid var(--border-color); border-radius: var(--border-radius); padding: 5px; margin-right: 15px;">
                     <option value="az">A-Z</option>
                     <option value="za">Z-A</option>
+                    <option value="public">Public Feedback</option>
+                    <option value="private">Private Feedback</option>
                 </select>
-            </div>
-        </div>
 
-        @if (SpecificFeedbacks != null)
-        {
-            foreach (var feedback in SpecificFeedbacks)
-            {
-                <NavLink class="feedback-box" href="@($"/viewfeedback/{feedback.FeedbackID}")">
-                    <p>@feedback.Title</p>
-                    @foreach (var teacher in Teachers)
+                <label for="modulesort" style="color: var(--text-primary); margin-right: 10px; font-weight: bold;">Sort By:</label>
+                <select id="modulesort" @onchange="SortByModule" style="background-color: var(--card-bg); color: var(--text-primary); border: 1px solid var(--border-color); border-radius: var(--border-radius); padding: 5px;">
+                    <option value="all">All Modules</option>
+                    @if (_modules.Count > 0)
                     {
-                        if (teacher.UserID == feedback.AssigneeID)
+                        for (int i = 0; i < _modules.Count; i++)
                         {
-                            <p><strong>@teacher.Username</strong></p>
+                            <option value="@_modules[i].ModuleID">@_modules[i].Module</option>
                         }
                     }
-                    <p>@feedback.FeedbackText</p>
-                </NavLink>
-            }
-        }
+                    else
+                    {
+                        <option value="">No assigned modules</option>
+                    }
+                </select>
 
-        <title>TSE Feedback: Your Feedback</title>
-    }
+            </RadzenCard>
 
-    else //For users that aren't logged in
-    {
-        <style>
-            body {
-            overflow: hidden;
-            }
-        </style>
-        <div class="loggedout">
-            <div class="loggedout-msg">
-                <img src="/Images/LoginCone.png" alt="Login Required" class="cone-img">
-                <h2>Please log in to access the feedback form.</h2>
-                <button class="btn btn-loggedout" @onclick=HomeButton>Return Home</button>
-            </div>
-        </div>
-    }
+            <RadzenDataGrid Style="border-bottom-left-radius: 10px; border-bottom-right-radius: 10px;background-color: var(--card-bg); color: var(--text-primary); border: 1px solid var(--border-color);"
+                            AllowFiltering="false" AllowSorting="true" PageSize="10" AllowPaging="true" Data="@SpecificFeedbacks" EmptyText="No feedback found">
+                <Columns>
+                    <RadzenDataGridColumn TItem="Core.Definitions.Feedback" Property="Title" Title="Title" TextAlign="TextAlign.Center" />
+                    <RadzenDataGridColumn TItem="Core.Definitions.Feedback" Property="FeedbackText" Title="Feedback" TextAlign="TextAlign.Center" />
+                    <RadzenDataGridColumn TItem="Core.Definitions.Feedback" Title="Created-BY" TextAlign="TextAlign.Center">
+                        <Template Context="feedback">
+                            @if (Users != null)
+                            {
+                                @foreach (var assignee in Users)
+                                {
+                                    if (assignee.UserID == feedback.AssigneeID)
+                                    {
+                                        <strong style="color: var(--text-primary);">@assignee.Username</strong>
+                                    }
+                                }
+                            }
+                        </Template>
+                    </RadzenDataGridColumn>
+                    <RadzenDataGridColumn TItem="Core.Definitions.Feedback" Title="Assigned-TO" TextAlign="TextAlign.Center">
+	                    <Template Context="feedback">
+		                    @if (Users != null)
+		                    {
+			                    @foreach (var assignee in Users)
+			                    {
+				                    if (assignee.UserID == feedback.AssignedUserID)
+				                    {
+					                    <strong>@assignee.Username</strong>
+				                    }
+			                    }
+		                    }
+	                    </Template>
+                    </RadzenDataGridColumn>
+                    <RadzenDataGridColumn TItem="Core.Definitions.Feedback" Title="Status" TextAlign="TextAlign.Center">
+                        <Template Context="feedback">
+                            <RadzenBadge Text="@(feedback.Closed ? "Closed" : "Open")" BadgeStyle="@(feedback.Closed ? BadgeStyle.Success : BadgeStyle.Warning)" />
+                        </Template>
+                    </RadzenDataGridColumn>
+
+                    <RadzenDataGridColumn TItem="Core.Definitions.Feedback" Title="View" TextAlign="TextAlign.Center">
+                        <Template Context="feedback">
+                            <RadzenButton ButtonStyle="ButtonStyle.Light" Icon="visibility" Click="@(args => NavigateToFeedback(feedback.FeedbackID))"
+                                          Style="background-color: var(--primary); color: var(--text-on-primary); border: none; width: 40px; height: 40px; border-radius: 4px;" />
+                        </Template>
+                    </RadzenDataGridColumn>
+                </Columns>
+            </RadzenDataGrid>
+        </RadzenCard>
+
 }
-
+	
 @code {
     private void HomeButton()
     {
         NavigationManager.NavigateTo("/LogIn");
     }
 
-    private List<FeedbackTrackerCommon.Definitions.Feedback> SelectedFeedbacks;
+    private void NavigateToFeedback(int feedbackId)
+    {
+        NavigationManager.NavigateTo($"/viewfeedback/{feedbackId}");
+    }
 
     /// <summary>
     /// These are lists that contain the data from the related
     /// datbase, e.g. Teachers contains data about the user
     /// </summary>
-    private List<FeedbackTrackerCommon.Definitions.Feedback> AllFeedbacks = new();
+    private List<Core.Definitions.Feedback> AllFeedbacks = new();
 
-    private List<FeedbackTrackerCommon.Definitions.Feedback> SpecificFeedbacks = new();
+    private List<Core.Definitions.Feedback> SpecificFeedbacks = new();
 
-    private List<FeedbackTrackerCommon.Definitions.User> Teachers = new();
+    private List<User> Users = new();
 
     // the values that will be assigned for these are from when the user filters their feedback
-    private string SelectedOption { get; set; } = "";
+    private string? SelectedOption { get; set; } = "";
 
     private string SelectedTeacherID { get; set; } = "";
+
+    // moduleID
+    private int _moduleID;
+    // get modules
+    private List<Modules> _modules = new();
+
+    // assign
+    // author of feedback (get current user)
+    private User _assignee = new();
+
+    // assigned user
+    private int _assignedUserID;
+    // get possible users to assign to
+    private List<User> _users = new() { new() { UserID = 0, Username = "No users" } };
+
 
     /// <summary>
     /// Sorts the feedbacks based on the specific filter applied
@@ -174,19 +164,49 @@
     /// </summary>
     private void SortBySelected(ChangeEventArgs e)
     {
-        SelectedOption = e.Value?.ToString();
+        if (e != null)
+        {
+            SelectedOption = e.Value?.ToString();
+        }
 
         if (SelectedOption == "az") // alphabetical
         {
-            SpecificFeedbacks.Sort((current, next) => current.Title.CompareTo(next.Title));
+            SpecificFeedbacks = SpecificFeedbacks.OrderBy(f => f.Title).ToList();
         }
         else if (SelectedOption == "za") // reverse alphabetical
         {
-            SpecificFeedbacks.Sort((current, next) => next.Title.CompareTo(current.Title));
+            SpecificFeedbacks = SpecificFeedbacks.OrderByDescending(f => f.Title).ToList();
         }
-        else if (SelectedOption == "priority") // lowest priority first
+        else if (SelectedOption == "public") // public
         {
-            SpecificFeedbacks.Sort((current, next) => current.Priority.CompareTo(next.Priority));
+            SpecificFeedbacks = AllFeedbacks.Where(feedback => feedback.Visibility.ToString() == "Public").ToList();
+        }
+        else if (SelectedOption == "private") // private 
+        {
+            SpecificFeedbacks = AllFeedbacks.Where(feedback => feedback.Visibility.ToString() == "Private").ToList();
+        }
+    }
+
+
+    private void SortByModule(ChangeEventArgs e)
+    {
+        var selectedModuleID = e.Value.ToString();
+        if (selectedModuleID == "all" || string.IsNullOrEmpty(selectedModuleID)) // if the user wishes to see all of their feedbacks or no module is selected
+        {
+            SpecificFeedbacks = new List<Core.Definitions.Feedback>(AllFeedbacks);
+        }
+        else if (_modules != null && _modules.Count > 0)
+        {
+            //only filter if there's modules
+            try
+            {
+                SpecificFeedbacks = AllFeedbacks.Where(f => int.Parse(selectedModuleID) == f.ModuleID).ToList();
+            }
+            catch
+            {
+                //error? show all
+                SpecificFeedbacks = new List<Core.Definitions.Feedback>(AllFeedbacks);
+            }
         }
     }
 
@@ -196,22 +216,14 @@
     /// </summary>
     private void SortByTeacher(ChangeEventArgs e)
     {
-        SelectedTeacherID = e.Value.ToString();
+        var SelectedTeacherID = e.Value.ToString();
         if (SelectedTeacherID == "all") // if the user wishes to see all of their feedbacks
         {
-            SpecificFeedbacks = new List<FeedbackTrackerCommon.Definitions.Feedback>(AllFeedbacks);
+            SpecificFeedbacks = new List<Core.Definitions.Feedback>(AllFeedbacks);
         }
         else
         {
-            SpecificFeedbacks.Clear();
-            foreach (var feedback in AllFeedbacks) // loops through original list to add all related feedbacks
-            {
-                // checks if the teacher assigned the feedback by seeing if they have the same ID as the assignee ID
-                if (int.Parse(SelectedTeacherID) == feedback.AssigneeID)
-                {
-                    SpecificFeedbacks.Add(feedback);
-                }
-            }
+            SpecificFeedbacks = AllFeedbacks.Where(f => SelectedTeacherID != null && int.Parse(SelectedTeacherID) == f.AssigneeID).ToList();
         }
     }
 
@@ -224,64 +236,107 @@
         try
         {
             var feedbacks = await FeedbackClientAccess.GetAssignedFeedbacks(ID); // communicates with API
-                                                                                 // different assignments to make sure All and Specific don't point to the same object in memory
-            AllFeedbacks = feedbacks;
-            SpecificFeedbacks = new List<FeedbackTrackerCommon.Definitions.Feedback>(feedbacks);
-
+             // different assignments to make sure All and Specific don't point to the same object in memory
+             if (feedbacks != null)
+             {
+                 AllFeedbacks = feedbacks;
+                 SpecificFeedbacks = new List<Core.Definitions.Feedback>(feedbacks);
+             }
         }
         catch (Exception ex) // feedbacks fails to load
         {
-            Console.WriteLine("Failed to load feedback.");
+            Log.Error(ex, "Failed to load feedbacks.");
         }
     }
+
+
+    // get users that can be assigned feedback
+    private async Task GetAssignableUsers()
+    {
+        // Get module teachers.
+        List<User?> modUsers = (await ModuleClient.GetUsersInModule(_moduleID))!.ToList();
+
+        if (modUsers is { Count: > 0 })
+        {
+            _users = modUsers;
+            _assignedUserID = modUsers[0].UserID;
+        }
+
+        StateHasChanged();
+    }
+
+
+    // getModules (get modules user in / can access)
+
+    private async Task GetModules()
+    {
+        if (JAuth.GetUser() != null)
+        {
+            _assignee = JAuth.GetUser();
+            var newModules = await UserClient.GetModules(_assignee.UserID);
+            
+            if (newModules != null && newModules.Count > 0)
+            {
+                _modules = newModules;
+                _moduleID = _modules.First().ModuleID;
+            }
+            else
+            {
+                //create empty list if no modules are found
+                _modules = new List<Modules>();
+            }
+            
+            await GetAssignableUsers();
+            // refresh ui with new data
+            await InvokeAsync(StateHasChanged);
+        }
+
+    }
+
+
 
     /// <summary>
-    /// Loads the data for teachers that have assigned feedback to the current user
+    /// Loads the data for people that have assigned feedback to the current user
     /// </summary>
-    private async Task LoadTeachers()
+    private async Task LoadAssignees()
     {
-        Teachers.Clear(); // empties teacher
-        foreach (var feedback in AllFeedbacks)
-        {
-            // checks to see if a teacher is already in the list, as otherwise the filter dropdown could be cluttered by the same teacher
-            if (!Teachers.Any(teach => teach.UserID == feedback.AssigneeID))
+        Users.Clear(); // empties teacher
+        if (AllFeedbacks != null)
+            foreach (var feedback in AllFeedbacks)
             {
-                var user = await UserClientAccess.GetUserByID(feedback.AssigneeID); // gets a single user based on a provided ID
-                try
+                // checks to see if a teacher is already in the list, as otherwise the filter dropdown could be cluttered by the same teacher
+                if (Users.All(teach => teach.UserID != feedback.AssigneeID))
                 {
-                    Teachers.Add(user); // adds to list
-                }
-                catch (Exception ex) // teachers fails to load
-                {
-                    Console.WriteLine("Failed to load teacher.");
+                    var user = await UserClientAccess.GetUserByID(feedback.AssigneeID); // gets a single user based on a provided ID
+                    try
+                    {
+                        if (user != null) 
+                        {
+                            Users.Add(user); // adds to list
+                        }
+                    }
+                    catch (Exception ex) // teachers fail to load
+                    {
+                        Log.Error(ex,"Failed to load teacher.");
+                    }
                 }
             }
-        }
     }
 
-    private async Task clearNotifications(){
-        List<FeedbackTrackerCommon.Definitions.Notification?>? notifications = await UserClientAccess.GetNotification(JAuth.GetUser().UserID);
-
-        if (notifications.Count > 0)
-        {
-            await UserClientAccess.DeleteNotification(JAuth.GetUser().UserID);
-
-        }
-        return;
-    }
     /// <summary>
     /// Loads the feedback data and teacher data as soon as the page is loaded
     /// </summary>
     protected override async Task OnInitializedAsync()
     {
+        JAuth.EnforceAuth();
         if (JAuth.IsAuthorised())
         {
-            await LoadAllFeedback(JAuth.User.UserID);
-            await LoadTeachers();
-
-            // clear notifications
-            await clearNotifications();
+            if(JAuth.GetUser()!=null){
+                _assignee = JAuth.GetUser();
+                await LoadAllFeedback(JAuth.User.UserID);
+                await LoadAssignees();
+                await GetModules();
+            }
         }
     }
-
 }

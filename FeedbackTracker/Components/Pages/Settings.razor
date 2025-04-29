@@ -1,108 +1,169 @@
 ﻿@page "/settings"
+@using Application.API
+@using Blazored.LocalStorage
+@inject UserAPI UserClientAccess
 @rendermode InteractiveServer
 @inject JAuth JAuth
-@using Application.API
-@using FeedbackTrackerCommon.Definitions
+@inject IJSRuntime JSRuntime
 @inject NavigationManager NavigationManager
-
-@*
-The 2FA Code was making the browser crash. Commented it but it's still there. Commented the button and replaced with dummy button until the 2FA works
-*@
-
+@inject NotificationService NotificationService
+@inject FeedbackTracker.Services.AppTheme AppTheme
+@inject ILocalStorageService LocalStorage
+<title>TSE: Settings</title>
 <!-- Settings Page Layout-->
-<div class="settings">
-    <h3>Settings</h3>
-    <div class="settings-container">
+<div class="@AppTheme.ColourTheme" Style="position: relative; width: 100%; height: 100%; display: grid; grid-template-rows: auto 1fr; padding: 20px; animation: fadeIn 0.5s ease-in; background-color: var(--main-body);">
+    <h3 Style="margin: 0 0 40px 0; font-size: 2.5rem; font-weight: 700; color: var(--text-primary); font-family: 'Poppins', sans-serif;">Settings</h3>
+
+    <div Style="display: flex; width: 100%; height: 100%; gap: 20px;">
         <!-- Left side: Categories -->
-        <div class="categories">
-            <ul>
-                <li><button class="btn-categories @(SelectedCategory == SettingsCategory.General ? "active" : "")" @onclick="() => SelectCategory(SettingsCategory.General)"><img class="settings-icon" src="/Images/SettingsIcons/general.png" /> General</button></li>
-                <li><button class="btn-categories @(SelectedCategory == SettingsCategory.Privacy ? "active" : "")" @onclick="() => SelectCategory(SettingsCategory.Privacy)"><img class="settings-icon" src="/Images/SettingsIcons/shield.png" /> Privacy</button></li>
-                <li><button class="btn-categories @(SelectedCategory == SettingsCategory.Notifications ? "active" : "")" @onclick="() => SelectCategory(SettingsCategory.Notifications)"><img class="settings-icon" src="/Images/SettingsIcons/bell.png" /> Notifications</button></li>
-                <li><button class="btn-categories @(SelectedCategory == SettingsCategory.Account ? "active" : "")" @onclick="() => SelectCategory(SettingsCategory.Account)"><img class="settings-icon" src="/Images/SettingsIcons/user.png" /> Account</button></li>
-            </ul>
+        <div Style="width: 30%; border-radius: 8px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); overflow: hidden; background-color: var(--card-bg);">
+            <RadzenPanelMenu Style="width: 100%; height: 100%;">
+                <RadzenPanelMenuItem Text="General" Icon="settings" Selected="SelectedCategory == SettingsCategory.General" Click="() => SelectCategory(SettingsCategory.General)" Style="padding: 15px; font-family: 'Inter', sans-serif;" />
+                <RadzenPanelMenuItem Text="Privacy" Icon="shield" Selected="SelectedCategory == SettingsCategory.Privacy" Click="() => SelectCategory(SettingsCategory.Privacy)" Style="padding: 15px; font-family: 'Inter', sans-serif;" />
+                <!--<RadzenPanelMenuItem Text="Notifications" Icon="notifications" Selected="SelectedCategory == SettingsCategory.Notifications" Click="() => SelectCategory(SettingsCategory.Notifications)" Style="padding: 15px; font-family: 'Inter', sans-serif;" />-->
+                <RadzenPanelMenuItem Text="Account" Icon="person" Selected="SelectedCategory == SettingsCategory.Account" Click="() => SelectCategory(SettingsCategory.Account)" Style="padding: 15px; font-family: 'Inter', sans-serif;" />
+            </RadzenPanelMenu>
         </div>
+
         <!-- Right Side: Options -->
-        <div class="options">
-            @* GENERAL SETTINGS (maybe theme selector or dark mode?)*@
-            @if (SelectedCategory == SettingsCategory.General)
-            {
-                <div class="option">
-                    <h2 for="first-option">General Settings</h2>
-                    <select id="general-option">
-                        <option>Option 1</option>
-                        <option>Option 2</option>
-                    </select>
-                </div>
-            }
+        <div Style="width: 70%; border-radius: 8px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); background-color: var(--card-bg); padding: 25px; overflow-y: auto; color: var(--text-primary);">
+            @* GENERAL SETTINGS *@
+            @if (SelectedCategory == SettingsCategory.General) {
+                <div Style="margin-bottom: 20px;">
+                    <h2 Style="font-size: 1.8rem; font-weight: 600; margin-bottom: 25px; color: var(--text-primary); font-family: 'Poppins', sans-serif;">General Settings</h2>
+                    <div Style="margin-bottom: 20px;">
+                        <RadzenText TextStyle="TextStyle.Subtitle1" Style="font-family: 'Inter', sans-serif; margin-bottom: 10px; color: var(--text-primary);">Theme:</RadzenText>
+                        <div Style="display: flex; align-items: center; gap: 15px;">
+                            <RadzenDropDown TValue="string" @bind-Value="SelectedTheme" TextProperty="Text" ValueProperty="Value" 
+                            Data="@(new[] { new { Text = "Light Theme", Value = "theme-light" }, new { Text = "Dark Theme", Value = "theme-dark" }, new { Text = "Hybrid Theme", Value = "theme-hybrid" }
+                                })"
+                            Style="width: 200px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);" />
+                            <RadzenButton Text="Apply" Click="ApplyTheme" ButtonStyle="ButtonStyle.Primary" 
+                            Style="padding: 8px 20px; font-weight: 500;" />
+                        </div>
+                    </div>
+                </div> }
+
             @* PRIVACY SETTINGS *@
-            else if (SelectedCategory == SettingsCategory.Privacy)
-            {
-                <div class="option">
-                    <h2 for="privacy-option">Privacy Settings</h2>
-                    <button type="submit" class="sett btn-primary" style="width: 30%; margin-top: 10px;" aria-label="2FA">2FA</button>
-                </div>
-            }
+            else if (SelectedCategory == SettingsCategory.Privacy) {
+                @if (JAuth.IsAuthorised()) {
+                    <div Style="margin-bottom: 20px;">
+                        <h2 Style="font-size: 1.8rem; font-weight: 600; margin-bottom: 25px; color: var(--text-primary); font-family: 'Poppins', sans-serif;">Privacy Settings</h2>
+                        @if (isDisabled == true)
+                        {
+                            <div Style="text-align: center;">
+                                <p Style="font-size: 1.3rem; font-weight: 500; color: var(--text-primary);">@MFAButtonText</p>
+                                <div Style="border: 1px solid var(--border-color); padding: 20px; margin: 20px auto; width: 80%; text-align: center; background-color: var(--card-bg); border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+                                    <p Style="font-size: 1rem; margin-bottom: 10px; color: var(--text-primary);">To use this code, please use an authenticator (you can find them on Google extensions)</p>
+                                    <p Style="font-size: 1rem; margin-bottom: 10px; color: var(--text-primary);">Enter the secret (the series of letters and numbers) into the authenticator and enter the code it displays when logging in</p>
+                                    <p Style="font-size: 1rem; color: var(--text-primary);">Keep in mind that the code only lasts 30 seconds before a new code is generated</p>
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div Style="text-align: center;">
+                                <div Style="border: 1px solid var(--border-color); padding: 20px; margin: 0 auto 20px; width: 80%; text-align: center; background-color: var(--card-bg); border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+                                    <p Style="font-size: 1rem; margin-bottom: 10px; color: var(--text-primary);">By activating 2FA, you will be required to use an authenticator (which can be found on the google extension store)</p>
+                                    <p Style="font-size: 1rem; margin-bottom: 10px; color: var(--text-primary);">A secret key will be displayed that you need to add to the authenticator</p>
+                                    <p Style="font-size: 1rem; color: var(--text-primary);">You SHOULD write this key down as well</p>
+                                </div>
+                                <RadzenButton Text="Enable 2FA" Click="Click2FA" ButtonStyle="ButtonStyle.Primary" 
+                                Style="padding: 12px 25px; font-size: 1rem; font-weight: 500;" />
+                            </div>
+                        }
+                    </div> }
+                else {
+                    <div Style="display: flex; justify-content: center; align-items: center; height: 100%;">
+                        <div Style="text-align: center;">
+                            <img src="/Images/LoginCone.png" alt="Please Log In" Style="width: 250px; height: auto; margin-bottom: 20px;">
+                            <p Style="font-size: 1.2rem; color: var(--text-primary);">Please log in to access privacy settings</p>
+                        </div>
+                    </div>
+                } }
             @* NOTIFICATION SETTINGS *@
+            @*
             else if (SelectedCategory == SettingsCategory.Notifications)
             {
-                <div class="option">
-                    <h2 for="notifications-option">Notifications Options</h2>
-                    <select id="notifications-option">
-                        <option>Option 1</option>
-                        <option>Option 2</option>
-                    </select>
+                <div Style="margin-bottom: 20px;">
+                    <h2 Style="font-size: 1.8rem; font-weight: 600; margin-bottom: 25px; color: var(--text-primary); font-family: 'Poppins', sans-serif;">Notification Settings</h2>
+                    <div Style="margin-bottom: 20px;">
+                        <RadzenText TextStyle="TextStyle.Subtitle1" Style="font-family: 'Inter', sans-serif; margin-bottom: 10px; color: var(--text-primary);">Notification Options:</RadzenText>
+                        <RadzenDropDown TValue="string" TextProperty="Text" ValueProperty="Value" 
+                            Style="width: 100%; box-shadow: 0 2px 5px rgba(0,0,0,0.1);" />
+                    </div>
                 </div>
             }
+            *@
             @* ACCOUNT SETTINGS *@ 
+
             else if (SelectedCategory == SettingsCategory.Account)
             {
-                if (JAuth.IsAuthorised()){
-                    <div class="option">
-                        <h2 for="account-option">Account Options</h2>
-                    </div>
-                    <form>
-                        <div class="mb-3">
-                            <label for="firstName" class="form-label">First Name</label>
-                            <input type="text" class="form-control" id="firstName" placeholder="Change First Name" @bind-value="FirstName">
+                <div Style="margin-bottom: 20px;">
+                    <h2 Style="font-size: 1.8rem; font-weight: 600; margin-bottom: 25px; color: var(--text-primary); font-family: 'Poppins', sans-serif;">Account Settings</h2>
+
+                    @if (JAuth.IsAuthorised())
+                    {
+                        <div Style="display: grid; gap: 15px;">
+                            @if(error){
+                                <div>
+                                    <RadzenText TextStyle="TextStyle.Subtitle1" Style="background-color:palevioletred;font-family: 'Inter', sans-serif; margin-bottom: 5px; color: var(--text-primary);">@errorMessage</RadzenText>
+                                </div>
+                            }
+                            <div>
+                                <RadzenText TextStyle="TextStyle.Subtitle1" Style="font-family: 'Inter', sans-serif; margin-bottom: 5px; color: var(--text-primary);">New First Name</RadzenText>
+                                <RadzenTextBox @bind-Value="FirstName" Placeholder="Change First Name" Style="width: 100%;" MaxLength="25" />
+                            </div>
+                            <div>
+                                <RadzenText TextStyle="TextStyle.Subtitle1" Style="font-family: 'Inter', sans-serif; margin-bottom: 5px; color: var(--text-primary);">New Last Name</RadzenText>
+                                <RadzenTextBox @bind-Value="LastName" Placeholder="Change Last Name" Style="width: 100%;" MaxLength="25" />
+                            </div>
+                            <div>
+                                <RadzenText TextStyle="TextStyle.Subtitle1" Style="font-family: 'Inter', sans-serif; margin-bottom: 5px; color: var(--text-primary);">New Username</RadzenText>
+                                <RadzenTextBox @bind-Value="Username" Placeholder="Change Username" Style="width: 100%;" MaxLength="25" />
+                            </div>
+                            <div>
+                                <RadzenText TextStyle="TextStyle.Subtitle1" Style="font-family: 'Inter', sans-serif; margin-bottom: 5px; color: var(--text-primary);">New Password</RadzenText>
+                                <RadzenPassword @bind-Value="Password" Placeholder="Change Password" Style="width: 100%;" MaxLength="100"/>
+                            </div>
+                            <div>
+                                <RadzenText TextStyle="TextStyle.Subtitle1" Style="font-family: 'Inter', sans-serif; margin-bottom: 5px; color: var(--text-primary);">Confirm New Password</RadzenText>
+                                <RadzenPassword @bind-Value="ConfirmPassword" Placeholder="Confirm Password" Style="width: 100%;" MaxLength="100" />
+                            </div>
+                            <div Style="text-align: center; margin-top: 15px;">
+                                <RadzenButton Text="Update Profile" ButtonStyle="ButtonStyle.Primary" Click="UpdateUserInfo"
+                                Style="padding: 10px 30px; font-weight: 500; width: 200px;" />
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label for="lastName" class="form-label">Last Name</label>
-                            <input type="text" class="form-control" id="lastName" placeholder="Change Last Name" @bind-value="LastName">
+                    }
+                    else
+                    {
+                        <div Style="display: flex; justify-content: center; align-items: center; height: 100%;">
+                            <div Style="text-align: center;">
+                                <img src="/Images/LoginCone.png" alt="Please Log In" Style="width: 250px; height: auto; margin-bottom: 20px;">
+                                <p Style="font-size: 1.2rem; color: var(--text-primary);">Please log in to access account settings</p>
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label for="username" class="form-label">Username</label>
-                            <input type="text" class="form-control" id="username" placeholder="Change Username" @bind-value="Username">
-                        </div>
-                        <div class="mb-3">
-                            <label for="password" class="form-label">Password</label>
-                            <input type="password" class="form-control" id="password" placeholder="Change Password" @bind-value="Password">
-                        </div>
-                        <div class="mb-3">
-                            <label for="password" class="form-label">Confirm Password</label>
-                            <input type="password" class="form-control" id="password" placeholder="Confirm Password" @bind-value="Password">
-                        </div>
-                        <div class="d-flex justify-content-center w-100">
-                            <!-- Button below needs @onclick once a function can update account details-->
-                            <button type="button" class="btn btn-primary" style="width: 38%; margin-top: 10px;">Update Profile</button>
-                        </div>
-                    </form>
-                }
-                else
-                {
-                    <div style="display: flex; justify-content: center; margin-top: 120px;">
-                        <img src="/Images/LoginCone.png" alt="Please Log In" style="width: 80%; height: auto;">
-                    </div>
-                }
+                    }
+                </div>
             }
         </div>
     </div>
 </div>
 
+<style>
+    @@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+    }
+</style>
+
 @code {
     //getters and setters for the selected settings category
     private SettingsCategory SelectedCategory { get; set; } = SettingsCategory.General;
-
+    private string SelectedTheme { get; set; } = "theme-light";
+    public bool isDisabled = false;
+    private string MFAButtonText = "Enable 2fa";
     private void SelectCategory(SettingsCategory category)
     {
         SelectedCategory = category;
@@ -115,61 +176,115 @@ The 2FA Code was making the browser crash. Commented it but it's still there. Co
         Notifications,
         Account
     }
-    
-    // JAuth for specific account settings
-    public string FirstName { get; set; }
-    public string LastName { get; set; }
-    public string Username { get; set; }
-    public string Password { get; set; }
-    
-    private bool isAuthorized;
 
-    protected override async Task OnInitializedAsync()
+    // colour changer
+    private void ApplyTheme()
     {
-        isAuthorized = JAuth.IsAuthorised();
-        if (isAuthorized)
+        if (!string.IsNullOrEmpty(SelectedTheme))
         {
-            JAuth.EnforceAuth();
+            AppTheme.ColourTheme = SelectedTheme;
+            StateHasChanged();
         }
-        StateHasChanged();
     }
-  
-    //Update the account settings (needs adding to a button)
-    private async Task UpdateProfile()
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        // make a function in the database so its possible to update details
-        // await new UserAPI("http://localhost:5189").
+        if (firstRender)
+        {
+            SelectedTheme = AppTheme.ColourTheme;
+            StateHasChanged();
+        }
     }
-  
-}
 
-@*
-NEEDS FIXING
-
-@code {
-    public bool isDisabled = false;
-    private string MFAButtonText = "Enable 2fa";
     public async void Click2FA()
     {
         UserAPI API = new UserAPI();
-        await API.Enable2FA(JAuth.User.UserID.ToString(), JAuth.User.Password);
+        await API.CreateTotpKey(JAuth.User.UserID.ToString(), JAuth.User.Password);
         JAuth.User = await API.GetUserByID(JAuth.User.UserID);
         isDisabled = true;
         MFAButtonText = "2FA Enabled, your code is: " + JAuth.User.MFASecret;
-
+        StateHasChanged();
+    }
+    protected override void OnInitialized()
+    {
+        JAuth.EnforceAuth();
+        SelectedTheme = AppTheme.ColourTheme;
+        AppTheme.OnChange += UpdateSelectedTheme;
+        StateHasChanged();
     }
 
-        
-    protected override async Task OnInitializedAsync()
+    private void UpdateSelectedTheme()
     {
-        if (JAuth.User.MFASecret != null)
-        {
-            MFAButtonText = "2FA Enabled, your code is: " + JAuth.User.MFASecret;
-            isDisabled = true;
+        SelectedTheme = AppTheme.ColourTheme;
+        StateHasChanged();
+    }
 
+    public void Dispose()
+    {
+        AppTheme.OnChange -= UpdateSelectedTheme;
+    }
+
+    public async void UpdateUserInfo(){
+        if(FirstName != null && LastName != null && Username != null && Password != null && ConfirmPassword != null){
+            // update
+            if(Password == ConfirmPassword){
+                if (Password.Length >= 8 && Password.Any(char.IsUpper) && Password.Any(c => !char.IsLetterOrDigit(c)))
+                {
+                    var users = await UserClientAccess.GetAllUsers();
+                    var user = users.Find(u => u.Username == Username);
+                    if (user == null)
+                    {
+                        await UserClientAccess.UpdateUser(JAuth.User.UserID.ToString(), FirstName, LastName, Username, Password);
+                        DeleteSession();
+                        StateHasChanged();
+                    }
+                    else
+                    {
+                        // username already taken
+                        error = true;
+                        errorMessage = "Username already taken";
+                        StateHasChanged();
+                    }
+                }else{
+                       // bad password
+                        error = true;
+                        errorMessage = "bad password, must be at least 8 characters long, contain at least one uppercase letter, and one special character!";
+                        StateHasChanged();
+                }
+            }else{
+                // password not match
+                error = true;
+                errorMessage = "password does not match";
+                StateHasChanged();
+            }
+
+        }else{
+            // something missing
+            error = true;
+            errorMessage = "some data is missing";
+            StateHasChanged();
         }
     }
+
+
+    private async void DeleteSession()
+    {
+        await LocalStorage.SetItemAsStringAsync("UserTok", "");
+        await LocalStorage.SetItemAsStringAsync("Username", "");
+        JAuth.Deauthorise();
+
+        NavigationManager.NavigateTo("/");
+    }
+
+    // JAuth for specific account settings
+    private string? FirstName { get; set; }
+    private string? LastName { get; set; }
+    private string? Username { get; set; }
+    private string? Password { get; set; }
+    private string? ConfirmPassword { get; set; }
+
+    private string? errorMessage {get;set;}
+    private bool error {get;set;}
+
+    private bool isAuthorized;
 }
-*@
-
-

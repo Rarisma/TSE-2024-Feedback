@@ -1,52 +1,75 @@
 ﻿@page "/LogIn"
-@inject IJSRuntime JSRuntime
 @using Application.API
 @inject NavigationManager NavigationManager
 @inject JAuth JAuth
 @using Blazored.LocalStorage
+@using Serilog
 @inject ILocalStorageService LocalStorage
+@inject Radzen.NotificationService NotificationService
+
 
 <!-- Authentication method, ran once button is clicked -->
 @code {
-
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            var storedToken = await LocalStorage.GetItemAsStringAsync("User token: ");
-            if (!string.IsNullOrEmpty(storedToken))
+            var storedToken = await LocalStorage.GetItemAsStringAsync("UserTok");
+            var storedUsername = await LocalStorage.GetItemAsStringAsync("Username");
+            if (!string.IsNullOrEmpty(storedToken) && !string.IsNullOrEmpty(storedUsername))
             {
-                JAuth.Authorise(storedToken, ""); // Restore session
+                await JAuth.Authorise(storedToken, storedUsername); // Restore session
                 StateHasChanged();
-                NavigationManager.NavigateTo("/");
+
+                if(JAuth.IsAuthorised()){
+                    NavigationManager.NavigateTo("/");
+                }
+
+
             }
         }
     }
     private async Task Submit()
     {
-        UserAPI API = new();
-
-        var attempted_user = await API.GetUserByUsername(Username);
-        if (attempted_user == null)
+        try
         {
-            return;
-        }
+            UserAPI API = new();
+            var attempted_user = await API.GetUserByUsername(Username);
+            if (attempted_user == null)
+            {
+                NotificationService.Notify(NotificationSeverity.Error, "Error", "Username not found");
+                return;
+            }
         
-        int id = attempted_user.UserID;
+            //Check if user has 2FA, if so abort login and show 2fa box.
+            int id = attempted_user.UserID;
+            if (await API.GetMFAStatus(id) && Hide2FA)
+            {
+                Hide2FA = false;
+            }
+            else
+            {
+                string JWT = await API.Authenticate(Username, Password, Code);
+                await JAuth.Authorise(JWT, Username);
+                if (JAuth.IsAuthorised())
+                {
+                    await LocalStorage.SetItemAsStringAsync("UserTok", JWT);
+                    await LocalStorage.SetItemAsStringAsync("Username", Username);
 
-        if (await API.getMFAStatus(id) && Hide2FA)
-        {
-            Hide2FA = false;
+                    //Login Successful, go to dash.
+                    StateHasChanged();
+                    NavigationManager.NavigateTo("/");
+                }
+                else
+                {
+                    NotificationService.Notify(NotificationSeverity.Error, "Error", "Incorrect password");
+                }
+            }
         }
-        else
+        catch (Exception ex)
         {
-            string JWT = await API.Authenticate(Username, Password, Code);
-            JAuth.Authorise(JWT, Username);
-            string token = JAuth.GetToken();
-            await LocalStorage.SetItemAsStringAsync("User token: ", token);
-            StateHasChanged();
-            
-            NavigationManager.NavigateTo("/");
+            Log.Error(ex, "Login failed");
+            NotificationService.Notify(NotificationSeverity.Error, "Error", "Login failed");
         }
     }
 
@@ -54,9 +77,11 @@
     public string Password { get; set; } = "";
     private bool Hide2FA { get; set; } = true;
     public string Code { get; set; } = "0";
+
 }
 @rendermode InteractiveServer
 <title>TSE Feedback: Log In </title>
+<RadzenNotification />
 <div class="login-page full-height">
     <!-- Top Section with Logo and Heading -->
     <!-- Image from: https://giphy.com/gifs/sandisk-bubble-loading-speech-2gHUXJe61iM0y7TpNu-->
@@ -82,17 +107,12 @@
                     <form @onsubmit="Submit">
                         <input type="text" class="form-control mb-3" placeholder="Username" @bind-value="Username" aria-label="Enter username">
                         <input type="password" class="form-control mb-3" placeholder="Password" @bind-value="Password" aria-label="Enter password">
-
-                        <!-- Remember me button, needs additional code-->
-                        <div class="d-flex align-items-center mb-3">
-                            <input type="checkbox" class="form-check-input me-2" id="rememberMe" aria-label="Remember me">
-                            <label for="rememberMe" class="form-check-label">Remember My Details</label>
-                        </div>
+                        <input type="text" hidden="@Hide2FA" class="form-control mb-3" placeholder="000000" @bind-value="Code" aria-label="Enter 2FA Code">
 
                         <button type="submit" class="btn btn-primary w-100" aria-label="Log in">Log In</button>
 
                         <!-- Forgot password button needs linking to the form-->
-                        <a href="#" class="d-block text-center mt-3" aria-label="Forgot password">Forgot Password?</a>
+                        <a href="#" class="d-block text-center mt-3" aria-label="Forgot password" @onclick="ResetPassword">Forgot Password?</a>
                     </form>
                 </div>
             </div>
@@ -129,5 +149,9 @@
     {
         NavigationManager.NavigateTo("/SignUp");
     }
-}
 
+    private void ResetPassword()
+    {
+        NavigationManager.NavigateTo("/ResetPassword");
+    }
+}

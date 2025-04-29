@@ -1,27 +1,68 @@
-﻿<!DOCTYPE html>
-<html lang="en">
+﻿@inherits LayoutComponentBase
+@inject IJSRuntime JSRuntime
 
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <base href="/" />
+    <RadzenTheme Theme="material" @rendermode="InteractiveServer" />
     <link rel="stylesheet" href="bootstrap/bootstrap.min.css" />
+    <link rel="stylesheet" href="_content/Radzen.Blazor/css/default.css" />
     <link rel="stylesheet" href="app.css" />
-    <link rel="stylesheet" href="Application.styles.css" />
+    <link rel="stylesheet" href="/Application.styles.css" />
+    <link rel="stylesheet" href="preloader.css" />
     <link rel="icon" type="image/png" href="favicon.png" />
+    <link rel="stylesheet" href="Application.styles.css" />
+	<link rel="icon" type="image/png" href="favicon.png" />    
+    <!-- Bootstrap Icons -->
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <!-- Material Icons (for navmenu) -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <HeadOutlet />
 </head>
 
 <body>
+    <!-- Preloader -->
+    <div id="preloader">
+        <div class="wrapper">
+            <div class="box-wrap">
+                <div class="box one"></div>
+                <div class="box two"></div>
+                <div class="box three"></div>
+                <div class="box four"></div>
+                <div class="box five"></div>
+                <div class="box six"></div>
+            </div>
+        </div>
+    </div>
+    
     <Routes />
-    <script src="_framework/blazor.web.js"></script>
+    <script src="/_framework/blazor.web.js"></script>
+    <script src="JS/themes.js"></script>
+    <script src="JS/preloader.js"></script>
+    <audio id="effectplayer">
+        <source id="effectplayerSource" src="" />
+    </audio>
+    <script src="JS/sound.js"></script>
+    <script src="_content/Radzen.Blazor/Radzen.Blazor.js?v=@(typeof(Radzen.Colors).Assembly.GetName().Version)"></script>
 </body>
-
 </html>
 
 @code{
-
     public static string Endpoint = "http://localhost:5189";
 
-
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            //retrieve the theme a cookie, or default to light
+            string savedTheme = await JSRuntime.InvokeAsync<string?>("ThemeHelpers.getCurrentTheme") ?? "theme-light";
+            
+            // apply the theme
+            await JSRuntime.InvokeVoidAsync("changeTheme", savedTheme); 
+            StateHasChanged();
+        }
+    }
 }

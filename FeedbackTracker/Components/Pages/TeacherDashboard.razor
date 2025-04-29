@@ -1,56 +1,61 @@
 ﻿@page "/TeacherDashboard"
 @using Application.API
+@using Core.Definitions
 @rendermode InteractiveServer
 @inject ModuleAPI ModuleClient
-@inject JAuth JAuth
-@inject UserAPI UserCLient
 @inject FeedbackAPI FeedbackClientAccess
-@inject UserAPI UserClientAccess
-@using FeedbackTrackerCommon.Definitions
-
+@inject BulkAPI BulkAPI
+@inject UserAPI UserAPI
+@inject JAuth JAuth
+@inject Radzen.NotificationService NotificationService
+@inject FeedbackTracker.Services.AppTheme AppTheme
 
 <title>TSE Modules: Create Module</title>
+<RadzenNotification />
 
 @if (JAuth.IsAuthorised())
 {
     <div class="d-flex justify-content-center align-items-center" style="min-height: 90vh; flex-direction: column;">
-        <h3 class="text-center mb-4" style="font-family: 'Lato', sans-serif; color: #4A4A4A;">
+        <h3 class="text-center mb-4" style="font-family: 'Lato', sans-serif; color: var(--text-primary);">
             Teacher Dashboard - Module Management
         </h3>
 
-        <div class="container mt-5">
+        <div class="text-center mb-4" style="color: var(--text-primary);">
+            Logged in as: @_assignee.Username
+        </div>
+
+        <div class="container mt-4">
             <div class="row justify-content-center">
                 <div class="col-md-8">
-                    <!-- Create Module Card -->
-                    <div class="card mb-4">
-                        <div class="card-header bg-primary text-white text-center">
-                            <h5 class="mb-0">Create Module</h5>
+                    <!-- Create Module  -->
+                    <div class="card mb-4 shadow-sm" style="background-color: var(--card-bg); border-color: var(--border-color);">
+                        <div class="card-header text-white text-center" style="background-color: var(--primary);">
+                            <h5 class="mb-0" style="color: #fff;">Create Module</h5>
                         </div>
-                        <div class="card-body">
-                            <p class="text-center">Logged in as: <strong>@assignee.Username</strong></p>
+                        <div class="card-body" style="color: var(--text-primary);">
                             <form>
                                 <div class="mb-3">
                                     <label for="moduleName" class="form-label">Module Name</label>
-                                    <input id="moduleName" type="text" class="form-control" @bind="moduleName" placeholder="Enter module name">
+                                    <input id="moduleName" type="text" class="form-control" @bind="_moduleName" placeholder="Enter module name">
                                 </div>
                                 <div class="d-grid">
-                                    <button class="btn btn-success" @onclick="SendModule">Create Module</button>
+                                    <button type="button" class="btn btn-primary" @onclick="SendModule">Create Module</button>
                                 </div>
                             </form>
                         </div>
                     </div>
 
-                    <!-- Assign Module Card -->
-                    <div class="card">
-                        <div class="card-header bg-primary text-white text-center">
-                            <h5 class="mb-0">Assign Module to User</h5>
+                    <!-- Assign Module  -->
+                    <div class="card mb-4 shadow-sm" style="background-color: var(--card-bg); border-color: var(--border-color);">
+                        <div class="card-header text-white text-center" style="background-color: var(--primary);">
+                            <h5 class="mb-0" style="color: #fff;">Assign Module to User</h5>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body" style="color: var(--text-primary);">
                             <form>
                                 <div class="mb-3">
-                                    <label for="userSelect" class="form-label">Select User</label>
-                                    <select id="userSelect" class="form-control" @bind="selectedUserId">
-                                        @foreach (var user in users)
+                                    <label for="assignUserSelect" class="form-label">Select User</label>
+                                    <select id="assignUserSelect" class="form-control" @bind="_selectedUserId">
+                                        @foreach (var user in _users)
                                         {
                                             <option value="@user.UserID">@user.Username</option>
                                         }
@@ -58,9 +63,9 @@
                                 </div>
 
                                 <div class="mb-3">
-                                    <label for="moduleSelect" class="form-label">Select Module</label>
-                                    <select id="moduleSelect" class="form-control" @bind="selectedModuleId">
-                                        @foreach (var module in modules)
+                                    <label for="assignModuleSelect" class="form-label">Select Module</label>
+                                    <select id="assignModuleSelect" class="form-control" @bind="_selectedModuleId">
+                                        @foreach (var module in _modules)
                                         {
                                             <option value="@module.ModuleID">@module.Module</option>
                                         }
@@ -68,69 +73,202 @@
                                 </div>
 
                                 <div class="d-grid">
-                                    <button type="button" class="btn btn-primary">Assign Module</button>
+                                    <button type="button" class="btn btn-primary" @onclick="assignModule">Assign Module</button>
                                 </div>
                             </form>
                         </div>
                     </div>
 
-                </div> 
-            </div> 
-        </div> 
-    </div> 
+                    <!-- Remove from Module  -->
+                    <div class="card mb-4 shadow-sm" style="background-color: var(--card-bg); border-color: var(--border-color);">
+                        <div class="card-header text-white text-center" style="background-color: var(--primary);">
+                            <h5 class="mb-0" style="color: #fff;">Remove User from Module</h5>
+                        </div>
+                        <div class="card-body" style="color: var(--text-primary);">
+                            <form>
+                                <div class="mb-3">
+                                    <label for="removeUserSelect" class="form-label">Select User</label>
+                                    <select id="removeUserSelect" class="form-control" @bind="_selectedUserId">
+                                        @foreach (var user in _users)
+                                        {
+                                            <option value="@user.UserID">@user.Username</option>
+                                        }
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="removeModuleSelect" class="form-label">Select Module</label>
+                                    <select id="removeModuleSelect" class="form-control" @bind="_selectedModuleId">
+                                        @foreach (var module in _modules)
+                                        {
+                                            <option value="@module.ModuleID">@module.Module</option>
+                                        }
+                                    </select>
+                                </div>
+
+                                <div class="d-grid">
+                                    <button type="button" class="btn btn-danger" @onclick="RemoveFromModule">Remove from Module</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Bulk -->
+                    <div class="card mb-4 shadow-sm" style="background-color: var(--card-bg); border-color: var(--border-color);">
+                        <div class="card-header text-white text-center" style="background-color: var(--primary);">
+                            <h5 class="mb-0" style="color: #fff;">Bulk Operations</h5>
+                        </div>
+                        <div class="card-body" style="color: var(--text-primary);">
+                            <!-- Create Users -->
+                            <div class="mb-4">
+                                <h6 class="mb-3 text-center" style="color: var(--text-primary);">Bulk Create Users</h6>
+                                <div class="mb-3">
+                                    <input type="text" class="form-control" @bind="_BulkUserEmails" placeholder="Enter user emails (CSV)">
+                                </div>
+                                <div class="d-grid">
+                                    <button class="btn btn-primary" @onclick="BulkCreateUsers">Create Users</button>
+                                </div>
+                            </div>
+
+                            <hr class="my-4">
+
+                            <!-- Create Modules -->
+                            <div class="mb-4">
+                                <h6 class="mb-3 text-center" style="color: var(--text-primary);">Bulk Create Modules</h6>
+                                <div class="mb-3">
+                                    <input type="text" class="form-control" @bind="_BulkModules" placeholder="Enter Module names (CSV)">
+                                </div>
+                                <div class="d-grid">
+                                    <button class="btn btn-primary" @onclick="BulkCreateModules">Create Modules</button>
+                                </div>
+                            </div>
+
+                            <hr class="my-4">
+
+                            <!-- Assign Modules -->
+                            <div>
+                                <h6 class="mb-3 text-center" style="color: var(--text-primary);">Bulk Assign Modules</h6>
+                                <div class="mb-3">
+                                    <input type="text" class="form-control" @bind="_BulkModUserEmails" placeholder="Enter user emails (CSV)">
+                                </div>
+                                <div class="mb-3">
+                                    <input type="number" class="form-control" @bind="_BulkModID" placeholder="Module ID">
+                                </div>
+                                <div class="d-grid">
+                                    <button class="btn btn-primary" @onclick="BulkAssignModules">Assign Modules</button>
+                                </div>
+                            </div>
+                            <!-- Assign Modules -->
+                            <div>
+                                <h6 class="mb-3 text-center">Assign module to everyone in the school (for school feedback)</h6>
+                                <div class="mb-3">
+                                    <label for="assignModuleSelect" class="form-label">Select Module</label>
+                                    <select id="assignModuleSelect" class="form-control" @bind="_selectedModuleId">
+                                        @foreach (var module in _modules)
+                                        {
+                                            <option value="@module.ModuleID">@module.Module</option>
+                                        }
+                                    </select>
+                                </div>
+                                <div class="d-grid">
+                                    <button class="btn btn-primary" @onclick="BulkAssignModulesBySchool">Assign Module to people in your school</button>
+                                </div>
+                            </div>
+                            <!-- IsStudent/IsTeacher-->
+                            <div>
+                                <h6 class="mb-3 text-center" style="color: var(--text-primary); margin-top: 18px;">Bulk Assign Role assign</h6>
+                                <div class="mb-3">
+                                    <input type="text" class="form-control" @bind="_BulkModUserEmails" placeholder="Enter user emails (CSV)">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="bulkTeacher" class="form-label">Select Role</label>
+                                    <select id="bulkTeacher" class="form-control" @bind="_BulkRolestr">
+                                         <option value="false" selected>student</option>
+                                        <option value="true">teacher</option>
+                                    </select>
+                                </div>
+                                <div class="d-grid">
+                                    <button class="btn btn-primary" @onclick="BulkAssignRoles">Assign Roles</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 }
 
 @code {
+    private string _moduleName;
+    private string _BulkUserEmails;
+    private string _BulkModules;
+    private string _BulkModUserEmails;
+    private string _BulkRolestr = "false";
+    private int _BulkModID;
 
-    private int moduleID;
-    private string moduleName;
-
-    private List<User> users = new List<User>();
-    private int selectedUserId;
-    private string selectedModuleId;
-    private List<Modules> modules = new List<Modules>();
-
-    private User SelectedUser;
-
-
+    private List<User> _users = new();
+    private int _selectedUserId;
+    private string _selectedModuleId;
+    private List<Modules>? _modules = new();
 
     // assigne
     // author of feedback (get current user)
-    private FeedbackTrackerCommon.Definitions.User assignee = getUser();
-
-    // get logged in user
-    private static FeedbackTrackerCommon.Definitions.User getUser()
-    {
-
-        // return logged user
-        return JAuth.User;
-    }
-
-    private FeedbackTrackerCommon.Definitions.User? loggedUser;
-
+    private User? _assignee;
 
     // Module Creation
     private async void SendModule()
     {
+        if (string.IsNullOrEmpty(_moduleName))
+        {
+            NotificationService.Notify(NotificationSeverity.Error, "Error", "Please enter a module name");
+            return;
+        }
+
         // Create a new module object
-        FeedbackTrackerCommon.Definitions.Modules newModule = new FeedbackTrackerCommon.Definitions.Modules();
+        Modules newModule = new();
 
-        newModule.ModuleID = moduleID;
-        newModule.Module = moduleName;
+        newModule.Module = _moduleName;
 
+        await ModuleClient.CreateModule(newModule);
+        NotificationService.Notify(NotificationSeverity.Success, "Success", "Module created successfully");
+    }
 
-       // string response = await ModuleClient.CreateModule(newModule);
+    // Module Creation
+    private async void assignModule()
+    {
+        // Create a new module object
+        if (_selectedModuleId != null && _selectedUserId != null)
+        {
+            ModuleClient.AddUserToModule(_selectedUserId.ToString(),_selectedModuleId);
+            NotificationService.Notify(NotificationSeverity.Success, "Success", "User assigned to module");
 
+            StateHasChanged();
+        }
+    }
+
+    // Remove from module
+    private async void RemoveFromModule()
+    {
+        // Create a new module object
+        if (_selectedModuleId != null && _selectedUserId != null)
+        {
+            ModuleClient.RemoveUserFromModule(_selectedUserId.ToString(), _selectedModuleId);
+
+            NotificationService.Notify(NotificationSeverity.Success, "Success", "User removed from module");
+            StateHasChanged();
+        }
     }
 
     private async Task LoadUsers()
     {
-        var AllUsers = await FeedbackClientAccess.GetAllUsersAsync();
+        var AllUsers = await UserAPI.GetAllUsers();
 
         if (AllUsers != null)
         {
-            users = AllUsers;
+            _users = AllUsers;
 
+            _selectedUserId = _users[0].UserID;
         }
         else
         {
@@ -138,22 +276,92 @@
         }
     }
 
-    private async Task LoadUser()
+    private async Task GetModules()
     {
-        var user = await UserClientAccess.GetUserByID(3);
+        var modules = await ModuleClient.GetAllModules();
 
-        if (user != null)
+        if (modules != null)
         {
-            loggedUser = user;
+            _modules = modules;
+
+            _selectedModuleId = _modules[0].ModuleID.ToString();
         }
         else
         {
-            Console.WriteLine("Failed to load user.");
+            Console.WriteLine("Failed to load users.");
         }
     }
 
     protected override async Task OnInitializedAsync()
     {
-        await LoadUsers();
+        JAuth.EnforceAuth();
+        if(JAuth.IsAuthorised())
+        {
+            _assignee = JAuth.User;
+            await LoadUsers();
+
+            await GetModules();
+            StateHasChanged();
+
+            await InvokeAsync(StateHasChanged);
+        }
     }
+
+    private async void BulkCreateUsers() 
+    {
+        if (string.IsNullOrEmpty(_BulkUserEmails))
+        {
+            NotificationService.Notify(NotificationSeverity.Error, "Error", "Please enter user emails");
+            return;
+        }
+        
+        await BulkAPI.CreateUsers(_BulkUserEmails);
+        NotificationService.Notify(NotificationSeverity.Success, "Success", "Users created successfully");
+    }
+
+    private async void BulkCreateModules() 
+    {
+        if (string.IsNullOrEmpty(_BulkModules))
+        {
+            NotificationService.Notify(NotificationSeverity.Error, "Error", "Please enter module names");
+            return;
+        }
+        
+        await BulkAPI.CreateModules(_BulkModules);
+        NotificationService.Notify(NotificationSeverity.Success, "Success", "Modules created successfully");
+    }
+
+
+    private async void BulkAssignModulesBySchool() => await ModuleClient.AddToModuleBySchool(_assignee.School, _selectedModuleId.ToString());
+
+    private async void BulkAssignModules() 
+    {
+        if (string.IsNullOrEmpty(_BulkModUserEmails))
+        {
+            NotificationService.Notify(NotificationSeverity.Error, "Error", "Please enter user emails");
+            return;
+        }
+        
+        if (_BulkModID <= 0)
+        {
+            NotificationService.Notify(NotificationSeverity.Error, "Error", "Please enter a valid module ID");
+            return;
+        }
+        
+        await BulkAPI.AssignUserModule(_BulkModUserEmails, _BulkModID);
+        NotificationService.Notify(NotificationSeverity.Success, "Success", "Modules assigned successfully");
+    }
+    
+    private async void BulkAssignRoles() 
+    {
+        if (string.IsNullOrEmpty(_BulkModUserEmails))
+        {
+            NotificationService.Notify(NotificationSeverity.Error, "Error", "Please enter user emails");
+            return;
+        }
+        
+        await BulkAPI.SetTeacher(_BulkModUserEmails, bool.Parse(_BulkRolestr));
+        NotificationService.Notify(NotificationSeverity.Success, "Success", "Roles assigned successfully");
+    }
+
 }

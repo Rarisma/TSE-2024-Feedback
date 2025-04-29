@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace FeedbackTrackerCommon.Definitions;
+namespace Core.Definitions;
 
     public class Notification
     {
@@ -17,22 +12,63 @@ namespace FeedbackTrackerCommon.Definitions;
         [Column("NOTIFICATION_ID")]
         public int NotificationID { get; set; }
 
-        ///<sumary>
-        /// User
-        /// </sumary>
+        ///<summary>
+        /// User_ID
+        /// </summary>
         [Column("USER_ID")]
-        public int UserID { get; set; }
+        public int? UserID { get; set; }
 
         ///<summary>
-        /// Feedback
+        /// Title
         /// </summary>
-        [Column("FEEDBACK_ID")]
-        public int FeedbackID { get; set; }
+        [Column("TITLE")]
+        public string? Title { get; set; } = string.Empty;
 
         ///<summary>
-        /// TIME
+        /// message
         /// </summary>
-        [Column("TIMESTAMP")]
-        public DateTime Timestamp { get; set; }
-    }
+        [Column("MESSAGE")]
+        public string? Message { get; set; } = string.Empty;
+
+        ///<summary>
+        /// type
+        /// </summary>
+        [Column("TYPE")]
+        public string? Type { get; set; } = string.Empty;
+
+        ///<summary>
+        /// payload (any extra data)
+        /// </summary>
+        [Column("PAYLOAD")]
+        public string? Payload { get; set; } = string.Empty;
+
+    ///<summary>
+    /// TIME
+    /// </summary>
+    [Column("TIMESTAMP")]
+        public DateTime Timestamp { get; set; } = DateTime.Now;
+
+        ///<summary>
+        /// TIME since creation
+        /// </summary>
+        public string TimeSinceCreation
+        {
+            get
+            {
+                var difference = DateTime.Now - Timestamp;
+
+                if (difference.Days > 0)
+                    return difference.Days.ToString() + "day(s) ago";
+
+                if (difference.Hours > 0)
+                    return difference.Hours.ToString() + "hour(s) ago";
+
+                return difference.Minutes.ToString() + "min(s) ago";
+            }
+        }
+
+    // remove when merged
+    [Column("FEEDBACK_ID")]
+    public int? FeedbackId { get; set; }
+}
 

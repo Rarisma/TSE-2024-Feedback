@@ -20,13 +20,13 @@ body {
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background: linear-gradient(135deg, #dfe9f3, #ffffff);
+    background: var(--background);
 }
 
 h3 {
     font-size: 4rem;
     font-weight: 800;
-    color: #3c3c3c;
+    color: var(--text-primary);
     margin: 2rem 0;
     text-align: center;
     letter-spacing: 2px;
@@ -43,13 +43,12 @@ h3 {
 }
 
 .contact-page, .info-cards {
-    background: rgba(255, 255, 255, 0.9);
+    background: var(--card-bg);
     backdrop-filter: blur(10px);
     padding: 40px;
     border-radius: 20px;
-    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+    box-shadow: var(--card-shadow);
     transition: transform 0.3s, box-shadow 0.3s;
-    background: rgba(255, 255, 255, 0.2);
 }
 
 .contact-page {
@@ -66,13 +65,14 @@ h3 {
         width: 100%;
         padding: 16px;
         margin-bottom: 22px;
-        border: 1px solid #ccc;
+        border: 1px solid var(--border-color);
         border-radius: 12px;
-        background: rgba(255, 255, 255, 0.9);
+        background: var(--card-bg);
+        color: var(--text-primary);
     }
 
         .contact-page input:focus, .contact-page textarea:focus {
-            border-color: #6c5ce7;
+            border-color: var(--primary);
             outline: none;
         }
 
@@ -93,12 +93,12 @@ h3 {
     font-family: 'Montserrat', sans-serif;
     font-size: 1.7rem;
     font-weight: 600;
-    color: #6a0dad;
+    color: var(--primary);
     margin-bottom: 1.5rem;
 }
 
 .info-cards p {
-   color: #555;
+   color: var(--text-secondary);
    font-size: 1.1rem;
    line-height: 1.7;
    padding: 1rem;
@@ -106,8 +106,8 @@ h3 {
 }
 
 .btn.btn-primary {
-    background-color: #6c5ce7;
-    color: #fff;
+    background-color: var(--primary);
+    color: var(--text-on-primary);
     border: none;
     padding: 16px 36px;
     border-radius: 12px;
@@ -117,11 +117,11 @@ h3 {
     margin: 20px auto;
     font-size: 1.2em;
     font-weight: 700;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--card-shadow);
 }
 
 .btn.btn-primary:hover {
-    background-color: #4e4fd2;
+    background-color: var(--primary-dark);
     transform: translateY(-5px);
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
 }

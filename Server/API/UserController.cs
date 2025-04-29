@@ -1,7 +1,5 @@
-﻿using System.ComponentModel;
-using System.Reflection;
-using System.Text.Json;
-using FeedbackTrackerCommon.Definitions;
+﻿using System.Text.Json;
+using Core.Definitions;
 using Microsoft.AspNetCore.Mvc;
 using OtpNet;
 using Serilog;
@@ -14,19 +12,19 @@ public class UserController(AuthService authService) : Controller
 	/// <summary>
 	/// Gets a user by their User ID
 	/// </summary>
-	/// <param name="ID">Account ID</param>
+	/// <param name="id">Account ID</param>
 	/// <returns>Account Object</returns>
 	[HttpGet("GetUserByID")]
-	public string GetUserByID(int ID)
+	public string GetUserById(int id)
 	{
 		try
 		{
 			//Find account
-			using TrackerContext Ctx = new();
-			User Account = Ctx.User.First(User => User.UserID == ID);
+			using TrackerContext ctx = new();
+			User account = ctx.User.First(user => user.UserID == id);
 
 			//Serialise to JSON
-			string json = JsonSerializer.Serialize(Account);
+			string json = JsonSerializer.Serialize(account);
 			return json;
 		}
 		catch (Exception ex) { return "Encountered an error: " + ex.Message; }
@@ -35,19 +33,19 @@ public class UserController(AuthService authService) : Controller
 	/// <summary>
 	/// Gets a user by their username
 	/// </summary>
-	/// <param name="Username">Username</param>
+	/// <param name="username">Username</param>
 	/// <returns>Account Object</returns>
 	[HttpGet("GetUserByUsername")]
-	public string GetUserByUsername(string Username)
+	public string GetUserByUsername(string username)
 	{
 		try
 		{
 			//Find account
-			using TrackerContext Ctx = new();
-			User Account = Ctx.User.First(User => User.Username == Username);
+			using TrackerContext ctx = new();
+			User account = ctx.User.First(user => user.Username == username);
 
 			//Serialise to JSON
-			return JsonSerializer.Serialize(Account);
+			return JsonSerializer.Serialize(account);
 		}
 		catch (Exception ex) { return "Encountered an error: " + ex.Message; }
 	}
@@ -55,30 +53,33 @@ public class UserController(AuthService authService) : Controller
 	/// <summary>
 	/// Creates a new user object.
 	/// </summary>
-	/// <param name="Username">Account username</param>
-	/// <param name="Password">Account password (in plaintext)</param>
+	/// <param name="username">Account username</param>
+	/// <param name="password">Account password (in plaintext)</param>
+	/// <param name="email">Account email (in plaintext)</param>
 	/// <returns></returns>
 	[HttpPost("CreateUser")]
-	public async void CreateUser(string Username, string Password, string Email)
+	public async void CreateUser(string Username, string Password, string Email, string School,string FirstName, string LastName)
 	{
 		try
 		{
 			//Create account object
 			//NOTE: bCrypt is very secure. (Salting is handled automatically)
-			User Account = new()
+			User account = new()
 			{
 				Username = Username,
+				FirstName = FirstName,
+				LastName = LastName,
 				Password = BCrypt.Net.BCrypt.HashPassword(Password),
-				IsStudent = true,
 				IsTeacher = false,
 				Email = Email,
+				School = School,
+				Initalised = true
 			};
-
-
+			
 			//Add user to database
-			await using TrackerContext Ctx = new();
-			Ctx.User.Add(Account);
-			await Ctx.SaveChangesAsync();
+			await using TrackerContext ctx = new();
+			ctx.User.Add(account);
+			await ctx.SaveChangesAsync();
 		}
 		catch (Exception ex)
 		{
@@ -89,217 +90,193 @@ public class UserController(AuthService authService) : Controller
 	/// <summary>
 	/// Authenticates a user
 	/// </summary>
-	/// <param name="Username">User's account username</param>
-	/// <param name="Password">account password</param>
-	/// <param name="Password">account MFA Code</param>
+	/// <param name="username">User's account username</param>
+	/// <param name="password">account password</param>
+	/// <param name="code">account MFA Code</param>
 	/// <returns></returns>
 	[HttpGet("Authenticate")]
-	public async Task<string?> Authenticate(string Username, string Password, string Code)
+	public async Task<string?> Authenticate(string username, string password, string code = "")
 	{
-		return await authService.AuthenticateUserAsync(Username, Password, Code);
+		return await authService.AuthenticateUserAsync(username, password, code);
 	}
 
-
-
-	[HttpGet("GetUsers")]
-	public Task<string> GetUsers()
+	[HttpGet("GetAllUsers")]
+	public Task<string>? GetAllUsers()
 	{
 		try
 		{
 			//Find accounts
+			using TrackerContext ctx = new();
+			List<User> accounts = ctx.User.ToList();
+			var result = accounts.ToList();
 
-			using TrackerContext Ctx = new();
-			List<User> Accounts = Ctx.User.ToList();
-			var result = Accounts.ToList();
-
-			Accounts.ForEach(acc => acc.Password = "");
+			accounts.ForEach(acc => acc.Password = "");
 			return Task.FromResult(JsonSerializer.Serialize(result));
 		}
 		catch (Exception ex) {
+			Log.Error(ex, "Error getting users");
 			return null;
 		}
 	}
 
 
 	/// <summary>
-	/// Creates a new user object.
+	/// Gets all modules
 	/// </summary>
-	/// <param name="Username">Account username</param>
-	/// <param name="Password">Account password (in plaintext)</param>
-	/// <returns></returns>
+	/// <returns>All modules</returns>
 	[HttpGet("GetModules")]
-	public string GetModules(int Userid)
+	public string GetModules(int userid)
 	{
 		try
 		{
             //Find account
-            using TrackerContext Ctx = new();
-            var modules = (from Users_Modules usermodule in Ctx.UsersModules
-                         join moduledata in Ctx.Modules on usermodule.ModuleID equals moduledata.ModuleID
-                         where usermodule.UserID == Userid
-                         select new
-                         {
-                             ModuleID = moduledata.ModuleID,
-							 Module = moduledata.Module,
-
-                         }).ToList();
+            using TrackerContext ctx = new();
+            var modules = (from Users_Modules usermodule in ctx.UsersModules
+                         join moduledata in ctx.Modules on usermodule.ModuleID equals moduledata.ModuleID
+                         where usermodule.UserID == userid
+                         select new { moduledata.ModuleID, moduledata.Module, }).ToList();
 
             //Serialise to JSON
-            string json = JsonSerializer.Serialize(modules);
-            return json;
+            return JsonSerializer.Serialize(modules);
         }
 		catch (Exception ex) { return "Encountered an error: " + ex.Message; }
 	}
+	
 	[HttpGet("CreateTOTPKey")]
-	public async Task<StatusCodeResult> CreateTOTPKey(string UserID, string Password)
+	public async Task<StatusCodeResult> CreateTotpKey(string userId, string password)
 	{
 		try
 		{
-			using TrackerContext Ctx = new();
-			User Account = Ctx.User.First(User => User.UserID == Convert.ToInt32(UserID));
+			await using TrackerContext ctx = new();
+			User account = ctx.User.First(user => user.UserID == Convert.ToInt32(userId));
 
-			if (Account.MFASecret != null)
+			if (account.MFASecret != null)
 			{
 				Log.Warning("User already has 2FA");
 				return StatusCode(405);
 			}
 
-			//prevent totp from being added where it shouldnt be.
-			if (Account.Password != Password)
+			//prevent totp from being added where it shouldn't be.
+			if (account.Password != password)
 			{
 				Log.Warning("Invalid auth");
 				return StatusCode(401);
 			}
 			
 			Log.Information("adding mfa for accounts without mfa");
-			var secret = KeyGeneration.GenerateRandomKey(20);
-			Account.MFASecret = Base32Encoding.ToString(secret);
-			Ctx.User.Update(Account);
-			await Ctx.SaveChangesAsync();
+			byte[]? secret = KeyGeneration.GenerateRandomKey(20);
+			account.MFASecret = Base32Encoding.ToString(secret);
+			ctx.User.Update(account);
+			await ctx.SaveChangesAsync();
 			return StatusCode(200);
 		}
 		catch (Exception ex)
 		{
-			Log.Warning("Error occured during adding MFA");
+			Log.Warning(ex, "Error occured during adding MFA");
 			return StatusCode(500);
 		}
 	}
 	
-	[HttpGet("MFABool")]
-	public bool getMFAStatus(int UserID)
+	[HttpGet("GetMfaStatus")]
+	public bool GetMfaStatus(int userId)
 	{
 		try
 		{
 			//Find account
-			using TrackerContext Ctx = new();
-			User Account = Ctx.User.First(User => User.UserID == UserID);
-			return !(string.IsNullOrEmpty(Account.MFASecret));
+			using TrackerContext ctx = new();
+			User account = ctx.User.First(user => user.UserID == userId);
+			return !string.IsNullOrEmpty(account.MFASecret);
 		}
 		catch (Exception ex)
 		{
-			Log.Error(ex, "Unexpected error when getting MFA status for account: " + UserID);
+			Log.Error(ex, $"Unexpected error when getting MFA status for account: {userId}" );
 			return false;
 		}
 	}
 	
-	    /// <summary>
-    /// Creates a new user object.
-    /// </summary>
-    /// <param Userid="user id">Account user id</param>
-    /// <returns></returns>
-    [HttpGet("Notification")]
-    public string NotificationGet(int Userid)
-    {
-        try
-        {
-            //Find account
-            using TrackerContext Ctx = new();
-            var notifications = (from Notification notificaiton in Ctx.Notification
-                                 where notificaiton.UserID == Userid
-                           select new
-                           {
-                               NotificationID = notificaiton.NotificationID,
-                               UserID = notificaiton.UserID,
-                               FeedbackID = notificaiton.FeedbackID,
-                               Timestamp = notificaiton.Timestamp,
-
-                           }).ToList();
-
-            //Serialise to JSON
-            string json = JsonSerializer.Serialize(notifications);
-            return json;
-        }
-        catch (Exception ex) { return "Encountered an error: " + ex.Message; }
-    }
-
-    /// <summary>
-    /// Creates a new user object.
-    /// </summary>
-    /// <param Userid="user id">Account user id</param>
-    /// <returns></returns>
-    [HttpPost("Notification")]
-    public async void NotificationPost(int Userid, int FeedbackID)
-    {
-        try
-        {
-			//Create account object
-			//NOTE: bCrypt is very secure. (Salting is handled automatically)
-			Notification notification = new()
-			{
-				UserID = Userid,
-				FeedbackID = FeedbackID,
-				Timestamp = DateTime.Now,
-			};
-
-
-            //Add user to database
-            await using TrackerContext Ctx = new();
-            Ctx.Notification.Add(notification);
-            await Ctx.SaveChangesAsync();
-
-        }
-        catch (Exception ex)
-        {
-            Log.Error(ex, "Failed to create user");
-        }
-    }
-
-    /// <summary>
-    /// Creates a new user object.
-    /// </summary>
-    /// <param Userid="user id">Account user id</param>
-    /// <returns></returns>
-    [HttpDelete("Notification")]
-    public async void NotificationDelete(int Userid)
-    {
-        try
-        {
-			//Add user to database
-            await using TrackerContext Ctx = new();
-            Ctx.Notification.RemoveRange(Ctx.Notification.Where(notification => notification.UserID == Userid));
-            await Ctx.SaveChangesAsync();
-
-        }
-        catch (Exception ex)
-        {
-            Log.Error(ex, "Failed to create user");
-        }
-    }
 
 	[HttpPut("UpdatePassword")]
-	public async void UpdatePassword(string Email, string Password)
+	public async void UpdatePassword(string email, string password)
 	{
 		try
 		{
-			using TrackerContext Ctx = new();
-			User Account = Ctx.User.First(User => User.Email == Email);
-			Account.Password = BCrypt.Net.BCrypt.HashPassword(Password);
-			Ctx.User.Update(Account);
-			await Ctx.SaveChangesAsync();
+			await using TrackerContext ctx = new();
+			User account = ctx.User.First(user => user.Email == email);
+			account.Password = BCrypt.Net.BCrypt.HashPassword(password);
+			ctx.User.Update(account);
+			await ctx.SaveChangesAsync();
 		}
 		catch (Exception ex)
 		{
 			Log.Error(ex, "Failed to update password");
 		}
+	}
+
+    [HttpPut("UpdateUser")]
+    public async void UpdateUser(string UserID,string FirstName, string LastName, string Username, string Password)
+    {
+        try
+        {
+            await using TrackerContext ctx = new();
+			Console.WriteLine("userID: " + UserID);
+            User? account = ctx.User.FirstOrDefault(user => user.UserID.ToString() == UserID);
+
+			Console.WriteLine("account before: "+account);
+			account.Username = Username;
+			account.FirstName = FirstName;
+			account.LastName = LastName;
+            account.Password = BCrypt.Net.BCrypt.HashPassword(Password);
+			Console.WriteLine("account after: " + account);
+            ctx.User.Update(account);
+            await ctx.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Failed to update user");
+        }
+    }
+    /// <summary>
+    /// update teacher status
+    /// </summary>
+    /// <param name="userid"></param>
+	/// <param name="role"></param>
+    [HttpPut("RoleUpdate")]
+    public async void RoleUpdate(int userid, bool role)
+    {
+        try
+        {
+            await using TrackerContext ctx = new();
+            User account = ctx.User.First(user => user.UserID == userid);
+            account.IsTeacher = role;
+            ctx.User.Update(account);
+            await ctx.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Failed to update role");
+        }
+    }
+
+    /// <summary>
+    /// Gets an average resolve time for a teacher
+    /// </summary>
+    /// <param name="userId"></param>
+    [HttpGet("GetAvgResolveTime")]
+	public float GetAverageResolveTime(int userId)
+	{
+		using TrackerContext ctx = new();
+		User account = ctx.User.First(user => user.UserID == userId);
+		if (account.IsTeacher)
+		{
+			//TODO: Check with fin if assign all in module is null
+			//TODO: Check with team or mark if avg time should include assign all.
+			var feedbacks = ctx.Feedback.Where(f => (f.AssignedUserID == userId ||
+			                                        f.AssignedUserID == null)& f.Closed) .ToList(); 
+			var total = TimeSpan.Zero;
+			feedbacks.ForEach(feedback => total += (feedback.ClosedDate - feedback.CreatedDate)!.Value);
+			return (float)total.TotalHours / feedbacks.Count;
+		}
+
+		return 0;
 	}
 }

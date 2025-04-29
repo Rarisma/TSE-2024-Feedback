@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace FeedbackTrackerCommon.Definitions;
+namespace Core.Definitions;
 
 public class User
 {
@@ -18,17 +18,24 @@ public class User
 	[Column("USERNAME")]
 	public string Username { get; set; }
 
-	/// <summary>
-	/// User's password
-	/// </summary>
-	[Column("PASSWORD")]
+    /// <summary>
+    /// users first name
+    /// </summary>
+    [Column("FIRST_NAME")]
+    public string? FirstName { get; set; }
+
+    /// <summary>
+    /// users first name
+    /// </summary>
+    [Column("LAST_NAME")]
+    public string? LastName { get; set; }
+
+    /// <summary>
+    /// User's password
+    /// </summary>
+    [Column("PASSWORD")]
 	public string Password { get; set; }
 
-	/// <summary>
-	/// Is the user a student
-	/// </summary>
-	[Column("ISSTUDENT")]
-	public bool IsStudent { get; set; }
 
 	/// <summary>
 	/// Is the user a teacher
@@ -44,4 +51,13 @@ public class User
 
 	[Column("TOTP")]
 	public string? MFASecret { get; set; }
+
+  [Column("School")]
+  public string? School { get; set; }
+	/// <summary>
+	/// Shows a user a setup page when logging in for the first time if false
+	/// (used in Bulk API)
+	/// </summary>
+	[Column("INITIALISED")]
+	public bool Initalised { get; set; }
 }

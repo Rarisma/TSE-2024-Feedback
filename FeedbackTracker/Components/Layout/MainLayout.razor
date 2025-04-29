@@ -1,44 +1,96 @@
 ﻿@inherits LayoutComponentBase
-@inject JAuth auth
 @inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
+@using FeedbackTracker.Services
+@inject AppTheme AppTheme
+@implements IDisposable
 
-<!-- About -->
-<!-- condition -->
-@if (NavigationManager.Uri.Contains("LogIn") ||
-        NavigationManager.Uri.Contains("SignUp") ||
-        NavigationManager.Uri.Contains("contact") ||
-        NavigationManager.Uri.Contains("about") ||
-        NavigationManager.Uri.Contains("privacypolicy") ||
-        NavigationManager.Uri.Contains("termsofservice"))
-{
-    <!-- Page structure -->
-    <div class="about-navbar">
-        <nav class="d-flex justify-content-around align-items-center h-100">
-            <NavLink class="nav-link about-link" href="/about" style="color: #e0e0e0;">About</NavLink>
-            <NavLink class="nav-link about-link" href="/termsofservice" style="color: #e0e0e0;">Terms of Service</NavLink>
-            <NavLink class="nav-link about-link" href="/privacypolicy" style="color: #e0e0e0;">Privacy Policy</NavLink>
-        </nav>
-    </div>
-}
+<RadzenComponents @rendermode="InteractiveServer" />
 
 <!-- Fonts -->
 <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap" rel="stylesheet" />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap" rel="stylesheet">
 
-<div class="page">
-    <div class="sidebar">
+<!-- Page Structure -->
+<RadzenLayout class="@AppTheme.ColourTheme" Style="height: 100vh; overflow: hidden;">
+    <RadzenSidebar class="@AppTheme.ColourTheme" Expanded="true" Style="width: 240px;">
         <NavMenu />
-    </div>
-    <main class="content-area">
-        <article class="content px-4">
+    </RadzenSidebar>
+    
+    <RadzenBody class="@AppTheme.ColourTheme" Style="@BodyStyle">
+        <div class="app-container @AppTheme.ColourTheme" style="@ContainerStyle">
             @Body
-        </article>
-    </main>
-</div>
+        </div>
+    </RadzenBody>
+    
+<!-- About -->
+<!-- condition -->
+@if (ShowFooter)
+{
+        <RadzenFooter class="@AppTheme.ColourTheme" Style="padding: 0 16px; height: 22px; z-index: 1000;">
+            <div Style="display: flex; justify-content: flex-end; align-items: center; width: 100%; font-size: 0.75rem;">
+                <NavLink href="/about" Style="margin: 0 8px; text-decoration: none; font-size: 0.75rem; color: #fff;">About</NavLink>
+                <NavLink href="/termsofservice" Style="margin: 0 8px; text-decoration: none; font-size: 0.75rem; color: #fff;">Terms of Service</NavLink>
+                <NavLink href="/privacypolicy" Style="margin: 0 8px; text-decoration: none; font-size: 0.75rem; color: #fff;">Privacy Policy</NavLink>
+            </div>
+        </RadzenFooter>
+    }      
+</RadzenLayout>
 
 <div id="blazor-error-ui">
     An unhandled error has occurred.
     <a href="" class="reload">Reload</a>
     <a class="dismiss">🗙</a>
 </div>
+
+@code {
+    private bool ShowFooter => 
+        NavigationManager.Uri.Contains("login") ||
+        NavigationManager.Uri.Contains("LogIn") ||
+        NavigationManager.Uri.Contains("ResetPassword") ||
+        NavigationManager.Uri.Contains("SignUp") ||
+        NavigationManager.Uri.Contains("contact") ||
+        NavigationManager.Uri.Contains("about") ||
+        NavigationManager.Uri.Contains("privacypolicy") ||
+        NavigationManager.Uri.Contains("termsofservice");
+
+    private string FooterHeight => ShowFooter ? "22px" : "0px";
+    
+    private string BodyStyle => $"padding: 10px; height: calc(100% - {FooterHeight});";
+    
+    private string ContainerStyle => $"height: calc(100% - {FooterHeight}); padding: 20px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);";
+
+    //run on first render
+    protected override void OnInitialized()
+    {
+        //detect url changes
+        NavigationManager.LocationChanged += HandleLocationChanged;
+        //apply the theme changes
+        AppTheme.OnChange += StateHasChanged;
+        base.OnInitialized();
+    }
+
+    //event handler for url changes
+    private void HandleLocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        StateHasChanged();
+    }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JSRuntime.InvokeVoidAsync("ThemeHelpers.applyTheme", AppTheme.ColourTheme);
+
+            //apply the class to the page content
+            await JSRuntime.InvokeVoidAsync("eval", $@"document.body.classList.add('{AppTheme.ColourTheme}');");
+        }
+    }
+
+    //avoid memory leaks
+    public void Dispose()
+    {
+        NavigationManager.LocationChanged -= HandleLocationChanged;
+        AppTheme.OnChange -= StateHasChanged;
+    }
+}

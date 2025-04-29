@@ -1,10 +1,11 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace FeedbackTrackerCommon.Definitions;
+namespace Core.Definitions;
 
 public class Feedback
 {
+    
     /// <summary>
     /// ID of feedback in database.
     /// </summary>
@@ -13,17 +14,16 @@ public class Feedback
     public int FeedbackID { get; set; }
 
     /// <summary>
-    /// Person recieiving feedback
+    /// Person receiving feedback
     /// </summary>
-    /// 
     [Column("ASSIGNED_USER")]
-    public int AssignedUserID { get; set; }
+    public int? AssignedUserID { get; set; }
 
     /// <summary>
     /// Person giving the feedback
     /// </summary>
     [Column("ASSIGNEE")]
-    public int AssigneeID { get; set; }
+    public int AssigneeID { get; set; } 
 
     /// <summary>
     /// Associated Module
@@ -49,21 +49,18 @@ public class Feedback
     [Column("TITLE")]
     public string Title { get; set; }
 
-    /// <summary>
-    /// Feedback deadline
-    /// </summary>
-    [Column("Deadline")]
-    public DateTime Deadline { get; set; }
-
-    /// <summary>
-    /// Priority Levels
-    /// </summary>
-    [Column("PRIORITY_VALUE")]
-    public int Priority { get; set; }
-
     [Column("Label")]
     public FeedbackLabel? Label { get; set; }
-    
+
+    [Column("Visibility")]
+    public FeedbackVisibility Visibility { get; set; }
+
+    [Column("CreatedDate")]
+    public DateTime? CreatedDate { get; set; }
+
+    [Column("ClosedDate")]
+    public DateTime? ClosedDate { get; set; }
+
     public User AssignedUser { get; set; }
 
     public User Assignee { get; set; }

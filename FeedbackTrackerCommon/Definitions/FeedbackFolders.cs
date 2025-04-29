@@ -1,11 +1,11 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace FeedbackTrackerCommon.Definitions;
+namespace Core.Definitions;
 
 public class FeedbackFolders
 {
-    [Key]
+	[Key]
 	[Column("FOLDER_ID")]
 	public int FolderID { get; set; }
 
@@ -15,9 +15,7 @@ public class FeedbackFolders
 	[Column("FEEDBACK_ID")]
 	public string FeedbackID { get; set; }
 
-    public User User { get; set; }
+	public User User { get; set; }
 
-    public Feedback Feedback { get; set; }
-
-
+	public Feedback Feedback { get; set; }
 }
