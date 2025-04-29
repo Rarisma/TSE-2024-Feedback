@@ -119,7 +119,10 @@ public class FeedbackController : Controller
             ctx.SaveChanges();
 
 			// add notification
-            var result = await _notificationService.CreateNotificationAsync(feedback.AssignedUserID.Value, "New Feedback", feedback.Title, "FEEDBACK", feedback.FeedbackID.ToString());
+			if (_notificationService != null)
+			{
+                var result = await _notificationService.CreateNotificationAsync(feedback.AssignedUserID.Value, "New Feedback", feedback.Title, "FEEDBACK", feedback.FeedbackID.ToString());
+            }
 
             return "Feedback created successfully";
 		}
