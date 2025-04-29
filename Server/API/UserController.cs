@@ -194,89 +194,6 @@ public class UserController(AuthService authService) : Controller
 		}
 	}
 	
-	/// <summary>
-    /// Creates a new user object.
-    /// </summary>
-    /// <param name="userid">Account user id</param>
-    /// <returns></returns>
-    [HttpGet("Notification")]
-    public string NotificationGet(int userid)
-    {
-        try
-        {
-            //Find account
-            using TrackerContext ctx = new();
-            var notifications = (from Notification notification in ctx.Notification
-                                 where notification.UserID == userid
-                           select new
-                           {
-	                           notification.NotificationID,
-                               notification.UserID,
-                               notification.FeedbackID,
-                               notification.Timestamp
-                           }).ToList();
-
-            //Serialise to JSON
-            return JsonSerializer.Serialize(notifications);
-        }
-        catch (Exception ex) { return "Encountered an error: " + ex.Message; }
-    }
-
-    /// <summary>
-    /// Creates a new user object.
-    /// </summary>
-    /// <param name="userid">Account user id</param>
-    /// <param name="feedbackId"></param>
-    /// <returns></returns>
-    [HttpPost("Notification")]
-    public async void NotificationPost(int userid, int feedbackId)
-    {
-        try
-        {
-			//Create account object
-			//NOTE: bCrypt is very secure. (Salting is handled automatically)
-			Notification notification = new()
-			{
-				UserID = userid,
-				FeedbackID = feedbackId,
-				Timestamp = DateTime.Now,
-			};
-
-
-            //Add user to database
-            await using TrackerContext ctx = new();
-            ctx.Notification.Add(notification);
-            await ctx.SaveChangesAsync();
-
-        }
-        catch (Exception ex)
-        {
-            Log.Error(ex, "Failed to create user");
-        }
-    }
-
-    /// <summary>
-    /// Creates a new user object.
-    /// </summary>
-    /// <param name="userID">account id</param>
-    /// <returns></returns>
-    [HttpDelete("Notification")]
-    public async void NotificationDelete(int userID)
-    {
-        try
-        {
-			//Add user to database
-            await using TrackerContext ctx = new();
-            ctx.Notification.RemoveRange(ctx.Notification
-	            .Where(notification => notification.UserID == userID));
-            await ctx.SaveChangesAsync();
-
-        }
-        catch (Exception ex)
-        {
-            Log.Error(ex, "Failed to create user");
-        }
-    }
 
 	[HttpPut("UpdatePassword")]
 	public async void UpdatePassword(string email, string password)
@@ -294,6 +211,30 @@ public class UserController(AuthService authService) : Controller
 			Log.Error(ex, "Failed to update password");
 		}
 	}
+
+    [HttpPut("UpdateUser")]
+    public async void UpdateUser(string UserID,string FirstName, string LastName, string Username, string Password)
+    {
+        try
+        {
+            await using TrackerContext ctx = new();
+			Console.WriteLine("userID: " + UserID);
+            User? account = ctx.User.FirstOrDefault(user => user.UserID.ToString() == UserID);
+
+			Console.WriteLine("account before: "+account);
+			account.Username = Username;
+			account.FirstName = FirstName;
+			account.LastName = LastName;
+            account.Password = BCrypt.Net.BCrypt.HashPassword(Password);
+			Console.WriteLine("account after: " + account);
+            ctx.User.Update(account);
+            await ctx.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Failed to update user");
+        }
+    }
     /// <summary>
     /// update teacher status
     /// </summary>

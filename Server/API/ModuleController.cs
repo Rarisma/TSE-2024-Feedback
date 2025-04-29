@@ -167,4 +167,42 @@ public class ModuleController : Controller
             throw;
         }
     }
+
+    ///<sumary>
+    /// add module to everyone in the school (mainly for generic feedback)
+    /// </sumary>
+    /// <param name="schoolID">school input</param>
+    /// <param name="moduleID">module to assign</param>
+    [HttpPost("AddToModuleBySchool")]
+    public async void AddToModuleBySchool(int schoolID, int moduleID)
+    {
+        try
+        {
+            //Find account
+            using TrackerContext ctx = new();
+
+
+            // get users in school
+
+            var users = ctx.User.Where(u => u.School == schoolID.ToString()).ToList();
+            List<Users_Modules> users_Modules = new List<Users_Modules> { };
+
+            // assign module to each user
+            foreach (var user in users)
+            {
+                // if not already in module
+                var test = ctx.UsersModules.Where(um => um.UserID == user.UserID && um.ModuleID == moduleID).ToList();
+                if(test.Count == 0){
+                    users_Modules.Add(new Users_Modules { UserID = user.UserID, ModuleID = moduleID });
+                }
+                
+            }
+
+            ctx.UsersModules.AddRange(users_Modules);
+
+            await ctx.SaveChangesAsync();
+            Log.Debug("added users to module");
+        }
+        catch (Exception ex) { Log.Error(ex, "Failed to add users to module"); }
+    }
 }

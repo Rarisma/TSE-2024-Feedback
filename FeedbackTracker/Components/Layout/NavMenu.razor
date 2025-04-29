@@ -1,13 +1,21 @@
-﻿@using Core.Definitions
+﻿@using System.Text.Json
+@using Core.Definitions
 @inject JAuth Auth
 @inject NavigationManager NavigationManager
 @inject API.UserAPI UserClient
+@inject API.NotificationAPI NotificationClient
 @rendermode InteractiveServer
 @inject IJSRuntime Js
+@inject NotificationService NotificationService
 @using FeedbackTracker.Services
 @inject AppTheme AppTheme
 
 <div class="@AppTheme.ColourTheme" Style="display: flex; flex-direction: column; height: 100%; padding: 0;">
+
+    <!-- Call notification Toasts-->
+    @if(ShowNotifications){
+        <Application.Components.Pages.Notification/>
+    }
     <!-- Title header -->
     <div Style="display: flex; align-items: center; justify-content: center; padding: 12px 15px; border-bottom: 1px solid var(--sidebar-border); font-family: 'Poppins', sans-serif;">
         <span class="nav-text-full" Style="color: var(--light-text); font-weight: 600; font-size: 16px; text-align: center;">Feedback Tracker</span>
@@ -21,7 +29,7 @@
                 <span class="nav-text">  Home</span>
             </NavLink>
         </div>
-        
+
         @if (Auth.IsAuthorised())
         {
             <div Style="padding: 5px 15px; margin: 2px 0;">
@@ -30,20 +38,11 @@
                     <span class="nav-text">  Create Feedback</span>
                 </NavLink>
             </div>
-            
+
             <div Style="padding: 5px 15px; margin: 2px 0;">
                 <NavLink href="usersfeedback" Style="display: flex; align-items: center; padding: 8px 10px; border-radius: 5px; text-decoration: none; color: var(--light-text); transition: background-color 0.2s;" class="nav-item">
                     <RadzenIcon Icon="assignment" Style="font-size: 18px; color: var(--icon-color); margin-right: 2px;" class="nav-icon" />
                     <span class="nav-text"> Your Feedback</span>
-                    @if (New_Feedback)
-                    {
-                        <span Style="color: #ff6b6b; font-weight: bold; margin-left: 5px; animation: pulse 1s infinite;">🔔</span>
-                        playsound = true;
-                    }
-                    else
-                    {
-                        playsound = false;
-                    }
                 </NavLink>
             </div>
 
@@ -58,7 +57,7 @@
             }
         }
     </div>
-    
+
     <!-- Bottom Navigation Icons -->
     <div Style="padding: 15px; margin-top: auto; border-top: 1px solid var(--sidebar-border);">
         <div class="settings-buttons" Style="display: flex; align-items: center; justify-content: center; width: 100%;">
@@ -75,8 +74,8 @@
                 <span class="material-icons theme-icon" style="color: var(--icon-color) !important;">@GetThemeIcon(AppTheme.ColourTheme)</span>
             </button>
             @if (Auth.IsAuthorised()){ <a href="/logout" class="nav-button"
-            Style="padding: 0; width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background-color: transparent; color: var(--icon-color); border: none; text-decoration: none; cursor: pointer;">
-                <span class="material-icons">logout</span></a>}
+                Style="padding: 0; width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background-color: transparent; color: var(--icon-color); border: none; text-decoration: none; cursor: pointer;">
+                    <span class="material-icons">logout</span></a>}
         </div>
     </div>
 </div>
@@ -84,45 +83,25 @@
 
 
 @code{
-    bool playsound = false;
-    bool New_Feedback = false;
     User? user;
+    private bool ShowNotifications =>
+    NavigationManager.Uri.Contains("") ||
+    NavigationManager.Uri.Contains("feedback") ||
+    NavigationManager.Uri.Contains("viewfeedback") ||
+    NavigationManager.Uri.Contains("usersfeedback") ||
+    NavigationManager.Uri.Contains("TeacherDashboard");
+
     protected override Task OnInitializedAsync()
     {
         NavigationManager.LocationChanged += async (_, _) =>
                 {
 
-                    if (NavigationManager.Uri == "/usersfeedback" && playsound == true)
-                    {
-                        playsound = false;
-                        NavigationManager.NavigateTo(NavigationManager.Uri);
-                    }
                     //NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true);        
                     // if logged in
                     if (Auth.IsAuthorised())
                     {
                         await Task.Delay(50); // ensure delay to allow for user to be correctly loaded
                         user = Auth.GetUser();
-                        // check if user has new feedback
-
-                        if (user != null){
-                            List<Core.Definitions.Notification?>? notifications = await UserClient.GetNotification(user.UserID);
-
-                            if (notifications?.Count > 0){
-
-                                New_Feedback = true;
-
-                                await InvokeAsync(StateHasChanged);
-                            }else{
-                                New_Feedback = false;
-
-                                await InvokeAsync(StateHasChanged);
-                            }
-
-                        }else{
-                            NavigationManager.NavigateTo(NavigationManager.Uri);
-
-                        }
 
 
                     }
@@ -132,18 +111,13 @@
     }
     protected override async Task OnAfterRenderAsync(bool firstrender)
     {
-        //Console.WriteLine("playsound: " + playsound);
-            if(playsound){
-            await Js.InvokeVoidAsync("PlaySoundEffect", "sounds/notification.wav");
-            }
-
         //initialize the theme
         if (firstrender)
         {
             await AppTheme.InitializeAsync();
         }
-    }
 
+    }
     protected override void OnInitialized()
     {
         //update the icon

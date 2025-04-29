@@ -3,10 +3,10 @@
 */
 
 // volume
-EffectVolume = 1.0
+var EffectVolume = 1.0
 
 // mute
-effectmute = false
+var effectmute = false
 
 // sound effect
 // src = audio file
@@ -22,7 +22,8 @@ window.PlaySoundEffect = (src) => {
         var audioSource = document.getElementById('effectplayerSource');
         if (audioSource != null) {
             audioSource.src = src;
-            audio.volume = EffectVolume;
+            audio.volume = window.EffectVolume;
+            audio.muted = window.effectmute;
             audio.load();
             let playPromise = audio.play();
             if (playPromise !== undefined) {

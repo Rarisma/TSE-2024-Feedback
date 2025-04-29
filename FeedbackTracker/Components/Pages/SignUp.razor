@@ -5,8 +5,10 @@
 @rendermode InteractiveServer
 @inject IJSRuntime JSRuntime
 @inject SchoolAPI schoolAPI
-
+@inject Radzen.NotificationService NotificationService
+@inject UserAPI UserClientAccess
 <title>TSE Feedback: Sign Up </title>
+<RadzenNotification />
 
 @code {
     private async void Submit()
@@ -15,9 +17,27 @@
         {
             if (Password.Length >= 8 && Password.Any(char.IsUpper) && Password.Any(c => !char.IsLetterOrDigit(c)))
             {
+                if (string.IsNullOrEmpty(School)){
+                    NotificationService.Notify(NotificationSeverity.Error, "Error", "Please select your school");
+                    return;
+                }
+                var users = await UserClientAccess.GetAllUsers();
+                var user = users.Find(u => u.Username == Username);
+                if (user != null)
+                {
+                    NotificationService.Notify(NotificationSeverity.Error, "Error", "Username already taken!");
+
+                    Username = "";
+
+                    Password = "";
+
+                    Password2 = "";
+                    StateHasChanged();
+                    return;
+                }
                 //Send req to create user.
                 await new UserAPI().CreateUser(Username.ToString(), Password.ToString(), Email.ToString(), School.ToString(),FirstName.ToString(),LastName.ToString());
-                await JSRuntime.InvokeVoidAsync("alert", "user created");
+                NotificationService.Notify(NotificationSeverity.Success, "Success", "User Created");
                 NavigationManager.NavigateTo("/");
             }
             else
@@ -25,7 +45,8 @@
                 //Clear if invalid
                 Password = "";
                 Password2 = "";
-                await JSRuntime.InvokeVoidAsync("alert", "Password must be at least 8 characters long, contain at least one uppercase letter, and one special character!");
+                NotificationService.Notify(NotificationSeverity.Error, "Error", "Password must be at least 8 characters long, contain at least one uppercase letter, and one special character!");
+                StateHasChanged();
             }
         }
         else
@@ -33,7 +54,8 @@
             //Clear if invalid
             Password = "";
             Password2 = "";
-            await JSRuntime.InvokeVoidAsync("alert", "The entered passwords don't match.");
+            NotificationService.Notify(NotificationSeverity.Error, "Error", "The entered passwords don't match.");
+            StateHasChanged();
         }
     }
 

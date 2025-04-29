@@ -6,6 +6,7 @@
 @using Serilog
 @inject FeedbackAPI FeedbackClientAccess
 @inject UserAPI UserClient
+@inject NotificationAPI NotificationClient
 @inject IJSRuntime JSRuntime
 @inject NavigationManager NavigationManager
 @using FeedbackTracker.Services
@@ -14,13 +15,12 @@
 <title>Dashboard - Feedback Tracker</title>
 
 <div class="dashboardContainer">
-
     <!-- Greeting section -->
     <RadzenCard class="@(AppTheme.ColourTheme == "theme-dark" ? "welcomeCardDark" : "welcomeCard")">
         <RadzenRow AlignItems="AlignItems.Center">
             <RadzenColumn SizeMD="8">
                 <div class="welcomeHeader">
-                    <RadzenText TextStyle="TextStyle.H2" class="welcomeTitle">@welcomeMessage, <span class="boldUsername">@assignee.Username @welcomeSymbol</span></RadzenText>
+                    <RadzenText TextStyle="TextStyle.H2" class="welcomeTitle">@welcomeMessage, <span class="boldUsername">@assignee.FirstName @welcomeSymbol</span></RadzenText>
                 </div>
                 <RadzenButton Text="Create New Feedback" Icon="add_circle" Click="@(() => NavigationManager.NavigateTo("/Feedback"))" />
             </RadzenColumn>
@@ -39,7 +39,7 @@
     <!-- Stats area, uses a loop to generate the cards. Will need updating once notification service is done -->
     <RadzenRow Gap="1rem" class="mb-4 mt-4">
         @foreach (var (icon, title, value) in new[]{
-        ("notifications", "Notifications", 0), @*Set as 0 as default, I know there's a notification function but i'll leave this to whoever develops the service*@
+        ("notifications", "Notifications", NopenCount), @*Set as 0 as default, I know there's a notification function but i'll leave this to whoever develops the service*@
         ("assignment", "Assigned to You", allFeedback?.Count(assign => assign.AssignedUserID == assignee.UserID) ?? 0),
         ("pending_actions", "Open Feedback", openCount)})
         {
@@ -83,18 +83,18 @@
                 }
             </RadzenCard>
 
-            <!-- Notifications section, will need updating! -->
+            <!-- Notifications section, will need updating! 
             <RadzenCard class="sectionCard">
-                <div class="notificationSectionHeader">
-                    <RadzenText TextStyle="TextStyle.H5" class="sectionTitle">
-                        <RadzenIcon Icon="notifications" class="sectionIcon" /> Recent Notifications
-                    </RadzenText>
-                    <RadzenBadge Text="?" BadgeStyle="BadgeStyle.Info" />
-                </div>
-                <div>
-                    <RadzenText class="emptyMessage">For Josh or whoever sorts the notifications out</RadzenText>
-                </div>
-            </RadzenCard>
+            <div class="notificationSectionHeader">
+            <RadzenText TextStyle="TextStyle.H5" class="sectionTitle">
+            <RadzenIcon Icon="notifications" class="sectionIcon" /> Recent Notifications
+            </RadzenText>
+            <RadzenBadge Text="?" BadgeStyle="BadgeStyle.Info" />
+            </div>
+            <div>
+            <RadzenText class="emptyMessage">For Josh or whoever sorts the notifications out</RadzenText>
+            </div>
+            </RadzenCard>-->
         </RadzenColumn>
 
         <!-- Right side, average resolve time -->
@@ -145,7 +145,7 @@
                     </div>
                     <div class="text-center">
                         <RadzenButton Text="View All Feedback" ButtonStyle="ButtonStyle.Secondary"
-                            Click="@(() => NavigationManager.NavigateTo("/usersfeedback"))" />
+                        Click="@(() => NavigationManager.NavigateTo("/usersfeedback"))" />
                     </div>
                 }
                 else
@@ -161,6 +161,7 @@
 </div>
 
 @code {
+
     private string? welcomeMessage { get; set; }
     private string? welcomeSymbol { get; set; }
 
@@ -187,8 +188,9 @@
     private string? completionRate = "not found";
     private User assignee = new() { };
     private List<Modules> modules = new() { };
-    private List<Notification> notifications = new() { };
     private int openCount = 0;
+    private int NopenCount = 0;
+    private List<Core.Definitions.Notification>? notifications;
     private async Task countOpenFeedback()
     {
         if (allFeedback != null)
@@ -199,6 +201,23 @@
             }
         }
     }
+    private async Task countNotifications()
+    {
+        if (notifications != null)
+        {
+            foreach (var noti in notifications.Where(n => n.UserID == JAuth.GetUser().UserID))
+            {
+                NopenCount += 1;
+            }
+        }
+    }
+    private async Task getNotifications(){
+        var noti = await NotificationClient.GetNotificationByUser(JAuth.GetUser().UserID);
+        if(noti.Count > 0){
+            notifications = noti;
+            await countNotifications();
+        }
+    }
     // get logged in user
     private async Task getUser()
     {
@@ -207,11 +226,11 @@
             assignee = JAuth.GetUser();
             await LoadFeedback();
             await getModules();
+            await getNotifications();
             if (assignee.IsTeacher)
             {
                 await getAverageResolveTime(assignee.UserID);
             }
-            await getNotifications();
             await countOpenFeedback();
         }
 
@@ -233,24 +252,6 @@
     private async Task getAverageResolveTime(int usrID)
     {
         completionRate = await UserClient.getAverageResolveTime(usrID);
-    }
-
-    private List<Core.Definitions.Feedback> notfiFB = new();
-    private async Task getNotifications()
-
-    {
-        if (assignee != null)
-        {
-
-            notifications = await UserClient.GetNotification(assignee.UserID);
-            foreach (var notification in notifications)
-            {
-                Core.Definitions.Feedback tempFB = await FeedbackClientAccess.GetFeedbackByID(notification.FeedbackID);
-                notfiFB.Add(tempFB);
-            }
-            await InvokeAsync(StateHasChanged);
-
-        }
     }
     protected override async Task OnInitializedAsync()
     {

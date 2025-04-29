@@ -7,6 +7,7 @@
 @inject JAuth JAuth
 @inject NavigationManager NavigationManager
 @inject UserAPI UserClient
+@inject NotificationAPI NotificationClient
 @inject ModuleAPI ModuleClient
 @rendermode InteractiveServer
 
@@ -16,8 +17,6 @@
 
 @{
     <title>Your Feedback</title>
-    @if (JAuth.IsAuthorised())
-    {
         <RadzenCard Style="margin-bottom: 30px; background-color: var(--main-body); border: 1px solid var(--border-color);">
             <div style="text-align: center; margin-bottom: 20px;">
                 <h1 style="font-size: 3.2rem; font-weight: 700; color: var(--text-primary); text-shadow: 0 0 5px rgba(0, 0, 0, 0.3);">
@@ -102,18 +101,7 @@
                     </RadzenDataGridColumn>
                     <RadzenDataGridColumn TItem="Core.Definitions.Feedback" Title="Status" TextAlign="TextAlign.Center">
                         <Template Context="feedback">
-                            @if (JAuth.User.UserID == feedback.AssigneeID)
-                            {
-                                <strong style="color: var(--text-primary);">You assigned this!</strong>
-                            }
-                            else if (JAuth.User.UserID != feedback.AssigneeID && JAuth.User.UserID != feedback.AssignedUserID)
-                            {
-                                <p style="color: var(--text-primary);"></p>
-                            }
-                            else
-                            {
-                                <strong style="color: var(--text-primary);">This was assigned to you!</strong>
-                            }
+                            <RadzenBadge Text="@(feedback.Closed ? "Closed" : "Open")" BadgeStyle="@(feedback.Closed ? BadgeStyle.Success : BadgeStyle.Warning)" />
                         </Template>
                     </RadzenDataGridColumn>
 
@@ -126,17 +114,6 @@
                 </Columns>
             </RadzenDataGrid>
         </RadzenCard>
-    }
-    else //For users that aren't logged in
-    {
-        <div class="loggedout">
-            <div class="loggedout-msg">
-                <img src="/Images/LoginCone.png" alt="Login Required" class="cone-img">
-                <h2>Please log in to access the feedback form.</h2>
-                <button class="btn btn-loggedout" @onclick=HomeButton>Return Home</button>
-            </div>
-        </div>
-    }
 
 }
 	
@@ -214,13 +191,22 @@
     private void SortByModule(ChangeEventArgs e)
     {
         var selectedModuleID = e.Value.ToString();
-        if (selectedModuleID == "all") // if the user wishes to see all of their feedbacks
+        if (selectedModuleID == "all" || string.IsNullOrEmpty(selectedModuleID)) // if the user wishes to see all of their feedbacks or no module is selected
         {
             SpecificFeedbacks = new List<Core.Definitions.Feedback>(AllFeedbacks);
         }
-        else
+        else if (_modules != null && _modules.Count > 0)
         {
-            SpecificFeedbacks = AllFeedbacks.Where(f => selectedModuleID != null && int.Parse(selectedModuleID) == f.ModuleID).ToList();
+            //only filter if there's modules
+            try
+            {
+                SpecificFeedbacks = AllFeedbacks.Where(f => int.Parse(selectedModuleID) == f.ModuleID).ToList();
+            }
+            catch
+            {
+                //error? show all
+                SpecificFeedbacks = new List<Core.Definitions.Feedback>(AllFeedbacks);
+            }
         }
     }
 
@@ -240,8 +226,6 @@
             SpecificFeedbacks = AllFeedbacks.Where(f => SelectedTeacherID != null && int.Parse(SelectedTeacherID) == f.AssigneeID).ToList();
         }
     }
-
-
 
     /// <summary>
     /// Loads all the feedbacks into the two specific feedback lists
@@ -286,27 +270,27 @@
 
     private async Task GetModules()
     {
-
-        //TODO get modules user is in
-
-        List<Modules?>? newModules = await UserClient.GetModules(_assignee.UserID);
-
-        if (newModules != null)
+        if (JAuth.GetUser() != null)
         {
-            try
+            _assignee = JAuth.GetUser();
+            var newModules = await UserClient.GetModules(_assignee.UserID);
+            
+            if (newModules != null && newModules.Count > 0)
             {
                 _modules = newModules;
                 _moduleID = _modules.First().ModuleID;
             }
-            catch (Exception ex)
+            else
             {
-                Log.Error(ex, "Error getting modules");
+                //create empty list if no modules are found
+                _modules = new List<Modules>();
             }
+            
+            await GetAssignableUsers();
+            // refresh ui with new data
+            await InvokeAsync(StateHasChanged);
         }
 
-        await GetAssignableUsers();
-        // refresh ui with new data
-        StateHasChanged();
     }
 
 
@@ -331,7 +315,7 @@
                             Users.Add(user); // adds to list
                         }
                     }
-                    catch (Exception ex) // teachers fails to load
+                    catch (Exception ex) // teachers fail to load
                     {
                         Log.Error(ex,"Failed to load teacher.");
                     }
@@ -339,15 +323,6 @@
             }
     }
 
-    private async Task clearNotifications(){
-        List<Notification?>? notifications = await UserClientAccess.GetNotification(JAuth.GetUser().UserID);
-
-        if (notifications.Count > 0)
-        {
-            await UserClientAccess.NotificationDelete(JAuth.GetUser().UserID);
-
-        }
-    }
     /// <summary>
     /// Loads the feedback data and teacher data as soon as the page is loaded
     /// </summary>
@@ -357,11 +332,10 @@
         if (JAuth.IsAuthorised())
         {
             if(JAuth.GetUser()!=null){
+                _assignee = JAuth.GetUser();
                 await LoadAllFeedback(JAuth.User.UserID);
                 await LoadAssignees();
-
-                // clear notifications
-                await clearNotifications();
+                await GetModules();
             }
         }
     }
