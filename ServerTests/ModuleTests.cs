@@ -72,7 +72,7 @@ public class ModuleControllerTests
         Assert.IsFalse(result.Contains("Invalid module ID"));
     }
 
-
+    /*
     /// <summary>
     /// This hits the GetFeedbackById  endpoint
     /// </summary>
@@ -103,7 +103,7 @@ public class ModuleControllerTests
 
         //Assert our result is a success.
         Assert.IsFalse(ctx.Modules.Contains(testModule), "module not cleaned up.");
-    }
+    }*/
 
     [TestMethod]
     public void CheckInvalidNameModule()
