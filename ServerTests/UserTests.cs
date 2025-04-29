@@ -99,7 +99,9 @@ public class UserControllerTests
 
 
         //Clean up so we don't clutter the db.
-
+        var x = ctx.UsersModules.Where(m => m.UserID == createdUser.UserID).ToList();
+        ctx.UsersModules.RemoveRange(x);
+        ctx.SaveChanges();
         ctx.User.Remove(createdUser);
         ctx.SaveChanges();
 
