@@ -337,6 +337,26 @@ body.theme-hybrid {
     color: var(--accent);
 }
 
+
+/* =========== ABOUT/PRIVACY/TOS CLASSES =========== */
+.card {
+    background: var(--card-bg);
+    border-radius: var(--border-radius);
+    color: var(--text-primary);
+}
+
+.card-header {
+    background-color: var(--primary);
+    color: var(--text-on-primary);
+}
+
+    .card-header h3 {
+        color: var(--text-on-primary);
+    }
+
+.about-headings {
+    color: var(--primary);
+  
 /* =========== FEEDBACK FORM =========== */
 
 .feedbackCard {
